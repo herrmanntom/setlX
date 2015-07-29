@@ -8,6 +8,7 @@
 \usepackage{fancyvrb}
 \usepackage{fancyhdr}
 \usepackage{alltt}
+\usepackage{diagbox}
 
 % point links to top left corner of respective element, not to caption
 \usepackage{hyperref}
@@ -19,6 +20,8 @@
     citecolor=red,
     pdfborder={0 0 0} 
 }
+
+\renewcommand*{\familydefault}{\sfdefault}
 
 \pagestyle{fancy}
 
@@ -53,7 +56,7 @@
 \title{\vspace*{-1cm}
   \epsfig{file=aleph0,scale=0.21} \\[0.5cm]
 \textsc{SetlX} --- A Tutorial \\[0.5cm]
-Version 2.3.4
+Version 2.4.0
 }
 \author{Karl Stroetmann \\[0.2cm]
 Duale Hochschule Baden-W\"urttemberg Mannheim \\[0.2cm]
@@ -65,6 +68,7 @@ Duale Hochschule Baden-W\"urttemberg Stuttgart \\[0.2cm]
 
 \newcommand{\squoted}[1]{\mbox{``\texttt{#1}''}}
 \newcommand{\quoted}[1]{\;\mbox{``\texttt{#1}''}\;}
+\newcommand{\qote}[1]{\symbol{34}#1\symbol{34}}
 
 \newcommand{\example}{\vspace*{0.2cm}
 
@@ -108,14 +112,13 @@ Duale Hochschule Baden-W\"urttemberg Stuttgart \\[0.2cm]
 Mathematical Sciences in New York, developed a very high level programming language called
 \textsc{Setl} 
 \cite{schwartz:1970, setl86}.  The most distinguishing feature of this language is the
-support it offers for sets and lists.   This feature permits convenient implementations of
-mathematical algorithms:  As set theory is the language of mathematics, many mathematical
-algorithms that are formulated in terms of set theory have very straightforward implementations in
+support it offers for sets and lists.   As set theory is the language of mathematics, many mathematical
+algorithms that are formulated in terms of set theory have a very straightforward implementation in
 \textsc{Setl}. 
 
 Unfortunately, at the time of its invention, \textsc{Setl} did not get the attention that it deserved.
-One of the main reasons was that \textsc{Setl} is an interpreted language and in those
-days, the run time overhead of an interpreter loop was not yet affordable.  More than
+One of the main reasons was that \textsc{Setl} is an interpreted language and in the early days of
+computer science, the run time overhead of an interpreter loop was not yet affordable.  More than
 forty years after the first conception of \textsc{Setl}, the efficiency of computers has changed
 dramatically and for many applications, the run time efficiency of a languange is no
 longer as important as it once was.  After all, 
@@ -124,12 +127,11 @@ are all interpreted and noticeably slower than compiled languages like \texttt{C
 fact hasn't impeded their success. 
 
 While teaching at the Baden-W\"urttemberg Corporate State University,  the first author had used
-\textsc{Setl2} \cite{snyder90b} at 
-for several years in a number of introductory computer science courses.  He had
-noticed that the adoption of \textsc{Setl} had made the abstract concepts of set theory
-more accesible to the students.   Nevertheless, as the original version of
+\textsc{Setl2} \cite{snyder90b} for several years in a number of introductory computer science
+courses.  He had noticed that the adoption of \textsc{Setl} had made the abstract concepts of set theory
+more accessible to the students.   Nevertheless, as the original version of
 \textsc{Setl} is more than forty years old, it has a number of shortcomings.  
-One minor issue is the fact, that the syntax is quite dated and has proven difficult to
+One minor issue is the fact that the syntax of \textsc{Setl} is quite dated and has proven difficult to
 master  for students that are mainly acquainted with \texttt{C} and \textsl{Java}.
 Furthermore,  \textsc{Setl} lacks any immediate support for first order terms.  Therefore, 
 \textsc{Setl} has been extended into the new language \textsc{SetlX}.  The main features that have
@@ -142,17 +144,19 @@ been changed or added are as follows:
       functions can be used as a primitive data type.  Furthermore, \textsc{SetlX}
       supports \emph{closures} and the \emph{memoization} of functions.
 \item \textsc{SetlX} has support for regular expressions.
-\item \textsc{SetlX} provides backtracking.
+\item \textsc{SetlX} provides a limited way of backtracking.
 \item \textsc{SetlX} supports object oriented programming concepts.
 \item \textsc{SetlX} provides a small set of graphical primitives that support
       the animation of algorithms.
+\item \textsc{SetlX} provides a plotting library that can be used graph functions or to draw scatter plots.
 \item Lastly, while \textsc{Setl} has a syntax that is reminiscent of Algol,
       \textsc{SetlX} has a syntax that is more akin to languages like \texttt{C} or
       \textsl{Java}.  
 \end{itemize}
 The language \textsc{SetlX} has been implemented by Tom Herrmann as part of his student
-research project.  Fortunately, for the time being he continues to maintain the language
-and even implements new features.
+research project.  He still continues to supervise the addition of new features.
+Furthermore, Markus Jagiella, Patrick Robinson, Arne Röcke, and Fabian Wohriska 
+have added various functionalities to the \textsc{SetlX} interpreter.
 \end{abstract}
 \pagebreak
 
@@ -165,6 +169,7 @@ and even implements new features.
 \include{closures}
 \include{backtracking}
 \include{linear-algebra}
+\include{plotting}
 \include{oo}
 \include{predefined-functions}    
 

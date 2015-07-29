@@ -1,9 +1,7 @@
 product := procedure(r1, r2) {
     r := {};
-    for ([x, y1] in r1, [y2, z] in r2) {
-        if (y1 == y2) {
-            r += { [x, z] };
-        }
+    for ([x, y1] in r1, [y2, z] in r2 | y1 == y2) {
+        r += { [x, z] };
     }
     return r;
 };

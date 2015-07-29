@@ -3,7 +3,12 @@ which is stated at the end of this document.
 
 This program uses the ANTLR parser generator in version 4.4,
 which is also licensed under the BSD license
-(see src/antlr/antlr_LICENSE.txt).
+(see interpreter/libs/antlr_LICENSE.txt).
+
+The functions for plotting require jfreechart which is provided
+with the setlX plot_addon.
+jfreechart ist distributed under the LGPL licence
+(see interpreter/plot_addon/lib/licence-LGPL)
 
 
 [The "BSD license"]

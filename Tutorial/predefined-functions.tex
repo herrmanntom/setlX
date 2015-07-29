@@ -10,6 +10,7 @@ sections.
       given type.
 \item Section six lists the functions that support interactive debugging.
 \item Section seven discusses the functions related to I/O.
+\item Section eight discusses the plotting functions.
 \item The last sections lists all those procedures that did not fit in 
       any of the previous sections.  
 \end{enumerate}
@@ -1162,6 +1163,524 @@ $\mathtt{writeFile}(f, l)$.
 \\[0.2cm]
 Here, $f$ is the name of the file and $l$ is a list.  The file $f$ is created and the list
 $l$ is written into the file $f$.  The different elements of $l$ are separated by newlines.
+
+
+\section{Plotting Functions}
+This section lists all plotting functions, specifies their parameters and provide small examples
+that demonstrate the use of these functions.
+ 
+
+\subsection{plot\_createCanvas} 
+The function \texttt{plot\_createCanvas} returns a canvas object that can be used for plotting.
+All other plotting functions need a canvas object as their first argument.  In general, it is
+possible to plot multiple graphs on a canvas object.  However, it is not possible to plot both
+functions and charts onto a canvas.  Hence, a canvas can either hold function graphs and scatter
+plots or it can hold statistical charts.
+
+The function \texttt{plot\_createCanvas} takes one parameter.  This parameter is a string that adds
+a title to the canvas. This parameter is optional.  The function returns a canvas object.
+
+\paragraph{Example Code}
+\begin{verbatim}
+    c := plot_createCanvas();
+    c := plot_createCanvas("Canvas Name");
+\end{verbatim}
+
+\subsection{plot\_addBullets} 
+This function adds points into a canvas.  Currently, these points are represented as squares.
+The function \texttt{plot\_addBullets} is called as follows:
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{plot\_addBullets}(\textsl{canvas}, \textsl{coordinates}, \textsl{color}, \textsl{size})
+\\[0.2cm]
+The parameters are interpreted as follows:
+\begin{enumerate}
+ \item \textsl{canvas} is a canvas object that has been previously created using the function
+       \texttt{plot\_createCanvas}.  
+\item \textsl{coordinates} is a list of pairs of floating point numbers.  Hence, these pairs have
+       the form $[x, y]$.  Here $x$ specifies the x-coordinate of the point to be plotted, while 
+       $y$ specifies its y-coordinate.
+\item \texttt{color} is a list of three integers of the form $[r,g,b]$, where $r$, $g$, and $b$ are
+      elements of the set $\{1, \cdots, 255\}$ that together specify the color of the points
+      to be plotted in the \href{https://en.wikipedia.org/wiki/RGB_color_model}{RGB color model}.
+
+      This parameter is optional and defaults to \texttt{[0,0,0]} which is the RGB code for the
+      color black.
+\item \textsl{size} is a floating point value that specifies the size of the bullet.  
+      This parameter is optional.
+\end{enumerate}
+The function returns a reference to the points that have been created.  This reference can be used
+to remove the points from the canvas via the function \texttt{plot\_removeGraph}, which is discussed
+later. 
+
+\paragraph{Example Code}
+\begin{verbatim}
+    c  := plot_createCanvas();
+    b1 := plot_addBullets(c, [[0,0]]);                     // one bullet
+    b2 := plot_addBullets(c, [[1,1], [2,2], [3,3]]);       // three bullets
+    b3 := plot_addBullets(c, [[1,2]], [255, 0, 0]);        // one red bullet
+    b4 := plot_addBullets(c, [[1,2]], [0, 255, 0], 10.0);  // one bigger bullet
+\end{verbatim}
+
+
+\subsection{plot\_addGraph}
+The function \texttt{plot\_addGraph} plots the graph of a function.
+The function \texttt{plot\_addGraph} is called as follows:
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{plot\_addGraph}(\textsl{canvas}, \textsl{function}, \textsl{label}, \textsl{color}, \textsl{fill})
+\\[0.2cm]
+The parameters are interpreted as follows:
+\begin{enumerate}
+ \item \textsl{canvas} is a canvas object that has been previously created using the function
+       \texttt{plot\_createCanvas}.  
+\item \textsl{function} is a string that specifies the function that is to be plotted.
+      This string uses the letter ``\texttt{x}'' to specify the independent variable.
+      For example, in order to draw the function $x \mapsto x \cdot x$ we could use the string
+      string ``\texttt{x*x}''
+\item \textsl{label} is a string that is used to label the function in the legend that is drawn at
+      the bottom of the generated figure.
+\item \texttt{color} is a list of three integers of the form $[r,g,b]$, where $r$, $g$, and $b$ are
+      elements of the set $\{1, \cdots, 255\}$ that together specify the color of the points
+      to be plotted in the \href{https://en.wikipedia.org/wiki/RGB_color_model}{RGB color model}.
+
+      This parameter is optional and defaults to \texttt{[0,0,0]} which is the RGB code for the
+      color black.
+\item \textsl{fill} is a boolean parameter that specifies whether the area under the graph should be
+      colored as well.  
+
+      This parameter is optional and defaults to \texttt{false}.  Hence, if this
+      parameter is not used then only the graph of the function is drawn.
+\end{enumerate}
+The function returns a reference to the graph that has been created.  This reference can be used
+to remove the graph from the canvas.
+ 
+\paragraph{Example Code}
+\begin{verbatim}
+    c  := plot_createCanvas();
+    g1 := plot_addGraph(c, "x*x", "parabola");
+    g2 := plot_addGraph(c, "x**3", "cubic function in red", [255, 0, 0]);
+    g3 := plot_addGraph(c, "sin(x)", "area under the sine", [0, 0, 0], true);
+\end{verbatim}
+
+
+\subsection{plot\_addListGraph}
+The function \texttt{plot\_addListGraph} takes a list of points and connects these points via straight lines.
+This function is called as follows:
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{plot\_addListGraph}(\textsl{canvas}, \textsl{coordinates}, \textsl{label}, \textsl{color}, \textsl{fill})
+\\[0.2cm]
+The parameters are interpreted as follows:
+\begin{enumerate}
+ \item \textsl{canvas} is a canvas object that has been previously created using the function
+       \texttt{plot\_createCanvas}.  
+\item \textsl{coordinates} is a list of pairs of floating point numbers.  Hence, these pairs have
+       the form $[x, y]$.  Here $x$ specifies the x-coordinate of a point, while 
+       $y$ specifies its y-coordinate.  The points specified via \textsl{coordinates} are connected
+       via straight lines.
+\item \textsl{label} is a string that is used to label the graph in the legend that is drawn at
+      the bottom of the generated figure.
+\item \texttt{color} is a list of three integers of the form $[r,g,b]$, where $r$, $g$, and $b$ are
+      elements of the set $\{1, \cdots, 255\}$ that together specify the color of the points
+      to be plotted in the \href{https://en.wikipedia.org/wiki/RGB_color_model}{RGB color model}.
+
+      This parameter is optional and defaults to \texttt{[0,0,0]} which is the RGB code for the
+      color black.
+\item \textsl{fill} is a boolean parameter that specifies whether the area under the lines should be
+      colored as well.  
+
+      This parameter is optional and defaults to \texttt{false}.  Hence, if this
+      parameter is not used then only the lines connecting the points are drawn.
+\end{enumerate}
+
+\paragraph{Example Code}
+\begin{verbatim}
+    c  := plot_createCanvas();
+    g1 := plot_addListGraph(c, [[10, 0],[-10,0]], "simple List graph");
+    g2 := plot_addListGraph(c, [[-10, -10], [-5, -5], [0, 1], [5,6]], 
+                            "listgraph with color", [255, 0, 0]);
+    g2 := plot_addListGraph(c, [[-10, 10], [-5, 5], [0, 0], [2.5,6], [5, -4]], 
+                            "listgraph with color and area", [255, 0, 255], true);
+\end{verbatim}
+
+\subsection{plot\_addParamGraph}
+The function \texttt{plot\_addParamGraph} plots a parametric curve.  The function is called as
+follows:
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{plot\_addParamGraph}(\textsl{canvas}, \textsl{x-fct}, \textsl{y-fct}, \textsl{label}, \textsl{limits}, \textsl{color}, \textsl{fill})
+\\[0.2cm]
+The parameters are interpreted as follows:
+\begin{enumerate}
+\item \textsl{canvas} is a canvas object that has been previously created using the function
+       \texttt{plot\_createCanvas}.  
+\item \textsl{x-fct} is a string that specifies how the x-coordinate is to be computed.
+      This string uses the letter ``\texttt{x}'' to specify the parameter.
+\item \textsl{y-fct} is a string that specifies how the y-coordinate is to be computed.
+      Again, this string uses the letter ``\texttt{x}'' to specify the parameter.
+\item \textsl{label} is a string that is used to label the function in the legend that is drawn at
+      the bottom of the generated figure.
+\item \textsl{limits} is a pair of two floating point numbers.  This pair has the form
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \texttt{[} \textsl{xMin}, \textsl{xMax}\texttt{]}.
+      \\[0.2cm]
+      Here, \textsl{xMin} is the smallest value of the parameter ``\texttt{x}'' that is used, while
+      \textsl{xMax} specifies the biggest value.
+\item \texttt{color} is a list of three integers of the form $[r,g,b]$, where $r$, $g$, and $b$ are
+      elements of the set $\{1, \cdots, 255\}$ that together specify the color of the points
+      to be plotted in the \href{https://en.wikipedia.org/wiki/RGB_color_model}{RGB color model}.
+
+      This parameter is optional and defaults to \texttt{[0,0,0]} which is the RGB code for the
+      color black.
+\item \textsl{fill} is a boolean parameter that specifies whether the area between the graph and the
+      x-axis should be colored as well.  
+
+      This parameter is optional and defaults to \texttt{false}.  Hence, if this
+      parameter is not used then only the graph of the function is drawn.
+\end{enumerate}
+The function returns a reference to the graph that has been created.  This reference can be used
+to remove the graph from the canvas.
+
+\paragraph{Example Code}
+\begin{verbatim}
+    c  := plot_createCanvas();
+    g1 := plot_addParamGraph(c, "3*cos(x)", "3*sin(x)", 
+                             "circle with radius 3", 
+                             [-3.15, 3.15]);
+    g2 := plot_addParamGraph(c, "2*cos(x)", "2*sin(x)", 
+                             "colored circle with radius 2", 
+                             [-3.15, 3.15], [0, 255, 0]);
+    g3 := plot_addParamGraph(c, "cos(x)", "sin(x)", 
+                             "filled green circle", 
+                             [-3.15, 3.15], [0, 255, 0], true);
+\end{verbatim}
+
+
+\subsection{plot\_addBarChart}
+The function \texttt{plot\_addBarChart} creates a bar chart where the bars are drawn vertically.
+This function is called as follows:
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{plot\_addBarChart}(\textsl{canvas}, \textsl{values}, \textsl{labels}, \textsl{name})
+\\[0.2cm]
+The parameters are interpreted as follows:
+\begin{enumerate}
+\item \textsl{canvas} is a canvas object that has been previously created using the function
+      \texttt{plot\_createCanvas}.  
+\item \textsl{values} is a list of floating point numbers. These numbers specify the height of the
+      bars.
+\item \textsl{labels} is a list of strings.  This list has to have the same length as the list
+      \textsl{values}.  The strings in the list \textsl{labels} are uses as legends at the bottowm
+      of the bar chart.  For example, in Figure \ref{fig:world-population.eps} on page
+      \pageref{fig:world-population.eps} the list that is used as labels has the form
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \texttt{[\qote{Northern America}, \qote{Oceania}, \qote{Latin America}, \qote{Europe}, \qote{Africa}, \\
+        \hspace*{1.3cm} 
+        \qote{Asia}, \qote{World}]}
+\item \textsl{name} is a string that attaches a common name to all values given in the list
+      \textsl{value}.  This parameter is used in the legend of the bar chart.  
+\item Note that there is no parameter to set the color of the individual bars.  All bars resulting
+      from the same invocation of a call of the function \texttt{plot\_addBarChart} are filled with
+      the same color, while \setlx\ uses different colors for different invocation of
+      \texttt{plot\_addBarChart}.  For example, in order to generate Figure
+      \ref{fig:world-population.eps} on page \pageref{fig:world-population.eps} the function 
+      \texttt{plot\_addBarChart} was called five times: The first invocation created the red bars
+      corresponding to the year 1900, the second invocation created the blue bars showing the
+      population in 1950 and so on.
+\end{enumerate}
+The function returns a reference to the graph that has been created.  This reference can be used
+to remove the graph from the canvas.
+
+\paragraph{Example Code}
+\begin{verbatim}
+    c   := plot_createCanvas();
+    ch1 := plot_addBarChart(c, [1,2], ["a","b"], "data set number 1");
+    ch2 := plot_addBarChart(c, [2,1], ["a","b"], "data set number 2");
+\end{verbatim}
+
+\subsection{plot\_addPieChart}
+The function \texttt{plot\_addPieChart} creates a pie chart.
+This function is called as follows:
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{plot\_addPieChart}(\textsl{canvas}, \textsl{values}, \textsl{labels})
+\\[0.2cm]
+The parameters are interpreted as follows:
+\begin{enumerate}
+\item \textsl{canvas} is a canvas object that has been previously created using the function
+      \texttt{plot\_createCanvas}.  
+\item \textsl{values} is a list of floating point numbers. These numbers specify the area of the
+      pies associated with them.
+\item \textsl{labels} is a list of strings.  This list has to have the same length as the list
+      \textsl{values}.  The strings in the list \textsl{labels} are used as legends for the pie chart.
+      For example, in the first pie chart shown in Figure \ref{fig:race-prison} on page
+      \pageref{fig:race-prison} the list that is used as labels has the form
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \texttt{[\qote{white}, \qote{black}, \qote{latino}, \qote{other}]}.
+\item Note that there is no parameter to set the color of the individual pies.  
+      These colors are chosen automatically by \setlx.
+\end{enumerate}
+The function returns a reference to the pie chart that has been created.  This reference can be used
+to remove this chart from the canvas.
+
+\paragraph{Example Code}
+\begin{verbatim}
+    c  := plot_createCanvas();
+    ch := plot_addPieChart(c, [1,2,3,4], ["a","b","c","d"]);
+\end{verbatim}
+
+
+\subsection{plot\_addLabel}
+The function \texttt{plot\_addLabel} takes a canvas and adds a label at a specified position.  This
+function is called as
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{plot\_addLabel}(\textsl{canvas}, \textsl{coordinate}, \textsl{label})
+\\[0.2cm]
+The parameters are interpreted as follows:
+\begin{enumerate}
+\item \textsl{canvas} specifies the canvas where the label needs to be added.
+\item \textsl{coordinates} is a pair of floating point numbers.  Hence, this pair has
+       the form $[x, y]$.  Here $x$ specifies the x-coordinate of a point, while 
+       $y$ specifies its y-coordinate.  These coordinates specify the location of the
+       \textsl{label}.  Specifically, the pair $[x,y]$ specifies the position of the lower left
+       corner of the label. 
+\item \textsl{label} is a string that is printed on the canvas at the position specified via the
+      parameter \textsl{coordinates}. 
+\end{enumerate}
+The function \texttt{plot\_addLabel} returns a reference to the label that has been created.  This
+reference can be used to remove the label using the function \texttt{plot\_removeGraph} discussed below.
+\paragraph{Example Code}
+\begin{verbatim}
+    c := plot_createCanvas();
+    g := plot_addGraph(c, "x*x", "parabola");
+    l := plot_addLabel(c, [0,0], "origin");
+\end{verbatim}
+
+\subsection{plot\_defineTitle}
+The function \texttt{plot\_defineTitle} takes a canvas and adds a title to the graph.  Note that the
+title is added below the title that is set with \texttt{plot\_createCanvas}.  
+The function \texttt{plot\_createCanvas} is called as follows:
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{plot\_createCanvas}(\textsl{canvas}, \textsl{title})
+\\[0.2cm]
+The parameters are interpreted as follows:
+\begin{enumerate}
+\item \textsl{canvas} specifies the canvas.
+\item \textsl{title} is the string that is used as title.
+\end{enumerate}
+This function does not return a value. 
+
+\paragraph{Example Code}
+\begin{verbatim}
+    c := plot_createCanvas();
+    plot_defineTitle(c, "Title of Canvas");
+\end{verbatim}
+
+\subsection{plot\_exportCanvas}
+The function \texttt{plot\_exportCanvas} stores a canvas on disk as a file in the
+\href{https://en.wikipedia.org/wiki/Portable_Network_Graphics}{PNG} format.
+The function is called as follows:
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{plot\_exportCanvas}(\textsl{canvas}, \textsl{fileName})
+\\[0.2cm]
+The parameters are interpreted as follows:
+\begin{enumerate}
+\item \textsl{canvas} is the canvas that is to be saved to disk.
+\item \textsl{fileName} is a string that specifies the name of the file that is used to store the
+      image of the canvas.  Note that the file extension ``\texttt{.png}'' is automatically added to
+      \textsl{fileName} when the file is stored on disk.
+\end{enumerate}
+The function does not return a value.
+
+\paragraph{Example Code}
+\begin{verbatim}
+    c := plot_createCanvas();
+    plot_addGraph(c, "cos(x)", "the cosine function");
+    plot_exportCanvas(c, "cosine");
+\end{verbatim}
+
+
+\subsection{plot\_labelAxis}
+The function \texttt{plot\_labelAxis} changes the labels of both x-axis and y-axis.  The function is
+called as follows:
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{plot\_labelAxis}(\textsl{canvas}, \textsl{xLabel}, \textsl{yLabel})
+\\[0.2cm]
+The parameters are interpreted as follows: 
+\begin{enumerate}
+\item \textsl{canvas} specifies the canvas whose axis are to be modified.
+\item \textsl{xLabel} is a string that is used as the new label of the x-axis.
+      If this string is the empty string, then the label of the x-axis is removed.
+\item \textsl{yLabel} is a string that is used as the new label of the y-axis.
+      If this string is the empty string, then the label of the y-axis is removed.
+\end{enumerate}
+This function does not return a value.
+
+\paragraph{Example Code}
+\begin{verbatim}
+    c := plot_createCanvas();
+    plot_addGraph(c, "x*x", "parabola");
+    plot_labelAxis(c, "x-axis", "y-axis");
+\end{verbatim}
+
+\subsection{plot\_legendVisible}
+The function \texttt{plot\_legendVisible} shows or hides the legend of a graph.
+The function is called  as follows:
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{plot\_legendVisible}(\textsl{canvas}, \textsl{flag})
+\\[0.2cm]
+The parameters are interpreted as follows:
+\begin{enumerate}
+\item \textsl{canvas} specifies the canvas whose legends are to be shown or hidden.
+\item \textsl{flag} is a Boolean value.  If \textsl{flag} is \texttt{true}, the legend is shown.
+      If \textsl{flag} is \texttt{false} the legend is hidden instead.  
+\end{enumerate}
+By default, the legend of a canvas is visible.  In order to switch the legend off, the function
+\texttt{plot\_legendVisible} has to be called with its second parameter set to \texttt{false}.
+
+\paragraph{Example Code}
+\begin{verbatim}
+    c := plot_createCanvas();
+    plot_addGraph(c, "x*x-2", "parabola");
+    plot_legendVisible(c, false);
+\end{verbatim}
+
+\subsection{plot\_modScale}
+The function \texttt{plot\_modScale} changes the scale of both the x-axis and the y-axis.
+Of course, this function can only be called for those graphs that have an x-axis and a y-axis.
+Hence, this function cannot be called for pie charts or bar charts.
+The function is called as follows:
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{plot\_modScale}(\textsl{canvas}, \textsl{xLimits}, \textsl{yLimits})
+\\[0.2cm]
+The parameters are interpreted as follows:
+\begin{enumerate}
+\item \textsl{canvas} specifies the canvas whose axis are to be changed.
+\item \textsl{xLimits} is pair of floating point numbers, i.e.~\textsl{xLimits} has the form
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \texttt{[}\textsl{xMin}, \textsl{xMax}\texttt{]}.
+      \\[0.2cm]
+      Here, \textsl{xMin} is the smallest value shown on the x-axis, while \textsl{xMax} is the
+      largest value.
+\item \textsl{yLimits} is pair of floating point numbers, i.e.~\textsl{yLimits} has the form
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \texttt{[}\textsl{yMin}, \textsl{yMax}\texttt{]}.
+      \\[0.2cm]
+      Here, \textsl{yMin} is the smallest value shown on the y-axis, while \textsl{yMax} is the
+      largest value.
+\end{enumerate}
+This function does not return a value.
+
+\paragraph{Example Code}
+\begin{verbatim}
+    c := plot_createCanvas();
+    plot_addGraph(c, "x**2-2*x", "parabola");
+    plot_modScale(c, [0, 5], [-2, 16]);
+\end{verbatim}
+
+\subsection{plot\_modScaleType}
+The function \texttt{plot\_modScaleType} changes the scaling type of an axis.  An axis can either be
+scaled linearly or logarithmically.  If an axis is scaled linearly, then the distance between any two
+numbers on the axis is proportionally to the difference of these numbers.  On the other hand, if an
+axis is scaled logarithmically, then the distance between any two numbers on the axis is
+proportionally to the quotient of these numbers.  The function \texttt{plot\_modScaleType} is called
+as follows:
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{plot\_modScaleType}(\textsl{canvas}, \textsl{xType}, \textsl{yType})
+\\[0.2cm]
+The parameters are interpreted as follows:
+\begin{enumerate}
+\item \textsl{canvas} specifies the canvas that is to be changed.
+\item \textsl{xType} is a string that is a member of the set $\{ \mathtt{\symbol{34}num\symbol{34}}, \mathtt{\symbol{34}log\symbol{34}} \}$.
+      If \textsl{xType} is equal to the string \texttt{\symbol{34}num\symbol{34}}, then the x-axis
+      is scaled linearly. If \textsl{xType} is equal to the string \texttt{\symbol{34}log\symbol{34}}, then the x-axis
+      is scaled logarithmically.
+\item \textsl{yType} is a string that is a member of the set $\{ \mathtt{\symbol{34}num\symbol{34}}, \mathtt{\symbol{34}log\symbol{34}} \}$.
+      If \textsl{yType} is equal to the string \texttt{\symbol{34}num\symbol{34}}, then the y-axis
+      is scaled linearly. If \textsl{yType} is equal to the string \texttt{\symbol{34}log\symbol{34}}, then the y-axis
+      is scaled logarithmically.
+\end{enumerate}
+The function does not return a value.
+
+\paragraph{Example Code}
+\begin{verbatim}
+    c := plot_createCanvas();
+    plot_addGraph(c, "x**2-2*x", "parabola");
+    plot_modScaleType(c, "num", "log");
+\end{verbatim}
+
+\subsection{plot\_removeGraph}
+The function \texttt{plot\_removeGraph} removes a graph or a chart from a canvas.
+The function is called as follows:
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{plot\_removeGraph}(\textsl{canvas}, \textsl{reference})
+\\[0.2cm]
+The parameters are interpreted as follows:
+\begin{enumerate}
+\item \textsl{canvas} specifies the canvas from which a graph or chart is to be removed.
+\item \textsl{reference} is a reference to the graph or canvas that is to be removed.
+      This reference is the return value of any of the \texttt{plot\_add*} functions.
+\end{enumerate}
+This function does not return a value.
+
+\paragraph{Example Code}
+\begin{verbatim}
+    c  := plot_createCanvas();
+    g1 := plot_addGraph(c, "sin(x)", "sine");
+    g2 := plot_addListGraph(c, [[-1, 1], [-2, 0], [1, 3], [2, 1]], "lines");
+    g3 := plot_addParamGraph(c, "cos(x)", "sin(x)", "circle", [-5,5]);
+    l1 := plot_addLabel(c, [1,1], "some text");
+    b1 := plot_addBullets(c, [[1, 2]]);
+    plot_removeGraph(c, g3);
+    plot_removeGraph(c, g2);
+    plot_removeGraph(c, g1);
+    plot_removeGraph(c, l1);
+    plot_removeGraph(c, b1);
+\end{verbatim}
+
+
+
+\subsection{plot\_modSize}
+The function \texttt{plot\_modSize} changes the size of the canvas.  The function is called as follows:
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{plot\_modSize}(\textsl{canvas}, \textsl{size})
+\\[0.2cm]
+The parameters are interpreted as follows:
+\begin{enumerate}
+\item \textsl{canvas} specifies the canvas whose size is to be changed.
+\item \textsl{size} is a pair of natural numbers.  This pair has the form
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \texttt{[}\textsl{width}, \textsl{height} \texttt{]}.
+      \\[0.2cm]
+      Here, \textsl{width} specifies the new width of the canvas area in pixles, while
+      \textsl{height} specifies the height of the window.
+\end{enumerate}
+The function does not return a value.
+
+\paragraph{Example Code}
+\begin{verbatim}
+    c := plot_createCanvas();
+    plot_modSize(c, [1024,768]);
+    plot_addParamGraph(c, "sin(x)", "cos(x)", "circle", [-3.15, 3.15]);
+\end{verbatim}
+
+
 
 \section{Miscellaneous Functions}
 This final section lists some functions that did not fit into any of the other sections.

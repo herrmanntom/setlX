@@ -69,6 +69,10 @@ public class SetlDouble extends NumberValue {
      * Double value of one.
      */
     public  final static SetlDouble ONE               = SetlDouble.valueOfNoEx(1.0);
+    /**
+     * Double value of five.
+     */
+    public  final static SetlDouble FIVE              = SetlDouble.valueOfNoEx(5.0);
 
     private SetlDouble(final Double d) {
         this.doubleValue = d;

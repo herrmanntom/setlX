@@ -1,0 +1,15 @@
+fatherAndSons := procedure() {
+    data  := readFile("fathers-and-sons.txt");
+    fsStr := [ split(line, " "): line in data];
+    fs    := [ [double(x), double(y)] : [x,y] in fsStr ];
+    c     := plot_createCanvas("Heights of Fathers vs. Heights of Sons.");
+    plot_addBullets(c, fs, [0,0,255], 2.0);
+    plot_modScale(c, [58, 80], [58, 80]);
+    plot_modSize(c, [1000, 1000]);
+    plot_labelAxis(c, "heights of fathers in inches", "heights of sons in inches");
+    plot_exportCanvas(c, "fathers-and-sons");
+};
+fatherAndSons();
+get("Press Enter to continue");
+
+

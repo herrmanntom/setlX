@@ -15,8 +15,9 @@ preconditions are satisfied, the command
 \\[0.2cm]
  launches the interpreter.  The interpreter first prints the banner shown in Figure
 \ref{fig:banner}, followed by a prompt``\texttt{=>}''.  Commands are typed after the prompt.    
-If the command is an assignment or an expression, then it is terminated by a semicolon.
-However, complex commands like, for example, loops are not terminated by a semicolon.
+If the command is an assignment or an expression, then it has to be terminated by a semicolon.
+However, complex commands like, for example, loops or class definitions are not terminated by 
+a semicolon. 
 
 \begin{figure}[!ht]
 \centering
@@ -28,12 +29,12 @@ However, complex commands like, for example, loops are not terminated by a semic
                   xleftmargin   = 0.0cm,
                   xrightmargin  = 0.0cm,
                 ]
--====================================setlX=============================v2.3.1=-
+-====================================setlX=============================v2.4.0=-
 
 Welcome to the setlX interpreter!
 
 Open Source Software from http://setlX.randoom.org/
-(c) 2011-2014 by Herrmann, Tom
+(c) 2011-2015 by Herrmann, Tom
 
 You can display some helpful information by using '--help' as parameter when
 launching this program.
@@ -50,8 +51,8 @@ Interactive-Mode:
 \label{fig:banner}
 \end{figure}
 \noindent
-The welcome banner of \textsc{SetlX} points out that we can call \texttt{setlX} with the parameter `
-`\texttt{--help}''.   Doing this yields the output shown in Figure \ref{fig:help-option} below. 
+The welcome banner of \textsc{SetlX} points out that we can call \texttt{setlX} with the parameter 
+``\texttt{--help}''.   Doing this yields the output shown in Figure \ref{fig:help-option} below. 
 
 \begin{figure}[!ht]
 \centering
@@ -64,7 +65,7 @@ The welcome banner of \textsc{SetlX} points out that we can call \texttt{setlX} 
                   xleftmargin   = 0.0cm,
                   xrightmargin  = 0.0cm,
                 ]
--====================================setlX=============================v2.3.1=-
+-====================================setlX=============================v2.4.0=-
 
 File paths supplied as parameters for this program will be parsed and executed.
 The interactive mode will be started if called without any file parameters.
@@ -73,29 +74,31 @@ Interactive-Mode:
   The 'exit;' statement terminates the interpreter.
 
 Additional parameters:
-  -e <expression>, --eval <expression>
-      Evaluates next argument as expression and exits.
-  -x <statement>, --exec <statement>
-      Executes next argument as statement and exits.
   -l <path>, --libraryPath <path>
       Override SETLX_LIBRARY_PATH environment variable.
-  -m, --multiLineMode
-      Only accept input in interactive mode after additional new line.
   -a, --noAssert
       Disables all assert functions.
   -n, --noExecution
       Load and check code for syntax errors, but do not execute it.
+  -r, --predictableRandom
+      Always use the same sequence of random numbers (useful for debugging).
   -p <argument> ..., --params <argument> ...
       Pass all following arguments to executed program via `params' variable.
-  -r, --predictableRandom
-      Always use same random sequence (debugging).
+  -e <expression>, --eval <expression>
+      Evaluates next argument as expression and exits.
+  -x <statement>, --exec <statement>
+      Executes next argument as statement and exits.
+  -v, --verbose
+      Display the parsed program before executing it.
   --doubleDefault
   --doubleScientific
   --doubleEngineering
   --doublePlain
-      Sets how the exponent of doubles is displayed.
-  -v, --verbose
-      Display the parsed program before executing it.
+      Sets how the exponent of a floating point number is printed.
+  -h, --harshWelcome
+      Interactive mode: Reduce welcome message to a bare minimum.
+  -m, --multiLineMode
+      Interactive mode: Input is only processed after an additional new line.
   --version
       Display interpreter version and terminate.
 \end{Verbatim}
@@ -131,13 +134,18 @@ will result in the following response:
 \\[0.2cm]
 After printing the result, the interpreter provides a new prompt so the next command can
 be entered.  Incidently, the last 
-example shows the first data type supported by \setlx: rational numbers.  A rational number
-consists of a numerator and a denominator, both of which are integers.  \setlx\ takes care to
-ensure that numerator and denominator are always in lowest terms.  Furthermore, if the
-denominator has the value 1, only the numerator is printed.  Therefore, after typing
+example shows the first data type supported by \setlx: Rational numbers. These will be discussed in
+more detail next.
+
+
+\subsection{Rational Numbers and Floating Point Numbers}
+\setlx\ supports both rational numbers and floating point numbers.
+A rational number consists of a numerator and a denominator, both of which are integers.  \setlx\ takes care to
+ensure that numerator and denominator are always reduced to lowest terms.  Furthermore, if the
+denominator happens to be the value 1, only the numerator is printed.  Therefore, after typing
 \\[0.2cm]
 \hspace*{1.3cm}
-\texttt{=>} \texttt{\textsl{1/3 + 2/3;}}
+\texttt{\textsl{1/3 + 2/3;}}
 \\[0.2cm]
 \setlx\ will respond:
 \\[0.2cm]
@@ -147,14 +155,37 @@ denominator has the value 1, only the numerator is printed.  Therefore, after ty
 The precision of rational numbers is only limited by the available memory.  For example, the command
 \\[0.2cm]
 \hspace*{1.3cm}
-\cmd{50!;}
+\texttt{50!;}
 \\[0.2cm]
 computes the factorial of $50$ and yields the result
 \\[0.2cm]
 \hspace*{0.1cm}
 \texttt{\symbol{126}< Result: 30414093201713378043612608166064768844377641568960512000000000000 >\symbol{126}}.
 \\[0.2cm]
-If you prefer to calculate with floating point values, the easiest way is to add
+Therefore, as long as only rational numbers are used, there will be no rounding errors.
+Unfortunately, if a rational number $q$ is the result of a computation involving $n$ arithmetic
+operations, in the worst case the length of the nominator and denominator of the rational numbers
+$q$ tends to grow exponentially with $n$.  For this reason, most calculations in engineering are
+done using floating point numbers.  \setlx\ supports 64 bit floating point numbers.
+
+\setlx\ provides the following arithmetic operators.  If not stated otherwise, these operators work
+for both rational numbers as well as floating point numbers:
+\begin{enumerate}
+\item ``\texttt{+}'' performs addition.
+\item ``\texttt{-}'' performs subtraction.
+\item ``\texttt{*}'' performs multiplication.
+\item ``\texttt{/}'' performs division.
+\item ``\texttt{\symbol{92}}'' performs integer division.
+      The result is always an integer.
+\item ``\texttt{\%}'' computes the rest.  This operator is only provided for rational numbers.
+
+      For rational number $x$ and $y$ the operators ``\texttt{*}'', \texttt{\symbol{92}}'' and ``\texttt{\%}'' 
+      satisfy the equation
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      $x = (x \,\mathtt{\symbol{92}}\, y) \,\mathtt{*}\, y + x\,\mathtt{\%}\, y$.
+\end{enumerate}
+In order to use floating point numbers instead of rational numbers, the easiest way is to add
 \texttt{0.0} at the end of an expression because if an arithmetic expression 
 contains a floating point value, the result is converted to a floating point number.
 Therefore, the command
@@ -170,16 +201,17 @@ yields the answer:
 Of course, the same can also be achieved via the command
 \\[0.2cm]
 \hspace*{1.3cm}
-\cmd{1.0/3 + 2/5;}
+\texttt{1.0/3 + 2/5;}
 \\[0.2cm]
 Since the precision of rational numbers in \setlx\ is not limited, we can do things like computing
 $\sqrt{2}$ to a hundred decimal places.  Figure \ref{fig:sqrt.stlx} on page \pageref{fig:sqrt.stlx}
 shows a program that uses the 
 \href{http://en.wikipedia.org/wiki/Methods_of_computing_square_roots#Babylonian_method}{\emph{Babylonian method}}
-to compute the square root of $2$.  The idea is to compute $\sqrt{2}$ as the limit of the sequence $(b_n)_n$ which is defined as
+to compute the square root of $2$.  The idea is to compute $\sqrt{2}$ as the limit of the sequence $(b_n)_{n\in\mathbb{N}}$, 
+where the numbers $b_n$ are defined by induction on $n$  as follows:
 \\[0.2cm]
 \hspace*{1.3cm}
-$b_0 := 2$ \quad and \quad $\displaystyle b_{n+1} := \frac{1}{2} \cdot \left(b_n + \frac{2}{b_n}\right)$.
+$b_1 := 2$ \quad and \quad $\displaystyle b_{n+1} := \frac{1}{2} \cdot \left(b_n + \frac{2}{b_n}\right)$.
 \\[0.2cm]
 In order to print a rational number in decimal notation with a fixed number of places, the function
 $\texttt{nDecimalPlaces}(x,n)$ has been used.  The first argument $x$ is the rational number to be
@@ -194,7 +226,7 @@ loads and executes this program.  Alternatively, the command can be executed int
 interpreter via the following command:
 \\[0.2cm]
 \hspace*{1.3cm}
-\cmd{load(\symbol{34}sqrt.stlx\symbol{34});}
+\texttt{load(\symbol{34}sqrt.stlx\symbol{34});}
 \\[0.2cm]
 The output of the program is shown in Figure \ref{fig:sqrt-output}.
 
@@ -249,8 +281,8 @@ The output of the program is shown in Figure \ref{fig:sqrt-output}.
 \end{figure}
 
 \noindent
-The last program also demonstrates that \setlx\ supports strings.  In \setlx, any sequence of
-characters enclosed in double quote characters is a string.  For example, the 
+The previous program also demonstrates that \setlx\ supports strings.  In \setlx, any sequence of
+characters enclosed in either double or single quote characters is a string.  For example, the 
 \emph{hello world program} in \setlx\ is just 
 \\[0.2cm]
 \hspace*{1.3cm}
@@ -274,20 +306,19 @@ This will yield two lines of  output:
         Hello world!
         ~< Result: om >~
 \end{verbatim}
-The first lines show the effect of the invocation of the function \texttt{print}, the
+The first line shows the effect of the invocation of the function \texttt{print}, the
 second line gives the return value computed by the call of the function $\texttt{print}()$.  As the
 function $\texttt{print}()$ does not return a meaningful value, the
 return value is the \emph{undefined value} that, following the
 tradition of \textsc{Setl}, is denoted as $\Omega$.  In \setlx, this value is written as \texttt{om}.
 
 
-In order to assign the value of an expression to a variable, \setlx\ provides the assignment
-operator ``\texttt{:=}''.  Syntactically, this operator is the only major deviation from the syntax
-of the programming language \texttt{C}.
-For example, the statement
+In order to assign the value of an expression to a variable, \setlx\ provides the 
+\emph{assignment operator} ``\texttt{:=}''.  Syntactically, this operator is the only major deviation from the syntax 
+of the programming language \texttt{C}. For example, the statement
 \\[0.2cm]
 \hspace*{1.3cm}
-\cmd{x := 1/3;}
+\texttt{x := 1/3;}
 \\[0.2cm]
 binds the variable \texttt{x} to the fraction \texttt{1/3}.  
 \vspace*{0.3cm}
@@ -296,16 +327,19 @@ binds the variable \texttt{x} to the fraction \texttt{1/3}.
 \textbf{Important}:  In \setlx, the names of variables
 have to start with a lower case letter.  After the first letter, the name can contain
 upper or lower case letters, digits, or underscores.  If the first letter is an upper case
-letter, then the identifier is interpreted as a \emph{functor}.  This notion will be
-explained when discussing \emph{terms}.
+letter, then the identifier is not interpreted as a variable but rather is taken as a
+\emph{functor}.  The notion of a functor will be explained in detail when we discuss \emph{terms}.
 
 
 \section{Boolean Values}
-The Boolean values \texttt{true} and \texttt{false} represent truth and falsity.  Boolean
+The Boolean values \texttt{true} and \texttt{false} represent truth and falsity, respectively.  Boolean
 expressions can be constructed using the comparison operators ``\texttt{==}'', 
 ``\texttt{!=}'', ``\texttt{<}'',  ``\texttt{>}'', ``\texttt{<=}'', and ``\texttt{>=}''.
+Note that these operators are identical to the comparison operators used in the programming language
+\texttt{C}.
+
  \setlx\
-provides the following propositional operators to combine Boolean expressions.
+provides the following operators from propositional logic to combine Boolean expressions.
 \begin{enumerate}
 \item ``\texttt{\&\&}'' denotes the logical \emph{and} (also known as \emph{conjunction}), so the expression
       \\[0.2cm]
@@ -314,13 +348,13 @@ provides the following propositional operators to combine Boolean expressions.
       \\[0.2cm]
       is true if and only if both \texttt{a} and \texttt{b} are true.
 \item ``\texttt{||}'' denotes the logical \emph{or}, which is also known as \emph{disjunction}.
-      so the expression
+      Therefore,  the expression
       \\[0.2cm]
       \hspace*{1.3cm}
       \texttt{a || b}
       \\[0.2cm]
       is true if either \texttt{a} or \texttt{b} is true.  Note that 
-      \texttt{a || b} is true if both \texttt{a} and \texttt{b} is
+      \texttt{a || b} is true if both \texttt{a} and \texttt{b} are
       true.
 \item ``\texttt{!}'' denotes the logical \emph{not}, (also known as \emph{negation}).
       Therefore, the expression
@@ -425,7 +459,7 @@ such that $2^x$ is less than $x^2$.
 \vspace*{0.3cm}
 
 \noindent
-\textbf{Important}:  \texttt{forall} and \texttt{exists} statements do \underline{not}
+\textbf{Important}:  \texttt{forall} and \texttt{exists} expressions do \underline{not}
 create their own local scope.  For example, the sequence of statements
 \begin{verbatim}
     exists ([x, y] in {[a,b] : a in {1..10}, b in {1..10}} | 3*x - 4*y == 5);
@@ -438,7 +472,7 @@ will print
 \\[0.2cm]
 This example shows that the values of the variables \texttt{x} and \texttt{y} is available
 outside of the existentially quantified expression.  The execution of
-a \texttt{forall} or an \texttt{exists} statement stops as soon as the
+a \texttt{forall} or an \texttt{exists} expression stops as soon as the
 truth value of the statement is known.
 This feature is quite useful if the actual value of the variable in an \texttt{exists}
 statement is needed.  It is also useful for a \texttt{forall} statement in case that the
@@ -447,9 +481,9 @@ statement is needed.  It is also useful for a \texttt{forall} statement in case 
 \hspace*{1.3cm}
 \texttt{forall (n in [1..10] | n**2 <= 2**n);}
 \\[0.2cm]
-evaluates to \texttt{false} and, furthermore, it sets the value of the variable \texttt{n}
-to $3$, as this is the first integer in the list \texttt{[1..10]}
-where the expression $n^2 \leq 2^n$ is false.
+evaluates to \texttt{false} and, furthermore, it assigns the value $3$ to the variable \texttt{n},
+since $3$ is the first integer in the list \texttt{[1..10]}
+such that the expression $n^2 \leq 2^n$ is false.
 
 \section{Sets}
 The most interesting data type provided by \setlx\ is the \emph{set} type.  A \emph{set} is
@@ -458,12 +492,12 @@ To create a
 simple set containing the numbers $1$, $2$, and $3$, we can write
 \\[0.2cm]
 \hspace*{1.3cm}
-\cmd{\{1, 2, 3\};}
+\texttt{\{1, 2, 3\};}
 \\[0.2cm]
 Note that the comparison
 \\[0.2cm]
 \hspace*{1.3cm}
-\cmd{\{1,2,3\} == \{2,3,1\}}
+\texttt{\{1,2,3\} == \{2,3,1\}}
 \\[0.2cm]
 yields the result
 \\[0.2cm]
@@ -474,27 +508,27 @@ since the order of elements in a set does not matter.  This behaviour can lead t
 results that are sometimes surprising for the novice.  For example, the command
 \\[0.2cm]
 \hspace*{1.3cm}
-\cmd{print(\{3,2,1\});}
+\texttt{print(\{3,2,1\});}
 \\[0.2cm]
 yields the following output:
 \\[0.2cm]
 \hspace*{1.3cm}
 \texttt{\{1, 2, 3\}}
 \\[0.2cm]
-The reason is, that \setlx\ does not remember the ordering of elements in a set, it just
-remembers the elements and sorts them internally to maximize the efficiency of looking up
-elements from a set.  
+The reason is, that \setlx\ does not remember the order of the insertion of different elements into
+a set, \setlx\ just remembers the elements and sorts them internally to maximize the efficiency of
+looking them up.
 
 To check whether a set contains a given entity as an element, \setlx\ provides the binary infix
 operator ``\texttt{in}''.  For example, the command
 \\[0.2cm]
 \hspace*{1.3cm}
-\cmd{2 in \{1,2,3\};}
+\texttt{2 in \{1,2,3\};}
 \\[0.2cm]
 yields the result \texttt{true}, as $2$ is indeed an element of the set $\{1,2,3\}$, while 
 \\[0.2cm]
 \hspace*{1.3cm}
-\cmd{4 in \{1,2,3\};}
+\texttt{4 in \{1,2,3\};}
 \\[0.2cm]
  returns \texttt{false}.
 
@@ -505,12 +539,12 @@ containing all the integers in a given range.  For example, to create the set co
 the integers from 1 up to 16, we can write 
 \\[0.2cm]
 \hspace*{1.3cm}
-\cmd{\{1..16\};}
+\texttt{\{1..16\};}
 \\[0.2cm]
 This will give the result
 \\[0.2cm]
 \hspace*{1.3cm}
-\texttt{Result: \{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16\}}.
+\texttt{\{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16\}}.
 \\[0.2cm]
 Here, we have used the range operator ``\texttt{..}''.  For given integers $a$ and $b$
 such that $a \leq b$,
@@ -537,12 +571,12 @@ differ by $1$, there is a variant of the range operator that allows us to
 specify the size of the difference between successive elements.   For example, the expression
 \\[0.2cm]
 \hspace*{1.3cm}
-\cmd{\{1,3..10\};}
+\texttt{\{1,3..10\};}
 \\[0.2cm]
 yields
 \\[0.2cm]
 \hspace*{1.3cm}
-\texttt{Result: \{1, 3, 5, 7, 9\}}.
+\texttt{\{1, 3, 5, 7, 9\}}.
 \\[0.2cm]
 In general, when a set definition of the form
 \\[0.2cm]
@@ -603,7 +637,7 @@ The most basic operators on sets are as follows:
       as $s_1 \symbol{92} s_2$.  It is defined as
       \\[0.2cm]
       \hspace*{1.3cm}
-      $s_1 \symbol{92} s_2 := \{ x \in s_1 \mid x \notin \}$.
+      $s_1 \symbol{92} s_2 := \{ x \in s_1 \mid x \notin s_2 \}$.
 \item ``\texttt{><}'' computes the \emph{Cartesian product} of two sets.
 
       In mathematics, the Cartesian product of two sets $s_1$ and $s_2$ is written
@@ -633,7 +667,7 @@ The most basic operators on sets are as follows:
       \\[0.2cm]
       \hspace*{1.3cm}
       \texttt{\{\{\}, \{1\}, \{1, 2\}, \{1, 2, 3\}, \{1, 3\}, \{2\}, \{2, 3\}, \{3\}\}}.
-\item ``\texttt{\symbol{37}}'' computes the \emph{symmetric difference} of sets.
+\item ``\texttt{\symbol{37}}'' computes the \emph{symmetric difference} of two sets.
 
       In mathematics, the symmetric difference of two sets $s_1$ and $s_2$ is often written
       as $s_1 \triangle s_2$.  It is defined as
@@ -685,11 +719,11 @@ number $2$ and the exponent is a set.  Therefore, if $s$ is a set, expressions l
 \texttt{3 ** $s$} \quad and \quad \texttt{$s$ ** 3}
 \\[0.2cm]
 are undefined. 
-Also note the use of \emph{string interpolation} in the examples given
+Also note the use of \emph{string interpolation} in the \texttt{print} statements given
 above:  Inside a string, any expression enclosed in
 \symbol{36}-symbols is evaluated and the result of this evaluation is
 inserted into the string.
-Strings interpolation will be discussed in more detail in the section on strings.
+Strings interpolation will be discussed in more detail later when we discuss strings.
 
 For all of the binary operators discussed above there is a variant of
 the assignment operator that incorporates the binary operator.  For example, we can write
@@ -775,7 +809,7 @@ we one.   Therefore, the expression
 We can use \emph{set comprehension} to build sets.  For example, the command
 \\[0.2cm]
 \hspace*{1.3cm}
-\texttt{\{ a * b : a in \{ 1 .. 3 \}, b in \{ 1 .. 3 \} \};}
+\texttt{\{ a * b: a in \{ 1..3 \}, b in \{ 1..3 \} \};}
 \\[0.2cm]
 computes the set of all products $a * b$ where both $a$ and $b$ run from $1$ to $3$.
 The command will therefore compute the set
@@ -913,13 +947,15 @@ might output a value like \texttt{0.5171688974345957}.
 \section{Lists}
 Besides sets, \setlx\ also supports lists.  Syntactically, the main difference is that the
 curly braces ``\texttt{\{}'' and ``\texttt{\}}'' are substituted with the square brackets
-``\texttt{[}'' and ``\texttt{]}''.  Semantically, a list is an ordered collection of elements that 
-can contain the same element multiple times.  For example
+``\texttt{[}'' and ``\texttt{]}''.  Semantically, while e set is an unordered collection of elements
+that can contain any element at most once, a list is an ordered collection of elements that 
+can contain an element multiple times.  For example
 \\[0.2cm]
 \hspace*{1.3cm}
-\texttt{[1,4,7,2,4,7]}
+\texttt{[3,4,7,2,5,3]}
 \\[0.2cm]
-is a typical list.  The easiest way to construct a list is by defining the list explicitly. For
+is a typical list.  Note that the element $3$ occurs twice in this list.  The easiest way to
+construct a list is by defining the list explicitly. For 
 example, the assignment
 \\[0.2cm]
 \hspace*{1.3cm}
@@ -927,12 +963,12 @@ example, the assignment
 \\[0.2cm]
 defines the list \texttt{[1,4,7,2,4,7]} and assigns it to the variable \texttt{l}.
 Another way to construct lists is via the range operator ``\texttt{..}'':
-For example, the command
+For example, the expression
 \\[0.2cm]
 \hspace*{1.3cm}
 \texttt{[1..10]}
 \\[0.2cm]
-computes the list
+returns the list
 \\[0.2cm]
 \hspace*{1.3cm}
 \texttt{[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]}.
@@ -956,8 +992,8 @@ yields the result $5050$.
 \hspace*{1.3cm}
 $\langle x_1, \cdots, x_n \rangle \in s_1 \times \cdots \times s_n$
 \\[0.2cm]
-such that \texttt{cond} is true and evaluates \texttt{expr} for the corresponding values of the
-variables $x_1$, $\cdots$, $x_n$.  The value of \texttt{expr} is
+such that $\textsl{cond}$ is true and evaluates $\textsl{expr}$ for the corresponding values of the
+variables $x_1$, $\cdots$, $x_n$.  The value of $\textsl{expr}$ is
 then inserted into the resulting list.  Here, the $s_i$ denote either sets or lists.
 For example, the following expression  computes all primes up
 to 100: 
@@ -966,7 +1002,7 @@ to 100:
 \texttt{[ p : p in [2..100] | \{ x : x in \{1..p\} | p \% x == 0 \} == \{1, p\} ]}.
 \\[0.2cm]
 Here, the idea is that a number $p$ is prime if the set of its divisors, which is the set
-of all numbers $x$ such that $p \,\texttt{\%}\, x = 0$, only contains the number $1$ and
+of all numbers $x$ such that $p \;\texttt{\%}\; x = 0$, only contains the number $1$ and
 the number $p$. 
 
 The syntax for building lists via comprehensions is a little bit more
@@ -979,9 +1015,14 @@ can be defined as
 \\[0.2cm]
 For example, assume that \texttt{r1} and \texttt{r2} are sets containing \emph{pairs} of elements, where a
 \emph{pair} is just a list of length two.  In this case, \texttt{r1} and \texttt{r2} could be viewed as binary
-relations.  Then the 
-\href{http://en.wikipedia.org/wiki/Binary_relation}{\emph{composition}} $\mathtt{r1} \circ \mathtt{r2}$ of \texttt{r1} and
-\texttt{r2} can be computed as
+relations.  Then, mathematically the 
+\href{https://en.wikipedia.org/wiki/Composition_of_relations}{\emph{composition}} of \texttt{r1} and
+\texttt{r2} is defined as
+\\[0.2cm]
+\hspace*{1.3cm}
+$\mathtt{r1} \circ \mathtt{r2} := \{ \pair(x,z) \mid \exists y: \pair(x,y) \in \mathtt{r1} \wedge \pair(y,z) \in\mathtt{r2} \}$. 
+\\[0.2cm]
+In \setlx, this composition can be computed as 
 \\[0.2cm]
 \hspace*{1.3cm}
 \texttt{\{ [x,z]:$\;$[x,y] in r1, [y,z] in r2 \}}.
@@ -1148,12 +1189,12 @@ will yield the following error message:
     Index '0' is invalid.
 \end{verbatim}
 However, the index $0$ is allowed as the second index in a range operator.  For example, the expression
-\texttt{l[1:0]}
+\texttt{l[1..0]}
 yields the empty list.
 
 
 Lists of variables can be used on the left hand side of an assignment.  This feature enables the
-simultaneous assignment of variables.  The statement
+\emph{simultaneous assignment} of several variables.  The statement
 \\[0.2cm]
 \hspace*{1.3cm}
 \texttt{[x,y] := [1,2];}
@@ -1163,7 +1204,7 @@ sets the variable $x$ to 1 and $y$ to 2.  A more interesting example is the foll
 \hspace*{1.3cm}
 \texttt{[y,x] := [x,y];}
 \\[0.2cm]
-This assignment swaps the values of $x$ and $y$.
+This assignment swaps the values of the variables $x$ and $y$.
 
 \section{Pairs, Relations,  and Functions}
 In \textsc{Setl}, a pair of the form $\langle x, y \rangle$ is represented as the list $[x,y]$.
@@ -1173,18 +1214,18 @@ generalization of the notion of a function.   If $r$ is a binary relation, we de
 of the pairs, that is we have
 \\[0.2cm]
 \hspace*{1.3cm}
-\texttt{domain(r) = \{ x :[x,y] in r \}} \quad and \quad
-\texttt{range(r)  = \{ y :[x,y] in r \}}.
+\texttt{domain(r) = \{ x :$\;$[x,y] in r \}} \quad and \quad
+\texttt{range(r)  = \{ y :$\;$[x,y] in r \}}.
 \\[0.2cm]
 Furthermore, if $r$ is a binary relation
-such that for all pairs such that
+such that 
 \\[0.2cm]
 \hspace*{1.3cm}
-$[x,y_1] \in r$ \quad and \quad $[x,y_2] \in r$ 
+$[x,y_1] \in r \wedge [x,y_2] \in r \rightarrow y_1 = y_2$ 
 \\[0.2cm]
-holds, we have that $y_1 = y_2$, then $r$ is called a \emph{map} and represents a function.
+holds for all $x$, $y_1$, and $y_2$, then $r$ is called a \emph{map} and represents a function.
 Therefore, a map is a set of \texttt{[\textsl{key}, \textsl{value}]} pairs such that the
-keys are unique. 
+keys are \emph{unique}, i.e.~every key is associated with exactly one value.
 If a binary relation $r$ is a map, \setlx\ permits us to use the relation as a function:  If $r$ is a map
 and $x \in \textsl{domain}(r)$, then $r[x]$ denotes the unique element $y$ such that 
 $\pair(x,y) \in r$:
@@ -1282,7 +1323,7 @@ For a binary relation $r$ and an object $x$, the expression $r\{x\}$ is defined 
 follows: 
 \\[0.2cm]
 \hspace*{1.3cm} 
-\texttt{r\{x\} := \{ y :[x, y] in r \}}.
+\texttt{r\{x\} := \{ y :$\;$[x, y] in r \}}.
 \\[0.2cm]
 Therefore, the  program from Figure \ref{fig:buggy-map.stlx} yields the following results:
 \begin{verbatim}
@@ -1302,6 +1343,7 @@ statements
 \end{verbatim}
 define a function that maps the pair $[1,2]$ to the value $3$, while the pair $[2,1]$ is mapped to
 the value $4$.
+\vspace*{0.2cm}
 
 \noindent
 \textbf{Remark}:
@@ -1362,9 +1404,19 @@ functions are \href{http://en.wikipedia.org/wiki/First-class_function}{\emph{fir
 in \setlx.  The ramifications of
 this fact will be explained in Chapter \ref{chapter:closures} on functional programming
 and \emph{closures}.
+\vspace*{0.2cm}
+
+\noindent
+\textbf{Remark}:
+A function defined using the keyword \texttt{procedure} is \textbf{not} able to read or write
+variables that are defined outside of the function definition.  If you need access to variables
+defined outside of the function, you have to define a \emph{closure} instead.  This is done by
+substituting the keyword \texttt{procedure} with the keyword \texttt{closure}.  Closures are
+discussed in more detail in Chapter \ref{chapter:closures} later.
+
 
 \section{Strings}
-Any sequence of characters enclosed in double quotes is considered a string.
+Any sequence of characters enclosed in either double quotes or single quotes is considered a string.
 Strings can be concatenated using the infix operator ``\texttt{+}'', so
 \\[0.2cm]
 \hspace*{1.3cm}
@@ -1430,7 +1482,7 @@ the indices $a$ and $b$ can be negative numbers.
 \setlx\ provides \emph{string interpolation}:
 If a string contains a substring enclosed in ``\texttt{\symbol{36}}''-symbols, then \setlx\ 
 parses this substring as an expression, evaluates this expression, and then substitutes the result
-into the string.  For example, if the variable \texttt{n} has the value $6$, the command
+back into the string.  For example, if the variable \texttt{n} has the value $6$, the command
 \\[0.2cm]
 \hspace*{1.3cm}
 \texttt{print(\symbol{34}\symbol{36}n\symbol{36}! = \symbol{36}n!\symbol{36}\symbol{34})};
@@ -1451,7 +1503,7 @@ prints the text
 \hspace*{1.3cm}
 \texttt{a single \symbol{36}-symbol}.
 \\[0.2cm]
-String interpolation is turned off by the prefix operator ``\texttt{@}'':
+String interpolation is turned off for a string by the prefix operator ``\texttt{@}'':
 The command
 \\[0.2cm]
 \hspace*{1.3cm}
@@ -1490,11 +1542,12 @@ There is no string interpolation either.  Therefore, the statement
 prints the string ``\texttt{\symbol{36}1+2\symbol{36}}'', where we have added the opening
 and closing quotes to delimit the string, they are not part of the string.
 Later, literal strings will come in very handy when dealing with \emph{regular expressions}.
+\vspace*{0.2cm}
 
 \noindent
 \textbf{Remark}:
 It should be noted that \textsc{SetlX} does not have a special data type to support single characters.
-The reason is that in \textsc{SetlX} single characters are represented as strings of length one. 
+Instead, in \textsc{SetlX} single characters are represented as strings of length one. 
 
 \section{Terms}
 \setlx\ provides 
@@ -1650,11 +1703,11 @@ tree \texttt{m}.   The implementation needs to distinguish two cases:
 
       The expression $\texttt{compare}(k1, k2)$ returns $-1$ if \texttt{k1} is less than
       \texttt{k2}, it returns $+1$ is \texttt{k1} is greater than \texttt{k2}, and it returns $0$
-      if \texttt{k1} and \texttt{k2} are the same.  The function \texttt{compare} is implemented
+      if \texttt{k1} and \texttt{k2} are the same.  The function \texttt{compare} is implemented for
       all data types. 
 \end{enumerate}
 This example uses a number of features of \setlx\ that have not been introduced. The discussion of
-the \texttt{switch} construct will be given in the next chapter.
+the control structure \texttt{switch} will be given in the next chapter.
 
 Sometimes, the fact that a functor has to be written in uppercase is inconvenient.  For these cases,
 there is an escape mechanism:  If the functor of a term is preceded be the symbol
@@ -1749,8 +1802,8 @@ the matrix $\mathrm{a}$.  In order to carry out this calculation in
       Note that the matrix $\mathrm{a}$ is defined as a list of its rows, where each row is
       represented as a list of numbers.
 \item Line 2 defines the vector $\vec{b}$ using the predefined function \texttt{la\_vector}.
-\item In line 3, the expression \texttt{a**-1} computes the inverse $\mathrm{a}^{-1}$ which is then
-      multiplied with the vector $\vec{b}$ to yield the solution $\vec{s}$.
+\item In line 3, the expression \texttt{a**-1} computes the inverse of the matrix $a$.
+      This inverse is then multiplied with the vector $\vec{b}$ to yield the solution $\vec{s}$.
 \item In line 4, printing the variable \texttt{s} yields the following result:
       \\[0.2cm]
       \hspace*{-0.8cm}

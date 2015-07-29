@@ -1,5 +1,8 @@
 Changes (* notice | + feature added, replaced or improved | - feature removed | # bugfix):
 
+---v2.4.0--- 2015-07-05
+ + added plotting functionality
+
 ---v2.3.4--- 2015-02-11
  # fixed matrix ** 0 computation
  # return more intuitive result for la_eigenVectors

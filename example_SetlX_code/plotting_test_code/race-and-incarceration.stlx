@@ -1,0 +1,19 @@
+data := [ ["white", 10933313, 38396],
+          ["black",  2404566, 51649],
+          ["latino", 6669666, 35028],
+          ["other",   844275,   582]
+    ];
+prisonPopulation := procedure(data) {
+    c1 := plot_createCanvas("Race disdribution in Texas.");
+    c2 := plot_createCanvas("Race disdribution in Texan prisons.");
+    races      := [line[1]: line in data];
+    population := [line[2]: line in data];
+    inmates    := [line[3]: line in data];
+    plot_addPieChart(c1, population, races);
+    plot_addPieChart(c2, inmates,    races);
+    plot_exportCanvas(c1, "race-population");
+    plot_exportCanvas(c2, "race-incarceration");
+};
+prisonPopulation(data);
+get("Press <Enter> to continue");
+

@@ -50,7 +50,7 @@ public class PD_plot_addLabel extends PreDefinedProcedure {
             throw new UndefinedOperationException("Second parameter has to be a Tupel of Numbers (eq: [1,2]) ");
         }
 
-        List<Double> list = ConvertSetlTypes.convertSetlListAsDouble(xyTupel);
+        List<Double> list = ConvertSetlTypes.convertSetlListAsDouble(xyTupel, state);
         SetlString label = (SetlString)args.get(LABEL);
         String stringLabel = label.toString().replace("\"", "");
 

@@ -22,6 +22,7 @@ public class PD_plot_defineTitle extends PreDefinedProcedure {
     }
     @Override
     protected Value execute(State state, HashMap<ParameterDef, Value> args) throws SetlException {
+
         if(!PlotCheckType.isCanvas(args.get(CANVAS))){
             throw new UndefinedOperationException("First parameter has to be of object Canvas");
         }
@@ -30,7 +31,9 @@ public class PD_plot_defineTitle extends PreDefinedProcedure {
             throw new UndefinedOperationException("Second parameter has to be a String");
         }
 
-        ConnectJFreeChart.getInstance().defineTitle((Canvas) args.get(CANVAS), args.get(TITLE).toString().replace("\"", ""));
-        return new SetlString("Added Title \""+args.get(TITLE));
+        String title = args.get(TITLE).toString().replace("\"", "");
+
+        ConnectJFreeChart.getInstance().defineTitle((Canvas) args.get(CANVAS), title);
+        return new SetlString("Added Title \""+title);
     }
 }

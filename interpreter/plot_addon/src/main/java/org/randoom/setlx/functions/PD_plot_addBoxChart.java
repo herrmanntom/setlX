@@ -65,7 +65,7 @@ public class PD_plot_addBoxChart extends PreDefinedProcedure {
         }
 
         //convert setllists to native java lists
-        List valuesList = ConvertSetlTypes.convertSetlListAsDouble(values);
+        List valuesList = ConvertSetlTypes.convertSetlListAsDouble(values, state);
         List categorieList = ConvertSetlTypes.convertSetlListAsString(categories);
 
         if (!(PlotCheckType.sameSize(valuesList, categorieList))) {

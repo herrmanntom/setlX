@@ -115,6 +115,7 @@ public class Graph extends Value {
         clone.setXfunction(this.xfunction);
         clone.setYfunction(this.yfunction);
         clone.setBullets(this.bullets);
+        clone.setBulletSize(this.bulletSize);
 
         return clone;
     }
@@ -149,7 +150,8 @@ public class Graph extends Value {
         if (color != null ? !color.equals(graph.color) : graph.color != null) return false;
         if (function != null ? !function.equals(graph.function) : graph.function != null) return false;
         if (xfunction != null ? !xfunction.equals(graph.xfunction) : graph.xfunction != null) return false;
-        if(bulletSize != null ? bulletSize == graph.bulletSize : graph.bulletSize != null) return false;
+        if (bulletSize != null ? !(bulletSize == graph.bulletSize) : graph.bulletSize != null) return false;
+
         return !(yfunction != null ? !yfunction.equals(graph.yfunction) : graph.yfunction != null);
 
     }

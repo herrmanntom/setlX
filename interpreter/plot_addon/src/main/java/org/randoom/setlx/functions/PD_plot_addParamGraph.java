@@ -77,7 +77,7 @@ public class PD_plot_addParamGraph extends PreDefinedProcedure {
             throw new UndefinedOperationException("Fifth parameter ParameterBounds has to consist of Numbers (eq. [-1, 3])");
         }
 
-        List<Double> limitsList = ConvertSetlTypes.convertSetlListAsDouble(limitsV);
+        List<Double> limitsList = ConvertSetlTypes.convertSetlListAsDouble(limitsV, state);
 
         Value graphColorV = args.get(GRAPHCOLOR);
         Value plotArea = args.get(PLOTAREA);

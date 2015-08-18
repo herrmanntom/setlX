@@ -2,7 +2,8 @@
 We have already mentioned that \setlx\ is a full-fledged functional language:
 Functions can be used both as arguments to other functions and as return values.  There is
 no fundamental difference between the type of a function and, say, the type of a rational
-number, as both can be assigned to variables, converted to strings, parsed, etc.
+number, as both can be assigned to variables, converted to strings, used as arguments of other
+functions, or returned from a function.  
 
 Additionaly, \setlx\ supports
 \href{http://en.wikipedia.org/wiki/Closure_(computer_science)}{\emph{closures}}
@@ -15,10 +16,9 @@ non-deterministic finite state machine.
 In this section we will first introduce the basic ideas of functional programming.
 After that, we discuss the notion of a closure.
 
-\subsection{Introducing Functional Programming}
 Using functions as arguments to other functions is something that is not often seen in
-conventional programming languages.  Figure \ref{fig:reduce.stlx} shows the implementation of
-the function \texttt{reduce} that takes two arguments:
+conventional programming languages.  Figure \ref{fig:reduce.stlx} on page \pageref{fig:reduce.stlx}
+shows the implementation of the function \texttt{reduce} that takes two arguments:
 \begin{enumerate}
 \item The first argument is a list $l$.
 \item The second argument is a binary function $f$ combining two elements of $l$ into a single value.
@@ -53,9 +53,9 @@ the function \texttt{reduce} that takes two arguments:
 \caption{Implementing a second order function.}
 \label{fig:reduce.stlx}
 \end{figure}
-The function \texttt{reduce} combines successive arguments of the list $l$ and thereby reduces
-the list $l$ into a single value.  For example, if the function $f$ is the function
-\texttt{add} that just adds its arguments, then $\texttt{reduce}(l,
+The function \texttt{reduce} combines successive arguments of the list $l$ using the function $f$
+and thereby reduces the list $l$ into a single value.  For example, if the function $f$ is the
+function \texttt{add} that just adds its arguments, then $\texttt{reduce}(l,
 \texttt{add})$ computes the sum of
 the elements of $l$.  Therefore, in line 12 the invocation of
 \texttt{reduce(l, add)} computes the sum
@@ -63,10 +63,12 @@ the elements of $l$.  Therefore, in line 12 the invocation of
 \hspace*{1.3cm}
  $\sum\limits_{i=1}^n i$. 
 \\[0.2cm] 
+Note that the expression ``\texttt{+/ $l$}'' is another way to compute this sum.
 If instead the second arguments of the function \texttt{reduce} is the function
 \texttt{multiply} that returns the product of its arguments, then 
 $\texttt{reduce}(l, \texttt{multiply})$ computes the product of all elements of the list
-$l$.  Finally, it should be noted that in the case that the list $l$ is empty,
+$l$ and hence is equivalent to the expression ``\texttt{*/ $l$}''.
+Finally, it should be noted that in the case that the list $l$ is empty,
 \texttt{reduce} returns the value \texttt{om}. 
 
 
@@ -115,8 +117,8 @@ Notice that the function \texttt{reduce} is a so called \emph{second order funct
 one of its arguments is itself a function.  While the example given above might seem
 artificial, there are common applications of this scheme.  One example is sorting.
 Figure \ref{fig:merge-sort.stlx} on page \pageref{fig:merge-sort.stlx} shows a generic
-implementation of the merge sort algorithm.  Here, the function \texttt{sort} takes two
-arguments:
+implementation of the algorithm \href{https://en.wikipedia.org/wiki/Merge_sort}{\emph{merge sort}}.
+Here, the function \texttt{sort} takes two arguments:
 \begin{enumerate}
 \item The first argument $l$ is the list to be sorted.
 \item The second argument \texttt{cmp} is a binary function that compares two  elements
@@ -325,7 +327,7 @@ expressions.
       \texttt{Cat(r1, r2)}
       \\[0.2cm]
       where \texttt{r1} is the representation of $r_1$ and \texttt{r2} is the
-      representation of $r_2$.
+      representation of $r_2$.  The name \texttt{Cat} reminds us of con\underline{cat}enation. 
 \item A regular expression $r$ of the form $r = r_1 \mid r_2$ is represented by the term
       \\[0.2cm]
       \hspace*{1.3cm}
@@ -338,9 +340,10 @@ expressions.
       \hspace*{1.3cm}
       \texttt{Star(r0)}
       \\[0.2cm]
-      where \texttt{r0} is the representation of $r_0$.
+      where \texttt{r0} is the representation of $r_0$. 
 \end{enumerate}
-The Thompson construction of a non-deterministic finite state machine from a given regular
+The \href{https://en.wikipedia.org/wiki/Thompson%27s_construction_algorithm}{\emph{Thompson construction}}
+of a non-deterministic finite state machine from a given regular 
 expression $r$ works by induction on the structure of $r$.  Given a regular expression
 $r$,  we define a non-deterministic finite state machine $A(r)$ by induction on $r$.
 For the purpose of this section, a finite state machine $A$ is a 4-tuple
@@ -412,7 +415,7 @@ abbreviate the notion of a
       \end{figure}
 
       Figure \ref{fig:genCharNFA.stlx} shows the function \texttt{genCharNFA} that takes a
-      character $c$ and generates the fsm $A(c)$.  The code corresponds closely to the
+      character $c$ and generates the fsm $A(c)$.  The code corresponds to the
       diagram shown in Figure \ref{fig:aChar.eps}.
       \begin{enumerate}
       \item We generate two new states $q_0$ and $q_1$ using the function
@@ -428,8 +431,9 @@ abbreviate the notion of a
       \end{enumerate}
       
 \item In order to compute the fsm $A(r_1 \cdot r_2)$ 
-      we have to assume that the states of the fsms
-      $A(r_1)$ and $A(r_2)$ are different.  
+      we have to assume that the sets of states of the fsms
+      $A(r_1)$ and $A(r_2)$ are disjoint.  This is true since the function \texttt{getNewState} does
+      create a new state every time it is called.
       Let us assume that the fsms  $A(r_1)$ and $A(r_2)$ have the following form:
       \begin{enumerate}
       \item $A(r_1) = \langle Q_1, \delta_1, q_1, q_2 \rangle$,
@@ -444,7 +448,7 @@ abbreviate the notion of a
                    \cup \delta_1 \cup \delta_2, q_0, q_4 \rangle$
       \\[0.2cm]
       The notation $\{ \pair(q_2,\varepsilon) \mapsto q_3 \} \cup \delta_1 \cup \delta_2$
-      specifies that the transition function $\delta$ contains all transitions
+      specifies that the transition function $\delta$ contains all the transitions
       from the transition functions  $\delta_1$ and $\delta_2$.  Additionally,
       there is an  $\varepsilon$-transition from $q_2$ to
       $q_3$.  Formally, the transition function could also be specified as follows:
@@ -694,7 +698,7 @@ by \texttt{getNewState} are unique.
 \end{figure}
 
 Finally, Figure \ref{fig:regexp2NFA.stlx} shows how to generate a finite state machine
-from a given regular expression.  The function $\texttt{regexp2NFA}(r)$ is defined by
+from a given regular expression $r$.  The function $\texttt{regexp2NFA}(r)$ is defined by
 recursion on $r$:
 \begin{enumerate}
 \item If $r$ is a single character $c$, then the fsm $A(c)$ is computed using
@@ -745,8 +749,8 @@ The reader should note that we have made heavy use of closures to implement the 
 The programming language \href{https://www.python.org}{\textsl{Python}} has a nice feature called 
 \href{http://en.wikipedia.org/wiki/Python_syntax_and_semantics#Decorators}{\emph{decorators}} that
 makes it easy to modify existing functions.  For example, a trace decorator is a function that can
-modify a given function so that every invocation of the function and every value returned by the
-function are automatically traced.  \setlx\ supports similar techniques as \textsl{Python} and,
+modify a given function $f$ so that every invocation of the function $f$ and every value returned by
+the function $f$ are automatically traced.  \setlx\ supports similar techniques as \textsl{Python} and,
 therefore, it is easy to implement decorators in \setlx, too.  In this section, we show how a simple
 albeit powerful trace decorator can be implemented in just a few lines of \setlx\ code.
 
@@ -871,6 +875,8 @@ implementation line by line.
       previously in the example.  The procedure \texttt{trace} works as follows:
       \begin{enumerate}
       \item In line 5, the old value of the procedure to be traced is saved in the dictionary 
+            \\[0.2cm]
+            \hspace*{1.3cm}
             \texttt{mStoredProcedures}.
       \item Next, line 6 defines a closure called \texttt{tracedFunction}.  This is a function    
             called with a variable number of arguments.  The reason is that we do

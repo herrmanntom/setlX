@@ -78,7 +78,11 @@ prints the message `\texttt{found a word}''.  Finally, calling
 \hspace*{1.3cm}
 \texttt{classify("0123");}
 \\[0.2cm]
-prints the answer ``\texttt{unkown: 0123}''.  
+prints the answer ``\texttt{unkown: 0123}''.  The reason is that the string
+``\texttt{0123}'' does not comply with the regular expression \texttt{'0|[1-9][0-9]*'} because this
+regular expression does not allow a number to start with the character ``\texttt{0}'' followed by
+more digits.  
+
 
 \subsection{Extracting Substrings}
 Often,  strings are structured and the task is to extract substrings corresponding to
@@ -143,7 +147,7 @@ against the pattern
 Therefore, if the match is successful, the variable \texttt{c} will contain the country
 code and the variable \texttt{a} is set to the area code.  The groups of
 regular expressions that are not needed are matched against the anonymous variable
-``\texttt{\_}''. 
+``\texttt{\_}'' and are therefore effectively ignored.
 
 If a regular expression contains  nested groups of parentheses, then the order of
 the groups is determined by the left parenthesis of the group.  For example, the regular
@@ -210,14 +214,14 @@ In this section we present an example of the  \texttt{match} statement in action
 function \texttt{printComments} shown in Figure \ref{fig:find-comments.stlx} attempts to
 extract all those \texttt{C}-style comments from a file that are contained in a single
 line.  The regular expression \verb|'\s*(//.*)'| in line 5 matches comments starting
-with ``\texttt{//}'', while the regular expression
+with the string ``\texttt{//}'' preceded by optional white space, while the regular expression
 \\[0.2cm]
 \hspace*{1.3cm}
-\verb"'\s*(\/\*([^*]|\*+[^*/])*\*+\/)\s*'"
+\verb"'\s*(/\*([^*]|\*+[^*/])*\*+/)\s*'"
 \\[0.2cm]
-in line 6 matches comments that start with the string ``\texttt{/*}'' and end with the
-string ``\texttt{*/}''.  This regular expression is quite difficult to read for two
-reasons:
+in line 6 matches comments that start with the string ``\texttt{/*}'', preceded by optional
+white space and end with the string ``\texttt{*/}'' followed by optional trailing white space.  This
+regular expression is quite difficult to read for three reasons:
 \begin{enumerate}
 \item We have to precede the symbol ``\texttt{*}'' with a backslash in order to prevent it
       from being interpreted as a regexp quantifier.
@@ -312,7 +316,8 @@ expression
 \\[0.2cm]
 matches any number of letters, but the string \texttt{c[1]} corresponding to the match
 is only added to the set of palindromes if the predicate \texttt{isPalindrome[c[1])} yields
-\texttt{true}. 
+\texttt{true}.  The function $\texttt{isPalindrome}(s)$ checks whether $s$ is a palindrome that has
+a length of at least 3.
 
 \begin{figure}[!ht]
 \centering
@@ -340,8 +345,10 @@ is only added to the set of palindromes if the predicate \texttt{isPalindrome[c[
     };
     
     isPalindrome := procedure(s) {
-        n := #s + 1;
-        return +/ [s[n - i] : i in [1 .. #s]] == s;
+        if (#s < 3) {
+            return false;
+        }
+        return reverse(s) == s;
     };
 \end{Verbatim}
 \vspace*{-0.3cm}
@@ -351,7 +358,31 @@ is only added to the set of palindromes if the predicate \texttt{isPalindrome[c[
 
 
 \section{The \texttt{scan} Statement}
-\begin{figure}[!ht]
+The program to extract comments that was presented in the previous subsection is quite
+unsatisfactory as it will only recognize those strings that span a single line.
+Figure \ref{fig:find-comments-scan.stlx} on page \pageref{fig:find-comments-scan.stlx} shows a
+function that instead extracts all 
+comments from a given file.  The function \texttt{printComments} takes a string as
+argument.  This string is interpreted as the name of a file.  In line 2, the function 
+\texttt{readFile} reads this file.  This function produces a list of strings.  Each string
+corresponds to a single line of the file without the trailing line break.  The function
+\texttt{join} joins all these lines into a single string.  As the second argument of
+\texttt{join} is the string ``\texttt{\symbol{92}n}'', a newline is put in between the
+lines that are joined.  The end result is that the variable \texttt{s} contains the
+content of the file as one string.  This string is then scanned using the \texttt{scan}
+statement in line 3. The general form of a scan statement is as follows:
+\\[0.2cm]
+\hspace*{1.3cm} \texttt{scan ($s$) \{}  \\
+\hspace*{1.8cm} \texttt{regex} $r_1$ \texttt{as} $l$ : $b_1$ \\
+\hspace*{1.8cm} $\vdots$                                                  \\
+\hspace*{1.8cm} \texttt{regex} $r_n$ \texttt{as} $l$ : $b_n$ \\
+\hspace*{1.3cm} \texttt{\}}             
+\\[0.2cm]
+Here, $s$ is a string to be analyzed, $r_1$, $\cdots$, $r_n$ denote regular
+expressions, while $b_1$, $\cdots$, $b_n$ are lists of statements.  The \texttt{scan}
+statement works as follows:
+
+\begin{figure}[t]
 \centering
 \begin{Verbatim}[ frame         = lines, 
                   framesep      = 0.3cm, 
@@ -376,29 +407,7 @@ is only added to the set of palindromes if the predicate \texttt{isPalindrome[c[
 \label{fig:find-comments-scan.stlx}
 \end{figure}
 
-\noindent 
-The program to extract comments that was presented in the previous subsection is quite
-unsatisfactory as it will only recognize those strings that span a single line.
-Figure \ref{fig:find-comments-scan.stlx} shows a function that instead extracts all
-comments form a given file.  The function \texttt{printComments} takes a string as
-argument.  This string is interpreted as the name of a file.  In line 2, the function 
-\texttt{readFile} reads this file.  This function produces a list of strings.  Each string
-corresponds to a single line of the file without the trailing line break.  The function
-\texttt{join} joins all these lines into a single string.  As the second argument of
-\texttt{join} is the string ``\texttt{\symbol{92}n}'', a newline is put in between the
-lines that are joined.  The end result is that the variable \texttt{s} contains the
-content of the file as one string.  This string is then scanned using the \texttt{scan}
-statement in line 3. The general form of a scan statement is as follows:
-\\[0.2cm]
-\hspace*{1.3cm} \texttt{scan ($s$) \{}  \\
-\hspace*{1.8cm} \texttt{regex} $r_1$ \texttt{as} $l$ : $b_1$ \\
-\hspace*{1.8cm} $\vdots$                                                  \\
-\hspace*{1.8cm} \texttt{regex} $r_n$ \texttt{as} $l$ : $b_n$ \\
-\hspace*{1.3cm} \texttt{\}}             
-\\[0.2cm]
-Here, $s$ is a string to be analyzed, $r_1$, $\cdots$, $r_n$ denote regular
-expressions, while $b_1$, $\cdots$, $b_n$ are lists of statements.  The \texttt{scan}
-statement works as follows:
+
 \begin{enumerate}
 \item All the regular expressions $r_1$, $\cdots$, $r_n$ are tried in parallel to match a
       prefix of the string $s$.
@@ -412,7 +421,7 @@ statement works as follows:
             is resolved in two steps:
             \begin{enumerate}
             \item If the prefix matched by some regular expression $r_j$ is longer
-                  than any other prefix matched by a another regular expression $r_i$,
+                  than any other prefix matched by another regular expression $r_i$,
                   then the regular expression $r_j$ wins, the list of statements $b_j$ is
                   executed and the prefix matched by $r_j$ is removed from $s$.
             \item If there are two (or more) regular expressions $r_i$ and $r_j$ that both
@@ -420,6 +429,7 @@ statement works as follows:
                   lowest index wins, i.e.~if $i < j$, then $b_i$ is executed.
             \end{enumerate}
       \end{enumerate}
+      Finally, the prefix of $s$ that has been matched is removed from $s$.
 \item This is repeated as long as the string $s$ is not empty.  Therefore, a \texttt{scan}
       statement is like a \texttt{while} loop combined with a \texttt{match} statement.
 \end{enumerate}
@@ -432,7 +442,7 @@ provided  by tools like
 \href{http://jflex.de}{\textsl{JFlex}} \cite{klein:2009}. 
 In order to support this claim, we present an example program that computes the marks of
 an exam.  Assume the results of an exam are collected in a text file like the one shown in
-Figure \ref{fig:result.txt}.  The first line of this file shows that this is an exam about
+Figure \ref{fig:result.txt} on page \pageref{fig:result.txt}.  The first line of this file shows that this is an exam about
 algorithms.  The third line tells us
 that there are 6 exercises in the given exam and the remaining lines list the points that
 have been achieved by individual students.  A hyphen signals that the student did not do
@@ -479,7 +489,7 @@ this, the mark can easily be calculated.
         all := join(readFile(file), "\n");
         state := "normal";
         scan(all) using map {
-            regex '[a-zA-Z]+:.*\n': // skip header
+            regex '[a-zA-Z]+:.*\n': // skip header lines
             regex '[A-Za-z]+\s[A-Za-z\-]+:' as [ name ]:
                   nPrint(name);
                   state := "printBlanks";
@@ -518,8 +528,8 @@ program line by line.
 \begin{enumerate}
 \item The function \texttt{evalExam} takes two arguments:  The first is the name of a file
       containing the results of the exam and the second argument is the number of points 
-      needed to get the best mark.  This number is a parameter that is needed to calculate
-      the marks.
+      needed to get the top mark.  This number is a parameter that is needed to calculate
+      the mark of a student.
 \item Line 2 creates a string containing the content of the given file.
 \item We will use two states in our scanner:
       \begin{enumerate}
@@ -532,13 +542,17 @@ program line by line.
 
             In state \texttt{"normal"}, all white space is discarded, but in state
             \texttt{"printBlanks"} white space is printed.  This is necessary to format
-            the output.
+            the output neatly.
       \end{enumerate}
       Line 3 therefore initializes the variable \texttt{state} to \texttt{"normal"}.
+\item Line 4 shows the \texttt{scan} statement.  Here, we have added the string ``\texttt{using map}'' 
+      after ``\texttt{scan(all)}''.  This enables us to retrieve line and column information via the
+      variable \texttt{map}.  How this is done is shown in line 26 and 27.
 \item The regular expression in line 5 is needed to skip the header of the file.  The
       header line can be recognized by the fact that there is a single word followed by a colon
-      ``\texttt{:}''.   In contrast, the names of students always consist of two words.
-\item The regular expression in line 5 matches the name of a student.  Notice, that we have used 
+      ``\texttt{:}''.   In contrast, the names of students always consist of two words separated by
+      white space.
+\item The regular expression in line 5 matches the name of a student.  Notice that we have used 
       ``\texttt{\symbol{92}s}'' to specify the blank between the given name and the family name.
       Furthermore, the family name is allowed to contain a hyphen ``\texttt{-}''.
       The student's name is printed and the number of points for this student is set to $0$.

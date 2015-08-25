@@ -1,9 +1,10 @@
 \chapter{Exceptions and Backtracking}
-In the first section of this chapter we will discuss exceptions as a means to deal with error
-situations.  The second section will introduce  a mechanism that supports backtracking. 
-This mechanism is quite similar to the exception handling in the first subsection.  Indeed, we
-will see that the backtracking mechanism provided in \setlx\ is really just a special case of
-exception handling.
+In the first section of this chapter we will discuss
+\href{https://en.wikipedia.org/wiki/Exception_handling}{\emph{exceptions}} as a means to deal with
+error situations.  The second section will introduce a mechanism that supports
+\href{https://en.wikipedia.org/wiki/Backtracking}{\emph{backtracking}}.  This mechanism is quite
+similar to the exception handling discussed in the first subsection.  Indeed, we will see that the
+backtracking mechanism provided in \setlx\ is really just a special case of exception handling.
 
 \section{Exceptions}
 If we issue the assignment
@@ -21,7 +22,7 @@ Here, evaluation of the expression \texttt{x + 1} has raised an \emph{exception}
 as it is not possible to add a number to the undefined value \texttt{om}.  This exception is then
 propagated to the enclosing assignment statement. \setlx\ offers to handle exceptions like the
 one described above.  The mechanism is similar to the way exceptions
-are implemented in 
+are treated in 
 \href{http://docs.oracle.com/javase/tutorial/essential/exceptions/}{\textsl{Java}} and uses the keywords
 ``\texttt{try}'' and ``\texttt{catch}''.   If we have a sequence of statements
 \textsl{stmntList} and we suspect that 
@@ -39,40 +40,19 @@ something might go wrong with these statements, then we can put the list of stat
 \\[0.2cm]
 If the execution of \textsl{stmntList} executes without errors, then the
 \texttt{try/catch}-block does nothing besides the execution of \textsl{stmntList}.  However, if
-one of the statements in \textsl{stmntList} does raise an exception, then the execution of 
+one of the statements in \textsl{stmntList} raises an exception, then the execution of 
 \textsl{stmntList} is aborted and instead the statements in \textsl{errorCode} are executed.
 
 Typically, exception handling is necessary when  processing user input.  Consider the program
-shown in Figure \ref{fig:bisection-exception.stlx}.  The function \texttt{findZero} implements
-the bisection method which can be used to find the zero of a function.  The first argument of
+shown in Figure \ref{fig:bisection-exception.stlx} on page \pageref{fig:bisection-exception.stlx}.
+The function \texttt{findZero} implements 
+the \href{https://en.wikipedia.org/wiki/Bisection_method}{bisection method} which can be used to
+find a zero of a function that has a sign change in a given interval.  The first argument of 
 \texttt{findZero} is a function $f$, while the arguments $a$ and $b$ are the left and right
 boundary of the interval where the zero of $f$ is sought.  Therefore, $a$ has to be less than
 $b$.  Finally, for the bisection algorithm implemented in the function \texttt{findZero} to
-work, the function $f$ needs to have a sign change in the interval $[a,b]$.  
-
-The function \texttt{askUser} asks the user to input the function $f$ together with the left and
-right boundary of the interval $[a,b]$.  The idea is that the user inputs a term describing the
-function value of $f$ for a given value of $x$.  For example, in order to compute the zero of the
-function
-\\[0.2cm]
-\hspace*{1.3cm}
-$x \mapsto x*x - 2$
-\\[0.2cm]
-the user has to provide the string ``\texttt{x*x-2}'' as input to the \texttt{read} command in
-line 3.  The string \texttt{s} that is input by the user is then converted into the string
-\\[0.2cm]
-\hspace*{1.3cm}
-\texttt{x |-> x*x-2}
-\\[0.2cm]
-in line 4 and, furthermore, the resulting string is parsed and then evaluated.  In this way, the
-variable \texttt{f} in line 4 will be assigned the function mapping \texttt{x} to \texttt{x*x-2}
-just as if the user had written
-\\[0.2cm]
-\hspace*{1.3cm}
-\texttt{f := x |-> x*x-2;}
-\\[0.2cm]
-in the command line.
-
+work, the function $f$ needs to have a sign change in the interval $[a,b]$, i.e.~the sign of $f(a)$
+needs to be different from the sign of $f(b)$.  
 
 \begin{figure}[!ht]
 \centering
@@ -123,6 +103,30 @@ in the command line.
 \caption{The bisection method for finding a zero of a function.}
 \label{fig:bisection-exception.stlx}
 \end{figure}
+
+The function \texttt{askUser} asks the user to input the function $f$ together with the left and
+right boundary of the interval $[a,b]$.  The idea is that the user inputs a term describing the
+function value of $f$ for a given value of $x$.  For example, in order to compute the zero of the
+function
+\\[0.2cm]
+\hspace*{1.3cm}
+$x \mapsto x*x - 2$
+\\[0.2cm]
+the user has to provide the string ``\texttt{x*x-2}'' as input to the \texttt{read} command in
+line 3.  The string \texttt{s} that is input by the user is then converted into the string
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{x |-> x*x-2}
+\\[0.2cm]
+in line 4 and, furthermore, the resulting string is parsed and then evaluated.  In this way, the
+variable \texttt{f} in line 4 will be assigned the function mapping \texttt{x} to \texttt{x*x-2}
+just as if the user had written
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{f := x |-> x*x-2;}
+\\[0.2cm]
+in the command line.
+
  
 There are a couple of things that can go wrong with the function \texttt{askUser}.  First,
 the string \texttt{s} that is input by the user might not be a proper function and then
@@ -146,7 +150,7 @@ $a < b$ \quad or \quad $f(a) * f(b) \leq 0$
 might be violated.  In this case, we raise an exception in line 17 or
 line 21 of the function \texttt{findZero}.  
 Since we don't want to abort the program on the occurrence of an exception, the whole block of
-code in line 3 up to line 8 is enclosed in a \texttt{try}/\texttt{catch}-block.  In case there is
+code from line 3 up to line 8 is enclosed in a \texttt{try}/\texttt{catch}-block.  In case there is
 an exception, the value of this exception, which is a string containing an error message, is
 caught in the variable \texttt{e} in line 9.  To continue our program, we print the error message
 in line 10 and then invoke the function \texttt{askUser} recursively so that the user of
@@ -180,7 +184,7 @@ by offering two variants of \texttt{catch}:
       \hspace*{1.3cm}
       \texttt{try \{ x := y + 1; \} catchUsr(e) \{ print("caught " + e); \}}
       \\[0.2cm]
-      will not print anything but instead the command raises an exception.
+      will not print anything but instead this command raises an exception.
 \item \texttt{catchLng} only catches language generated exceptions.  Therefore, the statement
       \\[0.2cm]
       \hspace*{1.3cm}
@@ -196,7 +200,9 @@ by offering two variants of \texttt{catch}:
       \hspace*{1.3cm}
       \texttt{try \{ throw(1); \} catchLng(e) \{ print(e); \}}
       \\[0.2cm]
-      is a user generated exception and would therefore not be caught.
+      is a user generated exception that is not caught by \texttt{catchLng}.  Instead, the exception
+      is propagated outside of this statement.  Hence, the net effect of this statement is to raise
+      an exception.
 \end{enumerate}
 Being able to distinguish between user generated  and language generated exceptions is
 quite valuable and we strongly advocate that user generated exceptions should only be
@@ -223,9 +229,16 @@ programs that use backtracking in an unrestricted fashion tend to be very hard t
 In general, it is our believe that the use of backtracking should always follow the
 \emph{generate and test} paradigm:
 \begin{enumerate}
-\item The set of possible values should be generated by a \emph{generating function}.  
-\item These values should then be tested.  If a test fails, the program backtracks
-      to step 1 where the next value to be tested is generated.
+\item Assume our goal is to find some $x$ such that $x$ is the solution of some problem.
+\item In order to find possible values for $x$, we invoke a \emph{generating function} that provides
+      us with solution candidates.  In general, the set of values provided by the generating
+      function is a superset of the set of solutions, i.e.~some of those values do not solve the
+      problem.  However, it is required that the generating function will, among other values, also
+      generate those values $x$ that are the solutions of the problem.  Of course, it might generate
+      many more values which are not solutions to the problem. 
+\item In order to check which of the generated values are indeed solutions, the generated values
+      have to be tested.  If a test fails, the program backtracks to step 2 where the next value to
+      be tested is generated. 
 \end{enumerate}
 In order to support the generate and test paradigm,  \setlx\ 
 implements backtracking only in a very restricted form.  Thus, we avoid the
@@ -247,7 +260,7 @@ Technically, instead of the string \texttt{\symbol{34}fail\symbol{34}}, \setlx\
 generates a unique exception, which is referred to as a \emph{fail-exception}.
 This exception can only be catched using \texttt{check}. 
 }
-converted into a block of the form
+converted into a block of the following form:
 \\[0.2cm]
 \hspace*{1.3cm}
 \texttt{try \{} 
@@ -270,8 +283,8 @@ converted into a block of the form
 \hspace*{1.3cm}
 \texttt{\}}
 \\[0.2cm]
-while the keyword ``\texttt{backtrack}'' is translated into
-``\texttt{throw(\symbol{34}fail\symbol{34})}''.   
+Here, \textsl{stmntList}  might contain the keyword ``\texttt{backtrack}''.  This keyword is
+translated into the command \texttt{throw(\symbol{34}fail\symbol{34})}.   
 
 
 \begin{figure}[!ht]
@@ -324,14 +337,14 @@ are as follows.
             assumed that the queens already positioned in \texttt{l} 
             do not attack each other.
             
-            Technically, \texttt{l} is a list on integers.
-            If \texttt{l[$i$]$=k$}, then  row $i$ contains a queen in column $k$.  For example,
+            Technically, \texttt{l} is a list of integers.
+            If \texttt{l[$i$]$=k$}, then the queen in row $i$ is placed in column $k$.  For example,
             \\[0.2cm]
             \hspace*{1.3cm}
             $l = \texttt{[4, 8, 1, 3, 6, 2, 7, 5]}$
             \\[0.2cm]
             is a solution of the 8 queens puzzle.  This solution is depicted in Figure
-            \ref{fig:queens-solution}.
+            \ref{fig:queens-solution} on page \pageref{fig:queens-solution}.
 
             \begin{figure}[!ht]
               \centering
@@ -363,15 +376,15 @@ are as follows.
       \texttt{solve([], 8)}.
       \\[0.2cm]
       Taking the parameter \texttt{l} to be the empty list assumes that initially no queen has
-      been set on the chess board.  Of course, then the assumption that the queens already
-      positioned in \texttt{l} do not attack each other is trivially satisfied.
+      been placed on the chess board.  Therefore, the assumption that the queens already
+      positioned in the list \texttt{l} do not attack each other is trivially satisfied.
 \item In line 2 it is checked, whether the list \texttt{l} already specifies the positions of
       \texttt{n} queens.  If this is the case, then because of the assumption that the queens
       specified in \texttt{l} do not attack each other, the problem is solved and therefore
       \texttt{l} is the solution and is returned.
 \item Otherwise, we  find a position \texttt{x} for the next queen in line 5.  Of course,
-      there is no point in trying to position the next queen into a row that has already been
-      taken by one of the queens in the list \texttt{l}.  Therefore, the number of positions
+      there is no point in trying to position the next queen into a column that has already been
+      taken by one of the queens in the list \texttt{l}.  Therefore, the number of column positions
       available for the next queen is given by the set
       \\[0.2cm]
       \hspace*{1.3cm}
@@ -379,20 +392,20 @@ are as follows.
       \\[0.2cm]
       Note that we had to convert the list \texttt{l} into the set 
       \texttt{\{i $\hspace*{-0.1cm}$: $\hspace*{-0.2cm}$i in l\}}
-      in order to be able to subtract the positions specified in \texttt{l} from the set of all
-      possible positions.
-\item Once we have decided to position the next queen in row \texttt{x}, we have to 
+      in order to be able to subtract the set of columns specified in \texttt{l} from the set of all
+      possible columns.
+\item Once we have decided to position the next queen in column \texttt{x}, we have to 
       test whether a queen that is put into that position can be attacked by another queen
       which happens to be on the same diagonal.  This test is performed in line 7 with the help
       of the function \texttt{testNext}.
 \item If this test succeeds, we add a queen in position \texttt{x} to the list \texttt{l} and
       recursively try to solve the resulting instance of the problem.
 \item On the other hand, if the call to \texttt{testNext} in line 7 fails, we have to try
-      the next value of \texttt{x}.  Now the function \texttt{testNext} does not return a 
+      the remaining values for \texttt{x}.   The function \texttt{testNext} does not return a 
       Boolean value to indicate success or failure so at this point you might well
       ask how we know that the call to \texttt{testNext} has failed.  The answer is that the function
       \texttt{testNext} includes a call to \texttt{backtrack} if it is not possible to
-      place a queen in position \texttt{x}.  Technically, calling \texttt{backtrack}
+      place the next queen in column \texttt{x}.  Technically, calling \texttt{backtrack}
       raises an exception that is caught by the \texttt{check} statement in line 6.
       After that,  the \texttt{for} loop in line 5 proceeds and picks the next
       candidate for \texttt{x}.
@@ -414,7 +427,7 @@ are as follows.
       \hspace*{1.3cm}
       $\pair(\texttt{\#l}+1, \mathtt{x})$.
       \\[0.2cm]
-      Now a diagonal is specified as the equation of a line with slope either $+1$ or $-1$.
+      A diagonal is specified as the equation of a line with slope either $+1$ or $-1$.
       The $i$-th  queen in \texttt{l} has the coordinates
       \\[0.2cm]
       \hspace*{1.3cm}
@@ -441,11 +454,11 @@ solutions are completed.   Figure \ref{fig:queens-all.stlx} on page
       The function returns the set of all solutions of the $n$ queens puzzle.
       To do so, it first initializes the variable \texttt{all} to the empty set.
       The solutions are then collected in this set.
-\item The function \texttt{solve} now gets \texttt{all} as an additional parameter.
+\item The new version of the function \texttt{solve} gets \texttt{all} as an additional parameter.
       Note that this parameter is specified in line 2 as an \texttt{rw} parameter, so 
       the value of \texttt{all} is actually changed by the procedure \texttt{solve}.
 \item The important change in the implementation of \texttt{solve} is that instead of
-      returning a solution,  a solution that is found is added to the set \texttt{all} in
+      returning a solution,  a newly found solution is added to the set \texttt{all} in
       line 10. After that, the function \texttt{solve} backtracks to look for more
       solutions.   Note that this backtracking here in effect asks the \texttt{for}-loop in line 13 
       to look for another solution.
@@ -503,7 +516,7 @@ This program finds all 92 solutions to the $8$ queens puzzle.
 \caption{Computing all solutions of the $n$ queens puzzle.}
 \label{fig:queens-all.stlx}
 \end{figure}
-
+\vspace*{0.3cm}
 
 The keyword \texttt{check} can be used with an additional optional branch.  In this case the
 complete \texttt{check} block has the form

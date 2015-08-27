@@ -232,10 +232,9 @@ In general, it is our believe that the use of backtracking should always follow 
 \item Assume our goal is to find some $x$ such that $x$ is the solution of some problem.
 \item In order to find possible values for $x$, we invoke a \emph{generating function} that provides
       us with solution candidates.  In general, the set of values provided by the generating
-      function is a superset of the set of solutions, i.e.~some of those values do not solve the
-      problem.  However, it is required that the generating function will, among other values, also
-      generate those values $x$ that are the solutions of the problem.  Of course, it might generate
-      many more values which are not solutions to the problem. 
+      function is a only superset of the set of solutions, i.e.~some of those values do not solve the
+      problem.  Although it is perfectly acceptable that most of the values generated do not solve
+      the problem, it is required that the generating function will never miss a solution.
 \item In order to check which of the generated values are indeed solutions, the generated values
       have to be tested.  If a test fails, the program backtracks to step 2 where the next value to
       be tested is generated. 
@@ -286,7 +285,15 @@ converted into a block of the following form:
 Here, \textsl{stmntList}  might contain the keyword ``\texttt{backtrack}''.  This keyword is
 translated into the command \texttt{throw(\symbol{34}fail\symbol{34})}.   
 
+In the rest of this section we show how to solve two classical logical puzzles using backtracking.
+As a first example,  we solve is the 8 queens puzzle.  We will see that this puzzle can be solved using
+a straightforward recursive approach.  The second example is the zebra puzzle.  In order to solve
+this puzzle succinctly, we need to make use of \emph{higher-order programming}, i.e.~we solve the
+problem by writing a function that, instead of solving the problem directly, will first generate
+some \setlx\ code.  This code is then executed and thereby the problem is solved.  Hence, the zebra
+puzzle provides the opportunity to show of the power of the \texttt{eval} function provided by \setlx.
 
+\subsection{The 8 Queens Puzzle}
 \begin{figure}[!ht]
 \centering
 \begin{Verbatim}[ frame         = lines, 
@@ -543,6 +550,342 @@ Here, \textsl{body} is a list of statements that is executed if there is a call 
 \end{verbatim}
 prints the number 1 and 3.
 
+\subsection{The Zebra Puzzle}
+There are many different versions of the
+\href{https://en.wikipedia.org/wiki/Zebra_Puzzle}{\emph{zebra puzzle}}.  The version below is taken
+from \href{https://en.wikipedia.org/wiki/Zebra_Puzzle}{\emph{Wikipedia}}.  The puzzle is the following:
+\begin{enumerate}
+\item There are five houses.
+\item The Englishman lives in the red house.
+\item The Spaniard owns the dog.
+\item Coffee is drunk in the green house.
+\item The Ukrainian drinks tea.
+\item The green house is immediately to the right of the ivory house.
+\item The Old Gold smoker owns snails.
+\item Kools are smoked in the yellow house.
+\item Milk is drunk in the middle house.
+\item The Norwegian lives in the first house.
+\item The man who smokes Chesterfields lives in the house next to the man with the fox.
+\item Kools are smoked in the house next to the house where the horse is kept.
+\item The Lucky Strike smoker drinks orange juice.
+\item The Japanese smokes Parliaments.
+\item The Norwegian lives next to the blue house.
+\item Who drinks water? 
+\item Who owns the zebra?
+\end{enumerate}
+In order to solve the puzzle, we also have to know the following facts:
+\begin{enumerate}
+\item Each of the five houses is painted in a different color.
+\item The inhabitants of the five houses are of different nationalities,
+\item they own different pets, 
+\item they drink different beverages, and 
+\item they smoke different brands of cigarettes. 
+\end{enumerate}
+
+In order to solve this problem we use a generic approach and first implement a general function that
+can be used to solve \emph{constraint satisfaction problems}.  Figure \ref{fig:generateAndTest.stlx}
+on page \pageref{fig:generateAndTest.stlx} shows the implementation of the function
+\texttt{generateAndTest} that can be used to solve a constraint satisfaction problem via
+backtracking.  This function is called with three arguments.
+\begin{enumerate}
+\item The first argument \texttt{constraints} is a list of constraints.  Each of the elements in
+      this list are, in turn,  lists of either two or three items.  These lists have the form
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \texttt{[var, assign, condition]},
+      \\[0.2cm]
+      where the last item \texttt{condition} may be missing.  These items have the following
+      interpretation.
+      \begin{enumerate}
+      \item \texttt{var} is a string that is interpreted as the name of a variable.
+      \item \texttt{assign} is a string that can be interpreted as a \setlx\ statement.  Typically,
+            this will be an assignment statement.  Another common case will the statement
+            ``\texttt{skip}'' that does nothing.
+      \item \texttt{condition} is a string that can be parsed as a logical expression in \setlx.
+            If the condition is missing it is implicitly interpreted as the trivial condition \texttt{true}.
+      \end{enumerate}
+      For example, the constraint ``\textsl{The Englishman lives in the red house.}'' can be
+      modeled by the constraint
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \texttt{[\symbol{34}english\symbol{34}, \symbol{34}red := english\symbol{34}, true]}.
+      \\[0.2cm]
+      This constraint introduces the two variables ``\texttt{english}'' and ``\texttt{red}''.
+      Due to the assignment 
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      ``\texttt{red := english}'', 
+      \\[0.2cm]
+      these two variables are required to have
+      the same value. Since there are no further constraints, the condition has the value
+      \texttt{true}.  Hence, we could also have dropped this part of the constraint and thereby
+      shorten it to
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \texttt{[\symbol{34}english\symbol{34}, \symbol{34}red := english\symbol{34}]}.
+\item \texttt{values} is a list of the possible values for those variables that are introduced via
+      the first argument \texttt{constraints}.
+\item \texttt{result} is a string that, when evaluated as an expression, returns the solution of the
+      constraint satisfaction problem.
+\end{enumerate}
+
+\begin{figure}[!ht]
+\centering
+\begin{Verbatim}[ frame         = lines, 
+                  framesep      = 0.3cm, 
+                  firstnumber   = 1,
+                  labelposition = bottomline,
+                  numbers       = left,
+                  numbersep     = -0.2cm,
+                  xleftmargin   = 0.8cm,
+                  xrightmargin  = 0.8cm,
+                ]
+    generateAndTest := procedure(constraints, values, result) {
+        stmnt := "procedure() {";
+        n     := #constraints;
+        for (i in [1..n]) {
+            if (#constraints[i] == 3) {
+                [var, assign, condition] := constraints[i];
+            } else {
+                [var, assign] := constraints[i];
+                condition := true;
+            }
+            stmnt += "for ($var$ in $values$) {";
+            if (assign != "skip") {
+                stmnt += assign + ";";
+            }
+            stmnt += "check {";
+            if (condition != true) {
+                stmnt += "if (!($condition$)) { backtrack; }";
+            }
+        }
+        stmnt += "return $result$;";
+        stmnt += "}" * (2*n+1);
+        return eval(stmnt+"()");
+    };
+\end{Verbatim}
+\vspace*{-0.3cm}
+\caption{The function \texttt{generateAndTest}.}
+\label{fig:generateAndTest.stlx}
+\end{figure}
+
+It is easiest to understand how  the arguments of \texttt{generateAndTest} are used by inspecting
+an example.  Suppose we are looking for natural numbers $a,b,c \in \{1, \cdots, 5\}$ such that both
+\\[0.2cm]
+\hspace*{1.3cm}
+$b = a + 1$ \quad and \quad $a^2 + b^2 = c^2$
+\\[0.2cm]
+holds.  Then we can define the parameters of the function \texttt{generateAndTest} as follows:
+\begin{enumerate}
+\item \texttt{constraints := [ ["a", "b := a + 1", "b <= 5"],} \\
+      \hspace*{3.0cm}
+      \texttt{["c", "skip", "a**2 + b**2 == c**2"] ];}
+\item \texttt{values := \{1..5\};}
+\item \texttt{result := "[a, b, c]";}
+\end{enumerate}
+Calling \texttt{generateAndTest} with these arguments will return the value \texttt{[3,4,5]}.  It is
+easy to check that the assignments $a := 3$, $b := 4$, and $c := 5$ solve the given problem.
+
+In order to understand the mechanics of \texttt{generateAndTest} we have to know that this function
+works in two steps.  
+\begin{enumerate}
+\item In the first step, the function generates a string that can be parsed and
+      evaluated as a \setlx\ procedure.  This string is called \texttt{stmnt} in Figure
+      \ref{fig:generateAndTest.stlx} on page \pageref{fig:generateAndTest.stlx}.   Figure
+      \ref{fig:generateAndTest.stlx-code} on page \pageref{fig:generateAndTest.stlx-code}. shows how this
+      string looks for the example discussed above.   From the example we can see that every constraint is
+      translated into a \texttt{for} loop.  This for loop iterates over all elements of the argument
+      \texttt{values}.  Inside this loop we first have the assignment \texttt{assign}, which is then followed by the
+      \texttt{condition}.  Note, however, that this condition is encapsulated in a \texttt{check}
+      statement.  If the \texttt{condition} is not satisfies, we have to \texttt{backtrack} so that the
+      for loop can try the next value for the given variable.  We can also see that the second contsraint
+      is nested in the first constraint.
+\item In the second step, the generated procedure is evaluated.  This happens through the call of
+      the function \texttt{eval} in line 22 of Figure \ref{fig:generateAndTest.stlx}.
+\end{enumerate}
+The kind of programming that is exhibited here is often called 
+\href{https://en.wikipedia.org/wiki/Higher-order_programming}{\emph{higher-order programming}}.
+
+\begin{figure}[!ht]
+\centering
+\begin{Verbatim}[ frame         = lines, 
+                  framesep      = 0.3cm, 
+                  firstnumber   = 1,
+                  labelposition = bottomline,
+                  numbers       = left,
+                  numbersep     = -0.2cm,
+                  xleftmargin   = 0.8cm,
+                  xrightmargin  = 0.8cm,
+                ]
+    procedure() {
+      for (a in [1, 2, 3, 4, 5]) {
+        b := a + 1;
+        check {
+          if (!(b <= 5)) { backtrack; }
+          for (c in [1, 2, 3, 4, 5]) {
+            check {
+              if (!(a**2 + b**2 == c**2)) { backtrack; }
+              return [a,b,c];
+            }
+          }
+        }
+      }
+    }
+\end{Verbatim}
+\vspace*{-0.3cm}
+\caption{The statement generated by \texttt{generateAndTest}.}
+\label{fig:generateAndTest.stlx-code}
+\end{figure}
+
+We proceed to discuss the details of the generation of the procedure string that is later
+evaluated.  
+\begin{enumerate}
+\item The string \texttt{stmnt} that is to contain the definition of the generated code is
+      created in line 2.
+\item In line 3 we define \texttt{n} to be the number of elements of the list \texttt{constraints}.
+\item Therefore, the \texttt{for} loop in line 4 effectively iterates over all constraints in the
+      list \texttt{constraints}.
+\item Since there maybe constraints where the \texttt{condition} is missing, the \texttt{if}
+      statement in line 5 checks whether the $i$th constraint is a list of two or three elements.
+      Then, the variables \texttt{var}, \texttt{assign}, and
+      \texttt{condition} are set to the first, second, and third element of the $i$th constraint.
+      In case there are only two elements, the variable \texttt{condition} is set to the trivial
+      test \texttt{true}.
+\item Next, we generate the \texttt{for} loop that tries the different elements of \texttt{values}
+      for the variable \texttt{var} of the $i$th constraint.
+\item If there is are real assignment, i.e.~if \texttt{assign} is different from the string
+      ``\texttt{skip}'', this assignment is the first statement in the \texttt{for} loop that is generated.
+\item Finally, if the test \texttt{condition} is non-trivial, an \texttt{if} statement is added that
+      checks if \texttt{condition} is satisfies and that backtracks if the condition is violated.
+\item Since the generated procedure takes no arguments, we can evaluate it by appending the string
+      ``\texttt{()}'' to the string \texttt{stmnt} and then calling the function \texttt{eval} on
+      the resulting string.
+\end{enumerate}
+
+\begin{figure}[!ht]
+\centering
+\begin{Verbatim}[ frame         = lines, 
+                  framesep      = 0.3cm, 
+                  firstnumber   = 1,
+                  labelposition = bottomline,
+                  numbers       = left,
+                  numbersep     = -0.2cm,
+                  xleftmargin   = 0.0cm,
+                  xrightmargin  = 0.0cm,
+                ]
+    nextTo   := procedure(a, b)          { return b == a+1 || a == b+1;  };
+    distinct := procedure(a, b, c, d, e) { return #{a, b, c, d, e} == 5; };
+    values := [1..5];   // 1. There are five houses
+    constr := 
+    [ //  2. The Englishman lives in the red house.
+      ["english", "red := english"],
+      //  3. The Spaniard owns the dog.
+      ["spaniard", "dog := spaniard"],
+      //  4. Coffee is drunk in the green house.
+      ["coffee", "green := coffee"],
+      //  5. The Ukrainian drinks tea.
+      ["ukrainian", "tea := ukrainian"],
+      //  6. The green house is immediately to the right of the ivory house.
+      ["ivory", "skip", "green == ivory + 1"],
+      //  7. The Old Gold smoker owns snails.
+      ["oldGold", "snails := oldGold"],
+      //  8. Kools are smoked in the yellow house.
+      ["kools", "yellow := kools"],
+      //  9. Milk is drunk in the middle house.
+      ["milk", "skip", "milk == 3"],
+      // 10. The Norwegian lives in the first house.
+      ["norwegian", "skip", "norwegian == 1"],
+      // 11. Chesterfields are smoked next to the fox.
+      ["chesterfields", "skip"],
+      ["fox", "skip", "nextTo(chesterfields, fox)"],
+      // 12. Kools are smoked in the house next to the horse.
+      ["horse", "skip", "nextTo(horse, kools)"],
+      ["zebra", "skip", "distinct(fox, horse, snails, dog, zebra)"],
+      // 13. The Lucky Strike smoker drinks orange juice.
+      ["luckies", "orange := luckies"],
+      ["water", "skip", "distinct(water, tea, milk, orange, coffee)"],
+      // 14. The Japanese smokes Parliaments.
+      ["japanese", "parliaments := japanese",
+       "distinct(norwegian, ukrainian, english, spaniard, japanese) && 
+        distinct(kools, chesterfields, oldGold, luckies, parliaments)"],
+      // 15. The Norwegian lives next to the blue house
+      ["blue", "skip",
+       "nextTo(norwegian, blue) && distinct(yellow, blue, red, ivory, green)"],
+      // 16. Who drinks water?
+      ["water", "skip", "distinct(water, tea, milk, orange, coffee)"],
+      // 17. Who owns the zebra?
+      ["zebra", "skip", "distinct(fox, horse, snails, dog, zebra)"]
+    ];
+    result := "[zebra, water]";
+    [zebra, water] := generateAndTest(constr, values, result);
+\end{Verbatim}
+\vspace*{-0.3cm}
+\caption{Coding the zebra problem.}
+\label{fig:zebra.stlx}
+\end{figure}
+
+Finally, we are ready to solve the zebra puzzle.  Figure \ref{fig:zebra.stlx} on page
+\pageref{fig:zebra.stlx} shows how to set the parameters of the function \texttt{generateAndTest}
+to solve the zebra puzzle.  The idea is to model the colors of the houses, the nationalities of
+their inhabitants, the beverages, the cigarette brand, and the pets by numbers from the set
+$\{1,2,3,4,5\}$.  For example, if the variable ``\texttt{red}´´ has the value 3, then this is
+interpreted as the fact that the third house is red.  Let us discuss the details of this program line by line.
+\begin{enumerate}
+\item In line 1 we define the auxiliary function \texttt{nextTo}.  This function checks whether
+      the houses given to it as arguments are next to each other.  Now $a$ is next to $b$ if either
+      $a$ is immediately to the left of $b$ or if $a$ is immediately to the right of $b$.  In the
+      first case we have that $b = a + 1$, in the second case we have $a = b + 1$.
+\item The function \texttt{distinct}, which is given in line 2 checks whether the five
+      arguments given to it are all distinct.  This is the case if and only if the set
+      $\{a,b,c,d,e\}$ contains exactly five elements.
+\item Since we model the houses by the number from 1 to 5, the set of possible values for all
+      variables occurring in the zebra puzzle is the set $\{1,2,3,4,5\}$.  This explains line 3.
+\item Next, the different statements of the zebra puzzle are translated into a list of constraints.
+      For example, the constraint that the Englishman lives in the red house is translated into the list
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \texttt{["english", "red := english"]}
+      \\[0.2cm]
+      This constraint introduces the variable ``\texttt{english}'' and furthermore guarantees that the
+      variable ``\texttt{red}'' has the same value as the variable ``\texttt{english}''. 
+
+      As another example, let us explore how the statement 
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      ``\textsl{Kools are smoked in the house next to the house where the horse is kept.}'' 
+      \\[0.2cm]
+      is translated into a constraint in line 26.  Since the variable ``\texttt{kools}'' has already
+      been introduced in line 18, we only need to introduce the variable ``\texttt{horse}'' to model
+      this statement.  The fact that the horse is in the house next to the house where Kools are
+      smoked is specified via the condition
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \texttt{nextTo(horse, kools)}.
+\item Some of the constraints have a condition that uses the function \texttt{distinct}.  Let us
+      explore the use of this function for the nationalities.  Line 33 introduces the
+      variable ``\texttt{japanese}''.  Since this is the last variable that introduces a nationality,
+      we can now evaluate the condition that the nationalities are all different via
+      the use of the function \texttt{distinct}.  Since the constraint in line 33 also introduces
+      the variable ``\texttt{parliaments}'', which is the last of the cigarette brands, we also have
+      attached the condition that all cigarette brands are different,
+      
+      The general idea is to attach a condition as soon as all variables mentioned in this condition
+      have been introduced and hence are defined.  As another example, line 40 introduces the
+      variable ``\texttt{water}''.  Since this is the last of the beverages, the condition
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \texttt{"distinct(water, tea, milk, orange, coffee)"}
+      \\[0.2cm]
+      is attached to the constraint introducing the variable ``\texttt{water}''.
+\item Since we are only interested in the house where the zebra lives and the house where the
+      inhabitant drinks water, the variable result is defined as the string
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \texttt{\symbol{34}[zebra, water]\symbol{34}}
+      \\[0.2cm]
+      in line 44.
+\item Finally, line 45 calls the function \texttt{generateAndTest} to solve the puzzle.
+\end{enumerate}
 
 
 

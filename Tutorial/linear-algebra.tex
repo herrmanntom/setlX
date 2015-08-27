@@ -40,9 +40,9 @@ Instead of using the function \texttt{la\_vector,} we could also have used the c
 \hspace*{1.3cm}
 \texttt{v := <<1/2 1/4 1/5>>;}
 \\[0.2cm]
-to define the vector \texttt{v}.  Note that the components of a vector are not separated by the
+to define the vector \texttt{v}.  This shows that the operators ``\texttt{<<}'' and ``\texttt{>>}''
+can be used to define a vector.  Note that the components of a vector are not separated by the
 character ``\texttt{,}'' but rather are separated by white space.
-
 
 \setlx\ support the basic arithmetic operations that are defined for vectors.  If \texttt{a} and
 \texttt{b} are two vectors, then 
@@ -78,7 +78,9 @@ then the expressions ``\texttt{a + b}'' and ``\texttt{a - b}'' yield the results
 \texttt{<<5.0 7.0 9.0>>} \quad and \quad \texttt{<<-3.0 -3.0 -3.0>>},
 \\[0.2cm]
 respectively.  Additionally, the shortcut assignment operators ``\texttt{+=}'' and ``\texttt{-=}''
-are available for vectors.  They work as expected.
+are available for vectors.  They work as expected.  Note that for the expressions ``\texttt{a + b}''
+and ``\texttt{a - b}'' to be defined, \texttt{a} and \texttt{b} have to have the same number of
+elements. 
 
 Vectors support 
 \href{http://en.wikipedia.org/wiki/Scalar_multiplication}{\emph{scalar multiplication}}.  If
@@ -415,7 +417,8 @@ of matrix \texttt{a} we can use the expression
 \section{Numerical Methods for Matrices and Vectors}
 In this section we will discuss the numerical methods that are provided.  These methods are inherited
 from \href{http://math.nist.gov/javanumerics/jama/}{\textsl{Jama}}, which is a \textsl{Java} matrix
-package.  The names of all methods inherited from \textsl{Jama} start with ``\texttt{la\_}''.
+package.  The names of all methods inherited from \textsl{Jama} start with ``\texttt{la\_}''.  This
+is short for \underline{l}inear \underline{a}lgebra.
 
 \subsection{Computing the Determinant}
 If \texttt{a} is a square matrix, the expression 
@@ -695,7 +698,7 @@ Therefore, if the matrix \texttt{a} is symmetric, neither of the two calls
 \hspace*{1.3cm}
 \texttt{la\_eigenValues(a)} \quad or \quad \texttt{la\_eigenVectors(a)}
 \\[0.2cm]
-can throw an exception.
+will throw an exception.
 
 
 %%% Local Variables: 

@@ -1,6 +1,6 @@
 f := procedure(n) {
     if (n <= 1) {
-        return 1;   
+        return 0;   
     }
     s := 0;
     while (n != 1) {

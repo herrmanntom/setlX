@@ -72,7 +72,7 @@ public class StringConstructor extends AZeroOperator {
                              */
                             if (state.getParserErrorCount() > errCount) {
                                 state.writeParserErrLn(
-                                    "Error(s) while parsing string " + this.toString(state) + " {"
+                                    "Error(s) while parsing string " + originalStr + " {"
                                 );
                                 if (pe instanceof SyntaxErrorException) {
                                     for (final String err : ((SyntaxErrorException) pe).getErrors()) {

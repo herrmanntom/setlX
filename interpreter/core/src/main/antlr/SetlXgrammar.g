@@ -224,15 +224,15 @@ assignmentDirectContent [FragmentList<AOperator> operators] returns [OperatorExp
 
 assignable [boolean enableIgnore] returns [AAssignableExpression a]
     : assignableVariable           { $a = $assignableVariable.v;                              }
-//      (
-//         '.' variable            { $a = new MemberAccess($a, $variable.v);                  }
+      (
+         '.' variable              { $a = new AssignableMember($a, $variable.v);              }
 //       | '['                     { exprs = new ArrayList<Expr>();                           }
 //         e1 = expr[false]        { exprs.add($e1.ex);                                       }
 //         (
 //           ',' e2 = expr[false]  { exprs.add($e2.ex);                                       }
 //         )*
 //         ']'                     { $a = new CollectionAccess($a, exprs);                    }
-//      )*
+      )*
 //    | '[' explicitAssignList ']' { $a = new AssignListConstructor($explicitAssignList.eil); }
 //    | {$enableIgnore}? '_'       { $a = VariableIgnore.VI;                                  }
     ;
@@ -354,10 +354,10 @@ prefixOperation [boolean enableIgnore, boolean quoted, FragmentList<AOperator> o
 //      (
 //        '**' p = prefixOperation[$enableIgnore, $quoted] { $po = new Power($po, $p.po);         }
 //      )?
-    | '+/' prefixOperation[$enableIgnore, $quoted, $operators] { operators.add(new SumOfMembers()); }
+    | '+/' prefixOperation[$enableIgnore, $quoted, $operators] { operators.add(new SumOfMembers());     }
     | '*/' prefixOperation[$enableIgnore, $quoted, $operators] { operators.add(new ProductOfMembers()); }
-//    | '#'  po2 = prefixOperation[$enableIgnore, $quoted] { $po = new Cardinality     ($po2.po); }
-    | '-'  prefixOperation[$enableIgnore, $quoted, $operators] { operators.add(new Minus()); }
+    | '#'  prefixOperation[$enableIgnore, $quoted, $operators] { operators.add(new Cardinality());      }
+    | '-'  prefixOperation[$enableIgnore, $quoted, $operators] { operators.add(new Minus());            }
 //    | '@'  po2 = prefixOperation[$enableIgnore, true]    { $po = new Quote           ($po2.po); }
     ;
 
@@ -375,9 +375,8 @@ factor [boolean enableIgnore, boolean quoted, FragmentList<AOperator> operators]
        | variable                    { operators.add($variable.v); }
       )
       (
-//         '.' variable                { $f = new MemberAccess($f, $variable.v);       }
-//       |
-call[$enableIgnore]     { operators.add($call.c);                                 }
+         '.' variable                { operators.add(new MemberAccess($variable.v));         }
+       | call[$enableIgnore]         { operators.add($call.c);                               }
       )*
       (
         '!'                          { operators.add(new Factorial());                       }

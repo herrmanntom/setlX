@@ -442,7 +442,7 @@ procedureListParameter returns [ParameterDef param]
 call [boolean enableIgnore] returns [AOperator c]
     : '(' callParameters[$enableIgnore]         ')' { $c = new Call($callParameters.params, $callParameters.ex); }
     | '[' collectionAccessParams[$enableIgnore] ']' { $c = new CollectionAccess($collectionAccessParams.params); }
-//    | '{' expr[$enableIgnore]                   '}' { $c = new CollectMap($c, $expr.ex);                             }
+    | '{' expr[$enableIgnore]                   '}' { $c = new CollectMap($expr.ex);                             }
     ;
 
 callParameters [boolean enableIgnore] returns [FragmentList<OperatorExpression> params, OperatorExpression ex]

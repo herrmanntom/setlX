@@ -25,7 +25,7 @@ public class CollectionAccess extends AUnaryPostfixOperator {
     private final boolean                          argumentsContainRange; // does args contain RangeDummy?
 
     /**
-     * Create a new call operator.
+     * Create a new CollectionAccess operator.
      *
      * @param arguments    Parameters to the call.
      */

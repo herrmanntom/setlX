@@ -441,7 +441,7 @@ procedureListParameter returns [ParameterDef param]
 
 call [boolean enableIgnore] returns [AOperator c]
     : '(' callParameters[$enableIgnore]         ')' { $c = new Call($callParameters.params, $callParameters.ex); }
-//    | '[' collectionAccessParams[$enableIgnore] ']' { $c = new CollectionAccess($c, $collectionAccessParams.params); }
+    | '[' collectionAccessParams[$enableIgnore] ']' { $c = new CollectionAccess($collectionAccessParams.params); }
 //    | '{' expr[$enableIgnore]                   '}' { $c = new CollectMap($c, $expr.ex);                             }
     ;
 
@@ -458,23 +458,23 @@ callParameters [boolean enableIgnore] returns [FragmentList<OperatorExpression> 
     | /* epsilon */
     ;
 
-//collectionAccessParams [boolean enableIgnore] returns [List<Expr> params]
-//    @init {
-//        $params = new ArrayList<Expr>();
-//    }
-//    : e1 = expr[$enableIgnore]      { $params.add($e1.ex);                          }
-//      (
-//         RANGE_SIGN                 { $params.add(CollectionAccessRangeDummy.CARD); }
-//         (
-//           e2 = expr[$enableIgnore] { $params.add($e2.ex);                          }
-//         )?
-//       | (
-//           ',' e3 = expr[false]     { $params.add($e3.ex);                          }
-//         )+
-//      )?
-//    | RANGE_SIGN                    { $params.add(CollectionAccessRangeDummy.CARD); }
-//      expr[$enableIgnore]           { $params.add($expr.ex);                        }
-//    ;
+collectionAccessParams [boolean enableIgnore] returns [FragmentList<OperatorExpression> params]
+    @init {
+        $params = new FragmentList<OperatorExpression>();
+    }
+    : e1 = expr[$enableIgnore]      { $params.add($e1.ex);                                                  }
+      (
+         RANGE_SIGN                 { $params.add(new OperatorExpression(CollectionAccessRangeDummy.CARD)); }
+         (
+           e2 = expr[$enableIgnore] { $params.add($e2.ex);                                                  }
+         )?
+       | (
+           ',' e3 = expr[false]     { $params.add($e3.ex);                                                  }
+         )+
+      )?
+    | RANGE_SIGN                    { $params.add(new OperatorExpression(CollectionAccessRangeDummy.CARD)); }
+      expr[$enableIgnore]           { $params.add($expr.ex);                                                }
+    ;
 
 value [boolean enableIgnore, boolean quoted] returns [AZeroOperator v]
     @init {

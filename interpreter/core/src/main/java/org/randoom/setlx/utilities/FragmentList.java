@@ -67,6 +67,16 @@ public class FragmentList<B extends CodeFragment> implements Iterable<B>, Compar
         fragmentList.set(index, fragment);
     }
 
+    /**
+     * Returns true> if this list contains the specified fragment.
+     *
+     * @param fragment element whose presence in this list is to be tested
+     * @return true if this list contains the specified fragment
+     */
+    public boolean contains(B fragment) {
+        return fragmentList.contains(fragment);
+    }
+
     @Override
     public final int compareTo(FragmentList<B> other) {
         if (this == other) {

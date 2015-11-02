@@ -126,6 +126,7 @@ public class OperatorExpression extends Expression {
      * @return               Result of the evaluation.
      * @throws SetlException Thrown in case of some (user-) error.
      */
+    @Override
     public Value evaluate(final State state) throws SetlException {
         Stack<Value> values = new Stack<Value>();
 

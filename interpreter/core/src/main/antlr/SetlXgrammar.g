@@ -257,10 +257,10 @@ expr [boolean enableIgnore] returns [OperatorExpression ex]
 exprContent [boolean enableIgnore, FragmentList<AOperator> operators]
     : lambdaProcedure          { operators.add(new ProcedureConstructor($lambdaProcedure.lp)); }
     | implication[$enableIgnore, $operators]
-    //      (
-    //         '<==>' i2 = implication[$enableIgnore] { $ex = new BoolEquals  ($ex, $i2.i); }
-    //       | '<!=>' i2 = implication[$enableIgnore] { $ex = new BoolNotEqual($ex, $i2.i); }
-    //      )?
+      (
+        '<==>' implication[$enableIgnore, $operators] { operators.add(new BooleanEqual   ()); }
+      | '<!=>' implication[$enableIgnore, $operators] { operators.add(new BooleanNotEqual()); }
+      )?
     ;
 
 lambdaProcedure returns [Procedure lp]

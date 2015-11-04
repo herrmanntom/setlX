@@ -333,11 +333,11 @@ sum [boolean enableIgnore, FragmentList<AOperator> operators]
 product [boolean enableIgnore, FragmentList<AOperator> operators]
     : reduce[$enableIgnore, $operators]
       (
-         '*' reduce[$enableIgnore, $operators] { operators.add(new Product());  }
-       | '/' reduce[$enableIgnore, $operators] { operators.add(new Quotient()); }
-//       | '\\' reduce[$enableIgnore] { $p = new IntegerDivision ($p, $r2.r); }
-//       | '%'  reduce[$enableIgnore] { $p = new Modulo          ($p, $r2.r); }
-//       | '><' reduce[$enableIgnore] { $p = new CartesianProduct($p, $r2.r); }
+         '*'  reduce[$enableIgnore, $operators] { operators.add(new Product());          }
+       | '/'  reduce[$enableIgnore, $operators] { operators.add(new Quotient());         }
+       | '\\' reduce[$enableIgnore, $operators] { operators.add(IntegerDivision.ID);  }
+       | '%'  reduce[$enableIgnore, $operators] { operators.add(Modulo.M);            }
+       | '><' reduce[$enableIgnore, $operators] { operators.add(CartesianProduct.CP); }
       )*
     ;
 
@@ -351,13 +351,13 @@ reduce [boolean enableIgnore, FragmentList<AOperator> operators]
 
 prefixOperation [boolean enableIgnore, boolean quoted, FragmentList<AOperator> operators]
     : factor[$enableIgnore, $quoted, $operators]
-//      (
-//        '**' p = prefixOperation[$enableIgnore, $quoted] { $po = new Power($po, $p.po);         }
-//      )?
-    | '+/' prefixOperation[$enableIgnore, $quoted, $operators] { operators.add(new SumOfMembers());     }
-    | '*/' prefixOperation[$enableIgnore, $quoted, $operators] { operators.add(new ProductOfMembers()); }
-    | '#'  prefixOperation[$enableIgnore, $quoted, $operators] { operators.add(new Cardinality());      }
-    | '-'  prefixOperation[$enableIgnore, $quoted, $operators] { operators.add(new Minus());            }
+      (
+        '**' prefixOperation[$enableIgnore, $quoted, $operators] { operators.add(Power.P);                }
+      )?
+    | '+/' prefixOperation[$enableIgnore, $quoted, $operators]   { operators.add(new SumOfMembers());     }
+    | '*/' prefixOperation[$enableIgnore, $quoted, $operators]   { operators.add(new ProductOfMembers()); }
+    | '#'  prefixOperation[$enableIgnore, $quoted, $operators]   { operators.add(new Cardinality());      }
+    | '-'  prefixOperation[$enableIgnore, $quoted, $operators]   { operators.add(new Minus());            }
 //    | '@'  po2 = prefixOperation[$enableIgnore, true]    { $po = new Quote           ($po2.po); }
     ;
 

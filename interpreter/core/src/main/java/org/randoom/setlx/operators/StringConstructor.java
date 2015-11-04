@@ -223,52 +223,6 @@ public class StringConstructor extends AZeroOperator {
         return term;
     }
 
-//    /**
-//     * Convert a term representing a StringConstructor into such an expression.
-//     *
-//     * @param state                    Current state of the running setlX program.
-//     * @param term                     Term to convert.
-//     * @return                         Resulting StringConstructor Expression.
-//     * @throws TermConversionException Thrown in case of an malformed term.
-//     */
-//    public static Expr termToExpr(final State state, final Term term) throws TermConversionException {
-//        if (term.size() != 2 || ! (term.firstMember() instanceof SetlList && term.lastMember() instanceof SetlList)) {
-//            throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
-//        } else {
-//            final StringBuilder     originalStr = new StringBuilder();
-//            final SetlList          frags       = (SetlList) term.firstMember();
-//            final SetlList          exps        = (SetlList) term.lastMember();
-//
-//            final ArrayList<String> fragments   = new ArrayList<String>(frags.size());
-//            final ArrayList<Expr>   exprs       = new ArrayList<Expr>(exps.size());
-//
-//            final Iterator<Value>   fIter       = frags.iterator();
-//            final Iterator<Value>   eIter       = exps.iterator();
-//
-//            originalStr.append("\"");
-//
-//            while (fIter.hasNext()) {
-//                final SetlString  sstring = (SetlString) fIter.next();
-//                final String      string  = sstring.getUnquotedString(state);
-//                originalStr.append(sstring.getEscapedString());
-//                fragments.add(string);
-//
-//                if (eIter.hasNext()) {
-//                    final Expr expr = TermConverter.valueToExpr(state, eIter.next());
-//                    exprs.add(expr);
-//                    originalStr.append("$");
-//                    originalStr.append(expr.toString(state).replace("$", "\\$"));
-//                    originalStr.append("$");
-//                }
-//            }
-//            if (eIter.hasNext()) {
-//                throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
-//            }
-//            originalStr.append("\"");
-//            return new StringConstructor(originalStr.toString(), fragments, exprs);
-//        }
-//    }
-
     /* comparisons */
 
     @Override

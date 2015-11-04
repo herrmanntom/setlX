@@ -287,37 +287,39 @@ lambdaParameters returns [ParameterList paramList]
 
 implication [boolean enableIgnore, FragmentList<AOperator> operators]
     : disjunction[$enableIgnore, $operators]
-//      (
-//        '=>' im = implication[$enableIgnore] { $i = new Implication($i, $im.i); }
-//      )?
+      (
+        { FragmentList<AOperator> innerOperators = new FragmentList<AOperator>(); }
+        '=>' implication[$enableIgnore, innerOperators] { operators.add(new Implication(new OperatorExpression(innerOperators))); }
+      )?
     ;
 
 disjunction [boolean enableIgnore, FragmentList<AOperator> operators]
     : conjunction[$enableIgnore, $operators]
-//      (
-//        '||' c2 = conjunction[$enableIgnore] { $d = new Disjunction($d, $c2.c); }
-//      )*
+      (
+        { FragmentList<AOperator> innerOperators = new FragmentList<AOperator>(); }
+        '||' conjunction[$enableIgnore, innerOperators] { operators.add(new Disjunction(new OperatorExpression(innerOperators))); }
+      )*
     ;
 
 conjunction [boolean enableIgnore, FragmentList<AOperator> operators]
     : comparison[$enableIgnore, $operators]
       (
         { FragmentList<AOperator> innerOperators = new FragmentList<AOperator>(); }
-        '&&' c2 = comparison[$enableIgnore, innerOperators]  { operators.add(new Conjunction(new OperatorExpression(innerOperators))); }
+        '&&' comparison[$enableIgnore, innerOperators] { operators.add(new Conjunction(new OperatorExpression(innerOperators))); }
       )*
     ;
 
 comparison [boolean enableIgnore, FragmentList<AOperator> operators]
     : sum[$enableIgnore, $operators]
       (
-         '=='    sum[$enableIgnore, $operators] { operators.add(Equal.E        ); }
-       | '!='    sum[$enableIgnore, $operators] { operators.add(NotEqual.NE    ); }
-       | '<'     sum[$enableIgnore, $operators] { operators.add(LessThan.LT    ); }
-       | '<='    sum[$enableIgnore, $operators] { operators.add(LessOrEqual.LOE); }
-//       | '>'     sum[$enableIgnore, $operators] { $comp = new GreaterThan   ($comp, $s2.s); }
-//       | '>='    sum[$enableIgnore, $operators] { $comp = new GreaterOrEqual($comp, $s2.s); }
-//       | 'in'    sum[$enableIgnore, $operators] { $comp = new In            ($comp, $s2.s); }
-//       | 'notin' sum[$enableIgnore, $operators] { $comp = new NotIn         ($comp, $s2.s); }
+         '=='    sum[$enableIgnore, $operators] { operators.add(Equal.E           ); }
+       | '!='    sum[$enableIgnore, $operators] { operators.add(NotEqual.NE       ); }
+       | '<'     sum[$enableIgnore, $operators] { operators.add(LessThan.LT       ); }
+       | '<='    sum[$enableIgnore, $operators] { operators.add(LessOrEqual.LOE   ); }
+       | '>'     sum[$enableIgnore, $operators] { operators.add(GreaterThan.GT    ); }
+       | '>='    sum[$enableIgnore, $operators] { operators.add(GreaterOrEqual.GOE); }
+       | 'in'    sum[$enableIgnore, $operators] { operators.add(In.I              ); }
+       | 'notin' sum[$enableIgnore, $operators] { operators.add(NotIn.NI          ); }
       )?
     ;
 
@@ -357,17 +359,20 @@ prefixOperation [boolean enableIgnore, boolean quoted, FragmentList<AOperator> o
     | '*/' prefixOperation[$enableIgnore, $quoted, $operators]   { operators.add(ProductOfMembers.POM); }
     | '#'  prefixOperation[$enableIgnore, $quoted, $operators]   { operators.add(Cardinality.C);        }
     | '-'  prefixOperation[$enableIgnore, $quoted, $operators]   { operators.add(Minus.M);              }
-//    | '@'  po2 = prefixOperation[$enableIgnore, true]    { $po = new Quote           ($po2.po); }
+    | (
+        { FragmentList<AOperator> innerOperators = new FragmentList<AOperator>(); }
+        '@' prefixOperation[$enableIgnore, true, innerOperators] { operators.add(new Quote(new OperatorExpression(innerOperators))); }
+      )
     ;
 
 factor [boolean enableIgnore, boolean quoted, FragmentList<AOperator> operators]
     : '!' factor[$enableIgnore, $quoted, $operators] { operators.add(Not.N); }
     | TERM '(' termArguments ')'
       { operators.add(new TermConstructor($TERM.text, $termArguments.args)); }
-//    | 'forall' '(' iteratorChain[$enableIgnore] '|' condition ')'
-//      { $f = new Forall($iteratorChain.ic, $condition.cnd); }
-//    | 'exists' '(' iteratorChain[$enableIgnore] '|' condition ')'
-//      { $f = new Exists($iteratorChain.ic, $condition.cnd); }
+    | 'forall' '(' iteratorChain[$enableIgnore] '|' condition ')'
+      { operators.add(new Forall($iteratorChain.ic, $condition.cnd)); }
+    | 'exists' '(' iteratorChain[$enableIgnore] '|' condition ')'
+      { operators.add(new Exists($iteratorChain.ic, $condition.cnd)); }
     | (
          '(' exprContent[$enableIgnore, $operators] ')'
        | procedure                   { operators.add(new ProcedureConstructor($procedure.pd)); }

@@ -2,7 +2,6 @@ package org.randoom.setlx.operators;
 
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.operatorUtilities.OperatorExpression;
-import org.randoom.setlx.operatorUtilities.OperatorExpression.OptimizerData;
 import org.randoom.setlx.operatorUtilities.Stack;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
@@ -12,51 +11,35 @@ import org.randoom.setlx.utilities.State;
 import java.util.List;
 
 /**
- * Operator that evaluates conjunction and puts the result on the stack.
+ * Operator that quotes an expression.
  */
-public class Conjunction extends AUnaryPostfixOperator {
+public class Quote extends AZeroOperator {
     private final OperatorExpression argument;
 
     /**
-     * Create a new Conjunction operator.
+     * Create a new Quote operator.
      *
      * @param argument Expression to evaluate lazily.
      */
-    public Conjunction(OperatorExpression argument) {
+    public Quote(OperatorExpression argument) {
         this.argument = unify(argument);
     }
 
     @Override
-    public OptimizerData collectVariablesAndOptimize(State state, List<String> boundVariables, List<String> unboundVariables, List<String> usedVariables, OptimizerData lhs) {
-        return new OptimizerData(
-                argument.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables)
-        );
-    }
-
-    @Override
-    public Value evaluate(State state, Stack<Value> values) throws SetlException {
-        return values.poll().conjunction(state, argument);
-    }
-
-    @Override
-    public void appendOperatorSign(State state, StringBuilder sb) {
-        sb.append(" && ");
-        argument.appendString(state, sb, 0);
-    }
-
-    @Override
-    public boolean isLeftAssociative() {
+    public boolean collectVariablesAndOptimize(State state, List<String> boundVariables, List<String> unboundVariables, List<String> usedVariables) {
+        argument.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
         return true;
     }
 
     @Override
-    public boolean isRightAssociative() {
-        return false;
+    public Value evaluate(State state, Stack<Value> values) throws SetlException {
+        return argument.toTerm(state);
     }
 
     @Override
-    public int precedence() {
-        return 1400;
+    public void appendOperatorSign(State state, StringBuilder sb) {
+        sb.append("@");
+        argument.appendString(state, sb, 0);
     }
 
     @Override
@@ -65,14 +48,24 @@ public class Conjunction extends AUnaryPostfixOperator {
         return term;
     }
 
-    private final static long COMPARE_TO_ORDER_CONSTANT = generateCompareToOrderConstant(Conjunction.class);
+    @Override
+    public boolean isRightAssociative() {
+        return true;
+    }
+
+    @Override
+    public int precedence() {
+        return 1900;
+    }
+
+    private final static long COMPARE_TO_ORDER_CONSTANT = generateCompareToOrderConstant(Quote.class);
 
     @Override
     public int compareTo(CodeFragment other) {
         if (this == other) {
             return 0;
-        } else if (other.getClass() == Conjunction.class) {
-            return argument.compareTo(((Conjunction) other).argument);
+        } else if (other.getClass() == Quote.class) {
+            return argument.compareTo(((Quote) other).argument);
         } else {
             return (this.compareToOrdering() < other.compareToOrdering())? -1 : 1;
         }
@@ -87,8 +80,8 @@ public class Conjunction extends AUnaryPostfixOperator {
     public boolean equals(Object obj) {
         if (this == obj) {
             return true;
-        } else if (obj.getClass() == Conjunction.class) {
-            return argument.equals(((Conjunction) obj).argument);
+        } else if (obj.getClass() == Quote.class) {
+            return argument.equals(((Quote) obj).argument);
         }
         return false;
     }

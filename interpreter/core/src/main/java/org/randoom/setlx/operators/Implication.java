@@ -12,17 +12,17 @@ import org.randoom.setlx.utilities.State;
 import java.util.List;
 
 /**
- * Operator that evaluates conjunction and puts the result on the stack.
+ * Operator that evaluates implication and puts the result on the stack.
  */
-public class Conjunction extends AUnaryPostfixOperator {
+public class Implication extends AUnaryPostfixOperator {
     private final OperatorExpression argument;
 
     /**
-     * Create a new Conjunction operator.
+     * Create a new Implication operator.
      *
      * @param argument Expression to evaluate lazily.
      */
-    public Conjunction(OperatorExpression argument) {
+    public Implication(OperatorExpression argument) {
         this.argument = unify(argument);
     }
 
@@ -35,28 +35,28 @@ public class Conjunction extends AUnaryPostfixOperator {
 
     @Override
     public Value evaluate(State state, Stack<Value> values) throws SetlException {
-        return values.poll().conjunction(state, argument);
+        return values.poll().disjunction(state, argument);
     }
 
     @Override
     public void appendOperatorSign(State state, StringBuilder sb) {
-        sb.append(" && ");
+        sb.append(" => ");
         argument.appendString(state, sb, 0);
     }
 
     @Override
     public boolean isLeftAssociative() {
-        return true;
-    }
-
-    @Override
-    public boolean isRightAssociative() {
         return false;
     }
 
     @Override
+    public boolean isRightAssociative() {
+        return true;
+    }
+
+    @Override
     public int precedence() {
-        return 1400;
+        return 1200;
     }
 
     @Override
@@ -65,14 +65,14 @@ public class Conjunction extends AUnaryPostfixOperator {
         return term;
     }
 
-    private final static long COMPARE_TO_ORDER_CONSTANT = generateCompareToOrderConstant(Conjunction.class);
+    private final static long COMPARE_TO_ORDER_CONSTANT = generateCompareToOrderConstant(Implication.class);
 
     @Override
     public int compareTo(CodeFragment other) {
         if (this == other) {
             return 0;
-        } else if (other.getClass() == Conjunction.class) {
-            return argument.compareTo(((Conjunction) other).argument);
+        } else if (other.getClass() == Implication.class) {
+            return argument.compareTo(((Implication) other).argument);
         } else {
             return (this.compareToOrdering() < other.compareToOrdering())? -1 : 1;
         }
@@ -87,8 +87,8 @@ public class Conjunction extends AUnaryPostfixOperator {
     public boolean equals(Object obj) {
         if (this == obj) {
             return true;
-        } else if (obj.getClass() == Conjunction.class) {
-            return argument.equals(((Conjunction) obj).argument);
+        } else if (obj.getClass() == Implication.class) {
+            return argument.equals(((Implication) obj).argument);
         }
         return false;
     }

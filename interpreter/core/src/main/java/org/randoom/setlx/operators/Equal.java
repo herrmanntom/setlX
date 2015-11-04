@@ -9,6 +9,11 @@ import org.randoom.setlx.utilities.State;
  * Operator that checks if two values on the stack are equal.
  */
 public class Equal extends ABinaryInfixOperator {
+    /** Singleton **/
+    public static final Equal E = new Equal();
+
+    private Equal() {}
+
     @Override
     public Value evaluate(State state, Stack<Value> values) throws SetlException {
         Value rhs = values.poll();

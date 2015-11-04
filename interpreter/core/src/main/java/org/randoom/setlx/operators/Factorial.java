@@ -10,6 +10,10 @@ import org.randoom.setlx.utilities.State;
  * Operator that computes the factorial and puts the result on the stack.
  */
 public class Factorial extends AUnaryPostfixOperator {
+    /** Singleton **/
+    public static final Factorial F = new Factorial();
+
+    private Factorial() {}
 
     @Override
     public Value evaluate(State state, Stack<Value> values) throws SetlException {

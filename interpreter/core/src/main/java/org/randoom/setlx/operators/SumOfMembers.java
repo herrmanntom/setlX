@@ -11,6 +11,11 @@ import org.randoom.setlx.utilities.State;
  * Operator that computes the sum of the members of the next value from the stack.
  */
 public class SumOfMembers extends AUnaryPrefixOperator {
+    /** Singleton **/
+    public static final SumOfMembers SOM = new SumOfMembers();
+
+    private SumOfMembers() {}
+
 
     @Override
     public Value evaluate(State state, Stack<Value> values) throws SetlException {

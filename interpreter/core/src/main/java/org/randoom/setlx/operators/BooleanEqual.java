@@ -2,7 +2,6 @@ package org.randoom.setlx.operators;
 
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.operatorUtilities.Stack;
-import org.randoom.setlx.types.SetlBoolean;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.State;
 
@@ -10,6 +9,11 @@ import org.randoom.setlx.utilities.State;
  * Operator that checks if two values on the stack are equal.
  */
 public class BooleanEqual extends ABinaryInfixOperator {
+    /** Singleton **/
+    public static final BooleanEqual BE = new BooleanEqual();
+
+    private BooleanEqual() {}
+
     @Override
     public Value evaluate(State state, Stack<Value> values) throws SetlException {
         Value rhs = values.poll();

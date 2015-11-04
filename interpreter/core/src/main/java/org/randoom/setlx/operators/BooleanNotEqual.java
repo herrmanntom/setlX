@@ -9,6 +9,11 @@ import org.randoom.setlx.utilities.State;
  * Operator that checks if two values on the stack are not equal.
  */
 public class BooleanNotEqual extends ABinaryInfixOperator {
+    /** Singleton **/
+    public static final BooleanNotEqual BNE = new BooleanNotEqual();
+
+    private BooleanNotEqual() {}
+
     @Override
     public Value evaluate(State state, Stack<Value> values) throws SetlException {
         Value rhs = values.poll();

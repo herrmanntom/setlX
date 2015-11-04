@@ -9,6 +9,11 @@ import org.randoom.setlx.utilities.State;
  * Operator that checks if the second values on the stack is less then the first.
  */
 public class LessThan extends ABinaryInfixOperator {
+    /** Singleton **/
+    public static final LessThan LT = new LessThan();
+
+    private LessThan() {}
+
     @Override
     public Value evaluate(State state, Stack<Value> values) throws SetlException {
         Value rhs = values.poll();

@@ -9,6 +9,11 @@ import org.randoom.setlx.utilities.State;
  * Operator that computes the quotient of two values on the stack.
  */
 public class Quotient extends ABinaryInfixOperator {
+    /** Singleton **/
+    public static final Quotient Q = new Quotient();
+
+    private Quotient() {}
+
     @Override
     public Value evaluate(State state, Stack<Value> values) throws SetlException {
         Value rhs = values.poll();

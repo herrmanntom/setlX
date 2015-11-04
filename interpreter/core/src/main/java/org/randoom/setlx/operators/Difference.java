@@ -9,6 +9,11 @@ import org.randoom.setlx.utilities.State;
  * Operator that computes the difference of two values on the stack.
  */
 public class Difference extends ABinaryInfixOperator {
+    /** Singleton **/
+    public static final Difference D = new Difference();
+
+    private Difference() {}
+
     @Override
     public Value evaluate(State state, Stack<Value> values) throws SetlException {
         Value rhs = values.poll();

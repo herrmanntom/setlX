@@ -9,6 +9,11 @@ import org.randoom.setlx.utilities.State;
  * Operator that computes the sum of two values on the stack.
  */
 public class Sum extends ABinaryInfixOperator {
+    /** Singleton **/
+    public static final Sum S = new Sum();
+
+    private Sum() {}
+
     @Override
     public Value evaluate(State state, Stack<Value> values) throws SetlException {
         Value rhs = values.poll();

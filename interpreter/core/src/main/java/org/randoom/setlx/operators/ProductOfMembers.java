@@ -11,6 +11,10 @@ import org.randoom.setlx.utilities.State;
  * Operator that computes the product of the members of the next value from the stack.
  */
 public class ProductOfMembers extends AUnaryPrefixOperator {
+    /** Singleton **/
+    public static final ProductOfMembers POM = new ProductOfMembers();
+
+    private ProductOfMembers() {}
 
     @Override
     public Value evaluate(State state, Stack<Value> values) throws SetlException {

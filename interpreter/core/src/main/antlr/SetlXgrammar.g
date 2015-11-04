@@ -175,7 +175,6 @@ assignableVariable returns [AssignableVariable v]
     : ID { $v = new AssignableVariable($ID.text); }
     ;
 
-
 variable returns [Variable v]
     : ID { $v = new Variable($ID.text); }
     ;
@@ -258,8 +257,8 @@ exprContent [boolean enableIgnore, FragmentList<AOperator> operators]
     : lambdaProcedure          { operators.add(new ProcedureConstructor($lambdaProcedure.lp)); }
     | implication[$enableIgnore, $operators]
       (
-        '<==>' implication[$enableIgnore, $operators] { operators.add(new BooleanEqual   ()); }
-      | '<!=>' implication[$enableIgnore, $operators] { operators.add(new BooleanNotEqual()); }
+        '<==>' implication[$enableIgnore, $operators] { operators.add(BooleanEqual.BE);     }
+      | '<!=>' implication[$enableIgnore, $operators] { operators.add(BooleanNotEqual.BNE); }
       )?
     ;
 
@@ -311,10 +310,10 @@ conjunction [boolean enableIgnore, FragmentList<AOperator> operators]
 comparison [boolean enableIgnore, FragmentList<AOperator> operators]
     : sum[$enableIgnore, $operators]
       (
-         '=='    sum[$enableIgnore, $operators] { operators.add(new Equal()       ); }
-       | '!='    sum[$enableIgnore, $operators] { operators.add(new NotEqual()    ); }
-       | '<'     sum[$enableIgnore, $operators] { operators.add(new LessThan()    ); }
-       | '<='    sum[$enableIgnore, $operators] {  operators.add(new LessOrEqual()); }
+         '=='    sum[$enableIgnore, $operators] { operators.add(Equal.E        ); }
+       | '!='    sum[$enableIgnore, $operators] { operators.add(NotEqual.NE    ); }
+       | '<'     sum[$enableIgnore, $operators] { operators.add(LessThan.LT    ); }
+       | '<='    sum[$enableIgnore, $operators] { operators.add(LessOrEqual.LOE); }
 //       | '>'     sum[$enableIgnore, $operators] { $comp = new GreaterThan   ($comp, $s2.s); }
 //       | '>='    sum[$enableIgnore, $operators] { $comp = new GreaterOrEqual($comp, $s2.s); }
 //       | 'in'    sum[$enableIgnore, $operators] { $comp = new In            ($comp, $s2.s); }
@@ -325,16 +324,16 @@ comparison [boolean enableIgnore, FragmentList<AOperator> operators]
 sum [boolean enableIgnore, FragmentList<AOperator> operators]
     : product[$enableIgnore, $operators]
       (
-          '+' product[$enableIgnore, $operators] { operators.add(new Sum());        }
-        | '-' product[$enableIgnore, $operators] { operators.add(new Difference()); }
+          '+' product[$enableIgnore, $operators] { operators.add(Sum.S);        }
+        | '-' product[$enableIgnore, $operators] { operators.add(Difference.D); }
       )*
     ;
 
 product [boolean enableIgnore, FragmentList<AOperator> operators]
     : reduce[$enableIgnore, $operators]
       (
-         '*'  reduce[$enableIgnore, $operators] { operators.add(new Product());          }
-       | '/'  reduce[$enableIgnore, $operators] { operators.add(new Quotient());         }
+         '*'  reduce[$enableIgnore, $operators] { operators.add(Product.P);           }
+       | '/'  reduce[$enableIgnore, $operators] { operators.add(Quotient.Q);          }
        | '\\' reduce[$enableIgnore, $operators] { operators.add(IntegerDivision.ID);  }
        | '%'  reduce[$enableIgnore, $operators] { operators.add(Modulo.M);            }
        | '><' reduce[$enableIgnore, $operators] { operators.add(CartesianProduct.CP); }
@@ -344,25 +343,25 @@ product [boolean enableIgnore, FragmentList<AOperator> operators]
 reduce [boolean enableIgnore, FragmentList<AOperator> operators]
     : p1 = prefixOperation[$enableIgnore, false, $operators]
       (
-         '+/' prefixOperation[$enableIgnore, false, $operators] { operators.add(new SumOfMembersBinary()    ); }
-       | '*/' prefixOperation[$enableIgnore, false, $operators] { operators.add(new ProductOfMembersBinary()); }
+         '+/' prefixOperation[$enableIgnore, false, $operators] { operators.add(SumOfMembersBinary.SOMB    ); }
+       | '*/' prefixOperation[$enableIgnore, false, $operators] { operators.add(ProductOfMembersBinary.POMB); }
       )*
     ;
 
 prefixOperation [boolean enableIgnore, boolean quoted, FragmentList<AOperator> operators]
     : factor[$enableIgnore, $quoted, $operators]
       (
-        '**' prefixOperation[$enableIgnore, $quoted, $operators] { operators.add(Power.P);                }
+        '**' prefixOperation[$enableIgnore, $quoted, $operators] { operators.add(Power.P);              }
       )?
-    | '+/' prefixOperation[$enableIgnore, $quoted, $operators]   { operators.add(new SumOfMembers());     }
-    | '*/' prefixOperation[$enableIgnore, $quoted, $operators]   { operators.add(new ProductOfMembers()); }
-    | '#'  prefixOperation[$enableIgnore, $quoted, $operators]   { operators.add(new Cardinality());      }
-    | '-'  prefixOperation[$enableIgnore, $quoted, $operators]   { operators.add(new Minus());            }
+    | '+/' prefixOperation[$enableIgnore, $quoted, $operators]   { operators.add(SumOfMembers.SOM);     }
+    | '*/' prefixOperation[$enableIgnore, $quoted, $operators]   { operators.add(ProductOfMembers.POM); }
+    | '#'  prefixOperation[$enableIgnore, $quoted, $operators]   { operators.add(Cardinality.C);        }
+    | '-'  prefixOperation[$enableIgnore, $quoted, $operators]   { operators.add(Minus.M);              }
 //    | '@'  po2 = prefixOperation[$enableIgnore, true]    { $po = new Quote           ($po2.po); }
     ;
 
 factor [boolean enableIgnore, boolean quoted, FragmentList<AOperator> operators]
-    : '!' factor[$enableIgnore, $quoted, $operators] { operators.add(new Not());              }
+    : '!' factor[$enableIgnore, $quoted, $operators] { operators.add(Not.N); }
     | TERM '(' termArguments ')'
       { operators.add(new TermConstructor($TERM.text, $termArguments.args)); }
 //    | 'forall' '(' iteratorChain[$enableIgnore] '|' condition ')'
@@ -372,18 +371,18 @@ factor [boolean enableIgnore, boolean quoted, FragmentList<AOperator> operators]
     | (
          '(' exprContent[$enableIgnore, $operators] ')'
        | procedure                   { operators.add(new ProcedureConstructor($procedure.pd)); }
-       | variable                    { operators.add($variable.v); }
+       | variable                    { operators.add($variable.v);                             }
       )
       (
-         '.' variable                { operators.add(new MemberAccess($variable.v));         }
-       | call[$enableIgnore]         { operators.add($call.c);                               }
+         '.' variable                { operators.add(new MemberAccess($variable.v));           }
+       | call[$enableIgnore]         { operators.add($call.c);                                 }
       )*
       (
-        '!'                          { operators.add(new Factorial());                       }
+        '!'                          { operators.add(Factorial.F);                             }
       )?
-    | value[$enableIgnore, $quoted]  { operators.add($value.v); }
+    | value[$enableIgnore, $quoted]  { operators.add($value.v);                                }
       (
-        '!'                          { operators.add(new Factorial());                       }
+        '!'                          { operators.add(Factorial.F);                             }
       )?
     ;
 
@@ -462,18 +461,18 @@ collectionAccessParams [boolean enableIgnore] returns [FragmentList<OperatorExpr
     @init {
         $params = new FragmentList<OperatorExpression>();
     }
-    : e1 = expr[$enableIgnore]      { $params.add($e1.ex);                                                  }
+    : e1 = expr[$enableIgnore]      { $params.add($e1.ex);                             }
       (
-         RANGE_SIGN                 { $params.add(new OperatorExpression(CollectionAccessRangeDummy.CARD)); }
+         RANGE_SIGN                 { $params.add(CollectionAccessRangeDummy.CARD_OE); }
          (
-           e2 = expr[$enableIgnore] { $params.add($e2.ex);                                                  }
+           e2 = expr[$enableIgnore] { $params.add($e2.ex);                             }
          )?
        | (
-           ',' e3 = expr[false]     { $params.add($e3.ex);                                                  }
+           ',' e3 = expr[false]     { $params.add($e3.ex);                             }
          )+
       )?
-    | RANGE_SIGN                    { $params.add(new OperatorExpression(CollectionAccessRangeDummy.CARD)); }
-      expr[$enableIgnore]           { $params.add($expr.ex);                                                }
+    | RANGE_SIGN                    { $params.add(CollectionAccessRangeDummy.CARD_OE); }
+      expr[$enableIgnore]           { $params.add($expr.ex);                           }
     ;
 
 value [boolean enableIgnore, boolean quoted] returns [AZeroOperator v]

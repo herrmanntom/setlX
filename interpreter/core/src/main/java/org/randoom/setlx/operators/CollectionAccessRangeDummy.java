@@ -1,6 +1,7 @@
 package org.randoom.setlx.operators;
 
 import org.randoom.setlx.exceptions.UndefinedOperationException;
+import org.randoom.setlx.operatorUtilities.OperatorExpression;
 import org.randoom.setlx.operatorUtilities.Stack;
 import org.randoom.setlx.types.RangeDummy;
 import org.randoom.setlx.types.Value;
@@ -24,7 +25,8 @@ public class CollectionAccessRangeDummy extends AZeroOperator {
     /**
      * Singleton VariableIgnore expression.
      */
-    public  final static CollectionAccessRangeDummy CARD = new CollectionAccessRangeDummy();
+    public static final CollectionAccessRangeDummy CARD = new CollectionAccessRangeDummy();
+    public static final OperatorExpression CARD_OE = new OperatorExpression(CARD);
 
     private CollectionAccessRangeDummy() { }
 

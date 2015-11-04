@@ -10,6 +10,10 @@ import org.randoom.setlx.utilities.State;
  * Operator that inverts one value on the stack.
  */
 public class Not extends AUnaryPrefixOperator {
+    /** Singleton **/
+    public static final Not N = new Not();
+
+    private Not() {}
 
     @Override
     public Value evaluate(State state, Stack<Value> values) throws SetlException {

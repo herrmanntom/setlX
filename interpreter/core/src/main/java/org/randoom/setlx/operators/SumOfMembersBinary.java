@@ -9,6 +9,11 @@ import org.randoom.setlx.utilities.State;
  * Operator that computes the sum of the members of the next value from the stack, using the second value as neutral element.
  */
 public class SumOfMembersBinary extends ABinaryInfixOperator {
+    /** Singleton **/
+    public static final SumOfMembersBinary SOMB = new SumOfMembersBinary();
+
+    private SumOfMembersBinary() {}
+
     @Override
     public Value evaluate(State state, Stack<Value> values) throws SetlException {
         Value rhs = values.poll();

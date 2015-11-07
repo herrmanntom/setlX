@@ -69,10 +69,10 @@ public class ExplicitList extends CollectionBuilder {
 
     @Override
     public void appendString(final State state, final StringBuilder sb) {
-        final Iterator<OperatorExpression> iter = list.iterator();
-        while (iter.hasNext()) {
-            iter.next().appendString(state, sb, 0);
-            if (iter.hasNext()) {
+        final Iterator<OperatorExpression> iterator = list.iterator();
+        while (iterator.hasNext()) {
+            iterator.next().appendString(state, sb, 0);
+            if (iterator.hasNext()) {
                 sb.append(", ");
             }
         }

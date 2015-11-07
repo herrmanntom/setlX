@@ -135,7 +135,6 @@ public class AssignableMember extends AAssignableExpression {
     @Override
     public int computeHashCode() {
         int hash = ((int) COMPARE_TO_ORDER_CONSTANT) + lhs.hashCode();
-        hash = hash * 31 + memberID.hashCode();
-        return hash;
+        return hash * 31 + memberID.hashCode();
     }
 }

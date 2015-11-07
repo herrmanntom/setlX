@@ -28,7 +28,7 @@ public class OperatorExpressionTest {
         FragmentList<AOperator> operators = new FragmentList<AOperator>();
         addNumber(operators, 10);
         addNumber(operators, 20);
-        operators.add(new Sum());
+        operators.add(Sum.S);
 
         // when
         EvaluationResult result = evaluate(operators);
@@ -46,8 +46,8 @@ public class OperatorExpressionTest {
         addNumber(operators, 10);
         addNumber(operators, 20);
         addNumber(operators, 2);
-        operators.add(new Product());
-        operators.add(new Sum());
+        operators.add(Product.P);
+        operators.add(Sum.S);
 
         // when
         EvaluationResult result = evaluate(operators);
@@ -64,9 +64,9 @@ public class OperatorExpressionTest {
         FragmentList<AOperator> operators = new FragmentList<AOperator>();
         addNumber(operators, 10);
         addNumber(operators, 2);
-        operators.add(new Product());
+        operators.add(Product.P);
         addNumber(operators, 20);
-        operators.add(new Sum());
+        operators.add(Sum.S);
 
         // when
         EvaluationResult result = evaluate(operators);
@@ -83,10 +83,10 @@ public class OperatorExpressionTest {
         FragmentList<AOperator> operators = new FragmentList<AOperator>();
         addNumber(operators, 10);
         addNumber(operators, 2);
-        operators.add(new Minus());
-        operators.add(new Product());
+        operators.add(Minus.M);
+        operators.add(Product.P);
         addNumber(operators, 20);
-        operators.add(new Sum());
+        operators.add(Sum.S);
 
         // when
         EvaluationResult result = evaluate(operators);
@@ -103,9 +103,9 @@ public class OperatorExpressionTest {
         FragmentList<AOperator> operators = new FragmentList<AOperator>();
         addNumber(operators, 10);
         addNumber(operators, 2);
-        operators.add(new Sum());
+        operators.add(Sum.S);
         addNumber(operators, 20);
-        operators.add(new Product());
+        operators.add(Product.P);
 
         // when
         EvaluationResult result = evaluate(operators);
@@ -122,9 +122,9 @@ public class OperatorExpressionTest {
         FragmentList<AOperator> operators = new FragmentList<AOperator>();
         addNumber(operators, 10);
         addNumber(operators, 5);
-        operators.add(new Difference());
+        operators.add(Difference.D);
         addNumber(operators, 3);
-        operators.add(new Sum());
+        operators.add(Sum.S);
 
         // when
         EvaluationResult result = evaluate(operators);
@@ -142,8 +142,8 @@ public class OperatorExpressionTest {
         addNumber(operators, 10);
         addNumber(operators, 5);
         addNumber(operators, 3);
-        operators.add(new Sum());
-        operators.add(new Difference());
+        operators.add(Sum.S);
+        operators.add(Difference.D);
 
         // when
         EvaluationResult result = evaluate(operators);
@@ -160,9 +160,9 @@ public class OperatorExpressionTest {
         FragmentList<AOperator> operators = new FragmentList<AOperator>();
         addNumber(operators, 1);
         addNumber(operators, 5);
-        operators.add(new Difference());
+        operators.add(Difference.D);
         addNumber(operators, 3);
-        operators.add(new Difference());
+        operators.add(Difference.D);
 
         // when
         EvaluationResult result = evaluate(operators);
@@ -180,8 +180,8 @@ public class OperatorExpressionTest {
         addNumber(operators, 1);
         addNumber(operators, 5);
         addNumber(operators, 3);
-        operators.add(new Difference());
-        operators.add(new Difference());
+        operators.add(Difference.D);
+        operators.add(Difference.D);
 
         // when
         EvaluationResult result = evaluate(operators);
@@ -198,23 +198,23 @@ public class OperatorExpressionTest {
         FragmentList<AOperator> operatorsA = new FragmentList<AOperator>();
         addNumber(operatorsA, 10);
         addNumber(operatorsA, 20);
-        operatorsA.add(new Sum());
+        operatorsA.add(Sum.S);
         OperatorExpression expressionA = new OperatorExpression(operatorsA);
 
         FragmentList<AOperator> operatorsB = new FragmentList<AOperator>();
         addNumber(operatorsB, 10);
         addNumber(operatorsB, 5);
-        operatorsB.add(new Difference());
+        operatorsB.add(Difference.D);
         addNumber(operatorsB, 3);
-        operatorsB.add(new Sum());
+        operatorsB.add(Sum.S);
         OperatorExpression expressionB = new OperatorExpression(operatorsB);
 
         FragmentList<AOperator> operatorsC = new FragmentList<AOperator>();
         addNumber(operatorsC, 10);
         addNumber(operatorsC, 2);
-        operatorsC.add(new Sum());
+        operatorsC.add(Sum.S);
         addNumber(operatorsC, 20);
-        operatorsC.add(new Product());
+        operatorsC.add(Product.P);
         OperatorExpression expressionC = new OperatorExpression(operatorsC);
 
         // when
@@ -289,17 +289,17 @@ public class OperatorExpressionTest {
         FragmentList<AOperator> operatorsA = new FragmentList<AOperator>();
         addNumber(operatorsA, 10);
         addNumber(operatorsA, 5);
-        operatorsA.add(new Difference());
+        operatorsA.add(Difference.D);
         addNumber(operatorsA, 3);
-        operatorsA.add(new Sum());
+        operatorsA.add(Sum.S);
         OperatorExpression expressionA = new OperatorExpression(operatorsA);
 
         FragmentList<AOperator> operatorsB = new FragmentList<AOperator>();
         addNumber(operatorsB, 10);
         addNumber(operatorsB, 5);
-        operatorsB.add(new Difference());
+        operatorsB.add(Difference.D);
         addNumber(operatorsB, 3);
-        operatorsB.add(new Sum());
+        operatorsB.add(Sum.S);
         OperatorExpression expressionB = new OperatorExpression(operatorsB);
 
         // when

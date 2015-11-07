@@ -222,29 +222,24 @@ assignmentDirectContent [FragmentList<AOperator> operators] returns [OperatorExp
     ;
 
 assignable [boolean enableIgnore] returns [AAssignableExpression a]
-    : assignableVariable           { $a = $assignableVariable.v;                              }
+    : assignableVariable         { $a = $assignableVariable.v;                               }
       (
-         '.' variable              { $a = new AssignableMember($a, $variable.v);              }
-//       | '['                     { exprs = new ArrayList<Expr>();                           }
-//         e1 = expr[false]        { exprs.add($e1.ex);                                       }
-//         (
-//           ',' e2 = expr[false]  { exprs.add($e2.ex);                                       }
-//         )*
-//         ']'                     { $a = new CollectionAccess($a, exprs);                    }
+         '.' variable            { $a = new AssignableMember($a, $variable.v);               }
+       | '[' exprList[false] ']' { $a = new AssignableCollectionAccess($a, $exprList.exprs); }
       )*
-//    | '[' explicitAssignList ']' { $a = new AssignListConstructor($explicitAssignList.eil); }
-//    | {$enableIgnore}? '_'       { $a = VariableIgnore.VI;                                  }
+    | '[' assignmentList ']'     { $a = new AssignableList($assignmentList.al);              }
+    | {$enableIgnore}? '_'       { $a = AssignableIgnore.AI;                                 }
     ;
 
-//explicitAssignList returns [ExplicitList eil]
-//    @init {
-//        List<Expr> exprs = new ArrayList<Expr>();
-//    }
-//    : a1 = assignable[true]       { exprs.add($a1.a);               }
-//      (
-//        ',' a2 = assignable[true] { exprs.add($a2.a);               }
-//      )*                          { $eil = new ExplicitList(exprs); }
-//    ;
+assignmentList returns [FragmentList<AAssignableExpression> al]
+    @init {
+        $al = new FragmentList<AAssignableExpression>();
+    }
+    : a1 = assignable[true]       { $al.add($a1.a); }
+      (
+        ',' a2 = assignable[true] { $al.add($a2.a); }
+      )*
+    ;
 
 expr [boolean enableIgnore] returns [OperatorExpression ex]
     @init {

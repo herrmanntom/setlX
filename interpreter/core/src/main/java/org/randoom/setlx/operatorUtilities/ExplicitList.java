@@ -1,6 +1,8 @@
 package org.randoom.setlx.operatorUtilities;
 
+import org.randoom.setlx.assignments.AAssignableExpression;
 import org.randoom.setlx.exceptions.SetlException;
+import org.randoom.setlx.exceptions.UndefinedOperationException;
 import org.randoom.setlx.types.CollectionValue;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.CodeFragment;
@@ -33,6 +35,15 @@ public class ExplicitList extends CollectionBuilder {
      */
     public ExplicitList(final FragmentList<OperatorExpression> exprList) {
         this.list = unify(exprList);
+    }
+
+    @Override
+    public FragmentList<AAssignableExpression> convertToAssignableExpressions() throws UndefinedOperationException {
+        FragmentList<AAssignableExpression> convertedFragments = new FragmentList<AAssignableExpression>();
+        for (OperatorExpression operatorExpression : list) {
+            convertedFragments.add(operatorExpression.convertToAssignable());
+        }
+        return unify(convertedFragments);
     }
 
     @Override

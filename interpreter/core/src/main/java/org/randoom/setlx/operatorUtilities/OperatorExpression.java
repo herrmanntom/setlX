@@ -161,10 +161,11 @@ public class OperatorExpression extends Expression {
      * @throws UndefinedOperationException if expression can not be converted.
      */
     public AAssignableExpression convertToAssignable() throws UndefinedOperationException {
-        if (numberOfOperators != 1) {
-            throw new UndefinedOperationException("Expression cannot be converted");
+        AAssignableExpression assignable = null;
+        for (AOperator operator : operators) {
+            assignable = unify(operator.convertToAssignableExpression(assignable));
         }
-        return operators.get(0).convertToAssignableExpression();
+        return assignable;
     }
 
     /* string operations */

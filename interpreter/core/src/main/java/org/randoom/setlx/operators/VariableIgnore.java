@@ -1,5 +1,7 @@
 package org.randoom.setlx.operators;
 
+import org.randoom.setlx.assignments.AAssignableExpression;
+import org.randoom.setlx.assignments.AssignableIgnore;
 import org.randoom.setlx.exceptions.UndefinedOperationException;
 import org.randoom.setlx.operatorUtilities.Stack;
 import org.randoom.setlx.types.IgnoreDummy;
@@ -33,6 +35,15 @@ public class VariableIgnore extends AZeroOperator {
     public  final static VariableIgnore VI = new VariableIgnore();
 
     private VariableIgnore() { }
+
+    @Override
+    public AAssignableExpression convertToAssignableExpression(AAssignableExpression assignable) throws UndefinedOperationException {
+        if (assignable == null) {
+            return AssignableIgnore.AI;
+        } else {
+            throw new UndefinedOperationException("Expression cannot be converted");
+        }
+    }
 
     @Override
     public boolean collectVariablesAndOptimize(State state, List<String> boundVariables, List<String> unboundVariables, List<String> usedVariables) {

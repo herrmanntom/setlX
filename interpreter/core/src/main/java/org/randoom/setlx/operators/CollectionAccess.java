@@ -1,6 +1,10 @@
 package org.randoom.setlx.operators;
 
+import org.randoom.setlx.assignments.AAssignableExpression;
+import org.randoom.setlx.assignments.AssignableCollectionAccess;
+import org.randoom.setlx.assignments.AssignableMember;
 import org.randoom.setlx.exceptions.SetlException;
+import org.randoom.setlx.exceptions.UndefinedOperationException;
 import org.randoom.setlx.exceptions.UnknownFunctionException;
 import org.randoom.setlx.operatorUtilities.OperatorExpression;
 import org.randoom.setlx.operatorUtilities.OperatorExpression.OptimizerData;
@@ -32,6 +36,15 @@ public class CollectionAccess extends AUnaryPostfixOperator {
     public CollectionAccess(FragmentList<OperatorExpression> arguments) {
         this.arguments             = unify(arguments);
         this.argumentsContainRange = this.arguments.contains(new OperatorExpression(CollectionAccessRangeDummy.CARD));
+    }
+
+    @Override
+    public AAssignableExpression convertToAssignableExpression(AAssignableExpression assignable) throws UndefinedOperationException {
+        if (assignable != null && ! argumentsContainRange) {
+            return new AssignableCollectionAccess(assignable, arguments);
+        } else {
+            throw new UndefinedOperationException("Expression cannot be converted");
+        }
     }
 
     @Override

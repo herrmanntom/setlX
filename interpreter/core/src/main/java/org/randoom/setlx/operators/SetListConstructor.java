@@ -1,7 +1,10 @@
 package org.randoom.setlx.operators;
 
+import org.randoom.setlx.assignments.AAssignableExpression;
+import org.randoom.setlx.assignments.AssignableList;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.TermConversionException;
+import org.randoom.setlx.exceptions.UndefinedOperationException;
 import org.randoom.setlx.operatorUtilities.CollectionBuilder;
 import org.randoom.setlx.operatorUtilities.Stack;
 import org.randoom.setlx.types.CollectionValue;
@@ -47,11 +50,16 @@ public class SetListConstructor extends AZeroOperator {
     }
 
     @Override
-    public boolean collectVariablesAndOptimize(State state, List<String> boundVariables, List<String> unboundVariables, List<String> usedVariables) {
-        if (builder != null) {
-            return builder.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
+    public AAssignableExpression convertToAssignableExpression(AAssignableExpression assignable) throws UndefinedOperationException {
+        if (assignable == null && type == CollectionType.LIST && builder != null) {
+            return new AssignableList(builder.convertToAssignableExpressions());
         }
-        return true;
+        throw new UndefinedOperationException("Expression cannot be converted");
+    }
+
+    @Override
+    public boolean collectVariablesAndOptimize(State state, List<String> boundVariables, List<String> unboundVariables, List<String> usedVariables) {
+        return builder == null || builder.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
     }
 
     @Override
@@ -62,7 +70,7 @@ public class SetListConstructor extends AZeroOperator {
                 builder.fillCollection(state, set);
             }
             return set;
-        } else /* if (mType == LIST) */ {
+        } else /* if (type == LIST) */ {
             final SetlList list = new SetlList();
             if (builder != null) {
                 builder.fillCollection(state, list);

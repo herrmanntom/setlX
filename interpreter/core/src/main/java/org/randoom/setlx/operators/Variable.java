@@ -1,6 +1,10 @@
 package org.randoom.setlx.operators;
 
+import org.randoom.setlx.assignments.AAssignableExpression;
+import org.randoom.setlx.assignments.AssignableIgnore;
+import org.randoom.setlx.assignments.AssignableVariable;
 import org.randoom.setlx.exceptions.SetlException;
+import org.randoom.setlx.exceptions.UndefinedOperationException;
 import org.randoom.setlx.operatorUtilities.Stack;
 import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.Term;
@@ -38,6 +42,15 @@ public class Variable extends AZeroOperator {
      */
     public Variable(final String id) {
         this.id = id;
+    }
+
+    @Override
+    public AAssignableExpression convertToAssignableExpression(AAssignableExpression assignable) throws UndefinedOperationException {
+        if (assignable == null) {
+            return new AssignableVariable(id);
+        } else {
+            throw new UndefinedOperationException("Expression cannot be converted");
+        }
     }
 
     /**

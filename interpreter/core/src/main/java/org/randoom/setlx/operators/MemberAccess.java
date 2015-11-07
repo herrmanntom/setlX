@@ -1,6 +1,9 @@
 package org.randoom.setlx.operators;
 
+import org.randoom.setlx.assignments.AAssignableExpression;
+import org.randoom.setlx.assignments.AssignableMember;
 import org.randoom.setlx.exceptions.SetlException;
+import org.randoom.setlx.exceptions.UndefinedOperationException;
 import org.randoom.setlx.operatorUtilities.Stack;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.CodeFragment;
@@ -20,6 +23,15 @@ public class MemberAccess extends AUnaryPostfixOperator {
      */
     public MemberAccess(final Variable variable) {
         this.id = variable.getId();
+    }
+
+    @Override
+    public AAssignableExpression convertToAssignableExpression(AAssignableExpression assignable) throws UndefinedOperationException {
+        if (assignable != null) {
+            return new AssignableMember(assignable, new Variable(id));
+        } else {
+            throw new UndefinedOperationException("Expression cannot be converted");
+        }
     }
 
     @Override

@@ -16,6 +16,17 @@ import java.util.List;
  */
 public abstract class AOperator extends ImmutableCodeFragment {
     /**
+     * Create an assignable expression from this operator.
+     *
+     * @return                             AssignableExpression.
+     * @throws UndefinedOperationException if operator can not be converted.
+     * @param assignable
+     */
+    public AAssignableExpression convertToAssignableExpression(AAssignableExpression assignable) throws UndefinedOperationException {
+        throw new UndefinedOperationException("Expression cannot be converted");
+    }
+
+    /**
      * Gather all bound and unbound variables in this operator and its input.
      *
      * @param state            Current state of the running setlX program.
@@ -102,15 +113,5 @@ public abstract class AOperator extends ImmutableCodeFragment {
     @Override
     public final Value toTerm(State state) throws SetlException {
         throw new IllegalStateException("Not implemented");
-    }
-
-    /**
-     * Create an assignable expression from this operator.
-     *
-     * @return                             AssignableExpression.
-     * @throws UndefinedOperationException if operator can not be converted.
-     */
-    public AAssignableExpression convertToAssignableExpression() throws UndefinedOperationException {
-        throw new UndefinedOperationException("Expression cannot be converted");
     }
 }

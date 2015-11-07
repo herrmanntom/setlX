@@ -29,20 +29,13 @@ import org.randoom.setlx.types.SetlObject;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
 
-import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-
 /**
  * Utility class to convert terms into their equivalent CodeFragment at runtime.
  */
 public class TermConverter {
-
-    private final static Set<String> STATEMENT_CHECKED = new HashSet<String>();
-    private final static Map<String, Method> STATEMENT_CONVERTERS = new HashMap<String, Method>();
+    private TermConverter() {
+        // no instantiation
+    }
 
     /**
      * Convert a term (or value) representing a setlX-Value into such a value.
@@ -99,49 +92,17 @@ public class TermConverter {
             final String fc   = term.getFunctionalCharacter();
             try {
                 if (fc.length() >= 3 && fc.charAt(0) == '^') { // all internally used terms start with ^
-                    Method  converter   = null;
                     if ( ! restrictToExpr) {
-                        synchronized (STATEMENT_CONVERTERS) {
-                            converter = STATEMENT_CONVERTERS.get(fc);
+                        Statement statement = Statement.createFromTerm(state, term, fc);
+                        if (statement != null) {
+                            return statement;
                         }
-                        // search via reflection, if method was not found in map
-                        if (converter == null && ! STATEMENT_CHECKED.contains(fc)) {
-                            // string used for method look-up
-                            final String    needle           = fc.substring(1, 2).toUpperCase(Locale.US) + fc.substring(2);
-                            // look it up in statement package
-                            final String    packageNameStmnt = Statement.class.getPackage().getName();
-                            // class which is searched
-                            Class<?> clAss;
-                            try {
-                                clAss     = Class.forName(packageNameStmnt + '.' + needle);
-                                converter = clAss.getMethod("termToStatement", State.class, Term.class);
+                    }
+                    OperatorExpression operatorExpression = OperatorExpression.createFromTerm(state, term, fc);
+                    if (operatorExpression != null) {
+                        return operatorExpression;
+                    }
 
-                                synchronized (STATEMENT_CONVERTERS) {
-                                    STATEMENT_CONVERTERS.put(fc, converter);
-                                }
-                            } catch (final Exception e1) {
-                                // look-up failed, nothing more to try
-                                converter   = null;
-                            }
-                            synchronized (STATEMENT_CHECKED) {
-                                STATEMENT_CHECKED.add(fc);
-                            }
-                        }
-                    }
-                    // invoke method found
-                    if (converter != null) {
-                        try {
-                            return (CodeFragment) converter.invoke(null, state, term);
-                        } catch (final Exception e) {
-                            //noinspection ConstantConditions
-                            if (e instanceof TermConversionException) {
-                                throw (TermConversionException) e;
-                            } else { // will never happen ;-)
-                                // because we know this method exists etc
-                                throw new TermConversionException("Impossible error...");
-                            }
-                        }
-                    }
                     // special cases
                     final Value specialValue = valueTermToValue(state, value);
 

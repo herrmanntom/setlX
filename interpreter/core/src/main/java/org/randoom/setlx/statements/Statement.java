@@ -3,12 +3,23 @@ package org.randoom.setlx.statements;
 import org.randoom.setlx.exceptions.AbortException;
 import org.randoom.setlx.exceptions.ExitException;
 import org.randoom.setlx.exceptions.SetlException;
-import org.randoom.setlx.utilities.*;
+import org.randoom.setlx.exceptions.TermConversionException;
+import org.randoom.setlx.types.Term;
+import org.randoom.setlx.utilities.ErrorHandlingRunnable;
+import org.randoom.setlx.utilities.ImmutableCodeFragment;
+import org.randoom.setlx.utilities.ReturnMessage;
+import org.randoom.setlx.utilities.State;
+import org.randoom.setlx.utilities.TermUtilities;
+
+import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Base class for all SetlX statement.
  */
 public abstract class Statement extends ImmutableCodeFragment {
+    private final static Map<String, Method> STATEMENT_CONVERTERS = new HashMap<String, Method>();
     /**
      * Code returned by executeWithErrorHandling().
      */
@@ -95,6 +106,53 @@ public abstract class Statement extends ImmutableCodeFragment {
             state.errWriteInternalError(e);
             return EXECUTE.ERROR;
         }
+    }
+
+    /**
+     * Create a Statement from a term representing a statement
+     *
+     * @param state                    Current state of the running setlX program.
+     * @param term                     Term to convert.
+     * @param functionalCharacter      Functional character of the term to convert.
+     * @return                         New Statement or null, if term does not represent a statement.
+     * @throws TermConversionException in case the term is malformed.
+     */
+    public static Statement createFromTerm(State state, Term term, String functionalCharacter) throws TermConversionException {
+        Method converter;
+        synchronized (STATEMENT_CONVERTERS) {
+            converter = STATEMENT_CONVERTERS.get(functionalCharacter);
+        }
+        // search via reflection, if method was not found in map
+        if (converter == null) {
+            Class<? extends Statement> statementClass = TermUtilities.getClassForTerm(Statement.class, functionalCharacter);
+
+            if (statementClass != null) {
+                try {
+                    converter = statementClass.getMethod("termToStatement", State.class, Term.class);
+
+                    synchronized (STATEMENT_CONVERTERS) {
+                        STATEMENT_CONVERTERS.put(functionalCharacter, converter);
+                    }
+                } catch (final Exception e1) {
+                    // look-up failed
+                }
+            }
+        }
+        // invoke method found
+        if (converter != null) {
+            try {
+                return unify((Statement) converter.invoke(null, state, term));
+            } catch (final Exception e) {
+                //noinspection ConstantConditions
+                if (e instanceof TermConversionException) {
+                    throw (TermConversionException) e;
+                } else { // will never happen ;-)
+                    // because we know this method exists etc
+                    throw new TermConversionException("Impossible error...");
+                }
+            }
+        }
+        return null;
     }
 
     /**

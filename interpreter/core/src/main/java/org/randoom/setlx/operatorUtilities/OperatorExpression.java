@@ -2,22 +2,32 @@ package org.randoom.setlx.operatorUtilities;
 
 import org.randoom.setlx.assignments.AAssignableExpression;
 import org.randoom.setlx.exceptions.SetlException;
+import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.exceptions.UndefinedOperationException;
 import org.randoom.setlx.operators.AOperator;
 import org.randoom.setlx.operators.AZeroOperator;
+import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.CodeFragment;
 import org.randoom.setlx.utilities.Expression;
 import org.randoom.setlx.utilities.FragmentList;
 import org.randoom.setlx.utilities.State;
+import org.randoom.setlx.utilities.TermUtilities;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Stack of operators that can be evaluated.
  */
 public class OperatorExpression extends Expression {
+    private final static Map<String, Class<? extends AOperator>> OPERATOR_CLASSES = new HashMap<String, Class<? extends AOperator>>();
+
     private FragmentList<AOperator> operators;
     private final int numberOfOperators;
     private boolean isConstant;
@@ -89,6 +99,32 @@ public class OperatorExpression extends Expression {
         } else {
             throw new IllegalStateException("Error in operator stack optimization!");
         }
+    }
+
+    /**
+     * Create a Statement from a term representing a statement
+     *
+     * @param state                    Current state of the running setlX program.
+     * @param term                     Term to convert.
+     * @param functionalCharacter      Functional character of the term to convert.
+     * @return                         New Statement or null, if term does not represent a statement.
+     * @throws TermConversionException in case the term is malformed.
+     */
+    public static OperatorExpression createFromTerm(State state, Term term, String functionalCharacter) throws TermConversionException {
+        Class<? extends AOperator> operatorClass;
+        synchronized (OPERATOR_CLASSES) {
+            operatorClass = OPERATOR_CLASSES.get(functionalCharacter);
+        }
+        if (operatorClass == null) {
+            operatorClass = TermUtilities.getClassForTerm(AOperator.class, functionalCharacter);
+
+            if (operatorClass != null) {
+                synchronized (OPERATOR_CLASSES) {
+                    OPERATOR_CLASSES.put(functionalCharacter, operatorClass);
+                }
+            }
+        }
+        return null;
     }
 
     /**

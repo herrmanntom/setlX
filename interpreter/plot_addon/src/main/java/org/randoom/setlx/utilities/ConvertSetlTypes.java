@@ -2,6 +2,7 @@ package org.randoom.setlx.utilities;
 
 
 import org.randoom.setlx.exceptions.IncompatibleTypeException;
+import org.randoom.setlx.exceptions.NotAnIntegerException;
 import org.randoom.setlx.exceptions.NumberToLargeException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.types.SetlBoolean;
@@ -13,17 +14,17 @@ import java.util.List;
 
 public class ConvertSetlTypes {
 
-    public static List convertSetlListAsDouble(SetlList setlList) throws SetlException {
+    public static List convertSetlListAsDouble(SetlList setlList, State state) throws SetlException {
 
         List returnList = new ArrayList();
         Value member;
         for (int i = 1; i < setlList.size() + 1; i++) {
             member = setlList.getMember(i);
             if (member instanceof SetlList) {
-                returnList.add(convertSetlListAsDouble((SetlList) member));
+                returnList.add(convertSetlListAsDouble((SetlList) member, state));
             } else {
 
-                double m = member.toDouble(new State()).jDoubleValue();
+                double m = member.toDouble(state).jDoubleValue();
 
                 returnList.add(m);
             }
@@ -65,8 +66,12 @@ public class ConvertSetlTypes {
         return returnList;
     }
 
-    public static double convertNumberToDouble(Value v) throws IncompatibleTypeException, NumberToLargeException {
-        return v.jDoubleValue();
+    public static double convertNumberToDouble(Value v) throws IncompatibleTypeException, NumberToLargeException, NotAnIntegerException {
+        if(v.isDouble().equalTo(SetlBoolean.TRUE)){
+            return v.jDoubleValue();
+        }else{
+            return v.jIntValue();
+        }
     }
 
 }

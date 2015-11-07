@@ -1,0 +1,79 @@
+// Try to bind the variable whose names are given in varlist to the correponding
+// values given in valueList subject to the condition that the formula test
+// evaluates as true.
+generateAndTest := procedure(constraints, values, result) {
+    stmnt := "procedure() {";
+    n     := #constraints;
+    for (i in [1..n]) {
+        if (#constraints[i] == 3) {
+            [var, assign, condition] := constraints[i];
+        } else {
+            [var, assign] := constraints[i];
+            condition := true;
+        }
+        stmnt += "for ($var$ in $values$) {";
+        if (assign != "skip") {
+            stmnt += assign + ";";
+        }
+        stmnt += "check {";
+        if (condition != true) {
+            stmnt += "if (!($condition$)) { backtrack; }";
+        }
+    }
+    stmnt += "return $result$;";
+    stmnt += "}" * (2*n+1);
+    return eval(stmnt+"()");
+};
+
+findZebra := procedure() {
+    // 1. There are five houses
+    values := [1..5];
+    constr := [
+                // 10. The Norwegian lives in the first house.
+                ["norwegian", "skip", "norwegian == 1"],
+                //  9. Milk is drunk in the middle house.
+                ["milk", "skip", "milk == 3"],
+                //  4. Coffee is drunk in the green house.
+                //  6. The green house is immediately to the right of the ivory house.
+                ["coffee", "green := coffee; ivory := green - 1", "ivory > 0 && coffee != milk"],
+                //  5. The Ukrainian drinks tea.
+                ["ukrainian", "tea := ukrainian", "!(tea in [coffee, milk]) && ukrainian != norwegian"],
+                // 13. The Lucky Strike smoker drinks orange juice.
+                ["luckies", "orange := luckies", "!(orange in [coffee, milk, tea])"],
+                ["water", "skip", "distinct(water, tea, milk, orange, coffee)"],
+                //  2. The Englishman lives in the red house.
+                ["english", "red := english", "!(red in [green, ivory]) && !(english in [norwegian, ukrainian])"],
+                //  8. Kools are smoked in the yellow house.
+                ["kools", "yellow := kools", "kools != luckies"],
+                // 15. The Norwegian lives next to the blue house
+                ["blue", "skip", "nextTo(norwegian, blue) && distinct(yellow, blue, red, ivory, green)"],
+                //  3. The Spaniard owns the dog.
+                ["spaniard", "dog := spaniard", "!(spaniard in [norwegian, ukrainian, english])"],
+                //  7. The Old Gold smoker owns snails.
+                ["oldGold", "snails := oldGold", "!(oldGold in [luckies, kools]) && snails != dog"],
+                // 12. Kools are smoked in the house next to the house where the horse is kept.
+                ["horse", "skip", "nextTo(horse, kools) && !(horse in [dog, snails])"],
+                // 11. The man who smokes Chesterfields lives in the house next to the man with the fox.
+                ["fox", "skip", "!(fox in [horse, snails, dog])"],
+                ["zebra", "skip", "distinct(fox, horse, snails, dog, zebra)"],
+                // 14. The Japanese smokes Parliaments.
+                ["japanese", "parliaments := japanese",
+                 "distinct(norwegian, ukrainian, english, spaniard, japanese)"],
+                // 11. The man who smokes Chesterfields lives in the house next to the man with the fox.
+                ["chesterfields", "skip", "nextTo(chesterfields, fox) && distinct(kools, chesterfields, oldGold, luckies, parliaments)"]
+              ];        
+    return generateAndTest(constr, values, "[zebra, water]");
+};
+
+nextTo := procedure(a, b) {
+    return b == a + 1 || a == b + 1;
+};
+
+distinct := procedure(a, b, c, d, e) {
+    return {a, b, c, d, e} == {1..5};
+};
+
+[zebra, water] := findZebra();
+print("The zebra lives in house number $zebra$.");
+print("The guy in house number $water$ drinks water.");
+

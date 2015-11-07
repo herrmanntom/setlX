@@ -14,18 +14,6 @@ import java.util.List;
  * Stack of operators that can be evaluated.
  */
 public abstract class AAssignableExpression extends Expression {
-
-    /**
-     * Create an assignable expression from an operator expression.
-     *
-     * @param operatorExpression           Operator stack to convert.
-     * @return                             AssignableExpression.
-     * @throws UndefinedOperationException if expression can not be converted.
-     */
-    public static AAssignableExpression convertToAssignable(OperatorExpression operatorExpression) throws UndefinedOperationException {
-        throw new IllegalStateException("not implemented");
-    }
-
     /**
      * Gather all bound and unbound variables in this expression and its siblings,
      * when it is used as an assignment.

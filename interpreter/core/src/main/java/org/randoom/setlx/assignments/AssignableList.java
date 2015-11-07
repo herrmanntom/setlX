@@ -35,7 +35,8 @@ public class AssignableList extends AAssignableExpression {
     public boolean collectVariablesAndOptimize(State state, List<String> boundVariables, List<String> unboundVariables, List<String> usedVariables) {
         boolean optimiseIfConstant = true;
         for (AAssignableExpression assignableExpression : assignableExpressions) {
-            optimiseIfConstant = optimiseIfConstant && assignableExpression.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
+            optimiseIfConstant = assignableExpression.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables)
+                    && optimiseIfConstant;
         }
         return optimiseIfConstant;
     }
@@ -44,7 +45,8 @@ public class AssignableList extends AAssignableExpression {
     public boolean collectVariablesWhenAssigned(State state, List<String> boundVariables, List<String> unboundVariables, List<String> usedVariables) {
         boolean optimiseIfConstant = true;
         for (AAssignableExpression assignableExpression : assignableExpressions) {
-            optimiseIfConstant = optimiseIfConstant && assignableExpression.collectVariablesWhenAssigned(state, boundVariables, unboundVariables, usedVariables);
+            optimiseIfConstant = assignableExpression.collectVariablesWhenAssigned(state, boundVariables, unboundVariables, usedVariables)
+                    && optimiseIfConstant;
         }
         return optimiseIfConstant;
     }

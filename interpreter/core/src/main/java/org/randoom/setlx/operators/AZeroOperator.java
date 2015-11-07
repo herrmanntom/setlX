@@ -17,8 +17,9 @@ public abstract class AZeroOperator extends AOperator {
 
     @Override
     public OptimizerData collectVariables(State state, List<String> boundVariables, List<String> unboundVariables, List<String> usedVariables, Stack<OptimizerData> optimizerData) {
-        boolean allowOptimization = collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
-        return new OptimizerData(allowOptimization);
+        return new OptimizerData(
+                collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables)
+        );
     }
 
     @Override

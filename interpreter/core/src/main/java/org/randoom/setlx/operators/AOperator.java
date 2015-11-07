@@ -1,6 +1,8 @@
 package org.randoom.setlx.operators;
 
+import org.randoom.setlx.assignments.AAssignableExpression;
 import org.randoom.setlx.exceptions.SetlException;
+import org.randoom.setlx.exceptions.UndefinedOperationException;
 import org.randoom.setlx.operatorUtilities.OperatorExpression.OptimizerData;
 import org.randoom.setlx.operatorUtilities.Stack;
 import org.randoom.setlx.types.Value;
@@ -83,7 +85,8 @@ public abstract class AOperator extends ImmutableCodeFragment {
 
     @Override
     public final void appendString(State state, StringBuilder sb, int tabs) {
-        throw new IllegalStateException("Not implemented");
+        sb.append("debug only output: ");
+        appendOperatorSign(state, sb);
     }
 
     /**
@@ -99,5 +102,15 @@ public abstract class AOperator extends ImmutableCodeFragment {
     @Override
     public final Value toTerm(State state) throws SetlException {
         throw new IllegalStateException("Not implemented");
+    }
+
+    /**
+     * Create an assignable expression from this operator.
+     *
+     * @return                             AssignableExpression.
+     * @throws UndefinedOperationException if operator can not be converted.
+     */
+    public AAssignableExpression convertToAssignableExpression() throws UndefinedOperationException {
+        throw new UndefinedOperationException("Expression cannot be converted");
     }
 }

@@ -65,8 +65,9 @@ public class ExplicitListWithRest extends ExplicitList {
         final List<String> unboundVariables,
         final List<String> usedVariables
     ) {
-        return super.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables)
-                && rest.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
+        boolean a = super.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
+        boolean b = rest.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
+        return a && b;
     }
 
     /* string operations */

@@ -153,7 +153,8 @@ public class StringConstructor extends AZeroOperator {
     ) {
         boolean allowOptimization = true;
         for (final OperatorExpression expr : expressions) {
-            allowOptimization = allowOptimization && expr.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
+            allowOptimization = expr.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables)
+                    && allowOptimization;
         }
         return allowOptimization;
     }

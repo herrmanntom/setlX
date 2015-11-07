@@ -67,9 +67,11 @@ public class Range extends CollectionBuilder {
     ) {
         boolean allowOptimization = start.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
         if (second != null) {
-            allowOptimization = allowOptimization && second.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
+            allowOptimization = second.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables)
+                    && allowOptimization;
         }
-        return allowOptimization && stop.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
+        return stop.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables)
+                && allowOptimization;
     }
 
     /* string operations */

@@ -60,24 +60,6 @@ public class LiteralConstructor extends AZeroOperator {
         return term;
     }
 
-//    /**
-//     * Convert a term representing a LiteralConstructor into such an expression.
-//     *
-//     * @param state                    Current state of the running setlX program.
-//     * @param term                     Term to convert.
-//     * @return                         Resulting LiteralConstructor Expression.
-//     * @throws TermConversionException Thrown in case of an malformed term.
-//     */
-//    public static LiteralConstructor termToExpr(final State state, final Term term) throws TermConversionException {
-//        if (term.size() != 1 || ! (term.firstMember() instanceof SetlString)) {
-//            throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
-//        } else {
-//            final SetlString runtimeString   = (SetlString) term.firstMember();
-//            final String     originalLiteral = "'" + runtimeString.getEscapedLiteral() + "'";
-//            return new LiteralConstructor(originalLiteral, runtimeString);
-//        }
-//    }
-
     /* comparisons */
 
     @Override

@@ -41,7 +41,8 @@ public class AssignableCollectionAccess extends AAssignableExpression {
     public boolean collectVariablesAndOptimize(State state, List<String> boundVariables, List<String> unboundVariables, List<String> usedVariables) {
         boolean optimiseIfConstant = assignableExpression.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
         for (OperatorExpression assignableExpression : expressions) {
-            optimiseIfConstant = optimiseIfConstant && assignableExpression.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
+            optimiseIfConstant = assignableExpression.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables)
+                    && optimiseIfConstant;
         }
         return optimiseIfConstant;
     }
@@ -51,7 +52,8 @@ public class AssignableCollectionAccess extends AAssignableExpression {
         // lhs & args are read, not bound, so use collectVariablesAndOptimize()
         boolean optimiseIfConstant = assignableExpression.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
         for (OperatorExpression assignableExpression : expressions) {
-            optimiseIfConstant = optimiseIfConstant && assignableExpression.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
+            optimiseIfConstant = assignableExpression.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables)
+                    && optimiseIfConstant;
         }
         return optimiseIfConstant;
     }

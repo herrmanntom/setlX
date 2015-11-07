@@ -36,7 +36,8 @@ public class TermConstructor extends AZeroOperator {
     public boolean collectVariablesAndOptimize(State state, List<String> boundVariables, List<String> unboundVariables, List<String> usedVariables) {
         boolean allowOptimization = true;
         for (final OperatorExpression arg: args) {
-            allowOptimization = allowOptimization && arg.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
+            allowOptimization = arg.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables)
+                    && allowOptimization;
         }
         return allowOptimization;
     }

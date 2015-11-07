@@ -1,6 +1,8 @@
 package org.randoom.setlx.operatorUtilities;
 
+import org.randoom.setlx.assignments.AAssignableExpression;
 import org.randoom.setlx.exceptions.SetlException;
+import org.randoom.setlx.exceptions.UndefinedOperationException;
 import org.randoom.setlx.operators.AOperator;
 import org.randoom.setlx.operators.AZeroOperator;
 import org.randoom.setlx.types.Value;
@@ -135,23 +137,8 @@ public class OperatorExpression extends Expression {
             try {
                 values.push(operator.evaluate(state, values));
             } catch (final SetlException se) {
-                StringBuilder error = new StringBuilder();
-                error.append("Error computing '");
-                if (operator.hasArgumentBeforeOperator()) {
-                    values.getLastValuePolled().appendString(state, error, 0);
-                }
-                operator.appendOperatorSign(state, error);
-                if (operator.hasArgumentAfterOperator()) {
-                    Value rhs = values.getLastValuePolled();
-                    if (operator.hasArgumentBeforeOperator()) {
-                        rhs = values.getSecondTolastValuePolled();
-                    }
-                    rhs.appendString(state, error, 0);
-                }
-                error.append("':");
-                se.addToTrace(error.toString());
                 while (i < numberOfOperators) {
-                    error = new StringBuilder();
+                    StringBuilder error = new StringBuilder();
                     error.append("Error in \"");
                     appendExpression(state, error, ++i);
                     error.append("\":");
@@ -165,6 +152,19 @@ public class OperatorExpression extends Expression {
         }
 
         return values.poll();
+    }
+
+    /**
+     * Create an assignable expression from this operator expression.
+     *
+     * @return                             AssignableExpression.
+     * @throws UndefinedOperationException if expression can not be converted.
+     */
+    public AAssignableExpression convertToAssignable() throws UndefinedOperationException {
+        if (numberOfOperators != 1) {
+            throw new UndefinedOperationException("Expression cannot be converted");
+        }
+        return operators.get(0).convertToAssignableExpression();
     }
 
     /* string operations */

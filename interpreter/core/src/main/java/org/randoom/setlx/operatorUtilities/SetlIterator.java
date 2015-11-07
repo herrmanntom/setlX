@@ -145,16 +145,19 @@ public class SetlIterator extends ImmutableCodeFragment {
            Collect them into a temporary list, add them to boundVariables and
            remove them again before returning. */
         final List<String> tempVars = new ArrayList<String>();
-        allowOptimization = allowOptimization && assignable.collectVariablesWhenAssigned(state, tempVars, unboundVariables, usedVariables);
+        allowOptimization = assignable.collectVariablesWhenAssigned(state, tempVars, unboundVariables, usedVariables)
+                && allowOptimization;
 
         final int preIndex = boundVariables.size();
         boundVariables.addAll(tempVars);
         tempVariables.addAll(tempVars);
 
         if (next != null) {
-            allowOptimization = allowOptimization && next.collectVariablesAndOptimize(state, container, tempVariables, boundVariables, unboundVariables, usedVariables);
+            allowOptimization = next.collectVariablesAndOptimize(state, container, tempVariables, boundVariables, unboundVariables, usedVariables)
+                    && allowOptimization;
         } else {
-            allowOptimization = allowOptimization && container.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
+            allowOptimization = container.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables)
+                    && allowOptimization;
         }
 
         // remove the added variables (DO NOT use removeAll(); same variable name could be there multiple times!)

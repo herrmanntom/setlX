@@ -64,7 +64,8 @@ public class SetlIteration extends CollectionBuilder {
             if (condition != null) {
                 allowOptimization = condition.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
             }
-            return allowOptimization && expr.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
+            return expr.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables)
+                    && allowOptimization;
 
         }
     }

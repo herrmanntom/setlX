@@ -51,7 +51,8 @@ public class ExplicitList extends CollectionBuilder {
     ) {
         boolean allowOptimization = true;
         for (final OperatorExpression expr : list) {
-            allowOptimization = allowOptimization && expr.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
+            allowOptimization = expr.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables)
+                    && allowOptimization;
         }
         return allowOptimization;
     }

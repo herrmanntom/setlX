@@ -82,7 +82,8 @@ public class Block extends Statement {
     ) {
         boolean allowOptimization = true;
         for (final Statement statement : statements) {
-            allowOptimization = allowOptimization && statement.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
+            allowOptimization = statement.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables)
+                    && allowOptimization;
         }
         return allowOptimization;
     }

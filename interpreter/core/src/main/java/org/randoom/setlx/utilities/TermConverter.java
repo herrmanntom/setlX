@@ -209,7 +209,7 @@ public class TermConverter {
      */
     public static AAssignableExpression valueToAssignableExpr(final State state, final Value value) throws TermConversionException {
         try {
-            return AAssignableExpression.convertToAssignable(valueToExpr(state, value));
+            return valueToExpr(state, value).convertToAssignable();
         } catch (UndefinedOperationException e) {
             throw new TermConversionException("malformed assignable expression", e);
         }

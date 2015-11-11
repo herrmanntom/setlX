@@ -133,8 +133,8 @@ public abstract class Statement extends ImmutableCodeFragment {
                     synchronized (STATEMENT_CONVERTERS) {
                         STATEMENT_CONVERTERS.put(functionalCharacter, converter);
                     }
-                } catch (final Exception e1) {
-                    // look-up failed
+                } catch (NoSuchMethodException e) {
+                    throw new IllegalStateException("Lazy programmer detected", e);
                 }
             }
         }

@@ -1,6 +1,5 @@
 package org.randoom.setlx.types;
 
-import org.antlr.v4.runtime.atn.SemanticContext.Operator;
 import org.randoom.setlx.assignments.AssignableVariable;
 import org.randoom.setlx.exceptions.IncorrectNumberOfParametersException;
 import org.randoom.setlx.exceptions.SetlException;
@@ -12,16 +11,8 @@ import org.randoom.setlx.operators.Assignment;
 import org.randoom.setlx.operators.ValueOperator;
 import org.randoom.setlx.statements.Block;
 import org.randoom.setlx.statements.ExpressionStatement;
-import org.randoom.setlx.statements.Return;
 import org.randoom.setlx.statements.Statement;
-import org.randoom.setlx.utilities.CodeFragment;
-import org.randoom.setlx.utilities.FragmentList;
-import org.randoom.setlx.utilities.ParameterList;
-import org.randoom.setlx.utilities.SetlHashMap;
-import org.randoom.setlx.utilities.State;
-import org.randoom.setlx.utilities.TermConverter;
-import org.randoom.setlx.utilities.VariableScope;
-import org.randoom.setlx.utilities.WriteBackAgent;
+import org.randoom.setlx.utilities.*;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -45,7 +36,6 @@ public class SetlClass extends Value {
     // functional character used in terms
     private final static String FUNCTIONAL_CHARACTER      = generateFunctionalCharacter(SetlClass.class);
     private final static long   COMPARE_TO_ORDER_CONSTANT = generateCompareToOrderConstant(SetlClass.class);
-    private final static Block  REBUILD_MARKER            = new Block(new Return(new OperatorExpression(new ValueOperator(new SetlString(FUNCTIONAL_CHARACTER + COMPARE_TO_ORDER_CONSTANT)))));
 
     private final ParameterList      parameters;          // parameter list
     private final Block              initBlock;           // statements in the body of the definition
@@ -84,7 +74,7 @@ public class SetlClass extends Value {
     }
 
     private Block getStaticBlock() {
-        if (staticBlock == REBUILD_MARKER) {
+        if (staticBlock == null) {
             // rebuild static block
             final FragmentList<Statement> sBlock = new FragmentList<Statement>(staticDefs.size());
             for (final Entry<String, Value> entry : staticDefs.entrySet()) {
@@ -119,10 +109,6 @@ public class SetlClass extends Value {
         if (this.initVars != null) {
             initVars = new HashSet<String>(this.initVars);
         }
-        Block staticBlock = null;
-        if (getStaticBlock() != null) {
-            staticBlock = REBUILD_MARKER;
-        }
         HashSet<String> staticVars = null;
         if (this.staticVars != null) {
             staticVars = new HashSet<String>(this.staticVars);
@@ -134,7 +120,7 @@ public class SetlClass extends Value {
                 staticDefs.put(entry.getKey(), entry.getValue().clone());
             }
         }
-        return new SetlClass(parameters, initBlock, initVars, staticBlock, staticVars, staticDefs);
+        return new SetlClass(parameters, initBlock, initVars, null, staticVars, staticDefs);
     }
 
     @Override
@@ -303,10 +289,6 @@ public class SetlClass extends Value {
 
     /* features of objects */
 
-    public Value getObjectMember(final State state, final String variable) throws SetlException {
-        return getObjectMemberUnCloned(state, variable).clone();
-    }
-
     @Override
     public Value getObjectMemberUnCloned(final State state, final String variable) throws SetlException {
         if (staticDefs == null) {
@@ -342,7 +324,7 @@ public class SetlClass extends Value {
         staticVars.add(variable);
 
         // mark static block to be rebuild on access
-        staticBlock = REBUILD_MARKER;
+        staticBlock = null;
     }
 
     /* string and char operations */
@@ -396,7 +378,7 @@ public class SetlClass extends Value {
 
         result.addMember(state, initBlock.toTerm(state));
         if (getStaticBlock() != null) {
-            result.addMember(state, staticBlock.toTerm(state));
+            result.addMember(state, getStaticBlock().toTerm(state));
         } else {
             result.addMember(state, SetlString.NIL);
         }

@@ -8,19 +8,12 @@ import org.randoom.setlx.operators.AOperator;
 import org.randoom.setlx.operators.AZeroOperator;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
-import org.randoom.setlx.utilities.CodeFragment;
-import org.randoom.setlx.utilities.Expression;
-import org.randoom.setlx.utilities.FragmentList;
-import org.randoom.setlx.utilities.State;
-import org.randoom.setlx.utilities.TermUtilities;
+import org.randoom.setlx.utilities.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * Stack of operators that can be evaluated.
@@ -285,20 +278,11 @@ public class OperatorExpression extends Expression {
 
     /* comparisons */
 
-    /**
-     * Check if this class is comparable to an OperatorExpression.
-     *
-     * @return true if this class is comparable
-     */
-    protected boolean isComparableToOperatorExpression() {
-        return true;
-    }
-
     @Override
     public int compareTo(CodeFragment other) {
         if (this == other) {
             return 0;
-        } else if (isComparableToOperatorExpression()) {
+        } else if (other.getClass() == OperatorExpression.class) {
             final OperatorExpression otr = (OperatorExpression) other;
             return operators.compareTo(otr.operators);
         } else {
@@ -314,11 +298,10 @@ public class OperatorExpression extends Expression {
     }
 
     @Override
-    @SuppressWarnings("EqualsWhichDoesntCheckParameterClass")
     public final boolean equals(final Object obj) {
         if (this == obj) {
             return true;
-        } else if (isComparableToOperatorExpression()) {
+        } else if (obj.getClass() == OperatorExpression.class) {
             return this.operators.equals(((OperatorExpression) obj).operators);
         }
         return false;

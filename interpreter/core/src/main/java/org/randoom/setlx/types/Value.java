@@ -839,13 +839,7 @@ public abstract class Value extends CodeFragment {
     public Value call(final State state, final FragmentList<OperatorExpression> args, final OperatorExpression listArg) throws SetlException {
         final StringBuilder error = new StringBuilder();
         error.append("Can not perform call with arguments '");
-        final Iterator<OperatorExpression> argIter = args.iterator();
-        while (argIter.hasNext()) {
-            argIter.next().appendString(state, error, 0);
-            if (argIter.hasNext()) {
-                error.append(", ");
-            }
-        }
+        args.appendString(state, error);
         if (listArg != null) {
             if (! args.isEmpty()) {
                 error.append(", ");

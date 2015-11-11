@@ -10,7 +10,6 @@ import org.randoom.setlx.utilities.FragmentList;
 import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.TermConverter;
 
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -58,13 +57,7 @@ public class TermConstructor extends AZeroOperator {
         sb.append(fChar);
         sb.append("(");
 
-        final Iterator<OperatorExpression> iter = args.iterator();
-        while (iter.hasNext()) {
-            iter.next().appendString(state, sb, 0);
-            if (iter.hasNext()) {
-                sb.append(", ");
-            }
-        }
+        args.appendString(state, sb);
 
         sb.append(")");
     }

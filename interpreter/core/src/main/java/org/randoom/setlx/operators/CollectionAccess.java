@@ -86,13 +86,7 @@ public class CollectionAccess extends AUnaryPostfixOperator {
     public void appendOperatorSign(State state, StringBuilder sb) {
         sb.append("[");
 
-        final Iterator<OperatorExpression> iter = arguments.iterator();
-        while (iter.hasNext()) {
-            iter.next().appendString(state, sb, 0);
-            if (iter.hasNext()) {
-                sb.append(", ");
-            }
-        }
+         arguments.appendString(state, sb);
 
         sb.append("]");
     }

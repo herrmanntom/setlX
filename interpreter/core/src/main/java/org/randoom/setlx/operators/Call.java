@@ -5,16 +5,11 @@ import org.randoom.setlx.exceptions.UnknownFunctionException;
 import org.randoom.setlx.operatorUtilities.OperatorExpression;
 import org.randoom.setlx.operatorUtilities.OperatorExpression.OptimizerData;
 import org.randoom.setlx.operatorUtilities.Stack;
-import org.randoom.setlx.types.Om;
-import org.randoom.setlx.types.SetlList;
-import org.randoom.setlx.types.SetlString;
-import org.randoom.setlx.types.Term;
-import org.randoom.setlx.types.Value;
+import org.randoom.setlx.types.*;
 import org.randoom.setlx.utilities.CodeFragment;
 import org.randoom.setlx.utilities.FragmentList;
 import org.randoom.setlx.utilities.State;
 
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -74,13 +69,8 @@ public class Call extends AUnaryPostfixOperator {
     public void appendOperatorSign(State state, StringBuilder sb) {
         sb.append("(");
 
-        final Iterator<OperatorExpression> iter = arguments.iterator();
-        while (iter.hasNext()) {
-            iter.next().appendString(state, sb, 0);
-            if (iter.hasNext()) {
-                sb.append(", ");
-            }
-        }
+        arguments.appendString(state, sb);
+
         if (listArgument != null) {
             if ( ! arguments.isEmpty()) {
                 sb.append(", ");

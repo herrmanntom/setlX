@@ -14,7 +14,6 @@ import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.VariableScope;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -123,13 +122,7 @@ public class AssignableCollectionAccess extends AAssignableExpression {
         assignableExpression.appendString(state, sb, tabs);
         sb.append("[");
 
-        final Iterator<OperatorExpression> iter = expressions.iterator();
-        while (iter.hasNext()) {
-            iter.next().appendString(state, sb, 0);
-            if (iter.hasNext()) {
-                sb.append(", ");
-            }
-        }
+        expressions.appendString(state, sb);
 
         sb.append("]");
     }

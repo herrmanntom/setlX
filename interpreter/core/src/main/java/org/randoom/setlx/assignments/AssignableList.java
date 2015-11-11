@@ -11,7 +11,6 @@ import org.randoom.setlx.utilities.FragmentList;
 import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.VariableScope;
 
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -106,13 +105,9 @@ public class AssignableList extends AAssignableExpression {
     @Override
     public void appendString(State state, StringBuilder sb, int tabs) {
         sb.append("[");
-        final Iterator<AAssignableExpression> iterator = assignableExpressions.iterator();
-        while (iterator.hasNext()) {
-            iterator.next().appendString(state, sb, 0);
-            if (iterator.hasNext()) {
-                sb.append(", ");
-            }
-        }
+
+        assignableExpressions.appendString(state, sb);
+
         sb.append("]");
     }
 

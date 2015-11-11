@@ -77,6 +77,28 @@ public class FragmentList<B extends CodeFragment> implements Iterable<B>, Compar
         return fragmentList.contains(fragment);
     }
 
+    /**
+     * Appends a string representation of this fragment list to the given
+     * StringBuilder object. Individual fragements are separated by comma and space
+     *
+     * @see org.randoom.setlx.utilities.CodeFragment#toString(State)
+     *
+     * @param state Current state of the running setlX program.
+     * @param sb    StringBuilder to append to.
+     */
+    public void appendString(
+            final State state,
+            final StringBuilder sb
+    ) {
+        final Iterator<B> iterator = iterator();
+        while (iterator.hasNext()) {
+            iterator.next().appendString(state, sb, 0);
+            if (iterator.hasNext()) {
+                sb.append(", ");
+            }
+        }
+    }
+
     @Override
     public final int compareTo(FragmentList<B> other) {
         if (this == other) {

@@ -10,7 +10,6 @@ import org.randoom.setlx.utilities.FragmentList;
 import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.TermConverter;
 
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -81,13 +80,7 @@ public class ExplicitList extends CollectionBuilder {
 
     @Override
     public void appendString(final State state, final StringBuilder sb) {
-        final Iterator<OperatorExpression> iterator = list.iterator();
-        while (iterator.hasNext()) {
-            iterator.next().appendString(state, sb, 0);
-            if (iterator.hasNext()) {
-                sb.append(", ");
-            }
-        }
+        list.appendString(state, sb);
     }
 
     /* term operations */

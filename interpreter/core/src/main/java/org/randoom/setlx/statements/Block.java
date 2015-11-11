@@ -133,10 +133,10 @@ public class Block extends Statement {
             sb.append("{");
             sb.append(endl);
         }
-        final Iterator<Statement> iter = statements.iterator();
-        while (iter.hasNext()) {
-            iter.next().appendString(state, sb, stmntTabs);
-            if (iter.hasNext()) {
+        final Iterator<Statement> iterator = statements.iterator();
+        while (iterator.hasNext()) {
+            iterator.next().appendString(state, sb, stmntTabs);
+            if (iterator.hasNext()) {
                 sb.append(endl);
             }
         }

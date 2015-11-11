@@ -5,19 +5,10 @@ import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.operatorUtilities.Condition;
 import org.randoom.setlx.operatorUtilities.OperatorExpression;
 import org.randoom.setlx.statements.Block;
-import org.randoom.setlx.types.SetlBoolean;
-import org.randoom.setlx.types.SetlList;
-import org.randoom.setlx.types.SetlString;
-import org.randoom.setlx.types.Term;
-import org.randoom.setlx.types.Value;
-import org.randoom.setlx.utilities.CodeFragment;
-import org.randoom.setlx.utilities.FragmentList;
-import org.randoom.setlx.utilities.MatchResult;
-import org.randoom.setlx.utilities.State;
-import org.randoom.setlx.utilities.TermConverter;
+import org.randoom.setlx.types.*;
+import org.randoom.setlx.utilities.*;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -122,13 +113,7 @@ public class MatchCaseBranch extends AbstractMatchBranch {
         state.appendLineStart(sb, tabs);
         sb.append("case ");
 
-        final Iterator<OperatorExpression> iter = exprs.iterator();
-        while (iter.hasNext()) {
-            iter.next().appendString(state, sb, tabs);
-            if (iter.hasNext()) {
-                sb.append(", ");
-            }
-        }
+        exprs.appendString(state, sb);
 
         if (condition != null) {
             sb.append(" | ");

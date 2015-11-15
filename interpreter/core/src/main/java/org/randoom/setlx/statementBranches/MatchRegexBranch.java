@@ -258,19 +258,19 @@ public class MatchRegexBranch extends AbstractMatchScanBranch {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
             try {
-                final OperatorExpression pattern = TermConverter.valueToExpr(state, term.firstMember());
+                final OperatorExpression pattern = OperatorExpression.createFromTerm(state, term.firstMember());
 
                 OperatorExpression assignTo = null;
                 if (! term.getMember(2).equals(SetlString.NIL)) {
-                    assignTo = TermConverter.valueToExpr(state, term.getMember(2));
+                    assignTo = OperatorExpression.createFromTerm(state, term.getMember(2));
                 }
 
                 Condition condition = null;
                 if (! term.getMember(3).equals(SetlString.NIL)) {
-                    condition = TermConverter.valueToCondition(state, term.getMember(3));
+                    condition = TermUtilities.valueToCondition(state, term.getMember(3));
                 }
 
-                final Block block = TermConverter.valueToBlock(state, term.lastMember());
+                final Block block = TermUtilities.valueToBlock(state, term.lastMember());
 
                 return new MatchRegexBranch(pattern, assignTo, condition, block, state);
             } catch (final SetlException se) {

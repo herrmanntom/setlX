@@ -9,7 +9,6 @@ import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.CodeFragment;
 import org.randoom.setlx.utilities.ParameterDef;
 import org.randoom.setlx.utilities.State;
-import org.randoom.setlx.utilities.TermConverter;
 
 import java.util.HashMap;
 
@@ -33,7 +32,7 @@ public class PD_evalTerm extends PreDefinedProcedure {
         final Value        termArg  = args.get(TERM);
 
         // get code to be executed
-        final CodeFragment fragment = TermConverter.valueToCodeFragment(state, termArg, false);
+        final CodeFragment fragment = Statement.convertTerm(state, termArg);
 
         // Value to be returned
         Value              result   = Om.OM;
@@ -45,7 +44,7 @@ public class PD_evalTerm extends PreDefinedProcedure {
             ((Statement) fragment).execute(state);
         } else {
             throw new UndefinedOperationException(
-                "This term does not represent an expression or a statement."
+                "This term does represent neither an expression nor a statement."
             );
         }
 

@@ -400,10 +400,10 @@ public class SetlClass extends Value {
         } else {
             try {
                 final ParameterList parameters  = ParameterList.termFragmentToParameterList(state, term.firstMember());
-                final Block         init        = TermConverter.valueToBlock(state, term.getMember(2));
+                final Block         init        = TermUtilities.valueToBlock(state, term.getMember(2));
                       Block         staticBlock = null;
                 if (! term.lastMember().equals(SetlString.NIL)) {
-                    staticBlock = TermConverter.valueToBlock(state, term.lastMember());
+                    staticBlock = TermUtilities.valueToBlock(state, term.lastMember());
                 }
                 return new SetlClass(parameters, init, staticBlock);
             } catch (final SetlException se) {

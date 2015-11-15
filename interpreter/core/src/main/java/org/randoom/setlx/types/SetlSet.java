@@ -7,7 +7,7 @@ import org.randoom.setlx.exceptions.UndefinedOperationException;
 import org.randoom.setlx.utilities.CodeFragment;
 import org.randoom.setlx.utilities.MatchResult;
 import org.randoom.setlx.utilities.State;
-import org.randoom.setlx.utilities.TermConverter;
+import org.randoom.setlx.utilities.TermUtilities;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -741,7 +741,7 @@ public class SetlSet extends CollectionValue {
 
     @Override
     public void appendString(final State state, final StringBuilder sb, final int tabs) {
-        TermConverter.valueToCodeFragment(state, this, false).appendString(state, sb, 0);
+        TermUtilities.appendCodeFragmentString(state, this, sb);
     }
 
     @Override

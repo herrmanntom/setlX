@@ -6,7 +6,7 @@ import org.randoom.setlx.statements.Block;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.utilities.CodeFragment;
 import org.randoom.setlx.utilities.State;
-import org.randoom.setlx.utilities.TermConverter;
+import org.randoom.setlx.utilities.TermUtilities;
 
 import java.util.List;
 
@@ -87,7 +87,7 @@ public class IfThenElseBranch extends AbstractIfThenBranch {
         if (term.size() != 1) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
-            final Block block = TermConverter.valueToBlock(state, term.firstMember());
+            final Block block = TermUtilities.valueToBlock(state, term.firstMember());
             return new IfThenElseBranch(block);
         }
     }

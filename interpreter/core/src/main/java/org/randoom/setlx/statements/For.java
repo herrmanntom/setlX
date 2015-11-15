@@ -12,7 +12,7 @@ import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.CodeFragment;
 import org.randoom.setlx.utilities.ReturnMessage;
 import org.randoom.setlx.utilities.State;
-import org.randoom.setlx.utilities.TermConverter;
+import org.randoom.setlx.utilities.TermUtilities;
 
 import java.util.List;
 
@@ -148,9 +148,9 @@ public class For extends Statement {
                 final SetlIterator iterator = SetlIterator.valueToIterator(state, term.firstMember());
                 Condition condition = null;
                 if ( ! term.getMember(2).equals(SetlString.NIL)) {
-                    condition = TermConverter.valueToCondition(state, term.getMember(2));
+                    condition = TermUtilities.valueToCondition(state, term.getMember(2));
                 }
-                final Block block = TermConverter.valueToBlock(state, term.lastMember());
+                final Block block = TermUtilities.valueToBlock(state, term.lastMember());
                 return new For(iterator, condition, block);
             } catch (final SetlException se) {
                 throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);

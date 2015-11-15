@@ -10,7 +10,7 @@ import org.randoom.setlx.types.Term;
 import org.randoom.setlx.utilities.CodeFragment;
 import org.randoom.setlx.utilities.ReturnMessage;
 import org.randoom.setlx.utilities.State;
-import org.randoom.setlx.utilities.TermConverter;
+import org.randoom.setlx.utilities.TermUtilities;
 
 import java.util.List;
 
@@ -98,8 +98,8 @@ public class Assert extends Statement {
         if (term.size() != 2) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
-            final Condition condition = TermConverter.valueToCondition(state, term.firstMember());
-            final OperatorExpression message = TermConverter.valueToExpr(state, term.lastMember());
+            final Condition condition = TermUtilities.valueToCondition(state, term.firstMember());
+            final OperatorExpression message = OperatorExpression.createFromTerm(state, term.lastMember());
             return new Assert(condition, message);
         }
     }

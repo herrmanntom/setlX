@@ -7,7 +7,6 @@ import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.exceptions.UndefinedOperationException;
 import org.randoom.setlx.assignments.AAssignableExpression;
 import org.randoom.setlx.operatorUtilities.OperatorExpression;
-import org.randoom.setlx.operators.Variable;
 import org.randoom.setlx.statementBranches.AbstractMatchBranch;
 import org.randoom.setlx.statementBranches.AbstractMatchScanBranch;
 import org.randoom.setlx.statementBranches.MatchDefaultBranch;
@@ -23,7 +22,7 @@ import org.randoom.setlx.utilities.MatchResult;
 import org.randoom.setlx.utilities.ReturnMessage;
 import org.randoom.setlx.utilities.ScanResult;
 import org.randoom.setlx.utilities.State;
-import org.randoom.setlx.utilities.TermConverter;
+import org.randoom.setlx.utilities.TermUtilities;
 import org.randoom.setlx.utilities.VariableScope;
 
 import java.util.ArrayList;
@@ -296,10 +295,10 @@ public class Scan extends Statement {
             try {
                 AAssignableExpression posVar = null;
                 if (! term.firstMember().equals(SetlString.NIL)) {
-                    posVar = TermConverter.valueToAssignableExpr(state, term.firstMember());
+                    posVar = TermUtilities.valueToAssignableExpr(state, term.firstMember());
                 }
 
-                final OperatorExpression                    expr       = TermConverter.valueToExpr(state, term.getMember(2));
+                final OperatorExpression                    expr       = OperatorExpression.createFromTerm(state, term.getMember(2));
 
                 final SetlList                              branches   = (SetlList) term.lastMember();
                 final FragmentList<AbstractMatchScanBranch> branchList = new FragmentList<AbstractMatchScanBranch>(branches.size());

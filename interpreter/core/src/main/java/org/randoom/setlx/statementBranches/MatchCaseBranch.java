@@ -165,13 +165,13 @@ public class MatchCaseBranch extends AbstractMatchBranch {
                 final SetlList termList = (SetlList) term.firstMember();
                 final FragmentList<OperatorExpression> exprs = new FragmentList<OperatorExpression>(termList.size());
                 for (final Value v : termList) {
-                    exprs.add(TermConverter.valueToExpr(state, v));
+                    exprs.add(OperatorExpression.createFromTerm(state, v));
                 }
                 Condition condition = null;
                 if (! term.getMember(2).equals(SetlString.NIL)) {
-                    condition = TermConverter.valueToCondition(state, term.getMember(2));
+                    condition = TermUtilities.valueToCondition(state, term.getMember(2));
                 }
-                final Block block = TermConverter.valueToBlock(state, term.lastMember());
+                final Block block = TermUtilities.valueToBlock(state, term.lastMember());
                 return new MatchCaseBranch(exprs, condition, block);
             } catch (final SetlException se) {
                 throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);

@@ -98,7 +98,7 @@ public class Variable extends AZeroOperator {
      */
     public static void appendToOperatorStack(final State state, final Term term, FragmentList<AOperator> operatorStack) throws TermConversionException {
         if (term.size() != 1 || ! (term.firstMember() instanceof SetlString)) {
-            throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
+            throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER_EXTERNAL);
         } else {
             final String id = term.firstMember().getUnquotedString(state);
             operatorStack.add(new Variable(id));

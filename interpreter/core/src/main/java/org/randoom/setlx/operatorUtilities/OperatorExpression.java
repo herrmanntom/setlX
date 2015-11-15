@@ -6,10 +6,25 @@ import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.exceptions.UndefinedOperationException;
 import org.randoom.setlx.operators.AOperator;
 import org.randoom.setlx.operators.AZeroOperator;
+import org.randoom.setlx.operators.CollectionAccessRangeDummy;
+import org.randoom.setlx.operators.ProcedureConstructor;
+import org.randoom.setlx.operators.SetListConstructor;
+import org.randoom.setlx.operators.TermConstructor;
+import org.randoom.setlx.operators.ValueOperator;
+import org.randoom.setlx.operators.VariableIgnore;
+import org.randoom.setlx.types.IgnoreDummy;
+import org.randoom.setlx.types.Procedure;
+import org.randoom.setlx.types.RangeDummy;
+import org.randoom.setlx.types.SetlBoolean;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
-import org.randoom.setlx.utilities.*;
+import org.randoom.setlx.utilities.CodeFragment;
+import org.randoom.setlx.utilities.Expression;
+import org.randoom.setlx.utilities.FragmentList;
+import org.randoom.setlx.utilities.State;
+import org.randoom.setlx.utilities.TermUtilities;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -44,6 +59,37 @@ public class OperatorExpression extends Expression {
         this.operators = unify(operators);
         this.numberOfOperators = operators.size();
         isConstant = false;
+    }
+
+    /**
+     * Create a new operator stack from one stack and one operator.
+     *
+     * @param first Operator stack to evaluate.
+     * @param operator Operator to append at the end.
+     */
+    public OperatorExpression(OperatorExpression first, AOperator operator) {
+        this(new FragmentList<AOperator>(first.operators, operator));
+    }
+
+    /**
+     * Create a new operator stack from two stacks and one operator.
+     *
+     * @param first First stack to append.
+     * @param second Second stack to append.
+     */
+    public OperatorExpression(OperatorExpression first, OperatorExpression second) {
+        this(new FragmentList<AOperator>(first.operators, second.operators));
+    }
+
+    /**
+     * Create a new operator stack from two stacks and one operator.
+     *
+     * @param first First stack to append.
+     * @param second Second stack to append.
+     * @param operator Operator to append at the end.
+     */
+    public OperatorExpression(OperatorExpression first, OperatorExpression second, AOperator operator) {
+        this(new FragmentList<AOperator>(first.operators, second.operators, operator));
     }
 
     @Override
@@ -252,71 +298,96 @@ public class OperatorExpression extends Expression {
     }
 
     /**
-     * Create a OperatorExpression from a term representing a expression
+     * Create a OperatorExpression from a (term-) value representing such an expression.
      *
      * @param state                    Current state of the running setlX program.
-     * @param term                     Term to convert.
-     * @param functionalCharacter      Functional character of the term to convert.
-     * @param operatorStack            Operator stack to append to.
+     * @param value                    (Term-) value to convert.
+     * @return                         New OperatorExpression.
      * @throws TermConversionException in case the term is malformed.
      */
-    public static void appendFromTerm(State state, Term term, String functionalCharacter, FragmentList<AOperator> operatorStack) throws TermConversionException {
-        appendFromTerm(state, term, functionalCharacter, operatorStack, true);
-    }
-
-    /**
-     * Create a OperatorExpression from a term representing a expression
-     *
-     * @param state                    Current state of the running setlX program.
-     * @param term                     Term to convert.
-     * @param functionalCharacter      Functional character of the term to convert.
-     * @return                         New Statement or null, if term does not represent a statement.
-     * @throws TermConversionException in case the term is malformed.
-     */
-    public static OperatorExpression createFromTerm(State state, Term term, String functionalCharacter) throws TermConversionException {
+    public static OperatorExpression createFromTerm(State state, Value value) throws TermConversionException {
         FragmentList<AOperator> operators = new FragmentList<AOperator>();
-        appendFromTerm(state, term, functionalCharacter, operators, false);
-        if (operators.isEmpty()) {
-            return null;
-        }
+        appendFromTerm(state, value, operators);
         return unify(new OperatorExpression(operators));
     }
 
-    private static void appendFromTerm(State state, Term term, String functionalCharacter, FragmentList<AOperator> operatorStack, boolean throwExceptionOnError) throws TermConversionException {
-        Method converter;
-        synchronized (OPERATOR_CONVERTERS) {
-            converter = OPERATOR_CONVERTERS.get(functionalCharacter);
-        }
-        if (converter == null) {
-            Class<? extends AOperator> operatorClass = TermUtilities.getClassForTerm(AOperator.class, functionalCharacter);
+    /**
+     * Create a OperatorExpression from a (term-) value representing such an expression.
+     *
+     * @param state                    Current state of the running setlX program.
+     * @param value                    (Term-) value to convert.
+     * @param operatorStack            Operator stack to append to.
+     * @throws TermConversionException in case the term is malformed.
+     */
+    public static void appendFromTerm(State state, Value value, FragmentList<AOperator> operatorStack) throws TermConversionException {
+        if (value.getClass() == Term.class) {
+            final Term term = (Term) value;
+            final String functionalCharacter = term.getFunctionalCharacter();
 
-            if (operatorClass != null) {
-                try {
-                    converter = operatorClass.getMethod("appendToOperatorStack", State.class, Term.class, FragmentList.class);
+            if (functionalCharacter.length() >= 3 && functionalCharacter.charAt(0) == '^') { // all internally used terms start with ^
+                Method converter;
+                synchronized (OPERATOR_CONVERTERS) {
+                    converter = OPERATOR_CONVERTERS.get(functionalCharacter);
+                }
+                if (converter == null) {
+                    Class<? extends AOperator> operatorClass = TermUtilities.getClassForTerm(AOperator.class, functionalCharacter);
 
-                    synchronized (OPERATOR_CONVERTERS) {
-                        OPERATOR_CONVERTERS.put(functionalCharacter, converter);
+                    if (operatorClass != null) {
+                        try {
+                            converter = operatorClass.getMethod("appendToOperatorStack", State.class, Term.class, FragmentList.class);
+
+                            synchronized (OPERATOR_CONVERTERS) {
+                                OPERATOR_CONVERTERS.put(functionalCharacter, converter);
+                            }
+                        } catch (NoSuchMethodException e) {
+                            throw new IllegalStateException("Unable to find \"appendToOperatorStacks\" in " + operatorClass.getSimpleName(), e);
+                        }
                     }
-                } catch (NoSuchMethodException e) {
-                    throw new IllegalStateException("Lazy programmer detected", e);
+                }
+                // invoke method found
+                if (converter != null) {
+                    try {
+                        converter.invoke(null, state, term, operatorStack);
+
+                        return;
+
+                    } catch (final InvocationTargetException ite) {
+                        Throwable targetException = ite.getTargetException();
+                        if (targetException instanceof TermConversionException) {
+                            throw (TermConversionException) targetException;
+                        }
+                        throw new TermConversionException("Unknown exception during term conversion", targetException);
+                    } catch (final Exception e) { // will never happen ;-)
+                        // because we know this method exists etc
+                        throw new TermConversionException("Impossible error...", e);
+                    }
                 }
             }
+        } else if (value == IgnoreDummy.ID) {
+            operatorStack.add(VariableIgnore.VI);
+
+            return;
+
+        } else if (value == RangeDummy.RD) {
+            operatorStack.add(CollectionAccessRangeDummy.CARD);
+
+            return;
+
+        } else if (value.isList() == SetlBoolean.TRUE || value.isSet() == SetlBoolean.TRUE) {
+            operatorStack.add(SetListConstructor.valueToExpr(state, value));
+
+            return;
+
         }
-        // invoke method found
-        if (converter != null) {
-            try {
-                converter.invoke(null, state, term, operatorStack);
-            } catch (final Exception e) {
-                //noinspection ConstantConditions
-                if (e instanceof TermConversionException) {
-                    throw (TermConversionException) e;
-                } else { // will never happen ;-)
-                    // because we know this method exists etc
-                    throw new TermConversionException("Impossible error...");
-                }
-            }
-        } else if (throwExceptionOnError) {
-            throw new TermConversionException("Malformed term");
+
+        final Value convertedValue = Value.createFromTerm(state, value);
+
+        if (value instanceof Procedure) {
+            operatorStack.add(new ProcedureConstructor((Procedure) value));
+        } else if (value.getClass() == Term.class) {
+            operatorStack.add(TermConstructor.termToExpr(state, (Term) value));
+        } else {
+            operatorStack.add(new ValueOperator(convertedValue));
         }
     }
 

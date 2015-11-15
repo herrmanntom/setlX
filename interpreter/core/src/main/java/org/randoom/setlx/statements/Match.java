@@ -163,7 +163,7 @@ public class Match extends Statement {
         if (term.size() != 2 || ! (term.lastMember() instanceof SetlList)) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
-            final OperatorExpression                expr       = TermConverter.valueToExpr(state, term.firstMember());
+            final OperatorExpression                expr       = OperatorExpression.createFromTerm(state, term.firstMember());
             final SetlList                          branches   = (SetlList) term.lastMember();
             final FragmentList<AbstractMatchBranch> branchList = new FragmentList<AbstractMatchBranch>(branches.size());
             for (final Value v : branches) {

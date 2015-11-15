@@ -212,7 +212,7 @@ public class ParameterDef extends ImmutableCodeFragment {
             final String var = term.firstMember().getUnquotedString(state);
             OperatorExpression defaultExpr = null;
             if (! term.lastMember().equals(SetlString.NIL)) {
-                defaultExpr = TermConverter.valueToExpr(state, term.lastMember());
+                defaultExpr = OperatorExpression.createFromTerm(state, term.lastMember());
             }
             if (fc.equals(FUNCTIONAL_CHARACTER)) {
                 return new ParameterDef(var, ParameterType.READ_ONLY, defaultExpr);

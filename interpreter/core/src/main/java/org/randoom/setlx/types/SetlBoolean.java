@@ -54,8 +54,8 @@ public class SetlBoolean extends ImmutableValue {
                 return TRUE;
             } else if (otr == FALSE) {
                return FALSE;
-//            } else if (otr.getClass() == Term.class) {
-//                return ((Term) otr).conjunctionFlipped(state, this);
+            } else if (otr.getClass() == Term.class) {
+                return ((Term) otr).conjunctionFlipped(state, this);
             } else {
                 throw new IncompatibleTypeException(
                     "Right-hand-side of '" + this.toString(state) + " && " + otr.toString(state) + "' is not a Boolean value."
@@ -74,8 +74,8 @@ public class SetlBoolean extends ImmutableValue {
                 return TRUE;
             } else if (otr == FALSE) {
                 return FALSE;
-//            } else if (otr.getClass() == Term.class) {
-//                return ((Term) otr).disjunctionFlipped(state, this);
+            } else if (otr.getClass() == Term.class) {
+                return ((Term) otr).disjunctionFlipped(state, this);
             } else {
                 throw new IncompatibleTypeException(
                     "Right-hand-side of '" + this.toString(state) + " || " + otr.toString(state) + "' is not a Boolean value."
@@ -94,8 +94,8 @@ public class SetlBoolean extends ImmutableValue {
                 return TRUE;
             } else if (otr == FALSE) {
                return FALSE;
-//            } else if (otr.getClass() == Term.class) {
-//                return ((Term) otr).implicationFlipped(state, this);
+            } else if (otr.getClass() == Term.class) {
+                return ((Term) otr).implicationFlipped(state, this);
             } else {
                 throw new IncompatibleTypeException(
                     "Right-hand-side of '" + this.toString(state) + " => " + otr.toString(state) + "' is not a Boolean value."

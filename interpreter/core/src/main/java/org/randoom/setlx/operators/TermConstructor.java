@@ -1,6 +1,7 @@
 package org.randoom.setlx.operators;
 
 import org.randoom.setlx.exceptions.SetlException;
+import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.operatorUtilities.OperatorExpression;
 import org.randoom.setlx.operatorUtilities.Stack;
 import org.randoom.setlx.types.Term;
@@ -8,7 +9,6 @@ import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.CodeFragment;
 import org.randoom.setlx.utilities.FragmentList;
 import org.randoom.setlx.utilities.State;
-import org.randoom.setlx.utilities.TermConverter;
 
 import java.util.List;
 
@@ -79,12 +79,13 @@ public class TermConstructor extends AZeroOperator {
      * @param state Current state of the running setlX program.
      * @param term  Term to convert.
      * @return      Resulting expression of this conversion.
+     * @throws TermConversionException in case the term is malformed.
      */
-    public static TermConstructor termToExpr(final State state, final Term term) {
+    public static TermConstructor termToExpr(final State state, final Term term) throws TermConversionException {
         final String functionalCharacter = term.getFunctionalCharacter();
         final FragmentList<OperatorExpression> args = new FragmentList<OperatorExpression>(term.size());
         for (final Value v : term) {
-            args.add(TermConverter.valueToExpr(state, v));
+            args.add(OperatorExpression.createFromTerm(state, v));
         }
         return new TermConstructor(functionalCharacter, args);
     }

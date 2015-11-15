@@ -8,7 +8,7 @@ import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.ReturnMessage;
 import org.randoom.setlx.utilities.State;
-import org.randoom.setlx.utilities.TermConverter;
+import org.randoom.setlx.utilities.TermUtilities;
 
 /**
  * Implementation of the %= operator, on statement level.
@@ -72,8 +72,8 @@ public class ModuloAssignment extends AbstractAssignment {
      */
     public static ModuloAssignment termToStatement(final State state, final Term term) throws TermConversionException {
         if (term.size() == 2) {
-            final AAssignableExpression lhs = TermConverter.valueToAssignableExpr(state, term.firstMember());
-            final OperatorExpression rhs = TermConverter.valueToExpr(state, term.lastMember());
+            final AAssignableExpression lhs = TermUtilities.valueToAssignableExpr(state, term.firstMember());
+            final OperatorExpression rhs = OperatorExpression.createFromTerm(state, term.lastMember());
             return new ModuloAssignment(lhs, rhs);
         }
         throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);

@@ -95,7 +95,7 @@ public class LambdaProcedure extends Procedure {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
             final ParameterList parameters = ParameterList.termFragmentToParameterList(state, term.firstMember());
-            final OperatorExpression expr = TermConverter.valueToExpr(state, term.lastMember());
+            final OperatorExpression expr = OperatorExpression.createFromTerm(state, term.lastMember());
             return new LambdaProcedure(parameters, expr);
         }
     }

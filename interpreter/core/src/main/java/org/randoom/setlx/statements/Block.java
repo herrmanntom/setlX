@@ -186,7 +186,7 @@ public class Block extends Statement {
             final SetlList                stmnts = (SetlList) term.lastMember();
             final FragmentList<Statement> block  = new FragmentList<Statement>(stmnts.size());
             for (final Value v : stmnts) {
-                block.add(TermConverter.valueToStatement(state, v));
+                block.add(createFromTerm(state, v));
             }
             return new Block(block);
         }

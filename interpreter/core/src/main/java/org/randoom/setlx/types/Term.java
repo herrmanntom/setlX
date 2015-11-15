@@ -1,13 +1,14 @@
 package org.randoom.setlx.types;
 
+import org.randoom.setlx.exceptions.IncompatibleTypeException;
 import org.randoom.setlx.exceptions.SetlException;
-import org.randoom.setlx.operators.StringConstructor;
-import org.randoom.setlx.operators.Variable;
-import org.randoom.setlx.operators.VariableIgnore;
+import org.randoom.setlx.operatorUtilities.OperatorExpression;
+import org.randoom.setlx.operators.*;
 import org.randoom.setlx.utilities.CodeFragment;
+import org.randoom.setlx.utilities.FragmentList;
 import org.randoom.setlx.utilities.MatchResult;
 import org.randoom.setlx.utilities.State;
-import org.randoom.setlx.utilities.TermConverter;
+import org.randoom.setlx.utilities.TermUtilities;
 
 import java.util.Iterator;
 import java.util.List;
@@ -70,88 +71,86 @@ public class Term extends IndexedCollectionValue {
 
     /* Boolean operations */
 
-//    // viral operation
-//    @Override
-//    public Term conjunction(final State state, final Expr other) throws SetlException {
-//        return (    new Conjunction(
-//                        TermConverter.valueToExpr(state, this),
-//                        TermConverter.valueToExpr(state, other.eval(state))
-//                    )
-//               ).toTerm(state);
-//    }
-//
-//    /**
-//     * Compute the conjunction between another value and this.
-//     *
-//     * @param state Current state of the running setlX program.
-//     * @param other Expression to evaluate lazily.
-//     * @return      Conjunction of value and this.
-//     */
-//    public Term conjunctionFlipped(final State state, final Value other) throws SetlException {
-//        return (    new Conjunction(
-//                        TermConverter.valueToExpr(state, other),
-//                        TermConverter.valueToExpr(state, this)
-//                    )
-//               ).toTerm(state);
-//    }
-//
-//    // viral operation
-//    @Override
-//    public Term disjunction(final State state, final Expr other) throws SetlException {
-//        return (    new Disjunction(
-//                        TermConverter.valueToExpr(state, this),
-//                        TermConverter.valueToExpr(state, other.eval(state))
-//                    )
-//               ).toTerm(state);
-//    }
-//
-//    /**
-//     * Compute the disjunction between another value and this.
-//     *
-//     * @param state Current state of the running setlX program.
-//     * @param other Expression to evaluate lazily.
-//     * @return      Disjunction of value and this.
-//     */
-//    public Term disjunctionFlipped(final State state, final Value other) throws SetlException {
-//        return (    new Disjunction(
-//                        TermConverter.valueToExpr(state, other),
-//                        TermConverter.valueToExpr(state, this))
-//               ).toTerm(state);
-//    }
-//
-//    // viral operation
-//    @Override
-//    public Term implication(final State state, final Expr other) throws SetlException {
-//        return (    new Implication(
-//                        TermConverter.valueToExpr(state, this),
-//                        TermConverter.valueToExpr(state, other.eval(state))
-//                    )
-//               ).toTerm(state);
-//    }
-//
-//    /**
-//     * Compute the implication between another value and this.
-//     *
-//     * @param state Current state of the running setlX program.
-//     * @param other Expression to evaluate lazily.
-//     * @return      Implication of value and this.
-//     */
-//    public Term implicationFlipped(final State state, final Value other) throws SetlException {
-//        return (    new Implication(
-//                        TermConverter.valueToExpr(state, other),
-//                        TermConverter.valueToExpr(state, this)
-//                    )
-//               ).toTerm(state);
-//    }
-//
-//    // viral operation
-//    @Override
-//    public Term not(final State state) throws SetlException {
-//        return (    new Not(
-//                        TermConverter.valueToExpr(state, this)
-//                    )
-//               ).toTerm(state);
-//    }
+    // viral operation
+    @Override
+    public Value conjunction(final State state, final OperatorExpression other) throws SetlException {
+        return new OperatorExpression(
+                OperatorExpression.createFromTerm(state, this),
+                new Conjunction(other)
+        ).toTerm(state);
+    }
+
+    /**
+     * Compute the conjunction between another value and this.
+     *
+     * @param state Current state of the running setlX program.
+     * @param other Expression to evaluate lazily.
+     * @return      Conjunction of value and this.
+     * @throws SetlException in case of (User-) Error.
+     */
+    public Value conjunctionFlipped(final State state, final Value other) throws SetlException {
+        return new OperatorExpression(
+                OperatorExpression.createFromTerm(state, other),
+                new Conjunction(OperatorExpression.createFromTerm(state, this))
+        ).toTerm(state);
+    }
+
+    // viral operation
+    @Override
+    public Value disjunction(final State state, final OperatorExpression other) throws SetlException {
+        return new OperatorExpression(
+                OperatorExpression.createFromTerm(state, this),
+                new Disjunction(other)
+        ).toTerm(state);
+    }
+
+    /**
+     * Compute the disjunction between another value and this.
+     *
+     * @param state Current state of the running setlX program.
+     * @param other Expression to evaluate lazily.
+     * @return      Disjunction of value and this.
+     * @throws SetlException in case of (User-) Error.
+     */
+    public Value disjunctionFlipped(final State state, final Value other) throws SetlException {
+        return new OperatorExpression(
+                OperatorExpression.createFromTerm(state, other),
+                new Disjunction(OperatorExpression.createFromTerm(state, this))
+        ).toTerm(state);
+    }
+
+    // viral operation
+    @Override
+    public Value implication(final State state, final OperatorExpression other) throws SetlException {
+        return new OperatorExpression(
+                OperatorExpression.createFromTerm(state, this),
+                new Implication(other)
+        ).toTerm(state);
+    }
+
+    /**
+     * Compute the implication between another value and this.
+     *
+     * @param state Current state of the running setlX program.
+     * @param other Expression to evaluate lazily.
+     * @return      Implication of value and this.
+     * @throws SetlException in case of (User-) Error.
+     */
+    public Value implicationFlipped(final State state, final Value other) throws SetlException {
+        return new OperatorExpression(
+                OperatorExpression.createFromTerm(state, other),
+                new Implication(OperatorExpression.createFromTerm(state, this))
+        ).toTerm(state);
+    }
+
+    // viral operation
+    @Override
+    public Value not(final State state) throws SetlException {
+        return new OperatorExpression(
+                OperatorExpression.createFromTerm(state, this),
+                Not.N
+        ).toTerm(state);
+    }
 
     /* type checks (sort of Boolean operation) */
 
@@ -162,198 +161,205 @@ public class Term extends IndexedCollectionValue {
 
     /* arithmetic operations */
 
-//    // viral operation
-//    @Override
-//    public Term difference(final State state, final Value subtrahend) throws SetlException {
-//        return (    new Difference(
-//                        TermConverter.valueToExpr(state, this),
-//                        TermConverter.valueToExpr(state, subtrahend)
-//                    )
-//               ).toTerm(state);
-//    }
-//
-//    /**
-//     * Compute the difference between another value and this.
-//     *
-//     * @param state      Current state of the running setlX program.
-//     * @param subtrahend Value to subtract.
-//     * @return           Difference subtrahend and this.
-//     */
-//    public Term differenceFlipped(final State state, final Value subtrahend) throws SetlException {
-//        return (    new Difference(
-//                        TermConverter.valueToExpr(state, subtrahend),
-//                        TermConverter.valueToExpr(state, this)
-//                    )
-//               ).toTerm(state);
-//    }
-//
-//    // viral operation
-//    @Override
-//    public Value factorial(final State state) throws SetlException {
-//        return (    new Factorial(
-//                        TermConverter.valueToExpr(state, this)
-//                    )
-//               ).toTerm(state);
-//    }
-//
-//    // viral operation
-//    @Override
-//    public Term integerDivision(final State state, final Value divisor) throws SetlException {
-//        return (    new IntegerDivision(
-//                        TermConverter.valueToExpr(state, this),
-//                        TermConverter.valueToExpr(state, divisor)
-//                    )
-//               ).toTerm(state);
-//    }
-//
-//    /**
-//     * Compute the integer division between another value and this.
-//     *
-//     * @param state   Current state of the running setlX program.
-//     * @param divisor Value to divide by.
-//     * @return        Integer division of divisor and this.
-//     */
-//    public Term integerDivisionFlipped(final State state, final Value divisor) throws SetlException {
-//        return (    new IntegerDivision(
-//                        TermConverter.valueToExpr(state, divisor),
-//                        TermConverter.valueToExpr(state, this)
-//                    )
-//               ).toTerm(state);
-//    }
-//
-//    // viral operation
-//    @Override
-//    public Term minus(final State state) throws SetlException {
-//        return (    new Minus(
-//                        TermConverter.valueToExpr(state, this)
-//                    )
-//               ).toTerm(state);
-//    }
-//
-//    // viral operation
-//    @Override
-//    public Term modulo(final State state, final Value modulo) throws SetlException {
-//        return (    new Modulo(
-//                        TermConverter.valueToExpr(state, this),
-//                        TermConverter.valueToExpr(state, modulo)
-//                    )
-//               ).toTerm(state);
-//    }
-//
-//    /**
-//     * Compute the modulo between another value and this.
-//     *
-//     * @param state   Current state of the running setlX program.
-//     * @param modulo  Value to divide by.
-//     * @return        Modulo of modulo and this.
-//     */
-//    public Term moduloFlipped(final State state, final Value modulo) throws SetlException {
-//        return (    new Modulo(
-//                        TermConverter.valueToExpr(state, modulo),
-//                        TermConverter.valueToExpr(state, this)
-//                    )
-//               ).toTerm(state);
-//    }
-//
-//    // viral operation
-//    @Override
-//    public Term power(final State state, final Value exponent) throws SetlException {
-//        return (    new Power(
-//                        TermConverter.valueToExpr(state, this),
-//                        TermConverter.valueToExpr(state, exponent)
-//                    )
-//               ).toTerm(state);
-//    }
-//
-//    /**
-//     * Compute the power between another value and this.
-//     *
-//     * @param state    Current state of the running setlX program.
-//     * @param exponent Value to raise by.
-//     * @return         Exponent raised by the power of this.
-//     */
-//    public Term powerFlipped(final State state, final Value exponent) throws SetlException {
-//        return (    new Power(
-//                        TermConverter.valueToExpr(state, exponent),
-//                        TermConverter.valueToExpr(state, this)
-//                    )
-//               ).toTerm(state);
-//    }
-//
-//    // viral operation
-//    @Override
-//    public Term product(final State state, final Value multiplier) throws SetlException {
-//        return (    new Product(
-//                        TermConverter.valueToExpr(state, this),
-//                        TermConverter.valueToExpr(state, multiplier)
-//                    )
-//               ).toTerm(state);
-//    }
-//
-//    /**
-//     * Compute the product between another value and this.
-//     *
-//     * @param state      Current state of the running setlX program.
-//     * @param multiplier Value to multiply by.
-//     * @return           Product of multiplier and this.
-//     */
-//    public Term productFlipped(final State state, final Value multiplier) throws SetlException {
-//        return (    new Product(
-//                        TermConverter.valueToExpr(state, multiplier),
-//                        TermConverter.valueToExpr(state, this)
-//                    )
-//               ).toTerm(state);
-//    }
-//
-//    // viral operation
-//    @Override
-//    public Term quotient(final State state, final Value divisor) throws SetlException {
-//        return (    new Quotient(
-//                        TermConverter.valueToExpr(state, this),
-//                        TermConverter.valueToExpr(state, divisor)
-//                    )
-//               ).toTerm(state);
-//    }
-//
-//    /**
-//     * Divide another value by this.
-//     *
-//     * @param state      Current state of the running setlX program.
-//     * @param divisor    Value to divide by.
-//     * @return           Division of divisor and this.
-//     */
-//    public Term quotientFlipped(final State state, final Value divisor) throws SetlException {
-//        return (    new Quotient(
-//                        TermConverter.valueToExpr(state, divisor),
-//                        TermConverter.valueToExpr(state, this)
-//                    )
-//               ).toTerm(state);
-//    }
-//
-//    // viral operation
-//    @Override
-//    public Term sum(final State state, final Value summand) throws SetlException {
-//        return (    new Sum(
-//                        TermConverter.valueToExpr(state, this),
-//                        TermConverter.valueToExpr(state, summand)
-//                    )
-//               ).toTerm(state);
-//    }
-//
-//    /**
-//     * Add this value and another.
-//     *
-//     * @param state      Current state of the running setlX program.
-//     * @param summand    Value to add.
-//     * @return           Sum of this and summand.
-//     */
-//    public Term sumFlipped(final State state, final Value summand) throws SetlException {
-//        return (    new Sum(
-//                        TermConverter.valueToExpr(state, summand),
-//                        TermConverter.valueToExpr(state, this)
-//                    )
-//               ).toTerm(state);
-//    }
+    // viral operation
+    @Override
+    public Value difference(final State state, final Value subtrahend) throws SetlException {
+        return new OperatorExpression(
+                OperatorExpression.createFromTerm(state, this),
+                OperatorExpression.createFromTerm(state, subtrahend),
+                Difference.D
+        ).toTerm(state);
+    }
+
+    /**
+     * Compute the difference between another value and this.
+     *
+     * @param state      Current state of the running setlX program.
+     * @param subtrahend Value to subtract.
+     * @return           Difference subtrahend and this.
+     * @throws SetlException in case of (User-) Error.
+     */
+    public Value differenceFlipped(final State state, final Value subtrahend) throws SetlException {
+        return new OperatorExpression(
+                OperatorExpression.createFromTerm(state, subtrahend),
+                OperatorExpression.createFromTerm(state, this),
+                Difference.D
+        ).toTerm(state);
+    }
+
+    // viral operation
+    @Override
+    public Value factorial(final State state) throws SetlException {
+        return new OperatorExpression(
+                OperatorExpression.createFromTerm(state, this),
+                Factorial.F
+        ).toTerm(state);
+    }
+
+    // viral operation
+    @Override
+    public Value integerDivision(final State state, final Value divisor) throws SetlException {
+        return new OperatorExpression(
+                OperatorExpression.createFromTerm(state, this),
+                OperatorExpression.createFromTerm(state, divisor),
+                IntegerDivision.ID
+        ).toTerm(state);
+    }
+
+    /**
+     * Compute the integer division between another value and this.
+     *
+     * @param state   Current state of the running setlX program.
+     * @param divisor Value to divide by.
+     * @return        Integer division of divisor and this.
+     * @throws SetlException in case of (User-) Error.
+     */
+    public Value integerDivisionFlipped(final State state, final Value divisor) throws SetlException {
+        return new OperatorExpression(
+                OperatorExpression.createFromTerm(state, divisor),
+                OperatorExpression.createFromTerm(state, this),
+                IntegerDivision.ID
+        ).toTerm(state);
+    }
+
+    // viral operation
+    @Override
+    public Value minus(final State state) throws SetlException {
+        return new OperatorExpression(
+                OperatorExpression.createFromTerm(state, this),
+                Minus.M
+        ).toTerm(state);
+    }
+
+    // viral operation
+    @Override
+    public Value modulo(final State state, final Value modulo) throws SetlException {
+        return new OperatorExpression(
+                OperatorExpression.createFromTerm(state, this),
+                OperatorExpression.createFromTerm(state, modulo),
+                Modulo.M
+        ).toTerm(state);
+    }
+
+    /**
+     * Compute the modulo between another value and this.
+     *
+     * @param state   Current state of the running setlX program.
+     * @param modulo  Value to divide by.
+     * @return        Modulo of modulo and this.
+     * @throws SetlException in case of (User-) Error.
+     */
+    public Value moduloFlipped(final State state, final Value modulo) throws SetlException {
+        return new OperatorExpression(
+                OperatorExpression.createFromTerm(state, modulo),
+                OperatorExpression.createFromTerm(state, this),
+                Modulo.M
+        ).toTerm(state);
+    }
+
+    // viral operation
+    @Override
+    public Value power(final State state, final Value exponent) throws SetlException {
+        return new OperatorExpression(
+                OperatorExpression.createFromTerm(state, this),
+                OperatorExpression.createFromTerm(state, exponent),
+                Power.P
+        ).toTerm(state);
+    }
+
+    /**
+     * Compute the power between another value and this.
+     *
+     * @param state    Current state of the running setlX program.
+     * @param exponent Value to raise by.
+     * @return         Exponent raised by the power of this.
+     * @throws SetlException in case of (User-) Error.
+     */
+    public Value powerFlipped(final State state, final Value exponent) throws SetlException {
+        return new OperatorExpression(
+                OperatorExpression.createFromTerm(state, exponent),
+                OperatorExpression.createFromTerm(state, this),
+                Power.P
+        ).toTerm(state);
+    }
+
+    // viral operation
+    @Override
+    public Value product(final State state, final Value multiplier) throws SetlException {
+        return new OperatorExpression(
+                OperatorExpression.createFromTerm(state, this),
+                OperatorExpression.createFromTerm(state, multiplier),
+                Product.P
+        ).toTerm(state);
+    }
+
+    /**
+     * Compute the product between another value and this.
+     *
+     * @param state      Current state of the running setlX program.
+     * @param multiplier Value to multiply by.
+     * @return           Product of multiplier and this.
+     * @throws SetlException in case of (User-) Error.
+     */
+    public Value productFlipped(final State state, final Value multiplier) throws SetlException {
+        return new OperatorExpression(
+                OperatorExpression.createFromTerm(state, multiplier),
+                OperatorExpression.createFromTerm(state, this),
+                Product.P
+        ).toTerm(state);
+    }
+
+    // viral operation
+    @Override
+    public Value quotient(final State state, final Value divisor) throws SetlException {
+        return new OperatorExpression(
+                OperatorExpression.createFromTerm(state, this),
+                OperatorExpression.createFromTerm(state, divisor),
+                Quotient.Q
+        ).toTerm(state);
+    }
+
+    /**
+     * Divide another value by this.
+     *
+     * @param state      Current state of the running setlX program.
+     * @param divisor    Value to divide by.
+     * @return           Division of divisor and this.
+     * @throws SetlException in case of (User-) Error.
+     */
+    public Value quotientFlipped(final State state, final Value divisor) throws SetlException {
+        return new OperatorExpression(
+                OperatorExpression.createFromTerm(state, divisor),
+                OperatorExpression.createFromTerm(state, this),
+                Quotient.Q
+        ).toTerm(state);
+    }
+
+    // viral operation
+    @Override
+    public Value sum(final State state, final Value summand) throws SetlException {
+        return new OperatorExpression(
+                OperatorExpression.createFromTerm(state, this),
+                OperatorExpression.createFromTerm(state, summand),
+                Sum.S
+        ).toTerm(state);
+    }
+
+    /**
+     * Add this value and another.
+     *
+     * @param state      Current state of the running setlX program.
+     * @param summand    Value to add.
+     * @return           Sum of this and summand.
+     * @throws SetlException in case of (User-) Error.
+     */
+    public Value sumFlipped(final State state, final Value summand) throws SetlException {
+        return new OperatorExpression(
+                OperatorExpression.createFromTerm(state, summand),
+                OperatorExpression.createFromTerm(state, this),
+                Sum.S
+        ).toTerm(state);
+    }
 
     /* operations on collection values (Lists, Sets [, Strings]) */
 
@@ -367,72 +373,73 @@ public class Term extends IndexedCollectionValue {
         return body.clone();
     }
 
-//    // viral operation
-//    @Override
-//    public Term cardinality(final State state) throws SetlException {
-//        return (    new Cardinality(
-//                        TermConverter.valueToExpr(state, this)
-//                    )
-//               ).toTerm(state);
-//    }
-//
-//    // viral operation
-//    @Override
-//    public Term cartesianProduct(final State state, final Value other) throws SetlException {
-//        return (    new CartesianProduct(
-//                        TermConverter.valueToExpr(state, this),
-//                        TermConverter.valueToExpr(state, other)
-//                    )
-//               ).toTerm(state);
-//    }
+    // viral operation
+    @Override
+    public Value cardinality(final State state) throws SetlException {
+        return new OperatorExpression(
+                OperatorExpression.createFromTerm(state, this),
+                Cardinality.C
+        ).toTerm(state);
+    }
 
-//    /**
-//     * Implementation of the >< operator. Computes the cartasionProduct of two sets
-//     * and combines two lists into one.
-//     *
-//     * @param state          Current state of the running setlX program.
-//     * @param other          Second value.
-//     * @return               Cartesian product of this and other.
-//     */
-//    public Term cartesianProductFlipped(final State state, final Value other) throws SetlException {
-//        return (    new CartesianProduct(
-//                        TermConverter.valueToExpr(state, other),
-//                        TermConverter.valueToExpr(state, this)
-//                    )
-//               ).toTerm(state);
-//    }
-//
-//    // viral operation
-//    @Override
-//    public Term collectionAccess(final State state, final List<Value> args) throws SetlException {
-//        final List<Expr> argExprs = new ArrayList<Expr>(args.size());
-//        for (final Value v : args) {
-//            argExprs.add(TermConverter.valueToExpr(state, v));
-//        }
-//        return (    new CollectionAccess(
-//                        TermConverter.valueToExpr(state, this),
-//                        argExprs)
-//               ).toTerm(state);
-//    }
+    // viral operation
+    @Override
+    public Value cartesianProduct(final State state, final Value other) throws SetlException {
+        return new OperatorExpression(
+                OperatorExpression.createFromTerm(state, this),
+                OperatorExpression.createFromTerm(state, other),
+                CartesianProduct.CP
+        ).toTerm(state);
+    }
+
+    /**
+     * Implementation of the >< operator. Computes the cartasion product of two sets
+     * and combines two lists into one.
+     *
+     * @param state          Current state of the running setlX program.
+     * @param other          Second value.
+     * @return               Cartesian product of this and other.
+     * @throws SetlException in case of (User-) Error.
+     */
+    public Value cartesianProductFlipped(final State state, final Value other) throws SetlException {
+        return new OperatorExpression(
+                OperatorExpression.createFromTerm(state, other),
+                OperatorExpression.createFromTerm(state, this),
+                CartesianProduct.CP
+        ).toTerm(state);
+    }
+
+    // viral operation
+    @Override
+    public Value collectionAccess(final State state, final List<Value> args) throws SetlException {
+        final FragmentList<OperatorExpression> arguments = new FragmentList<OperatorExpression>(args.size());
+        for (final Value v : args) {
+            arguments.add(OperatorExpression.createFromTerm(state, v));
+        }
+        return new OperatorExpression(
+                OperatorExpression.createFromTerm(state, this),
+                new CollectionAccess(arguments)
+        ).toTerm(state);
+    }
 
     @Override
     public Value collectionAccessUnCloned(final State state, final List<Value> args) throws SetlException {
         return body.collectionAccessUnCloned(state, args);
     }
 
-//    // viral operation
-//    @Override
-//    public Term collectMap(final State state, final Value arg) throws SetlException {
-//        return (    new CollectMap(
-//                        TermConverter.valueToExpr(state, this),
-//                        TermConverter.valueToExpr(state, arg))
-//               ).toTerm(state);
-//    }
+    // viral operation
+    @Override
+    public Value collectMap(final State state, final Value arg) throws SetlException {
+        return new OperatorExpression(
+                OperatorExpression.createFromTerm(state, this),
+                new CollectMap(OperatorExpression.createFromTerm(state, arg))
+        ).toTerm(state);
+    }
 
     @Override
     public SetlBoolean containsMember(final State state, final Value element) {
         // Terms are inherently recursive, so search recursively
-        return containsMemberRecursive(element); // this is implemented in CollectionValue.java
+        return containsMemberRecursive(element);
     }
 
     @Override
@@ -497,22 +504,22 @@ public class Term extends IndexedCollectionValue {
         return body.minimumMember(state);
     }
 
-//    // viral operation
-//    @Override
-//    public Term productOfMembers(final State state, final Value neutral) throws SetlException {
-//        if (neutral == Om.OM) {
-//            return (    new ProductOfMembers(
-//                            TermConverter.valueToExpr(state, this)
-//                        )
-//                   ).toTerm(state);
-//        } else {
-//            return (    new ProductOfMembersBinary(
-//                            TermConverter.valueToExpr(state, neutral),
-//                            TermConverter.valueToExpr(state, this)
-//                        )
-//                   ).toTerm(state);
-//        }
-//    }
+    // viral operation
+    @Override
+    public Value productOfMembers(final State state, final Value neutral) throws SetlException {
+        if (neutral == Om.OM) {
+            return new OperatorExpression(
+                    OperatorExpression.createFromTerm(state, this),
+                    ProductOfMembers.POM
+            ).toTerm(state);
+        } else {
+            return new OperatorExpression(
+                    OperatorExpression.createFromTerm(state, neutral),
+                    OperatorExpression.createFromTerm(state, this),
+                    ProductOfMembersBinary.POMB
+            ).toTerm(state);
+        }
+    }
 
     @Override
     public void removeMember(final State state, final Value element) {
@@ -544,49 +551,49 @@ public class Term extends IndexedCollectionValue {
         return body.size();
     }
 
-//    // viral operation
-//    @Override
-//    public Term sumOfMembers(final State state, final Value neutral) throws SetlException {
-//        if (neutral == Om.OM) {
-//            return (    new SumOfMembers(
-//                    TermConverter.valueToExpr(state, this)
-//                )
-//           ).toTerm(state);
-//        } else {
-//            return (    new SumOfMembersBinary(
-//                    TermConverter.valueToExpr(state, neutral),
-//                    TermConverter.valueToExpr(state, this)
-//                )
-//           ).toTerm(state);
-//        }
-//    }
-//
-//    /* function call */
-//
-//    // viral operation
-//    @Override
-//    public Term call(final State state, final List<Expr> args, final Expr listArg) throws SetlException {
-//        if (functionalCharacter.equalsIgnoreCase(VariableIgnore.getFunctionalCharacter())) {
-//            return (    new Call(
-//                            new Variable(
-//                                TermConverter.valueToExpr(state, this).toString(state)
-//                            ),
-//                            args,
-//                            listArg
-//                        )
-//                   ).toTerm(state);
-//        } else {
-//            throw new IncompatibleTypeException(
-//                "Viral term expansion is only supported when performing a call on a term representing a variable."
-//            );
-//        }
-//    }
+    // viral operation
+    @Override
+    public Value sumOfMembers(final State state, final Value neutral) throws SetlException {
+        if (neutral == Om.OM) {
+            return new OperatorExpression(
+                    OperatorExpression.createFromTerm(state, this),
+                    SumOfMembers.SOM
+            ).toTerm(state);
+        } else {
+            return new OperatorExpression(
+                    OperatorExpression.createFromTerm(state, neutral),
+                    OperatorExpression.createFromTerm(state, this),
+                    SumOfMembersBinary.SOMB
+            ).toTerm(state);
+        }
+    }
+
+    /* function call */
+
+    // viral operation
+    @Override
+    public Value call(final State state, final FragmentList<OperatorExpression> args, final OperatorExpression listArg) throws SetlException {
+        if (functionalCharacter.equalsIgnoreCase(VariableIgnore.getFunctionalCharacter())) {
+            FragmentList<AOperator> operators = new FragmentList<AOperator>(2);
+            operators.add(
+                    new Variable(OperatorExpression.createFromTerm(state, this).toString(state))
+            );
+            operators.add(
+                    new Call(args, listArg)
+            );
+            return new OperatorExpression(operators).toTerm(state);
+        } else {
+            throw new IncompatibleTypeException(
+                "Viral term expansion is only supported when performing a call on a term representing a variable."
+            );
+        }
+    }
 
     /* string and char operations */
 
     @Override
     public void appendString(final State state, final StringBuilder sb, final int tabs) {
-        TermConverter.valueToCodeFragment(state, this, false).appendString(state, sb, 0);
+        TermUtilities.appendCodeFragmentString(state, this, sb);
     }
 
     @Override
@@ -656,11 +663,11 @@ public class Term extends IndexedCollectionValue {
         }
 
         // same functional character & same number of arguments
-        final MatchResult     result      = new MatchResult(true);
-        final Iterator<Value> thisIter    = iterator();
-        final Iterator<Value> otherIter   = otherTerm.iterator();
-        while (thisIter.hasNext() && otherIter.hasNext() && result.isMatch()) {
-            final MatchResult subResult   = thisIter.next().matchesTerm(state, otherIter.next());
+        final MatchResult     result        = new MatchResult(true);
+        final Iterator<Value> thisIterator  = iterator();
+        final Iterator<Value> otherIterator = otherTerm.iterator();
+        while (thisIterator.hasNext() && otherIterator.hasNext() && result.isMatch()) {
+            final MatchResult subResult = thisIterator.next().matchesTerm(state, otherIterator.next());
             if (subResult.isMatch()) {
                 result.addBindings(subResult);
             } else {
@@ -709,6 +716,7 @@ public class Term extends IndexedCollectionValue {
         return COMPARE_TO_ORDER_CONSTANT;
     }
 
+    @SuppressWarnings("SimplifiableIfStatement")
     @Override
     public boolean equalTo(final Object other) {
         if (this == other) {

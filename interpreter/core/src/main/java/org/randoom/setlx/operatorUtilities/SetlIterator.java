@@ -224,8 +224,8 @@ public class SetlIterator extends ImmutableCodeFragment {
                     throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
                 }
 
-                final AAssignableExpression assignable = TermConverter.valueToAssignableExpr(state, term.firstMember());
-                final OperatorExpression collection = TermConverter.valueToExpr(state, term.getMember(2));
+                final AAssignableExpression assignable = TermUtilities.valueToAssignableExpr(state, term.firstMember());
+                final OperatorExpression collection = OperatorExpression.createFromTerm(state, term.getMember(2));
 
                 SetlIterator iterator = null;
                 if (! term.lastMember().equals(SetlString.NIL)) {

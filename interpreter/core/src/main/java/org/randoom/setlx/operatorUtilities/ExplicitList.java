@@ -2,13 +2,13 @@ package org.randoom.setlx.operatorUtilities;
 
 import org.randoom.setlx.assignments.AAssignableExpression;
 import org.randoom.setlx.exceptions.SetlException;
+import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.exceptions.UndefinedOperationException;
 import org.randoom.setlx.types.CollectionValue;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.CodeFragment;
 import org.randoom.setlx.utilities.FragmentList;
 import org.randoom.setlx.utilities.State;
-import org.randoom.setlx.utilities.TermConverter;
 
 import java.util.List;
 
@@ -98,11 +98,12 @@ public class ExplicitList extends CollectionBuilder {
      * @param state                    Current state of the running setlX program.
      * @param value                    CollectionValue containing the term representation.
      * @return                         Regenerated ExplicitList.
+     * @throws TermConversionException in case the term is malformed.
      */
-    public static ExplicitList collectionValueToExplicitList(final State state, final CollectionValue value) {
+    public static ExplicitList collectionValueToExplicitList(final State state, final CollectionValue value) throws TermConversionException {
         final FragmentList<OperatorExpression> exprList = new FragmentList<OperatorExpression>(value.size());
         for (final Value v : value) {
-            exprList.add(TermConverter.valueToExpr(state, v));
+            exprList.add(OperatorExpression.createFromTerm(state, v));
         }
         return new ExplicitList(exprList);
     }

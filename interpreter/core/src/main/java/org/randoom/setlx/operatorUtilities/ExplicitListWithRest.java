@@ -11,7 +11,6 @@ import org.randoom.setlx.utilities.CodeFragment;
 import org.randoom.setlx.utilities.FragmentList;
 import org.randoom.setlx.utilities.MatchResult;
 import org.randoom.setlx.utilities.State;
-import org.randoom.setlx.utilities.TermConverter;
 
 import java.util.List;
 
@@ -142,9 +141,9 @@ public class ExplicitListWithRest extends ExplicitList {
             final SetlList exprs = (SetlList) term.firstMember();
             final FragmentList<OperatorExpression> exprList = new FragmentList<OperatorExpression>(exprs.size());
             for (final Value v : exprs) {
-                exprList.add(TermConverter.valueToExpr(state, v));
+                exprList.add(OperatorExpression.createFromTerm(state, v));
             }
-            final OperatorExpression rest = TermConverter.valueToExpr(state, term.lastMember());
+            final OperatorExpression rest = OperatorExpression.createFromTerm(state, term.lastMember());
             return new ExplicitListWithRest(exprList, rest);
         }
     }

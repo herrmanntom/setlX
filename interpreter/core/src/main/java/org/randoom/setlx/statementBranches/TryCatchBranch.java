@@ -4,11 +4,10 @@ import org.randoom.setlx.assignments.AssignableVariable;
 import org.randoom.setlx.exceptions.CatchableInSetlXException;
 import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.assignments.AAssignableExpression;
-import org.randoom.setlx.operators.Variable;
 import org.randoom.setlx.statements.Block;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.utilities.State;
-import org.randoom.setlx.utilities.TermConverter;
+import org.randoom.setlx.utilities.TermUtilities;
 
 /**
  * This catch block catches any exception, which is catchable in SetlX.
@@ -69,8 +68,8 @@ public class TryCatchBranch extends AbstractTryCatchBranch {
      */
     public static TryCatchBranch termToBranch(final State state, final Term term) throws TermConversionException {
         if (term.size() == 2) {
-            final AAssignableExpression var = TermConverter.valueToAssignableExpr(state, term.firstMember());
-            final Block block = TermConverter.valueToBlock(state, term.lastMember());
+            final AAssignableExpression var = TermUtilities.valueToAssignableExpr(state, term.firstMember());
+            final Block block = TermUtilities.valueToBlock(state, term.lastMember());
             if (var.getClass() == AssignableVariable.class) {
                 return new TryCatchBranch((AssignableVariable) var, block);
             }

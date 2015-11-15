@@ -8,7 +8,6 @@ import org.randoom.setlx.types.Term;
 import org.randoom.setlx.utilities.CodeFragment;
 import org.randoom.setlx.utilities.ReturnMessage;
 import org.randoom.setlx.utilities.State;
-import org.randoom.setlx.utilities.TermConverter;
 
 import java.util.List;
 
@@ -99,7 +98,7 @@ public class Return extends Statement {
         } else {
             OperatorExpression expr = null;
             if (! term.firstMember().equals(SetlString.NIL)) {
-                expr = TermConverter.valueToExpr(state, term.firstMember());
+                expr = OperatorExpression.createFromTerm(state, term.firstMember());
             }
             return new Return(expr);
         }

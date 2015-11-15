@@ -30,6 +30,25 @@ public class FragmentList<B extends CodeFragment> implements Iterable<B>, Compar
         fragmentList = new ArrayList<B>(elements.fragmentList);
     }
 
+    public <T extends B> FragmentList(FragmentList<T> firstElements, T element) {
+        fragmentList = new ArrayList<B>(firstElements.size() + 1);
+        fragmentList.addAll(firstElements.fragmentList);
+        fragmentList.add(element);
+    }
+
+    public <T extends B> FragmentList(FragmentList<T> firstElements, FragmentList<T> secondElements) {
+        fragmentList = new ArrayList<B>(firstElements.size() + secondElements.size());
+        fragmentList.addAll(firstElements.fragmentList);
+        fragmentList.addAll(secondElements.fragmentList);
+    }
+
+    public <T extends B> FragmentList(FragmentList<T> firstElements, FragmentList<T> secondElements, T element) {
+        fragmentList = new ArrayList<B>(firstElements.size() + secondElements.size() + 1);
+        fragmentList.addAll(firstElements.fragmentList);
+        fragmentList.addAll(secondElements.fragmentList);
+        fragmentList.add(element);
+    }
+
     /**
      * @return The number of elements in this list.
      */

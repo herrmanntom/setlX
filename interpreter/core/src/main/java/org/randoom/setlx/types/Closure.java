@@ -12,7 +12,7 @@ import org.randoom.setlx.utilities.ParameterList;
 import org.randoom.setlx.utilities.ReturnMessage;
 import org.randoom.setlx.utilities.SetlHashMap;
 import org.randoom.setlx.utilities.State;
-import org.randoom.setlx.utilities.TermConverter;
+import org.randoom.setlx.utilities.TermUtilities;
 import org.randoom.setlx.utilities.VariableScope;
 import org.randoom.setlx.utilities.WriteBackAgent;
 
@@ -234,7 +234,7 @@ public class Closure extends Procedure {
             for (final Value v : paramList) {
                 parameters.add(ParameterDef.valueToParameterDef(state, v));
             }
-            final Block              block      = TermConverter.valueToBlock(state, term.lastMember());
+            final Block              block      = TermUtilities.valueToBlock(state, term.lastMember());
             return new Closure(parameters, block);
         }
     }

@@ -10,7 +10,7 @@ import org.randoom.setlx.utilities.CodeFragment;
 import org.randoom.setlx.utilities.FragmentList;
 import org.randoom.setlx.utilities.ParameterList;
 import org.randoom.setlx.utilities.State;
-import org.randoom.setlx.utilities.TermConverter;
+import org.randoom.setlx.utilities.TermUtilities;
 
 import java.lang.ref.SoftReference;
 import java.util.ArrayList;
@@ -230,7 +230,7 @@ public class CachedProcedure extends Procedure {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
             final ParameterList parameters = ParameterList.termFragmentToParameterList(state, term.firstMember());
-            final Block              block      = TermConverter.valueToBlock(state, term.lastMember());
+            final Block              block      = TermUtilities.valueToBlock(state, term.lastMember());
             return new CachedProcedure(parameters, block);
         }
     }

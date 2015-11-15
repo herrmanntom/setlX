@@ -152,7 +152,7 @@ public class SetlHashMap<V extends Value> extends HashMap<String, V> implements 
                 if (val instanceof SetlList) {
                     final SetlList binding = (SetlList) val;
                     if (binding.size() == 2 && binding.firstMember() instanceof SetlString) {
-                        result.put(binding.firstMember().getUnquotedString(state), TermConverter.valueTermToValue(state, binding.lastMember()));
+                        result.put(binding.firstMember().getUnquotedString(state), Value.createFromTerm(state, binding.lastMember()));
                         continue;
                     }
                 }

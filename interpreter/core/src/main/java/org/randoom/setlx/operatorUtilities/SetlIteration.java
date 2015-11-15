@@ -10,7 +10,7 @@ import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.CodeFragment;
 import org.randoom.setlx.utilities.ReturnMessage;
 import org.randoom.setlx.utilities.State;
-import org.randoom.setlx.utilities.TermConverter;
+import org.randoom.setlx.utilities.TermUtilities;
 
 import java.util.List;
 
@@ -139,13 +139,13 @@ public class SetlIteration extends CollectionBuilder {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
             try {
-                final OperatorExpression expr = TermConverter.valueToExpr(state, term.firstMember());
+                final OperatorExpression expr = OperatorExpression.createFromTerm(state, term.firstMember());
 
                 final SetlIterator iterator = SetlIterator.valueToIterator(state, term.getMember(2));
 
                 Condition cond = null;
                 if (! term.lastMember().equals(SetlString.NIL)) {
-                    cond = TermConverter.valueToCondition(state, term.lastMember());
+                    cond = TermUtilities.valueToCondition(state, term.lastMember());
                 }
                 return new SetlIteration(expr, iterator, cond);
             } catch (final SetlException se) {

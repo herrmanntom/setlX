@@ -4,6 +4,7 @@ import org.randoom.setlx.exceptions.IncompatibleTypeException;
 import org.randoom.setlx.exceptions.NotAnIntegerException;
 import org.randoom.setlx.exceptions.NumberToLargeException;
 import org.randoom.setlx.exceptions.SetlException;
+import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.exceptions.UndefinedOperationException;
 import org.randoom.setlx.operatorUtilities.OperatorExpression;
 import org.randoom.setlx.utilities.CodeFragment;
@@ -11,7 +12,6 @@ import org.randoom.setlx.utilities.FragmentList;
 import org.randoom.setlx.utilities.MatchResult;
 import org.randoom.setlx.utilities.State;
 
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -326,9 +326,9 @@ public abstract class Value extends CodeFragment {
      * @throws SetlException Thrown in case of some (user-) error.
      */
     public Value difference(final State state, final Value subtrahend) throws SetlException {
-//        if (subtrahend.getClass() == Term.class) {
-//            return ((Term) subtrahend).differenceFlipped(state, this);
-//        }
+        if (subtrahend.getClass() == Term.class) {
+            return ((Term) subtrahend).differenceFlipped(state, this);
+        }
         throw new UndefinedOperationException(
             "'" + this.toString(state) + " - " + subtrahend.toString(state) + "' is undefined."
         );
@@ -365,9 +365,9 @@ public abstract class Value extends CodeFragment {
      * @throws SetlException Thrown in case of some (user-) error.
      */
     public Value integerDivision(final State state, final Value divisor) throws SetlException {
-//        if (divisor.getClass() == Term.class) {
-//            return ((Term) divisor).integerDivisionFlipped(state, this);
-//        }
+        if (divisor.getClass() == Term.class) {
+            return ((Term) divisor).integerDivisionFlipped(state, this);
+        }
         throw new UndefinedOperationException(
             "'" + this.toString(state) + " \\ " + divisor.toString(state) + "' is undefined."
         );
@@ -408,9 +408,9 @@ public abstract class Value extends CodeFragment {
      * @throws SetlException Thrown in case of some (user-) error.
      */
     public Value modulo(final State state, final Value modulo) throws SetlException {
-//        if (modulo.getClass() == Term.class) {
-//            return ((Term) modulo).moduloFlipped(state, this);
-//        }
+        if (modulo.getClass() == Term.class) {
+            return ((Term) modulo).moduloFlipped(state, this);
+        }
         throw new UndefinedOperationException(
             "'" + this.toString(state) + " % " + modulo.toString(state) + "' is undefined."
         );
@@ -429,9 +429,9 @@ public abstract class Value extends CodeFragment {
      * @throws SetlException Thrown in case of some (user-) error.
      */
     public Value power(final State state, final Value exponent) throws SetlException {
-//        if (exponent.getClass() == Term.class) {
-//            return ((Term) exponent).powerFlipped(state, this);
-//        }
+        if (exponent.getClass() == Term.class) {
+            return ((Term) exponent).powerFlipped(state, this);
+        }
         throw new IncompatibleTypeException(
             "Left-hand-side of '" + this.toString(state) + " ** " + exponent.toString(state) + "' is not a number."
         );
@@ -446,9 +446,9 @@ public abstract class Value extends CodeFragment {
      * @throws SetlException Thrown in case of some (user-) error.
      */
     public Value product(final State state, final Value multiplier) throws SetlException {
-//        if (multiplier.getClass() == Term.class) {
-//            return ((Term) multiplier).productFlipped(state, this);
-//        }
+        if (multiplier.getClass() == Term.class) {
+            return ((Term) multiplier).productFlipped(state, this);
+        }
         throw new UndefinedOperationException(
             "'" + this.toString(state) + " * " + multiplier.toString(state) + "' is undefined."
         );
@@ -467,9 +467,9 @@ public abstract class Value extends CodeFragment {
      * @throws SetlException Thrown in case of some (user-) error.
      */
     public Value quotient(final State state, final Value divisor) throws SetlException {
-//        if (divisor.getClass() == Term.class) {
-//            return ((Term) divisor).quotientFlipped(state, this);
-//        }
+        if (divisor.getClass() == Term.class) {
+            return ((Term) divisor).quotientFlipped(state, this);
+        }
         throw new UndefinedOperationException(
             "'" + this.toString(state) + " / " + divisor.toString(state) + "' is undefined."
         );
@@ -506,9 +506,9 @@ public abstract class Value extends CodeFragment {
      * @throws SetlException Thrown in case of some (user-) error.
      */
     public Value sum(final State state, final Value summand) throws SetlException {
-        /*if (summand.getClass() == Term.class) {
+        if (summand.getClass() == Term.class) {
             return ((Term) summand).sumFlipped(state, this);
-        } else*/ if (this != Om.OM && summand.getClass() == SetlString.class) {
+        } else if (this != Om.OM && summand.getClass() == SetlString.class) {
             return ((SetlString) summand).sumFlipped(state, this);
         }
         throw new UndefinedOperationException(
@@ -554,9 +554,9 @@ public abstract class Value extends CodeFragment {
      * @throws SetlException Thrown in case of some (user-) error.
      */
     public Value cartesianProduct(final State state, final Value other) throws SetlException {
-//        if (other.getClass() == Term.class) {
-//            return ((Term) other).cartesianProductFlipped(state, this);
-//        }
+        if (other.getClass() == Term.class) {
+            return ((Term) other).cartesianProductFlipped(state, this);
+        }
         throw new UndefinedOperationException(
             "'" + this.toString(state) + " >< " + other.toString(state) + "' is undefined."
         );
@@ -940,6 +940,43 @@ public abstract class Value extends CodeFragment {
     @Override
     public Value toTerm(final State state) throws SetlException {
         return this.clone();
+    }
+
+    /**
+     * Create a Value from a (term-) value representing such a value
+     *
+     * @param state                    Current state of the running setlX program.
+     * @param value                    (Term-) value to convert.
+     * @return                         New Value.
+     * @throws TermConversionException in case the term is malformed.
+     */
+    public static Value createFromTerm(State state, Value value) throws TermConversionException {
+        if (value.getClass() == Term.class) {
+            final Term   term                = (Term) value;
+            final String functionalCharacter = term.getFunctionalCharacter();
+            if (functionalCharacter.length() >= 3 && functionalCharacter.charAt(0) == '^') { // all internally used terms start with ^
+                // special cases
+                if (functionalCharacter.equals(CachedProcedure.getFunctionalCharacter())) {
+                    return CachedProcedure.termToValue(state, term);
+                } else if (functionalCharacter.equals(Closure.getFunctionalCharacter())) {
+                    return Closure.termToValue(state, term);
+                } else if (functionalCharacter.equals(LambdaClosure.getFunctionalCharacter())) {
+                    return LambdaClosure.termToValue(state, term);
+                } else if (functionalCharacter.equals(LambdaProcedure.getFunctionalCharacter())) {
+                    return LambdaProcedure.termToValue(state, term);
+                } else if (functionalCharacter.equals(Procedure.getFunctionalCharacter())) {
+                    return Procedure.termToValue(state, term);
+                } else if (functionalCharacter.equals(SetlClass.getFunctionalCharacter())) {
+                    return SetlClass.termToValue(state, term);
+                } else if (functionalCharacter.equals(SetlObject.getFunctionalCharacter())) {
+                    return SetlObject.termToValue(state, term);
+                } else if (functionalCharacter.equals(Om.getFunctionalCharacter())) {
+                    return Om.OM;
+                }
+            }
+        }
+        // `value' is in fact a (more or less) simple value
+        return value;
     }
 
     /* comparisons */

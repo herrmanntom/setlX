@@ -102,7 +102,7 @@ public class LambdaClosure extends Closure {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
             final ParameterList parameters = ParameterList.termFragmentToParameterList(state, term.firstMember());
-            final OperatorExpression expr = TermConverter.valueToExpr(state, term.lastMember());
+            final OperatorExpression expr = OperatorExpression.createFromTerm(state, term.lastMember());
             return new LambdaClosure(parameters, expr);
         }
     }

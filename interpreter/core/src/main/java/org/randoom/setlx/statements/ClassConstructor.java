@@ -9,7 +9,6 @@ import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.CodeFragment;
 import org.randoom.setlx.utilities.ReturnMessage;
 import org.randoom.setlx.utilities.State;
-import org.randoom.setlx.utilities.TermConverter;
 
 import java.util.List;
 
@@ -94,7 +93,7 @@ public class ClassConstructor extends Statement {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
             final String name            = term.firstMember().getUnquotedString(state);
-            final Value  classDefinition = TermConverter.valueTermToValue(state, term.lastMember());
+            final Value  classDefinition = Value.createFromTerm(state, term.lastMember());
             if (classDefinition instanceof SetlClass) {
                 return new ClassConstructor(name, (SetlClass) classDefinition);
             } else {

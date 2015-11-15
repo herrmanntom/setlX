@@ -9,7 +9,6 @@ import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.CodeFragment;
 import org.randoom.setlx.utilities.State;
-import org.randoom.setlx.utilities.TermConverter;
 
 import java.util.List;
 
@@ -116,14 +115,14 @@ public class Range extends CollectionBuilder {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
             try {
-                final OperatorExpression start = TermConverter.valueToExpr(state, term.firstMember());
+                final OperatorExpression start = OperatorExpression.createFromTerm(state, term.firstMember());
 
                 OperatorExpression second = null;
                 if (! term.getMember(2).equals(SetlString.NIL)) {
-                    second  = TermConverter.valueToExpr(state, term.getMember(2));
+                    second  = OperatorExpression.createFromTerm(state, term.getMember(2));
                 }
 
-                final OperatorExpression stop = TermConverter.valueToExpr(state, term.lastMember());
+                final OperatorExpression stop = OperatorExpression.createFromTerm(state, term.lastMember());
                 return new Range(start, second, stop);
             } catch (final SetlException se) {
                 throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);

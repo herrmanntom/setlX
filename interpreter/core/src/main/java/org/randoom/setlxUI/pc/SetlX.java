@@ -3,11 +3,11 @@ package org.randoom.setlxUI.pc;
 import org.randoom.setlx.exceptions.*;
 import org.randoom.setlx.statements.Block;
 import org.randoom.setlx.statements.ExpressionStatement;
+import org.randoom.setlx.statements.Statement;
 import org.randoom.setlx.types.SetlList;
 import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.utilities.ParseSetlX;
 import org.randoom.setlx.utilities.State;
-import org.randoom.setlx.utilities.TermConverter;
 import org.randoom.setlx.utilities.WriteFile;
 
 import java.util.ArrayList;
@@ -350,7 +350,7 @@ public class SetlX {
         if (termLoop) {
             for (int i = 0; i < programs.size(); ++i) {
                 try {
-                    programs.set(i, (Block) TermConverter.valueToStatement(state, programs.get(i).toTerm(state)));
+                    programs.set(i, (Block) Statement.createFromTerm(state, programs.get(i).toTerm(state)));
                 } catch (final SetlException se) {
                     state.errWriteLn("Error during termLoop!");
                     se.printExceptionsTrace(state);

@@ -121,7 +121,7 @@ public class TryCatch extends Statement {
         if (term.size() != 2 || ! (term.lastMember() instanceof SetlList)) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
-            final Block                                block      = TermConverter.valueToBlock(state, term.firstMember());
+            final Block                                block      = TermUtilities.valueToBlock(state, term.firstMember());
             final SetlList                             branches   = (SetlList) term.lastMember();
             final FragmentList<AbstractTryCatchBranch> branchList = new FragmentList<AbstractTryCatchBranch>(branches.size());
             for (final Value v : branches) {

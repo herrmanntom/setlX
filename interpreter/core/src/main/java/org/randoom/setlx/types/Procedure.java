@@ -254,7 +254,7 @@ public class Procedure extends ImmutableValue {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
             final ParameterList parameters = ParameterList.termFragmentToParameterList(state, term.firstMember());
-            final Block         block      = TermConverter.valueToBlock(state, term.lastMember());
+            final Block         block      = TermUtilities.valueToBlock(state, term.lastMember());
             return new Procedure(parameters, block);
         }
     }

@@ -38,8 +38,7 @@ public class Sum extends ABinaryInfixOperator {
      * @throws TermConversionException If term is malformed.
      */
     public static void appendToOperatorStack(final State state, final Term term, FragmentList<AOperator> operatorStack) throws TermConversionException {
-        appendArgumentsToOperatorStack(state, term, operatorStack, Sum.class);
-        operatorStack.add(S);
+        appendToOperatorStack(state, term, operatorStack, S);
     }
 
     @Override

@@ -68,20 +68,21 @@ public abstract class ABinaryInfixOperator extends AOperator {
     }
 
     /**
-     * Append arguments of the operator represented by a term to the supplied operator stack.
+     * Append arguments and the operator represented by a term to the supplied operator stack.
      *
      * @param state                    Current state of the running setlX program.
      * @param term                     Term to convert.
-     * @param operatorStack            Operator to append to.
-     * @param operatorClass            Class of the operator (used for error messages).
+     * @param operatorStack            OperatorStack to append to.
+     * @param operator                 Operator to append to the end.
      * @throws TermConversionException If term is malformed.
      */
-    protected static void appendArgumentsToOperatorStack(State state, Term term, FragmentList<AOperator> operatorStack, Class<? extends ABinaryInfixOperator> operatorClass) throws TermConversionException {
+    protected static void appendToOperatorStack(State state, Term term, FragmentList<AOperator> operatorStack, AOperator operator) throws TermConversionException {
         if (term.size() != 2) {
-            throw new TermConversionException("malformed " + generateFunctionalCharacter(operatorClass));
+            throw new TermConversionException("malformed " + generateFunctionalCharacter(operator.getClass()));
         } else {
             OperatorExpression.appendFromTerm(state, term.firstMember(), operatorStack);
             OperatorExpression.appendFromTerm(state, term.lastMember(), operatorStack);
+            operatorStack.add(operator);
         }
     }
 

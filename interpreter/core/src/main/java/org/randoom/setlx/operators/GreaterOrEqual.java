@@ -1,6 +1,5 @@
 package org.randoom.setlx.operators;
 
-import com.sun.org.apache.bcel.internal.generic.GETFIELD;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.operatorUtilities.Stack;

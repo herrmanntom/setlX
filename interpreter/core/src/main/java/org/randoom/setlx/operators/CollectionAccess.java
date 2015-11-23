@@ -2,8 +2,8 @@ package org.randoom.setlx.operators;
 
 import org.randoom.setlx.assignments.AAssignableExpression;
 import org.randoom.setlx.assignments.AssignableCollectionAccess;
-import org.randoom.setlx.assignments.AssignableMember;
 import org.randoom.setlx.exceptions.SetlException;
+import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.exceptions.UndefinedOperationException;
 import org.randoom.setlx.exceptions.UnknownFunctionException;
 import org.randoom.setlx.operatorUtilities.OperatorExpression;
@@ -11,6 +11,7 @@ import org.randoom.setlx.operatorUtilities.OperatorExpression.OptimizerData;
 import org.randoom.setlx.operatorUtilities.Stack;
 import org.randoom.setlx.types.Om;
 import org.randoom.setlx.types.SetlList;
+import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.CodeFragment;
@@ -18,7 +19,6 @@ import org.randoom.setlx.utilities.FragmentList;
 import org.randoom.setlx.utilities.State;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -92,21 +92,6 @@ public class CollectionAccess extends AUnaryPostfixOperator {
     }
 
     @Override
-    public boolean isLeftAssociative() {
-        return false;
-    }
-
-    @Override
-    public boolean isRightAssociative() {
-        return false;
-    }
-
-    @Override
-    public int precedence() {
-        return 2100;
-    }
-
-    @Override
     public Value modifyTerm(State state, Term term) throws SetlException {
         // Unbox first argument, if it is a variable
         Value value = term.firstMember();
@@ -124,6 +109,53 @@ public class CollectionAccess extends AUnaryPostfixOperator {
         term.addMember(state, args);
 
         return term;
+    }
+
+    /**
+     * Append the operator represented by a term to the supplied operator stack.
+     *
+     * @param state                    Current state of the running setlX program.
+     * @param term                     Term to convert.
+     * @param operatorStack            Operator to append to.
+     * @throws TermConversionException If term is malformed.
+     */
+    public static void appendToOperatorStack(final State state, final Term term, FragmentList<AOperator> operatorStack) throws TermConversionException {
+        try {
+            if (term.size() != 2 || term.getMember(2).getClass() != SetlList.class) {
+                throw new TermConversionException("malformed " + generateFunctionalCharacter(CollectionAccess.class));
+            }
+
+            final Value lhs = term.firstMember();
+            if (lhs instanceof SetlString) {
+                operatorStack.add(new Variable(lhs.getUnquotedString(state)));
+            } else {
+                OperatorExpression.appendFromTerm(state, term.firstMember(), operatorStack);
+            }
+
+            FragmentList<OperatorExpression> arguments = new FragmentList<OperatorExpression>();
+            for (final Value argument : (SetlList) term.getMember(2)) {
+                arguments.add(OperatorExpression.createFromTerm(state, argument));
+            }
+
+            operatorStack.add(new CollectionAccess(arguments));
+        } catch (SetlException se) {
+            throw new TermConversionException("malformed " + generateFunctionalCharacter(CollectionAccess.class));
+        }
+    }
+
+    @Override
+    public boolean isLeftAssociative() {
+        return false;
+    }
+
+    @Override
+    public boolean isRightAssociative() {
+        return false;
+    }
+
+    @Override
+    public int precedence() {
+        return 2100;
     }
 
     private final static long COMPARE_TO_ORDER_CONSTANT = generateCompareToOrderConstant(CollectionAccess.class);

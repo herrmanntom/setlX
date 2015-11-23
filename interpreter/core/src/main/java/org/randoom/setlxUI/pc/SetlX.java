@@ -17,7 +17,7 @@ import java.util.List;
  * Class containing main-function and other glue for the PC version of the setlX interpreter.
  */
 public class SetlX {
-    private final static String  VERSION                = "2.4.0";
+    private final static String  VERSION                = "2.4.0+";
     private final static String  SETLX_URL              = "http://setlX.randoom.org/";
     private final static String  C_YEARS                = "2011-2015";
     private final static String  VERSION_PREFIX         = "v";

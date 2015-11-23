@@ -1,10 +1,13 @@
 package org.randoom.setlx.operators;
 
 import org.randoom.setlx.exceptions.SetlException;
+import org.randoom.setlx.exceptions.TermConversionException;
+import org.randoom.setlx.operatorUtilities.OperatorExpression;
 import org.randoom.setlx.operatorUtilities.OperatorExpression.OptimizerData;
 import org.randoom.setlx.operatorUtilities.Stack;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
+import org.randoom.setlx.utilities.FragmentList;
 import org.randoom.setlx.utilities.State;
 
 import java.util.List;
@@ -54,9 +57,27 @@ public abstract class AUnaryOperator extends AOperator {
      * @param state          Current state of the running setlX program.
      * @param term           Term to work with.
      * @return               Resulting term.
-     * @throws org.randoom.setlx.exceptions.SetlException Thrown in case of some (user-) error.
+     * @throws SetlException Thrown in case of some (user-) error.
      */
     public Value modifyTerm(State state, Term term) throws SetlException {
         return term;
+    }
+
+    /**
+     * Append arguments and the operator represented by a term to the supplied operator stack.
+     *
+     * @param state                    Current state of the running setlX program.
+     * @param term                     Term to convert.
+     * @param operatorStack            OperatorStack to append to.
+     * @param operator                 Operator to append to the end.
+     * @throws TermConversionException If term is malformed.
+     */
+    protected static void appendToOperatorStack(State state, Term term, FragmentList<AOperator> operatorStack, AOperator operator) throws TermConversionException {
+        if (term.size() < 1) {
+            throw new TermConversionException("malformed " + generateFunctionalCharacter(operator.getClass()));
+        } else {
+            OperatorExpression.appendFromTerm(state, term.firstMember(), operatorStack);
+            operatorStack.add(operator);
+        }
     }
 }

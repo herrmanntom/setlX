@@ -1,12 +1,10 @@
 package org.randoom.setlx.operators;
 
 import org.randoom.setlx.exceptions.SetlException;
-import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.operatorUtilities.Stack;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.CodeFragment;
-import org.randoom.setlx.utilities.FragmentList;
 import org.randoom.setlx.utilities.State;
 
 import java.util.List;

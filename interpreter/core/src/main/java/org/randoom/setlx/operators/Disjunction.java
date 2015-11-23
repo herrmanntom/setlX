@@ -1,21 +1,18 @@
 package org.randoom.setlx.operators;
 
 import org.randoom.setlx.exceptions.SetlException;
+import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.operatorUtilities.OperatorExpression;
-import org.randoom.setlx.operatorUtilities.OperatorExpression.OptimizerData;
 import org.randoom.setlx.operatorUtilities.Stack;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
-import org.randoom.setlx.utilities.CodeFragment;
+import org.randoom.setlx.utilities.FragmentList;
 import org.randoom.setlx.utilities.State;
-
-import java.util.List;
 
 /**
  * Operator that evaluates disjunction and puts the result on the stack.
  */
-public class Disjunction extends AUnaryPostfixOperator {
-    private final OperatorExpression argument;
+public class Disjunction extends ALazyBinaryInfixOperator {
 
     /**
      * Create a new Disjunction operator.
@@ -23,25 +20,30 @@ public class Disjunction extends AUnaryPostfixOperator {
      * @param argument Expression to evaluate lazily.
      */
     public Disjunction(OperatorExpression argument) {
-        this.argument = unify(argument);
-    }
-
-    @Override
-    public OptimizerData collectVariablesAndOptimize(State state, List<String> boundVariables, List<String> unboundVariables, List<String> usedVariables, OptimizerData lhs) {
-        return new OptimizerData(
-                argument.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables)
-        );
+        super(argument);
     }
 
     @Override
     public Value evaluate(State state, Stack<Value> values) throws SetlException {
-        return values.poll().disjunction(state, argument);
+        return values.poll().disjunction(state, getRightHandSide());
     }
 
     @Override
-    public void appendOperatorSign(State state, StringBuilder sb) {
-        sb.append(" || ");
-        argument.appendString(state, sb, 0);
+    public String getOperatorSign() {
+        return " || ";
+    }
+
+    /**
+     * Append the operator represented by a term to the supplied operator stack.
+     *
+     * @param state                    Current state of the running setlX program.
+     * @param term                     Term to convert.
+     * @param operatorStack            Operator to append to.
+     * @throws TermConversionException If term is malformed.
+     */
+    public static void appendToOperatorStack(final State state, final Term term, FragmentList<AOperator> operatorStack) throws TermConversionException {
+        Disjunction disjunction = new Disjunction(OperatorExpression.createFromTerm(state, term.lastMember()));
+        appendToOperatorStack(state, term, operatorStack, disjunction);
     }
 
     @Override
@@ -59,24 +61,7 @@ public class Disjunction extends AUnaryPostfixOperator {
         return 1300;
     }
 
-    @Override
-    public Value modifyTerm(State state, Term term) throws SetlException {
-        term.addMember(state, argument.toTerm(state));
-        return term;
-    }
-
     private final static long COMPARE_TO_ORDER_CONSTANT = generateCompareToOrderConstant(Disjunction.class);
-
-    @Override
-    public int compareTo(CodeFragment other) {
-        if (this == other) {
-            return 0;
-        } else if (other.getClass() == Disjunction.class) {
-            return argument.compareTo(((Disjunction) other).argument);
-        } else {
-            return (this.compareToOrdering() < other.compareToOrdering())? -1 : 1;
-        }
-    }
 
     @Override
     public long compareToOrdering() {
@@ -84,17 +69,7 @@ public class Disjunction extends AUnaryPostfixOperator {
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        } else if (obj.getClass() == Disjunction.class) {
-            return argument.equals(((Disjunction) obj).argument);
-        }
-        return false;
-    }
-
-    @Override
     public int computeHashCode() {
-        return ((int) COMPARE_TO_ORDER_CONSTANT) + argument.hashCode();
+        return ((int) COMPARE_TO_ORDER_CONSTANT) + getArgumentHashCode();
     }
 }

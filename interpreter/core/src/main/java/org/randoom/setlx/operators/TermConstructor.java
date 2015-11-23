@@ -74,20 +74,20 @@ public class TermConstructor extends AZeroOperator {
     }
 
     /**
-     * Convert a term representing a TermConstructor expression into such an expression.
+     * Append the operator represented by a term to the supplied operator stack.
      *
-     * @param state Current state of the running setlX program.
-     * @param term  Term to convert.
-     * @return      Resulting expression of this conversion.
-     * @throws TermConversionException in case the term is malformed.
+     * @param state                    Current state of the running setlX program.
+     * @param term                     Term to convert.
+     * @param operatorStack            Operator to append to.
+     * @throws TermConversionException If term is malformed.
      */
-    public static TermConstructor termToExpr(final State state, final Term term) throws TermConversionException {
+    public static void appendToOperatorStack(final State state, final Term term, FragmentList<AOperator> operatorStack) throws TermConversionException {
         final String functionalCharacter = term.getFunctionalCharacter();
-        final FragmentList<OperatorExpression> args = new FragmentList<OperatorExpression>(term.size());
+        final FragmentList<OperatorExpression> arguments = new FragmentList<OperatorExpression>(term.size());
         for (final Value v : term) {
-            args.add(OperatorExpression.createFromTerm(state, v));
+            arguments.add(OperatorExpression.createFromTerm(state, v));
         }
-        return new TermConstructor(functionalCharacter, args);
+        operatorStack.add(new TermConstructor(functionalCharacter, arguments));
     }
 
     private final static long COMPARE_TO_ORDER_CONSTANT = generateCompareToOrderConstant(TermConstructor.class);

@@ -284,6 +284,22 @@ public class OperatorExpression extends Expression {
         }
     }
 
+    /**
+     * Precedence level in SetlX-grammar. Manly used for automatic bracket insertion
+     * when printing expressions.
+     *
+     * (See src/grammar/OperatorPrecedences.txt)
+     *
+     * @return Precedence level.
+     */
+    public int precedence() {
+        if (operators.size() > 0) {
+            return operators.get(operators.size() - 1).precedence();
+        } else {
+            return 0;
+        }
+    }
+
     /* term operations */
 
     @Override
@@ -385,7 +401,7 @@ public class OperatorExpression extends Expression {
         if (value instanceof Procedure) {
             operatorStack.add(new ProcedureConstructor((Procedure) value));
         } else if (value.getClass() == Term.class) {
-            operatorStack.add(TermConstructor.termToExpr(state, (Term) value));
+            TermConstructor.appendToOperatorStack(state, (Term) value, operatorStack);
         } else {
             operatorStack.add(new ValueOperator(convertedValue));
         }

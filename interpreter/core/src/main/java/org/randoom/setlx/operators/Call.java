@@ -1,6 +1,7 @@
 package org.randoom.setlx.operators;
 
 import org.randoom.setlx.exceptions.SetlException;
+import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.exceptions.UnknownFunctionException;
 import org.randoom.setlx.operatorUtilities.OperatorExpression;
 import org.randoom.setlx.operatorUtilities.OperatorExpression.OptimizerData;
@@ -83,21 +84,6 @@ public class Call extends AUnaryPostfixOperator {
     }
 
     @Override
-    public boolean isLeftAssociative() {
-        return false;
-    }
-
-    @Override
-    public boolean isRightAssociative() {
-        return false;
-    }
-
-    @Override
-    public int precedence() {
-        return 2100;
-    }
-
-    @Override
     public Value modifyTerm(State state, Term term) throws SetlException {
         // Unbox first argument, if it is a variable
         Value value = term.firstMember();
@@ -120,6 +106,58 @@ public class Call extends AUnaryPostfixOperator {
             term.addMember(state, SetlString.NIL);
         }
         return term;
+    }
+
+    /**
+     * Append the operator represented by a term to the supplied operator stack.
+     *
+     * @param state                    Current state of the running setlX program.
+     * @param term                     Term to convert.
+     * @param operatorStack            Operator to append to.
+     * @throws TermConversionException If term is malformed.
+     */
+    public static void appendToOperatorStack(final State state, final Term term, FragmentList<AOperator> operatorStack) throws TermConversionException {
+        try {
+            if (term.size() != 3 || term.getMember(2).getClass() != SetlList.class) {
+                throw new TermConversionException("malformed " + generateFunctionalCharacter(Call.class));
+            }
+
+            final Value lhs = term.firstMember();
+            if (lhs instanceof SetlString) {
+                operatorStack.add(new Variable(lhs.getUnquotedString(state)));
+            } else {
+                OperatorExpression.appendFromTerm(state, term.firstMember(), operatorStack);
+            }
+
+            FragmentList<OperatorExpression> arguments = new FragmentList<OperatorExpression>();
+            for (final Value argument : (SetlList) term.getMember(2)) {
+                arguments.add(OperatorExpression.createFromTerm(state, argument));
+            }
+
+            OperatorExpression listArgument = null;
+            if (!term.lastMember().equals(SetlString.NIL)) {
+                listArgument = OperatorExpression.createFromTerm(state, term.lastMember());
+            }
+
+            operatorStack.add(new Call(arguments, listArgument));
+        } catch (SetlException se) {
+            throw new TermConversionException("malformed " + generateFunctionalCharacter(Call.class));
+        }
+    }
+
+    @Override
+    public boolean isLeftAssociative() {
+        return false;
+    }
+
+    @Override
+    public boolean isRightAssociative() {
+        return false;
+    }
+
+    @Override
+    public int precedence() {
+        return 2100;
     }
 
     private final static long COMPARE_TO_ORDER_CONSTANT = generateCompareToOrderConstant(Call.class);

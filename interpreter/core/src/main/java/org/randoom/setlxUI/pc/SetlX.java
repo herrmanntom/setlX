@@ -291,7 +291,7 @@ public class SetlX {
         } else if (statement != null) {
             nPrograms += 1;
         }
-        final List<Block> programs = new ArrayList<Block>(nPrograms);
+        List<Block> programs = new ArrayList<Block>(nPrograms);
 
         // parse content of all files
         try {
@@ -348,14 +348,16 @@ public class SetlX {
         }
 
         if (termLoop) {
-            for (int i = 0; i < programs.size(); ++i) {
+            ArrayList<Block> termConvertedPrograms = new ArrayList<Block>(nPrograms);
+            for (Block program : programs) {
                 try {
-                    programs.set(i, (Block) Statement.createFromTerm(state, programs.get(i).toTerm(state)));
+                    termConvertedPrograms.add((Block) Statement.createFromTerm(state, program.toTerm(state)));
                 } catch (final SetlException se) {
                     state.errWriteLn("Error during termLoop!");
                     se.printExceptionsTrace(state);
                 }
             }
+            programs = termConvertedPrograms;
         }
 
         // print and/or dump programs if needed

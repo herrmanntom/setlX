@@ -1,10 +1,6 @@
 package org.randoom.setlx.operators;
 
-import org.randoom.setlx.exceptions.ParserException;
-import org.randoom.setlx.exceptions.SetlException;
-import org.randoom.setlx.exceptions.StopExecutionException;
-import org.randoom.setlx.exceptions.SyntaxErrorException;
-import org.randoom.setlx.exceptions.UndefinedOperationException;
+import org.randoom.setlx.exceptions.*;
 import org.randoom.setlx.operatorUtilities.OperatorExpression;
 import org.randoom.setlx.operatorUtilities.Stack;
 import org.randoom.setlx.types.SetlList;
@@ -12,6 +8,7 @@ import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.CodeFragment;
+import org.randoom.setlx.utilities.FragmentList;
 import org.randoom.setlx.utilities.ParseSetlX;
 import org.randoom.setlx.utilities.State;
 
@@ -205,8 +202,6 @@ public class StringConstructor extends AZeroOperator {
 
     /* term operations */
 
-
-
     @Override
     public Value modifyTerm(State state, Term term) throws SetlException {
         final SetlList strList = new SetlList(fragments.size());
@@ -222,6 +217,52 @@ public class StringConstructor extends AZeroOperator {
         term.addMember(state, expList);
 
         return term;
+    }
+
+    /**
+     * Append the operator represented by a term to the supplied operator stack.
+     *
+     * @param state                    Current state of the running setlX program.
+     * @param term                     Term to convert.
+     * @param operatorStack            Operator to append to.
+     * @throws TermConversionException If term is malformed.
+     */
+    public static void appendToOperatorStack(final State state, final Term term, FragmentList<AOperator> operatorStack) throws TermConversionException {
+        if (term.size() != 2 || ! (term.firstMember().getClass() == SetlList.class) || ! (term.lastMember().getClass() == SetlList.class)) {
+            throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
+        } else {
+            final StringBuilder                 originalStr = new StringBuilder();
+            final SetlList                      frags       = (SetlList) term.firstMember();
+            final SetlList                      exps        = (SetlList) term.lastMember();
+
+            final ArrayList<String>             fragments   = new ArrayList<String>(frags.size());
+            final ArrayList<OperatorExpression> expressions = new ArrayList<OperatorExpression>(exps.size());
+
+            final Iterator<Value>               fIterator   = frags.iterator();
+            final Iterator<Value>               eIterator   = exps.iterator();
+
+            originalStr.append("\"");
+
+            while (fIterator.hasNext()) {
+                final SetlString  sstring = (SetlString) fIterator.next();
+                final String      string  = sstring.getUnquotedString(state);
+                originalStr.append(sstring.getEscapedString());
+                fragments.add(string);
+
+                if (eIterator.hasNext()) {
+                    final OperatorExpression expr = OperatorExpression.createFromTerm(state, eIterator.next());
+                    expressions.add(expr);
+                    originalStr.append("$");
+                    originalStr.append(expr.toString(state).replace("$", "\\$"));
+                    originalStr.append("$");
+                }
+            }
+            if (eIterator.hasNext()) {
+                throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
+            }
+            originalStr.append("\"");
+            operatorStack.add(new StringConstructor(originalStr.toString(), fragments, expressions));
+        }
     }
 
     /* comparisons */

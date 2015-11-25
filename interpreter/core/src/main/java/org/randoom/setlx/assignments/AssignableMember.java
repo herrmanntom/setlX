@@ -1,13 +1,12 @@
 package org.randoom.setlx.assignments;
 
-import org.randoom.setlx.exceptions.IncompatibleTypeException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.UndefinedOperationException;
+import org.randoom.setlx.operatorUtilities.OperatorExpression;
+import org.randoom.setlx.operators.MemberAccess;
 import org.randoom.setlx.operators.Variable;
-import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.CodeFragment;
-import org.randoom.setlx.utilities.Expression;
 import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.VariableScope;
 
@@ -17,11 +16,9 @@ import java.util.List;
  * Assignment to the member of an object.
  */
 public class AssignableMember extends AAssignableExpression {
-    private final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(AssignableMember.class);
-
-    private final Expression lhs;      // left hand side (Variable, Expr, CollectionAccess, etc)
-    private final Variable   member;   // member to access
-    private final String     memberID; // member to access
+    private final AAssignableExpression lhs;
+    private final String                memberID;
+    private       Value                 term;
 
     /**
      * Create new AssignableMember expression.
@@ -29,10 +26,10 @@ public class AssignableMember extends AAssignableExpression {
      * @param lhs    Left hand side (Variable, Expr, CollectionAccess, etc)
      * @param member Member to access.
      */
-    public AssignableMember(final Expression lhs, final Variable member) {
+    public AssignableMember(final AAssignableExpression lhs, final Variable member) {
         this.lhs      = unify(lhs);
-        this.member   = unify(member);
-        this.memberID = this.member.getId();
+        this.memberID = member.getId();
+        this.term     = null;
     }
 
     @Override
@@ -65,14 +62,8 @@ public class AssignableMember extends AAssignableExpression {
 
     @Override
     public void assignUncloned(State state, Value value, String context) throws SetlException {
-        if (this.lhs instanceof AAssignableExpression) {
-            final Value lhs = this.lhs.evaluate(state);
-            lhs.setObjectMember(state, memberID, value, context);
-        } else {
-            throw new IncompatibleTypeException(
-                    "Left-hand-side of \"" + this.toString(state) + " := " + value.toString(state) + "\" is unusable for member assignment."
-            );
-        }
+        final Value lhs = this.lhs.evaluate(state);
+        lhs.setObjectMember(state, memberID, value, context);
     }
 
     @Override
@@ -92,10 +83,12 @@ public class AssignableMember extends AAssignableExpression {
 
     @Override
     public Value toTerm(State state) throws SetlException {
-        final Term result = new Term(FUNCTIONAL_CHARACTER, 2);
-        result.addMember(state, lhs.toTerm(state));
-        result.addMember(state, member.toTerm(state));
-        return result;
+        if (term == null) {
+            OperatorExpression lhsExpression = OperatorExpression.createFromTerm(state, lhs.toTerm(state));
+            OperatorExpression rest = new OperatorExpression(new MemberAccess(new Variable(memberID)));
+            term = new OperatorExpression(lhsExpression, rest).toTerm(state);
+        }
+        return term;
     }
 
     private final static long COMPARE_TO_ORDER_CONSTANT = generateCompareToOrderConstant(AssignableMember.class);

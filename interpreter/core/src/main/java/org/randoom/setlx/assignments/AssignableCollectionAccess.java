@@ -4,9 +4,11 @@ import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.UndefinedOperationException;
 import org.randoom.setlx.exceptions.UnknownFunctionException;
 import org.randoom.setlx.operatorUtilities.OperatorExpression;
+import org.randoom.setlx.operators.CollectionAccess;
+import org.randoom.setlx.operators.MemberAccess;
+import org.randoom.setlx.operators.Variable;
 import org.randoom.setlx.types.Om;
 import org.randoom.setlx.types.SetlList;
-import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.CodeFragment;
 import org.randoom.setlx.utilities.FragmentList;
@@ -17,29 +19,29 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Assignment to a list of expressions.
+ * Assignment into a collection.
  */
 public class AssignableCollectionAccess extends AAssignableExpression {
-    private final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(AssignableCollectionAccess.class);
-
-    private final AAssignableExpression            assignableExpression;
-    private final FragmentList<OperatorExpression> expressions;
+    private final AAssignableExpression            leftHandSide;
+    private final FragmentList<OperatorExpression> arguments;
+    private       Value                            term;
 
     /**
      * Create a new AssignableCollectionAccess expression.
      *
-     * @param assignableExpression Left hand side.
-     * @param expressions Arguments.
+     * @param leftHandSide Left hand side.
+     * @param arguments    Arguments.
      */
-    public AssignableCollectionAccess(final AAssignableExpression assignableExpression, final FragmentList<OperatorExpression> expressions) {
-        this.assignableExpression = unify(assignableExpression);
-        this.expressions = unify(expressions);
+    public AssignableCollectionAccess(final AAssignableExpression leftHandSide, final FragmentList<OperatorExpression> arguments) {
+        this.leftHandSide = unify(leftHandSide);
+        this.arguments = unify(arguments);
+        this.term = null;
     }
 
     @Override
     public boolean collectVariablesAndOptimize(State state, List<String> boundVariables, List<String> unboundVariables, List<String> usedVariables) {
-        boolean optimiseIfConstant = assignableExpression.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
-        for (OperatorExpression assignableExpression : expressions) {
+        boolean optimiseIfConstant = leftHandSide.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
+        for (OperatorExpression assignableExpression : arguments) {
             optimiseIfConstant = assignableExpression.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables)
                     && optimiseIfConstant;
         }
@@ -49,8 +51,8 @@ public class AssignableCollectionAccess extends AAssignableExpression {
     @Override
     public boolean collectVariablesWhenAssigned(State state, List<String> boundVariables, List<String> unboundVariables, List<String> usedVariables) {
         // lhs & args are read, not bound, so use collectVariablesAndOptimize()
-        boolean optimiseIfConstant = assignableExpression.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
-        for (OperatorExpression assignableExpression : expressions) {
+        boolean optimiseIfConstant = leftHandSide.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
+        for (OperatorExpression assignableExpression : arguments) {
             optimiseIfConstant = assignableExpression.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables)
                     && optimiseIfConstant;
         }
@@ -59,16 +61,16 @@ public class AssignableCollectionAccess extends AAssignableExpression {
 
     @Override
     public Value evaluate(State state) throws SetlException {
-        final Value lhs = this.assignableExpression.evaluate(state);
+        final Value lhs = this.leftHandSide.evaluate(state);
         if (lhs == Om.OM) {
             throw new UnknownFunctionException(
-                    "Left hand side \"" + this.assignableExpression.toString(state) + "\" is undefined."
+                    "Left hand side \"" + this.leftHandSide.toString(state) + "\" is undefined."
             );
         }
 
         // evaluate all arguments
-        List<Value> arguments = new ArrayList<Value>(this.expressions.size());
-        for (final OperatorExpression expression: this.expressions) {
+        List<Value> arguments = new ArrayList<Value>(this.arguments.size());
+        for (final OperatorExpression expression: this.arguments) {
             arguments.add(expression.evaluate(state).clone());
         }
         if (arguments.size() > 1) {
@@ -86,17 +88,17 @@ public class AssignableCollectionAccess extends AAssignableExpression {
 
     @Override
     public void assignUncloned(State state, Value value, String context) throws SetlException {
-        final Value lhs = this.assignableExpression.evaluate(state);
+        final Value lhs = this.leftHandSide.evaluate(state);
         if (lhs == Om.OM) {
             throw new UnknownFunctionException(
-                    "Left hand side \"" + this.assignableExpression.toString(state) + "\" is undefined."
+                    "Left hand side \"" + this.leftHandSide.toString(state) + "\" is undefined."
             );
         }
 
-        if (expressions.size() > 1) {
+        if (arguments.size() > 1) {
             // evaluate all arguments
-            List<Value> arguments = new ArrayList<Value>(this.expressions.size());
-            for (final OperatorExpression arg: this.expressions) {
+            List<Value> arguments = new ArrayList<Value>(this.arguments.size());
+            for (final OperatorExpression arg: this.arguments) {
                 arguments.add(arg.evaluate(state).clone());
             }
             SetlList argumentList = new SetlList(arguments.size());
@@ -105,7 +107,7 @@ public class AssignableCollectionAccess extends AAssignableExpression {
             }
             lhs.setMember(state, argumentList, value);
         } else {
-            lhs.setMember(state, expressions.get(0).evaluate(state), value);
+            lhs.setMember(state, arguments.get(0).evaluate(state), value);
         }
     }
 
@@ -119,27 +121,22 @@ public class AssignableCollectionAccess extends AAssignableExpression {
 
     @Override
     public void appendString(State state, StringBuilder sb, int tabs) {
-        assignableExpression.appendString(state, sb, tabs);
+        leftHandSide.appendString(state, sb, tabs);
         sb.append("[");
 
-        expressions.appendString(state, sb);
+        arguments.appendString(state, sb);
 
         sb.append("]");
     }
 
     @Override
     public Value toTerm(State state) throws SetlException {
-        final Term result = new Term(FUNCTIONAL_CHARACTER, 1);
-
-        result.addMember(state, assignableExpression.toTerm(state));
-
-        final SetlList list = new SetlList();
-        for (OperatorExpression operatorExpression : expressions) {
-            list.addMember(state, operatorExpression.toTerm(state));
+        if (term == null) {
+            OperatorExpression lhsExpression = OperatorExpression.createFromTerm(state, leftHandSide.toTerm(state));
+            OperatorExpression rest = new OperatorExpression(new CollectionAccess(arguments));
+            term = new OperatorExpression(lhsExpression, rest).toTerm(state);
         }
-        result.addMember(state, list);
-
-        return result;
+        return term;
     }
 
     private final static long COMPARE_TO_ORDER_CONSTANT = generateCompareToOrderConstant(AssignableCollectionAccess.class);
@@ -150,11 +147,11 @@ public class AssignableCollectionAccess extends AAssignableExpression {
             return 0;
         } else if (other.getClass() == AssignableCollectionAccess.class) {
             AssignableCollectionAccess otr = (AssignableCollectionAccess) other;
-            int cmp = assignableExpression.compareTo(otr.assignableExpression);
+            int cmp = leftHandSide.compareTo(otr.leftHandSide);
             if (cmp != 0) {
                 return cmp;
             }
-            return expressions.compareTo(otr.expressions);
+            return arguments.compareTo(otr.arguments);
         } else {
             return (this.compareToOrdering() < other.compareToOrdering())? -1 : 1;
         }
@@ -171,14 +168,14 @@ public class AssignableCollectionAccess extends AAssignableExpression {
             return true;
         } else if (obj.getClass() == AssignableCollectionAccess.class) {
             AssignableCollectionAccess other = (AssignableCollectionAccess) obj;
-            return assignableExpression.equals(other.assignableExpression) && expressions.equals(other.expressions);
+            return leftHandSide.equals(other.leftHandSide) && arguments.equals(other.arguments);
         }
         return false;
     }
 
     @Override
     public int computeHashCode() {
-        int hash = ((int) COMPARE_TO_ORDER_CONSTANT) + assignableExpression.hashCode();
-        return hash * 31 + expressions.hashCode();
+        int hash = ((int) COMPARE_TO_ORDER_CONSTANT) + leftHandSide.hashCode();
+        return hash * 31 + arguments.hashCode();
     }
 }

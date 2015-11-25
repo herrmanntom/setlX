@@ -55,7 +55,9 @@ public class Assignment extends AUnaryPrefixOperator {
 
     @Override
     public Value modifyTerm(State state, Term term) throws SetlException {
-        term.addMember(state, assignableExpression.toTerm(state));
+        Value rightHandSide = term.firstMember();
+        term.setMember(state, 1, assignableExpression.toTerm(state));
+        term.setMember(state, 2, rightHandSide);
         return term;
     }
 
@@ -69,8 +71,9 @@ public class Assignment extends AUnaryPrefixOperator {
      */
     public static void appendToOperatorStack(final State state, final Term term, FragmentList<AOperator> operatorStack) throws TermConversionException {
         try {
-            AAssignableExpression assignableExpression = OperatorExpression.createFromTerm(state, term.lastMember()).convertToAssignable();
-            appendToOperatorStack(state, term, operatorStack, new Assignment(assignableExpression));
+            OperatorExpression.appendFromTerm(state, term.lastMember(), operatorStack);
+            AAssignableExpression assignableExpression = OperatorExpression.createFromTerm(state, term.firstMember()).convertToAssignable();
+            operatorStack.add(new Assignment(assignableExpression));
         } catch (UndefinedOperationException e) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER, e);
         }

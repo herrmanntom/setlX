@@ -1,8 +1,8 @@
 package org.randoom.setlx.assignments;
 
 import org.randoom.setlx.exceptions.SetlException;
-import org.randoom.setlx.types.SetlString;
-import org.randoom.setlx.types.Term;
+import org.randoom.setlx.operatorUtilities.OperatorExpression;
+import org.randoom.setlx.operators.Variable;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.CodeFragment;
 import org.randoom.setlx.utilities.State;
@@ -14,9 +14,8 @@ import java.util.List;
  * Simple assignment to a variable.
  */
 public class AssignableVariable extends AAssignableExpression {
-    private final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(AssignableVariable.class);
-
     private final String id;
+    private Value term;
 
     /**
      * Create a new Variable expression.
@@ -25,6 +24,7 @@ public class AssignableVariable extends AAssignableExpression {
      */
     public AssignableVariable(final String id) {
         this.id = id;
+        this.term = null;
     }
 
     /**
@@ -72,9 +72,10 @@ public class AssignableVariable extends AAssignableExpression {
 
     @Override
     public Value toTerm(State state) throws SetlException {
-        final Term result = new Term(FUNCTIONAL_CHARACTER, 1);
-        result.addMember(state, new SetlString(id));
-        return result;
+        if (term == null) {
+            term = new OperatorExpression(new Variable(id)).toTerm(state);
+        }
+        return term;
     }
 
     private final static long COMPARE_TO_ORDER_CONSTANT = generateCompareToOrderConstant(AssignableVariable.class);

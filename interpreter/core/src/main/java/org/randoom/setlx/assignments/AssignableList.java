@@ -4,7 +4,6 @@ import org.randoom.setlx.exceptions.IncompatibleTypeException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.types.IndexedCollectionValue;
 import org.randoom.setlx.types.SetlList;
-import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.CodeFragment;
 import org.randoom.setlx.utilities.FragmentList;
@@ -17,7 +16,6 @@ import java.util.List;
  * Assignment to a list of expressions.
  */
 public class AssignableList extends AAssignableExpression {
-    private final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(AssignableList.class);
 
     private final FragmentList<AAssignableExpression> assignableExpressions;
 
@@ -113,15 +111,11 @@ public class AssignableList extends AAssignableExpression {
 
     @Override
     public Value toTerm(State state) throws SetlException {
-        final Term result = new Term(FUNCTIONAL_CHARACTER, 1);
-
         final SetlList list = new SetlList();
         for (AAssignableExpression assignableExpression : assignableExpressions) {
             list.addMember(state, assignableExpression.toTerm(state));
         }
-        result.addMember(state, list);
-
-        return result;
+        return list;
     }
 
     private final static long COMPARE_TO_ORDER_CONSTANT = generateCompareToOrderConstant(AssignableList.class);

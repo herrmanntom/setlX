@@ -1,8 +1,9 @@
 package org.randoom.setlx.assignments;
 
 import org.randoom.setlx.exceptions.SetlException;
+import org.randoom.setlx.operatorUtilities.OperatorExpression;
+import org.randoom.setlx.operators.VariableIgnore;
 import org.randoom.setlx.types.IgnoreDummy;
-import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.CodeFragment;
 import org.randoom.setlx.utilities.State;
@@ -14,10 +15,11 @@ import java.util.List;
  * Simply ignored assignment ('_' operator).
  */
 public class AssignableIgnore extends AAssignableExpression {
-    private final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(AssignableIgnore.class);
 
     /** Singleton **/
     public static final AssignableIgnore AI = new AssignableIgnore();
+
+    private static Value term = null;
 
     private AssignableIgnore() {}
 
@@ -53,7 +55,10 @@ public class AssignableIgnore extends AAssignableExpression {
 
     @Override
     public Value toTerm(State state) throws SetlException {
-        return new Term(FUNCTIONAL_CHARACTER, 0);
+        if (term == null) {
+            term = new OperatorExpression(VariableIgnore.VI).toTerm(state);
+        }
+        return term;
     }
 
     private final static long COMPARE_TO_ORDER_CONSTANT = generateCompareToOrderConstant(AssignableIgnore.class);

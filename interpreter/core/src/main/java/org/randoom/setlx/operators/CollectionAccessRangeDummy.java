@@ -59,11 +59,11 @@ public class CollectionAccessRangeDummy extends AZeroOperator {
      * @throws TermConversionException If term is malformed.
      */
     public static void appendToOperatorStack(final State state, final Term term, FragmentList<AOperator> operatorStack) throws TermConversionException {
-            if (term.size() != 0) {
-                throw new TermConversionException("malformed " + generateFunctionalCharacter(CollectionAccess.class));
-            }
-
+        if (term.size() != 0) {
+            throw new TermConversionException("malformed " + generateFunctionalCharacter(CollectionAccess.class));
+        } else {
             operatorStack.add(CARD);
+        }
     }
 
     /* comparisons */

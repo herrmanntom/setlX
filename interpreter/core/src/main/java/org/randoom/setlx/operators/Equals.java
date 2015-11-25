@@ -11,11 +11,11 @@ import org.randoom.setlx.utilities.State;
 /**
  * Operator that checks if two values on the stack are equal.
  */
-public class Equal extends ABinaryInfixOperator {
+public class Equals extends ABinaryInfixOperator {
     /** Singleton **/
-    public static final Equal E = new Equal();
+    public static final Equals E = new Equals();
 
-    private Equal() {}
+    private Equals() {}
 
     @Override
     public Value evaluate(State state, Stack<Value> values) throws SetlException {
@@ -56,7 +56,7 @@ public class Equal extends ABinaryInfixOperator {
         return 1500;
     }
 
-    private final static long COMPARE_TO_ORDER_CONSTANT = generateCompareToOrderConstant(Equal.class);
+    private final static long COMPARE_TO_ORDER_CONSTANT = generateCompareToOrderConstant(Equals.class);
 
     @Override
     public long compareToOrdering() {

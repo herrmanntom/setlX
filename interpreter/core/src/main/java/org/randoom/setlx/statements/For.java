@@ -153,7 +153,7 @@ public class For extends Statement {
                 final Block block = TermUtilities.valueToBlock(state, term.lastMember());
                 return new For(iterator, condition, block);
             } catch (final SetlException se) {
-                throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
+                throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER, se);
             }
         }
     }

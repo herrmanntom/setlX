@@ -638,7 +638,7 @@ public class Term extends IndexedCollectionValue {
                 result.addBinding(id, other);
                 return result;
             }
-        } else if (functionalCharacter.equals(StringConstructor.getFunctionalCharacter()) && body.size() == 2 &&
+        } else if (functionalCharacter.equals(StringConstructor.getFunctionalCharacter()) && body.size() == 3 &&
                    other.isString() == SetlBoolean.TRUE) {
             // 'this' is a StringConstructor, which may match a simple string
             return other.matchesTerm(state, this);

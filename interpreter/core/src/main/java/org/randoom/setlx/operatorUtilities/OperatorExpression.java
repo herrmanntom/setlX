@@ -398,10 +398,10 @@ public class OperatorExpression extends Expression {
 
         final Value convertedValue = Value.createFromTerm(state, value);
 
-        if (value instanceof Procedure) {
-            operatorStack.add(new ProcedureConstructor((Procedure) value));
+        if (convertedValue instanceof Procedure) {
+            operatorStack.add(new ProcedureConstructor((Procedure) convertedValue));
         } else if (value.getClass() == Term.class) {
-            TermConstructor.appendToOperatorStack(state, (Term) value, operatorStack);
+            TermConstructor.appendToOperatorStack(state, (Term) convertedValue, operatorStack);
         } else {
             operatorStack.add(new ValueOperator(convertedValue));
         }

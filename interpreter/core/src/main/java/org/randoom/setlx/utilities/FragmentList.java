@@ -148,7 +148,9 @@ public class FragmentList<B extends CodeFragment> implements Iterable<B>, Compar
                 final Iterator<B> iterFirst  = fragmentList.iterator();
                 final Iterator<B> iterSecond = otherList.iterator();
                 while (iterFirst.hasNext() && iterSecond.hasNext()) {
-                    if ( ! iterFirst.next().equals(iterSecond.next())) {
+                    B first = iterFirst.next();
+                    B second = iterSecond.next();
+                    if ( ! first.equals(second)) {
                         return false;
                     }
                 }

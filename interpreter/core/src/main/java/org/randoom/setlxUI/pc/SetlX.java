@@ -6,6 +6,7 @@ import org.randoom.setlx.statements.ExpressionStatement;
 import org.randoom.setlx.statements.Statement;
 import org.randoom.setlx.types.SetlList;
 import org.randoom.setlx.types.SetlString;
+import org.randoom.setlx.types.Term;
 import org.randoom.setlx.utilities.ParseSetlX;
 import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.WriteFile;
@@ -351,7 +352,14 @@ public class SetlX {
             ArrayList<Block> termConvertedPrograms = new ArrayList<Block>(nPrograms);
             for (Block program : programs) {
                 try {
-                    termConvertedPrograms.add((Block) Statement.createFromTerm(state, program.toTerm(state)));
+                    Term term = program.toTerm(state);
+                    Block recreatedProgram = (Block) Statement.createFromTerm(state, term);
+                    if (program.equals(recreatedProgram)) {
+                        termConvertedPrograms.add(recreatedProgram);
+                    } else {
+                        state.errWriteLn("Error during termLoop!");
+                        state.errWriteLn("Programs are not equal.");
+                    }
                 } catch (final SetlException se) {
                     state.errWriteLn("Error during termLoop!");
                     se.printExceptionsTrace(state);

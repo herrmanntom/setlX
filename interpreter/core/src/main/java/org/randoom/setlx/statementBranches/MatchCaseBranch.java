@@ -174,7 +174,7 @@ public class MatchCaseBranch extends AbstractMatchBranch {
                 final Block block = TermUtilities.valueToBlock(state, term.lastMember());
                 return new MatchCaseBranch(exprs, condition, block);
             } catch (final SetlException se) {
-                throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
+                throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER, se);
             }
         }
     }

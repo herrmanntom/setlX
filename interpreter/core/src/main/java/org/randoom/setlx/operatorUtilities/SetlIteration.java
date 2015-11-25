@@ -149,7 +149,7 @@ public class SetlIteration extends CollectionBuilder {
                 }
                 return new SetlIteration(expr, iterator, cond);
             } catch (final SetlException se) {
-                throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
+                throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER, se);
             }
         }
     }

@@ -125,7 +125,7 @@ public class Range extends CollectionBuilder {
                 final OperatorExpression stop = OperatorExpression.createFromTerm(state, term.lastMember());
                 return new Range(start, second, stop);
             } catch (final SetlException se) {
-                throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
+                throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER, se);
             }
         }
     }

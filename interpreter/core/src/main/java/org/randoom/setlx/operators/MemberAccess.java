@@ -71,7 +71,7 @@ public class MemberAccess extends AUnaryPostfixOperator {
         if (term.size() != 2 || ! (term.lastMember() instanceof SetlString)) {
             throw new TermConversionException("malformed " + generateFunctionalCharacter(MemberAccess.class));
         }
-        MemberAccess memberAccess = new MemberAccess(term.firstMember().getUnquotedString(state));
+        MemberAccess memberAccess = new MemberAccess(term.lastMember().getUnquotedString(state));
         appendToOperatorStack(state, term, operatorStack, memberAccess);
     }
 

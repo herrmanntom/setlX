@@ -84,7 +84,10 @@ public class ExplicitListWithRest extends ExplicitList {
     public void addToTerm(final State state, final CollectionValue collection) throws SetlException {
         final Term     result  = new Term(FUNCTIONAL_CHARACTER, 2);
 
-        super.addToTerm(state, result);
+        final SetlList members = new SetlList();
+        super.addToTerm(state, members);
+        result.addMember(state, members);
+
         result.addMember(state, rest.toTerm(state));
 
         collection.addMember(state, result);
@@ -196,7 +199,7 @@ public class ExplicitListWithRest extends ExplicitList {
     @Override
     public int computeHashCode() {
         int hash = ((int) COMPARE_TO_ORDER_CONSTANT) + rest.hashCode();
-        return hash * 31 + super.hashCode();
+        return hash * 31 + super.computeHashCode();
     }
 }
 

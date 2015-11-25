@@ -1,6 +1,11 @@
 package org.randoom.setlx.operators;
 
-import org.randoom.setlx.exceptions.*;
+import org.randoom.setlx.exceptions.ParserException;
+import org.randoom.setlx.exceptions.SetlException;
+import org.randoom.setlx.exceptions.StopExecutionException;
+import org.randoom.setlx.exceptions.SyntaxErrorException;
+import org.randoom.setlx.exceptions.TermConversionException;
+import org.randoom.setlx.exceptions.UndefinedOperationException;
 import org.randoom.setlx.operatorUtilities.OperatorExpression;
 import org.randoom.setlx.operatorUtilities.Stack;
 import org.randoom.setlx.types.SetlList;
@@ -204,6 +209,8 @@ public class StringConstructor extends AZeroOperator {
 
     @Override
     public Value modifyTerm(State state, Term term) throws SetlException {
+        term.addMember(state, new SetlString(originalStr));
+
         final SetlList strList = new SetlList(fragments.size());
         for (final String str: fragments) {
             strList.addMember(state, new SetlString(str));
@@ -228,40 +235,36 @@ public class StringConstructor extends AZeroOperator {
      * @throws TermConversionException If term is malformed.
      */
     public static void appendToOperatorStack(final State state, final Term term, FragmentList<AOperator> operatorStack) throws TermConversionException {
-        if (term.size() != 2 || ! (term.firstMember().getClass() == SetlList.class) || ! (term.lastMember().getClass() == SetlList.class)) {
-            throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
-        } else {
-            final StringBuilder                 originalStr = new StringBuilder();
-            final SetlList                      frags       = (SetlList) term.firstMember();
-            final SetlList                      exps        = (SetlList) term.lastMember();
-
-            final ArrayList<String>             fragments   = new ArrayList<String>(frags.size());
-            final ArrayList<OperatorExpression> expressions = new ArrayList<OperatorExpression>(exps.size());
-
-            final Iterator<Value>               fIterator   = frags.iterator();
-            final Iterator<Value>               eIterator   = exps.iterator();
-
-            originalStr.append("\"");
-
-            while (fIterator.hasNext()) {
-                final SetlString  sstring = (SetlString) fIterator.next();
-                final String      string  = sstring.getUnquotedString(state);
-                originalStr.append(sstring.getEscapedString());
-                fragments.add(string);
-
-                if (eIterator.hasNext()) {
-                    final OperatorExpression expr = OperatorExpression.createFromTerm(state, eIterator.next());
-                    expressions.add(expr);
-                    originalStr.append("$");
-                    originalStr.append(expr.toString(state).replace("$", "\\$"));
-                    originalStr.append("$");
-                }
-            }
-            if (eIterator.hasNext()) {
+        try {
+            if (term.size() != 3 || ! (term.firstMember().getClass() == SetlString.class) || ! (term.getMember(2).getClass() == SetlList.class) || ! (term.lastMember().getClass() == SetlList.class)) {
                 throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
+            } else {
+                final SetlString originalStr = (SetlString) term.firstMember();
+                final SetlList frags = (SetlList) term.getMember(2);
+                final SetlList exps = (SetlList) term.lastMember();
+
+                final ArrayList<String> fragments = new ArrayList<String>(frags.size());
+                final ArrayList<OperatorExpression> expressions = new ArrayList<OperatorExpression>(exps.size());
+
+                final Iterator<Value> fIterator = frags.iterator();
+                final Iterator<Value> eIterator = exps.iterator();
+
+                while (fIterator.hasNext()) {
+                    final String string = fIterator.next().getUnquotedString(state);
+                    fragments.add(string);
+
+                    if (eIterator.hasNext()) {
+                        final OperatorExpression expr = OperatorExpression.createFromTerm(state, eIterator.next());
+                        expressions.add(expr);
+                    }
+                }
+                if (eIterator.hasNext()) {
+                    throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
+                }
+                operatorStack.add(new StringConstructor(originalStr.getUnquotedString(state), fragments, expressions));
             }
-            originalStr.append("\"");
-            operatorStack.add(new StringConstructor(originalStr.toString(), fragments, expressions));
+        } catch (SetlException se) {
+            throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER, se);
         }
     }
 

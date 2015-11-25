@@ -233,7 +233,7 @@ public class SetlIterator extends ImmutableCodeFragment {
                 }
                 return new SetlIterator(assignable, collection, iterator);
             } catch (final SetlException se) {
-                throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
+                throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER, se);
             }
         }
     }

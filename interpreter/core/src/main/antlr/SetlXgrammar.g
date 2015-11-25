@@ -307,7 +307,7 @@ conjunction [boolean enableIgnore, FragmentList<AOperator> operators]
 comparison [boolean enableIgnore, FragmentList<AOperator> operators]
     : sum[$enableIgnore, $operators]
       (
-         '=='    sum[$enableIgnore, $operators] { operators.add(Equal.E           ); }
+         '=='    sum[$enableIgnore, $operators] { operators.add(Equals.E          ); }
        | '!='    sum[$enableIgnore, $operators] { operators.add(NotEqual.NE       ); }
        | '<'     sum[$enableIgnore, $operators] { operators.add(LessThan.LT       ); }
        | '<='    sum[$enableIgnore, $operators] { operators.add(LessOrEqual.LOE   ); }

@@ -141,7 +141,7 @@ public class Call extends AUnaryPostfixOperator {
 
             operatorStack.add(new Call(arguments, listArgument));
         } catch (SetlException se) {
-            throw new TermConversionException("malformed " + generateFunctionalCharacter(Call.class));
+            throw new TermConversionException("malformed " + generateFunctionalCharacter(Call.class), se);
         }
     }
 

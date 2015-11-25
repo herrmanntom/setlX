@@ -1,11 +1,14 @@
 package org.randoom.setlx.operators;
 
+import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.exceptions.UndefinedOperationException;
 import org.randoom.setlx.operatorUtilities.OperatorExpression;
 import org.randoom.setlx.operatorUtilities.Stack;
 import org.randoom.setlx.types.RangeDummy;
+import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.CodeFragment;
+import org.randoom.setlx.utilities.FragmentList;
 import org.randoom.setlx.utilities.State;
 
 import java.util.List;
@@ -45,6 +48,22 @@ public class CollectionAccessRangeDummy extends AZeroOperator {
     @Override
     public void appendOperatorSign(final State state, final StringBuilder sb) {
         sb.append(" .. ");
+    }
+
+    /**
+     * Append the operator represented by a term to the supplied operator stack.
+     *
+     * @param state                    Current state of the running setlX program.
+     * @param term                     Term to convert.
+     * @param operatorStack            Operator to append to.
+     * @throws TermConversionException If term is malformed.
+     */
+    public static void appendToOperatorStack(final State state, final Term term, FragmentList<AOperator> operatorStack) throws TermConversionException {
+            if (term.size() != 0) {
+                throw new TermConversionException("malformed " + generateFunctionalCharacter(CollectionAccess.class));
+            }
+
+            operatorStack.add(CARD);
     }
 
     /* comparisons */

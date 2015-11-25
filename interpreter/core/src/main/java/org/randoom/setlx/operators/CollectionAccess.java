@@ -139,7 +139,7 @@ public class CollectionAccess extends AUnaryPostfixOperator {
 
             operatorStack.add(new CollectionAccess(arguments));
         } catch (SetlException se) {
-            throw new TermConversionException("malformed " + generateFunctionalCharacter(CollectionAccess.class));
+            throw new TermConversionException("malformed " + generateFunctionalCharacter(CollectionAccess.class), se);
         }
     }
 

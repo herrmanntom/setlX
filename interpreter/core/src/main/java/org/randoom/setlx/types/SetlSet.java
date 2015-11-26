@@ -4,6 +4,7 @@ import org.randoom.setlx.exceptions.IncompatibleTypeException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.StopExecutionException;
 import org.randoom.setlx.exceptions.UndefinedOperationException;
+import org.randoom.setlx.operatorUtilities.ExplicitListWithRest;
 import org.randoom.setlx.utilities.CodeFragment;
 import org.randoom.setlx.utilities.MatchResult;
 import org.randoom.setlx.utilities.State;
@@ -766,10 +767,10 @@ public class SetlSet extends CollectionValue {
         } else if (other.getClass() != SetlSet.class) {
             return new MatchResult(false);
         } else if (set.size() == 1 && set.first().getClass() == Term.class) {
-//            final MatchResult result = ExplicitListWithRest.matchTerm(state, (Term) set.first(), (SetlSet) other);
-//            if (result.isMatch()) {
-//                return result;
-//            }
+            final MatchResult result = ExplicitListWithRest.matchTerm(state, (Term) set.first(), (SetlSet) other);
+            if (result.isMatch()) {
+                return result;
+            }
         }
 
         if (this.size() != other.size()) {

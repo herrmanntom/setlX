@@ -55,9 +55,9 @@ This is a 21_test_12
 This is a $test$
 This is a 21_test_12This is a 21_test_12
 
-{throwACoin, print} = {^lambdaProcedure([], ^call("rnd", [{^stringConstructor(["heads"], []), ^stringConstructor(["tails"], [])}], "nil")), ^preDefinedProcedure("print")}
+{throwACoin, print} = {^lambdaProcedure([], ^call("rnd", [{^stringConstructor("heads", ["heads"], []), ^stringConstructor("tails", ["tails"], [])}], "nil")), ^preDefinedProcedure("print")}
 a + 10 * b % 4 = ^sum(^variable("a"), ^modulo(^product(10, ^variable("b")), 4))
-"print(parseStatements(\"print(\\"that is crazy!\\");\"));" = ^block([^call("print", [^call("parseStatements", [^stringConstructor(["print(\"that is crazy!\");"], [])], "nil")], "nil")])
+"print(parseStatements(\"print(\\"that is crazy!\\");\"));" = ^block([^call("print", [^call("parseStatements", [^stringConstructor("print(\"that is crazy!\");", ["print(\"that is crazy!\");"], [])], "nil")], "nil")])
 
 6
 foo

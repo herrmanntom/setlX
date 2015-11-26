@@ -42,8 +42,12 @@ public class Disjunction extends ALazyBinaryInfixOperator {
      * @throws TermConversionException If term is malformed.
      */
     public static void appendToOperatorStack(final State state, final Term term, FragmentList<AOperator> operatorStack) throws TermConversionException {
-        Disjunction disjunction = new Disjunction(OperatorExpression.createFromTerm(state, term.lastMember()));
-        appendToOperatorStack(state, term, operatorStack, disjunction);
+        if (term.size() != 2) {
+            throw new TermConversionException("malformed " + generateFunctionalCharacter(Disjunction.class));
+        } else {
+            Disjunction disjunction = new Disjunction(OperatorExpression.createFromTerm(state, term.lastMember()));
+            appendToOperatorStack(state, term, operatorStack, disjunction);
+        }
     }
 
     @Override

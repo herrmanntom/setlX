@@ -42,8 +42,12 @@ public class Conjunction extends ALazyBinaryInfixOperator {
      * @throws TermConversionException If term is malformed.
      */
     public static void appendToOperatorStack(final State state, final Term term, FragmentList<AOperator> operatorStack) throws TermConversionException {
-        Conjunction conjunction = new Conjunction(OperatorExpression.createFromTerm(state, term.lastMember()));
-        appendToOperatorStack(state, term, operatorStack, conjunction);
+        if (term.size() != 2) {
+            throw new TermConversionException("malformed " + generateFunctionalCharacter(Conjunction.class));
+        } else {
+            Conjunction conjunction = new Conjunction(OperatorExpression.createFromTerm(state, term.lastMember()));
+            appendToOperatorStack(state, term, operatorStack, conjunction);
+        }
     }
 
     @Override

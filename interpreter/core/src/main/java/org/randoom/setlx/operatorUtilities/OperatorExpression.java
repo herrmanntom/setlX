@@ -400,7 +400,7 @@ public class OperatorExpression extends Expression {
 
         if (convertedValue instanceof Procedure) {
             operatorStack.add(new ProcedureConstructor((Procedure) convertedValue));
-        } else if (value.getClass() == Term.class) {
+        } else if (convertedValue.getClass() == Term.class) {
             TermConstructor.appendToOperatorStack(state, (Term) convertedValue, operatorStack);
         } else {
             operatorStack.add(new ValueOperator(convertedValue));

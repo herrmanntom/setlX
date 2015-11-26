@@ -1,6 +1,6 @@
 rule stack: [initBlock]
 line 4:1 extraneous input '%' expecting {<EOF>, 'om', '[', 'continue', 'false', 'closure', '<<', 'scan', 'do', '_', '@', '+/', 'cachedProcedure', 'class', 'assert', '!', 'exit', 'while', '-', '(', 'if', 'match', 'try', 'check', '{', '*/', 'break', 'true', 'procedure', 'backtrack', 'for', 'return', 'forall', 'exists', 'switch', '#', ID, TERM, NUMBER, DOUBLE, STRING, LITERAL}
-rule stack: [initBlock, statement, expr, implication, disjunction, conjunction, comparison, sum, product, reduce, prefixOperation, prefixOperation]
+rule stack: [initBlock, statement, expr, exprContent, implication, disjunction, conjunction, comparison, sum, product, reduce, prefixOperation, prefixOperation]
 line 5:9 no viable alternative at input '*'
 rule stack: [initBlock]
 line 6:1 extraneous input '~' expecting {<EOF>, 'om', '[', 'continue', 'false', 'closure', '<<', 'scan', 'do', '_', '@', '+/', 'cachedProcedure', 'class', 'assert', '!', 'exit', 'while', '-', '(', 'if', 'match', 'try', 'check', '{', '*/', 'break', 'true', 'procedure', 'backtrack', 'for', 'return', 'forall', 'exists', 'switch', '#', ID, TERM, NUMBER, DOUBLE, STRING, LITERAL}

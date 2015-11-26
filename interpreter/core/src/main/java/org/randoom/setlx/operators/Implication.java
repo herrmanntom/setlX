@@ -25,12 +25,12 @@ public class Implication extends ALazyBinaryInfixOperator {
 
     @Override
     public Value evaluate(State state, Stack<Value> values) throws SetlException {
-        return values.poll().disjunction(state, getRightHandSide());
+        return values.poll().implication(state, getRightHandSide());
     }
 
     @Override
     public String getOperatorSign() {
-        return " || ";
+        return " => ";
     }
 
     /**
@@ -42,8 +42,12 @@ public class Implication extends ALazyBinaryInfixOperator {
      * @throws TermConversionException If term is malformed.
      */
     public static void appendToOperatorStack(final State state, final Term term, FragmentList<AOperator> operatorStack) throws TermConversionException {
-        Implication implication = new Implication(OperatorExpression.createFromTerm(state, term.lastMember()));
-        appendToOperatorStack(state, term, operatorStack, implication);
+        if (term.size() != 2) {
+            throw new TermConversionException("malformed " + generateFunctionalCharacter(Implication.class));
+        } else {
+            Implication implication = new Implication(OperatorExpression.createFromTerm(state, term.lastMember()));
+            appendToOperatorStack(state, term, operatorStack, implication);
+        }
     }
 
     @Override

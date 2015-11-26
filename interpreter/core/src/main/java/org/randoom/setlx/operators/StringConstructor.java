@@ -209,7 +209,7 @@ public class StringConstructor extends AZeroOperator {
 
     @Override
     public Value modifyTerm(State state, Term term) throws SetlException {
-        term.addMember(state, new SetlString(originalStr));
+        term.addMember(state, new SetlString(originalStr.substring(1, originalStr.length() -1)));
 
         final SetlList strList = new SetlList(fragments.size());
         for (final String str: fragments) {
@@ -261,7 +261,7 @@ public class StringConstructor extends AZeroOperator {
                 if (eIterator.hasNext()) {
                     throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
                 }
-                operatorStack.add(new StringConstructor(originalStr.getUnquotedString(state), fragments, expressions));
+                operatorStack.add(new StringConstructor(originalStr.toString(state), fragments, expressions));
             }
         } catch (SetlException se) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER, se);

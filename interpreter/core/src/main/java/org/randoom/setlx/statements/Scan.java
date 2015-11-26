@@ -306,7 +306,7 @@ public class Scan extends Statement {
                     branchList.add(AbstractMatchScanBranch.valueToMatchAbstractScanBranch(state, v));
                 }
 
-                if (posVar.getClass() == AssignableVariable.class) {
+                if (posVar == null || posVar.getClass() == AssignableVariable.class) {
                     return new Scan(expr, (AssignableVariable) posVar, branchList);
                 }
             } catch (final SetlException se) {

@@ -96,7 +96,6 @@ public abstract class AOperator extends ImmutableCodeFragment {
 
     @Override
     public final void appendString(State state, StringBuilder sb, int tabs) {
-        sb.append("debug only output: ");
         appendOperatorSign(state, sb);
     }
 

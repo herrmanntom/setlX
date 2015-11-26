@@ -166,7 +166,7 @@ public class SetlIteration extends CollectionBuilder {
     /* comparisons */
 
     @Override
-    public int compareTo(final CodeFragment other) {
+    public int compareTo(final CodeFragment other, boolean ordered) {
         if (this == other) {
             return 0;
         } else if (other.getClass() == SetlIteration.class) {
@@ -202,7 +202,7 @@ public class SetlIteration extends CollectionBuilder {
     }
 
     @Override
-    public boolean equals(final Object obj) {
+    public boolean equals(final Object obj, boolean ordered) {
         if (this == obj) {
             return true;
         } else if (obj.getClass() == SetlIteration.class) {
@@ -220,7 +220,7 @@ public class SetlIteration extends CollectionBuilder {
     }
 
     @Override
-    public int computeHashCode() {
+    public int computeHashCode(boolean ordered) {
         int hash = ((int) COMPARE_TO_ORDER_CONSTANT) + expr.hashCode();
         hash = hash * 31 + iterator.hashCode();
         if (condition != null) {

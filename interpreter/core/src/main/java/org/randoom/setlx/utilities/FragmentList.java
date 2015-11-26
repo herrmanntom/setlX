@@ -2,6 +2,7 @@ package org.randoom.setlx.utilities;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.TreeSet;
 
 /**
  * A list of CodeFragments.
@@ -123,13 +124,33 @@ public class FragmentList<B extends CodeFragment> implements Iterable<B>, Compar
         if (this == other) {
             return 0;
         }
+        return compareTo(other, true);
+    }
+
+    public final int compareTo(FragmentList<B> other, boolean ordered) {
+        if (this == other) {
+            return 0;
+        }
+
         final int size = fragmentList.size();
         int cmp = Integer.valueOf(size).compareTo(other.fragmentList.size());
         if (cmp != 0) {
             return cmp;
         }
-        for (int index = 0; index < size; ++index) {
-            cmp = fragmentList.get(index).compareTo(other.fragmentList.get(index));
+
+        final Iterator<B> thisIterator;
+        final Iterator<B> otherIterator;
+        if (ordered) {
+            thisIterator  = fragmentList.iterator();
+            otherIterator = other.fragmentList.iterator();
+        } else {
+            thisIterator = new TreeSet<B>(fragmentList).iterator();
+            otherIterator = new TreeSet<B>(other.fragmentList).iterator();
+        }
+        while (thisIterator.hasNext() && otherIterator.hasNext()) {
+            B first = thisIterator.next();
+            B second = otherIterator.next();
+            cmp = first.compareTo(second);
             if (cmp != 0) {
                 return cmp;
             }
@@ -137,19 +158,30 @@ public class FragmentList<B extends CodeFragment> implements Iterable<B>, Compar
         return 0;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public final boolean equals(final Object obj) {
+        return equals(obj, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    public final boolean equals(final Object obj, boolean ordered) {
         if (this == obj) {
             return true;
         } else if (this.getClass() == obj.getClass()) {
             final ArrayList<B> otherList = ((FragmentList<B>) obj).fragmentList;
             if (fragmentList.size() == otherList.size()) {
-                final Iterator<B> iterFirst  = fragmentList.iterator();
-                final Iterator<B> iterSecond = otherList.iterator();
-                while (iterFirst.hasNext() && iterSecond.hasNext()) {
-                    B first = iterFirst.next();
-                    B second = iterSecond.next();
+                final Iterator<B> thisIterator;
+                final Iterator<B> otherIterator;
+                if (ordered) {
+                    thisIterator  = fragmentList.iterator();
+                    otherIterator = otherList.iterator();
+                } else {
+                    thisIterator = new TreeSet<B>(fragmentList).iterator();
+                    otherIterator = new TreeSet<B>(otherList).iterator();
+                }
+                while (thisIterator.hasNext() && otherIterator.hasNext()) {
+                    B first = thisIterator.next();
+                    B second = otherIterator.next();
                     if ( ! first.equals(second)) {
                         return false;
                     }
@@ -162,12 +194,24 @@ public class FragmentList<B extends CodeFragment> implements Iterable<B>, Compar
 
     @Override
     public final int hashCode() {
+        return hashCode(true);
+    }
+
+    public final int hashCode(boolean ordered) {
         final int size = fragmentList.size();
         int hash = size;
         if (size > 0) {
-            hash = hash * 31 + fragmentList.get(0).hashCode();
-            if (size > 1) {
-                hash = hash * 31 + fragmentList.get(size -1).hashCode();
+            if (ordered) {
+                hash = hash * 31 + fragmentList.get(0).hashCode();
+                if (size > 1) {
+                    hash = hash * 31 + fragmentList.get(size - 1).hashCode();
+                }
+            } else {
+                TreeSet<B> set = new TreeSet<B>(fragmentList);
+                hash = hash * 31 + set.first().hashCode();
+                if (size > 1) {
+                    hash = hash * 31 + set.last().hashCode();
+                }
             }
         }
         return hash;

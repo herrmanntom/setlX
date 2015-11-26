@@ -111,11 +111,11 @@ public class ExplicitList extends CollectionBuilder {
     /* comparisons */
 
     @Override
-    public int compareTo(final CodeFragment other) {
+    public int compareTo(final CodeFragment other, boolean ordered) {
         if (this == other) {
             return 0;
         } else if (other.getClass() == ExplicitList.class || other instanceof ExplicitList) {
-            return list.compareTo(((ExplicitList) other).list);
+            return list.compareTo(((ExplicitList) other).list, ordered);
         } else {
             return (this.compareToOrdering() < other.compareToOrdering())? -1 : 1;
         }
@@ -129,18 +129,18 @@ public class ExplicitList extends CollectionBuilder {
     }
 
     @Override
-    public boolean equals(final Object obj) {
+    public boolean equals(final Object obj, boolean ordered) {
         if (this == obj) {
             return true;
         } else if (obj.getClass() == ExplicitList.class || obj instanceof ExplicitList) {
-            return list.equals(((ExplicitList) obj).list);
+            return list.equals(((ExplicitList) obj).list, ordered);
         }
         return false;
     }
 
     @Override
-    public int computeHashCode() {
-        return  ((int) COMPARE_TO_ORDER_CONSTANT) + list.hashCode();
+    public int computeHashCode(boolean ordered) {
+        return  ((int) COMPARE_TO_ORDER_CONSTANT) + list.hashCode(ordered);
     }
 }
 

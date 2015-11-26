@@ -142,7 +142,7 @@ public class Range extends CollectionBuilder {
     /* comparisons */
 
     @Override
-    public int compareTo(final CodeFragment other) {
+    public int compareTo(final CodeFragment other, boolean ordered) {
         if (this == other) {
             return 0;
         } else if (other.getClass() == Range.class) {
@@ -178,7 +178,7 @@ public class Range extends CollectionBuilder {
     }
 
     @Override
-    public boolean equals(final Object obj) {
+    public boolean equals(final Object obj, boolean ordered) {
         if (this == obj) {
             return true;
         } else if (obj.getClass() == Range.class) {
@@ -196,7 +196,7 @@ public class Range extends CollectionBuilder {
     }
 
     @Override
-    public int computeHashCode() {
+    public int computeHashCode(boolean ordered) {
         int hash = ((int) COMPARE_TO_ORDER_CONSTANT) + start.hashCode();
         hash = hash * 31 + stop.hashCode();
         if (second != null) {

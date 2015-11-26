@@ -163,7 +163,7 @@ public class ExplicitListWithRest extends ExplicitList {
     /* comparisons */
 
     @Override
-    public int compareTo(final CodeFragment other) {
+    public int compareTo(final CodeFragment other, boolean ordered) {
         if (this == other) {
             return 0;
         } else if (other.getClass() == ExplicitListWithRest.class) {
@@ -172,7 +172,7 @@ public class ExplicitListWithRest extends ExplicitList {
             if (cmp != 0) {
                 return cmp;
             }
-            return super.compareTo(otherExplicitListWithRest);
+            return super.compareTo(otherExplicitListWithRest, ordered);
         } else {
             return (this.compareToOrdering() < other.compareToOrdering())? -1 : 1;
         }
@@ -186,20 +186,20 @@ public class ExplicitListWithRest extends ExplicitList {
     }
 
     @Override
-    public boolean equals(final Object obj) {
+    public boolean equals(final Object obj, boolean ordered) {
         if (this == obj) {
             return true;
         } else if (obj.getClass() == ExplicitListWithRest.class) {
             ExplicitListWithRest otherExplicitListWithRest = (ExplicitListWithRest) obj;
-            return rest.equals(otherExplicitListWithRest.rest) && super.equals(otherExplicitListWithRest);
+            return rest.equals(otherExplicitListWithRest.rest) && super.equals(otherExplicitListWithRest, ordered);
         }
         return false;
     }
 
     @Override
-    public int computeHashCode() {
+    public int computeHashCode(boolean ordered) {
         int hash = ((int) COMPARE_TO_ORDER_CONSTANT) + rest.hashCode();
-        return hash * 31 + super.computeHashCode();
+        return hash * 31 + super.computeHashCode(ordered);
     }
 }
 

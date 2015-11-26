@@ -7,6 +7,7 @@ import org.randoom.setlx.exceptions.UndefinedOperationException;
 import org.randoom.setlx.types.CollectionValue;
 import org.randoom.setlx.types.Om;
 import org.randoom.setlx.types.Term;
+import org.randoom.setlx.utilities.CodeFragment;
 import org.randoom.setlx.utilities.FragmentList;
 import org.randoom.setlx.utilities.ImmutableCodeFragment;
 import org.randoom.setlx.utilities.State;
@@ -109,5 +110,26 @@ public abstract class CollectionBuilder extends ImmutableCodeFragment {
             return ExplicitList.collectionValueToExplicitList(state, value);
         }
     }
+
+    @Override
+    public final int compareTo(final CodeFragment other) {
+        return compareTo(other, true);
+    }
+
+    public abstract int compareTo(final CodeFragment other, boolean ordered);
+
+    @Override
+    public final boolean equals(final Object obj) {
+        return equals(obj, true);
+    }
+
+    public abstract boolean equals(final Object obj, boolean ordered);
+
+    @Override
+    public final int computeHashCode() {
+        return computeHashCode(true);
+    }
+
+    public abstract int computeHashCode(boolean ordered);
 }
 

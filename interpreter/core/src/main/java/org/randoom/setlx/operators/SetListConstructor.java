@@ -156,7 +156,7 @@ public class SetListConstructor extends AZeroOperator {
 
             if (builder != null) {
                 if (otr.builder != null) {
-                    return builder.compareTo(otr.builder);
+                    return builder.compareTo(otr.builder, type == CollectionType.LIST);
                 } else {
                     return 1;
                 }
@@ -182,7 +182,7 @@ public class SetListConstructor extends AZeroOperator {
             SetListConstructor other = (SetListConstructor) obj;
             if (type == other.type) {
                 if (builder != null && other.builder != null) {
-                    return builder.equals(other.builder);
+                    return builder.equals(other.builder, type == CollectionType.LIST);
                 } else if (builder == null && other.builder == null) {
                     return true;
                 }
@@ -195,7 +195,7 @@ public class SetListConstructor extends AZeroOperator {
     public int computeHashCode() {
         int hash = ((int) COMPARE_TO_ORDER_CONSTANT) + type.hashCode();
         if (builder != null) {
-            hash = hash * 31 + builder.hashCode();
+            hash = hash * 31 + builder.computeHashCode(type == CollectionType.LIST);
         }
         return hash;
     }

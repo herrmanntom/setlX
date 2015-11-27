@@ -409,8 +409,8 @@ public class Rational extends NumberValue {
             }
         } else if (subtrahend.getClass() == SetlDouble.class) {
             return ((SetlDouble) subtrahend).differenceFlipped(state, this);
-//        } else if (subtrahend.getClass() == Term.class) {
-//            return ((Term) subtrahend).differenceFlipped(state, this);
+        } else if (subtrahend.getClass() == Term.class) {
+            return ((Term) subtrahend).differenceFlipped(state, this);
         } else {
             throw new IncompatibleTypeException(
                 "Right-hand-side of '" + this.toString(state) + " - " + subtrahend.toString(state) + "' is not a number."
@@ -559,8 +559,8 @@ public class Rational extends NumberValue {
     public Value integerDivision(final State state, final Value divisor) throws SetlException {
         if (divisor.isNumber() == SetlBoolean.TRUE) {
             return this.quotient(state, divisor).floor(state);
-//        } else if (divisor.getClass() == Term.class) {
-//            return ((Term) divisor).integerDivisionFlipped(state, this);
+        } else if (divisor.getClass() == Term.class) {
+            return ((Term) divisor).integerDivisionFlipped(state, this);
         } else {
             throw new IncompatibleTypeException(
                 "Right-hand-side of '" + this.toString(state) + " \\ " + divisor.toString(state) + "' is not a number."
@@ -589,8 +589,8 @@ public class Rational extends NumberValue {
                 final Rational ab = (Rational) this.quotient(state, b);
                 return this.difference(state, ab.floor(state).product(state, b));
             }
-//        } else if (modulo.getClass() == Term.class) {
-//            return ((Term) modulo).moduloFlipped(state, this);
+        } else if (modulo.getClass() == Term.class) {
+            return ((Term) modulo).moduloFlipped(state, this);
         } else {
             throw new IncompatibleTypeException(
                 "Right-hand-side of '" + this.toString(state) + " % " + modulo.toString(state) + "' is not a rational number."
@@ -630,8 +630,8 @@ public class Rational extends NumberValue {
                    multiplier.isVector() == SetlBoolean.TRUE
         ) {
             return multiplier.product(state, this);
-//        } else if (multiplier.getClass() == Term.class) {
-//            return ((Term) multiplier).productFlipped(state, this);
+        } else if (multiplier.getClass() == Term.class) {
+            return ((Term) multiplier).productFlipped(state, this);
         } else {
             throw new IncompatibleTypeException(
                 "Right-hand-side of '" + this.toString(state) + " * " + multiplier.toString(state) + "' is not a number, list or string."
@@ -658,8 +658,8 @@ public class Rational extends NumberValue {
             }
         } else if (divisor.getClass() == SetlDouble.class) {
             return ((SetlDouble) divisor).quotientFlipped(state, this);
-//        } else if (divisor.getClass() == Term.class) {
-//            return ((Term) divisor).quotientFlipped(state, this);
+        } else if (divisor.getClass() == Term.class) {
+            return ((Term) divisor).quotientFlipped(state, this);
         } else {
             throw new IncompatibleTypeException(
                 "Right-hand-side of '(" + this.toString(state) + ") / (" + divisor.toString(state) + ")' is not a number."
@@ -747,8 +747,8 @@ public class Rational extends NumberValue {
             }
         } else if (summand.isDouble() == SetlBoolean.TRUE) {
             return summand.sum(state, this);
-//        } else if (summand.getClass() == Term.class) {
-//            return ((Term) summand).sumFlipped(state, this);
+        } else if (summand.getClass() == Term.class) {
+            return ((Term) summand).sumFlipped(state, this);
         } else if (summand.getClass() == SetlString.class) {
             return ((SetlString)summand).sumFlipped(state, this);
         } else {

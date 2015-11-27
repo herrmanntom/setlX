@@ -37,8 +37,8 @@ public abstract class NumberValue extends ImmutableValue {
             return this.power(state, exponent.jDoubleValue());
         } else if (exponent.getClass() == SetlSet.class && this.equalTo(Rational.TWO)) {
             return ((SetlSet) exponent).powerSet(state);
-//        } else if (exponent.getClass() == Term.class) {
-//            return ((Term) exponent).powerFlipped(state, this);
+        } else if (exponent.getClass() == Term.class) {
+            return ((Term) exponent).powerFlipped(state, this);
         } else {
             throw new IncompatibleTypeException(
                 "Exponent of '" + this.toString(state) + " ** " + exponent.toString(state) + "' is not a number."

@@ -1,6 +1,6 @@
 a + b == 20
 
-uncached factorial
+computing factorial that was not in cache
 a! == 15511210043330985984000000
 a! == 15511210043330985984000000
 

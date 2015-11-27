@@ -166,8 +166,8 @@ public class SetlSet extends CollectionValue {
             result.separateFromOriginal();
             result.set.removeAll(((SetlSet) subtrahend).set);
             return result;
-//        } else if (subtrahend.getClass() == Term.class) {
-//            return ((Term) subtrahend).differenceFlipped(state, this);
+        } else if (subtrahend.getClass() == Term.class) {
+            return ((Term) subtrahend).differenceFlipped(state, this);
         } else {
             throw new IncompatibleTypeException(
                 "Right-hand-side of '" + this.toString(state) + " - " + subtrahend.toString(state) + "' is not a set."
@@ -181,8 +181,8 @@ public class SetlSet extends CollectionValue {
             separateFromOriginal();
             set.removeAll(((SetlSet) subtrahend).set);
             return this;
-//        } else if (subtrahend.getClass() == Term.class) {
-//            return ((Term) subtrahend).differenceFlipped(state, this);
+        } else if (subtrahend.getClass() == Term.class) {
+            return ((Term) subtrahend).differenceFlipped(state, this);
         } else {
             throw new IncompatibleTypeException(
                 "Right-hand-side of '" + this.toString(state) + " -= " + subtrahend.toString(state) + "' is not a set."
@@ -210,8 +210,8 @@ public class SetlSet extends CollectionValue {
 
             result.set.addAll(mClone.set);
             return result;
-//        } else if (modulo.getClass() == Term.class) {
-//            return ((Term) modulo).productFlipped(state, this);
+        } else if (modulo.getClass() == Term.class) {
+            return ((Term) modulo).productFlipped(state, this);
         } else {
             throw new IncompatibleTypeException(
                 "Right-hand-side of '" + this.toString(state) + " % " + modulo.toString(state) + "' is not a set."
@@ -240,8 +240,8 @@ public class SetlSet extends CollectionValue {
             this.set.addAll(mClone.set);
 
             return this;
-//        } else if (modulo.getClass() == Term.class) {
-//            return ((Term) modulo).productFlipped(state, this);
+        } else if (modulo.getClass() == Term.class) {
+            return ((Term) modulo).productFlipped(state, this);
         } else {
             throw new IncompatibleTypeException(
                 "Right-hand-side of '" + this.toString(state) + " % " + modulo.toString(state) + "' is not a set."
@@ -258,8 +258,8 @@ public class SetlSet extends CollectionValue {
                 se.addToTrace("Error in substitute operation \"" + this.toString(state) + " >< " + this.toString(state) +  "\":");
                 throw se;
             }
-//        } else if (exponent.getClass() == Term.class) {
-//            return ((Term) exponent).powerFlipped(state, this);
+        } else if (exponent.getClass() == Term.class) {
+            return ((Term) exponent).powerFlipped(state, this);
         }
         throw new IncompatibleTypeException(
             "Left-hand-side of '" + this.toString(state) + " ** " + exponent.toString(state) + "' is not a number."
@@ -273,8 +273,8 @@ public class SetlSet extends CollectionValue {
             result.separateFromOriginal();
             result.set.retainAll(((SetlSet) multiplier).set);
             return result;
-//        } else if (multiplier.getClass() == Term.class) {
-//            return ((Term) multiplier).productFlipped(state, this);
+        } else if (multiplier.getClass() == Term.class) {
+            return ((Term) multiplier).productFlipped(state, this);
         } else {
             throw new IncompatibleTypeException(
                 "Right-hand-side of '" + this.toString(state) + " * " + multiplier.toString(state) + "' is not a set."
@@ -288,8 +288,8 @@ public class SetlSet extends CollectionValue {
             separateFromOriginal();
             set.retainAll(((SetlSet) multiplier).set);
             return this;
-//        } else if (multiplier.getClass() == Term.class) {
-//            return ((Term) multiplier).productFlipped(state, this);
+        } else if (multiplier.getClass() == Term.class) {
+            return ((Term) multiplier).productFlipped(state, this);
         } else {
             throw new IncompatibleTypeException(
                 "Right-hand-side of '" + this.toString(state) + " * " + multiplier.toString(state) + "' is not a set."
@@ -299,9 +299,9 @@ public class SetlSet extends CollectionValue {
 
     @Override
     public Value sum(final State state, final Value summand) throws SetlException {
-        /*if (summand.getClass() == Term.class) {
+        if (summand.getClass() == Term.class) {
             return ((Term) summand).sumFlipped(state, this);
-        } else*/ if (summand.getClass() == SetlString.class) {
+        } else if (summand.getClass() == SetlString.class) {
             return ((SetlString)summand).sumFlipped(state, this);
         } else if(summand instanceof CollectionValue) {
             final SetlSet result = this.clone();
@@ -318,9 +318,9 @@ public class SetlSet extends CollectionValue {
 
     @Override
     public Value sumAssign(final State state, final Value summand) throws SetlException {
-        /*if (summand.getClass() == Term.class) {
+        if (summand.getClass() == Term.class) {
             return ((Term) summand).sumFlipped(state, this);
-        } else*/ if (summand.getClass() == SetlString.class) {
+        } else if (summand.getClass() == SetlString.class) {
             return ((SetlString)summand).sumFlipped(state, this);
         } else if(summand instanceof CollectionValue) {
             separateFromOriginal();
@@ -361,8 +361,8 @@ public class SetlSet extends CollectionValue {
             }
 
             return result;
-//        } else if (other.getClass() == Term.class) {
-//            return ((Term) other).cartesianProductFlipped(state, this);
+        } else if (other.getClass() == Term.class) {
+            return ((Term) other).cartesianProductFlipped(state, this);
         } else {
             throw new IncompatibleTypeException(
                 "Right-hand-side of '" + this.toString(state) + " >< " + other.toString(state) + "' is not a set."

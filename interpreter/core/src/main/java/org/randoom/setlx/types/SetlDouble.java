@@ -287,8 +287,8 @@ public class SetlDouble extends NumberValue {
         if (subtrahend.getClass() == Rational.class) {
             final Rational rhs = (Rational) subtrahend;
             return SetlDouble.valueOf(this.doubleValue - rhs.toDouble().doubleValue);
-//         } else if (subtrahend.getClass() == Term.class) {
-//            return ((Term) subtrahend).differenceFlipped(state, this);
+         } else if (subtrahend.getClass() == Term.class) {
+            return ((Term) subtrahend).differenceFlipped(state, this);
         } else {
             throw new IncompatibleTypeException(
                 "Right-hand-side of '" + this.toString(state) + " - " + subtrahend.toString(state) + "' is not a number."
@@ -328,13 +328,13 @@ public class SetlDouble extends NumberValue {
             final Rational rhs = (Rational) divisor;
             return SetlDouble.valueOf(this.doubleValue / rhs.toDouble().doubleValue).floor(state);
         }
-//        if (divisor.getClass() == Term.class) {
-//            return ((Term) divisor).integerDivisionFlipped(state, this);
-//        } else {
+        if (divisor.getClass() == Term.class) {
+            return ((Term) divisor).integerDivisionFlipped(state, this);
+        } else {
             throw new IncompatibleTypeException(
                 "Right-hand-side of '" + this.toString(state) + " \\ " + divisor.toString(state) + "' is not a number."
             );
-//        }
+        }
     }
 
     @Override
@@ -370,8 +370,8 @@ public class SetlDouble extends NumberValue {
                    multiplier.getClass() == SetlVector.class
         ) {
             return multiplier.product(state, this);
-//        } else if (multiplier.getClass() == Term.class) {
-//            return ((Term) multiplier).productFlipped(state, this);
+        } else if (multiplier.getClass() == Term.class) {
+            return ((Term) multiplier).productFlipped(state, this);
         } else {
             throw new IncompatibleTypeException(
                 "Right-hand-side of '" + this.toString(state) + " * " + multiplier.toString(state) + "' is not a number."
@@ -388,8 +388,8 @@ public class SetlDouble extends NumberValue {
         if (divisor.getClass() ==  Rational.class) {
             final Rational rhs = (Rational) divisor;
             return SetlDouble.valueOf(this.doubleValue / rhs.toDouble().doubleValue);
-//        } else if (divisor.getClass() == Term.class) {
-//            return ((Term) divisor).quotientFlipped(state, this);
+        } else if (divisor.getClass() == Term.class) {
+            return ((Term) divisor).quotientFlipped(state, this);
         } else {
             throw new IncompatibleTypeException(
                 "Right-hand-side of '" + this.toString(state) + " / " + divisor.toString(state) + "' is not a number."
@@ -426,8 +426,8 @@ public class SetlDouble extends NumberValue {
         if (summand.getClass() == Rational.class) {
             final Rational rhs = (Rational) summand;
             return SetlDouble.valueOf(this.doubleValue + rhs.toDouble().doubleValue);
-//        } else if (summand.getClass() == Term.class) {
-//            return ((Term) summand).sumFlipped(state, this);
+        } else if (summand.getClass() == Term.class) {
+            return ((Term) summand).sumFlipped(state, this);
         } else if (summand.getClass() == SetlString.class) {
             return ((SetlString)summand).sumFlipped(state, this);
         } else {

@@ -143,8 +143,8 @@ public class SetlVector extends IndexedCollectionValue {
                 result.add(vector.get(i) - subd.vector.get(i));
             }
             return new SetlVector(result);
-//        } else if(subtrahend instanceof Term) {
-//            return ((Term)subtrahend).differenceFlipped(state, this);
+        } else if(subtrahend instanceof Term) {
+            return ((Term)subtrahend).differenceFlipped(state, this);
         } else {
             throw new IncompatibleTypeException("A difference cannot have a vector parameter and a parameter of another type.");
         }
@@ -163,8 +163,8 @@ public class SetlVector extends IndexedCollectionValue {
                 result.add(vector.get(i) * doubleValue);
             }
             return new SetlVector(result);
-//        } else if (multiplier instanceof Term) {
-//            return ((Term) multiplier).productFlipped(state, this);
+        } else if (multiplier instanceof Term) {
+            return ((Term) multiplier).productFlipped(state, this);
         } else {
             throw new IncompatibleTypeException("Given parameter is not of supported type.");
         }
@@ -183,8 +183,8 @@ public class SetlVector extends IndexedCollectionValue {
                 result.add(vector.get(i) + sumd.vector.get(i));
             }
             return new SetlVector(result);
-//        } else if(summand instanceof Term) {
-//            return ((Term)summand).sumFlipped(state, this);
+        } else if(summand instanceof Term) {
+            return ((Term)summand).sumFlipped(state, this);
         } else {
             throw new IncompatibleTypeException("A sum cannot have a vector parameter and a parameter of another type.");
         }
@@ -197,8 +197,8 @@ public class SetlVector extends IndexedCollectionValue {
             otherVector = new SetlVector(state, (SetlMatrix) other);
         } else if (other instanceof SetlVector) {
             otherVector = (SetlVector) other;
-//        } else if(other instanceof Term) {
-//            return ((Term)other).powerFlipped(state, this);
+        } else if(other instanceof Term) {
+            return ((Term)other).powerFlipped(state, this);
         }
         if (otherVector != null) {
             return this.vectorProduct(otherVector);

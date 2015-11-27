@@ -214,8 +214,8 @@ public class SetlMatrix extends IndexedCollectionValue {
             } else {
                 throw new IncompatibleTypeException("Subtrahend have different number of columns.");
             }
-//        } else if(subtrahend instanceof Term) {
-//            return ((Term)subtrahend).differenceFlipped(state, this);
+        } else if(subtrahend instanceof Term) {
+            return ((Term)subtrahend).differenceFlipped(state, this);
         } else {
             throw new IncompatibleTypeException("Subtrahend is not of type Matrix.");
         }
@@ -236,8 +236,8 @@ public class SetlMatrix extends IndexedCollectionValue {
             } else {
                 throw new IncompatibleTypeException("Subtrahend have different number of columns.");
             }
-//        } else if(subtrahend instanceof Term) {
-//            return ((Term)subtrahend).differenceFlipped(state, this);
+        } else if(subtrahend instanceof Term) {
+            return ((Term)subtrahend).differenceFlipped(state, this);
         } else {
             throw new IncompatibleTypeException("Subtrahend is not of type Matrix.");
         }
@@ -296,8 +296,8 @@ public class SetlMatrix extends IndexedCollectionValue {
             }
         } else if(multiplier instanceof NumberValue) {
             return new SetlMatrix(this.matrix.times(multiplier.toJDoubleValue(state)));
-//        } else if(multiplier instanceof Term) {
-//            return ((Term)multiplier).productFlipped(state, this);
+        } else if(multiplier instanceof Term) {
+            return ((Term)multiplier).productFlipped(state, this);
         } else {
             throw new IncompatibleTypeException("Multiplier is not a matrix.");
         }
@@ -320,8 +320,8 @@ public class SetlMatrix extends IndexedCollectionValue {
         } else if(multiplier instanceof NumberValue) {
             this.matrix.timesEquals(multiplier.toJDoubleValue(state));
             return this;
-//        } else if(multiplier instanceof Term) {
-//            return ((Term)multiplier).productFlipped(state, this);
+        } else if(multiplier instanceof Term) {
+            return ((Term)multiplier).productFlipped(state, this);
         } else {
             throw new IncompatibleTypeException("Multiplier is not a matrix.");
         }
@@ -341,8 +341,8 @@ public class SetlMatrix extends IndexedCollectionValue {
             } else {
                 throw new IncompatibleTypeException("Summands have different number of columns.");
             }
-//        } else if(summand instanceof Term) {
-//            return ((Term)summand).sumFlipped(state, this);
+        } else if(summand instanceof Term) {
+            return ((Term)summand).sumFlipped(state, this);
         } else {
             throw new IncompatibleTypeException("Summand is not of type Matrix.");
         }
@@ -363,8 +363,8 @@ public class SetlMatrix extends IndexedCollectionValue {
             } else {
                 throw new IncompatibleTypeException("Summands have different number of columns.");
             }
-//        } else if(summand instanceof Term) {
-//            return ((Term)summand).sumFlipped(state, this);
+        } else if(summand instanceof Term) {
+            return ((Term)summand).sumFlipped(state, this);
         } else {
             throw new IncompatibleTypeException("Summand is not of type Matrix.");
         }

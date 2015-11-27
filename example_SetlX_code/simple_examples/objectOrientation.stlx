@@ -19,7 +19,7 @@ print("a + b == $a + b$");
 
 print();
 // also overload '!' operator in object `a'
-a.factorial := procedure() { if (cache == om) { print("uncached factorial"); this.cache := (number ** 2)!; } return cache;};
+a.factorial := procedure() { if (cache == om) { print("computing factorial that was not in cache"); this.cache := (number ** 2)!; } return cache;};
 
 print("a! == $a!$");
 print("a! == $a!$");

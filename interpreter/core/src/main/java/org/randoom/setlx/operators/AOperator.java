@@ -109,6 +109,18 @@ public abstract class AOperator extends ImmutableCodeFragment {
      */
     public abstract Value buildTerm(State state, Stack<Value> termFragments) throws SetlException;
 
+    /**
+     * Create term for this operator, taking arguments from term stack and returning results.
+     *
+     * @param state          Current state of the running setlX program.
+     * @param termFragments  Term stack to work with.
+     * @return               Resulting term.
+     * @throws SetlException Thrown in case of some (user-) error.
+     */
+    public Value buildQuotedTerm(State state, Stack<Value> termFragments) throws SetlException {
+        return buildTerm(state, termFragments);
+    }
+
     @Override
     public final Value toTerm(State state) throws SetlException {
         throw new IllegalStateException("Not implemented");

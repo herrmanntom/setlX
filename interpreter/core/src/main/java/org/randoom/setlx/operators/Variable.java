@@ -88,6 +88,13 @@ public class Variable extends AZeroOperator {
         return result;
     }
 
+    @Override
+    public Value buildQuotedTerm(State state, Stack<Value> termFragments) throws SetlException {
+        final Term result = new Term(FUNCTIONAL_CHARACTER_EXTERNAL, 1);
+        result.addMember(state, new SetlString(id));
+        return result;
+    }
+
     /**
      * Append the operator represented by a term to the supplied operator stack.
      *

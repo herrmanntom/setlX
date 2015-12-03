@@ -314,6 +314,26 @@ public class OperatorExpression extends Expression {
     }
 
     /**
+     * Generate term representing the code this expression represents, when
+     * this expression is quoted ('@').
+     *
+     * @see org.randoom.setlx.utilities.CodeFragment#toTerm(State)
+     *
+     * @param state          Current state of the running setlX program.
+     * @return               Generated term.
+     * @throws SetlException When some error happens.
+     */
+    public          Value toTermQuoted(final State state) throws SetlException  {
+        Stack<Value> termFragments = new Stack<Value>();
+
+        for (AOperator operator : operators) {
+            termFragments.push(operator.buildQuotedTerm(state, termFragments));
+        }
+
+        return termFragments.poll();
+    }
+
+    /**
      * Create a OperatorExpression from a (term-) value representing such an expression.
      *
      * @param state                    Current state of the running setlX program.

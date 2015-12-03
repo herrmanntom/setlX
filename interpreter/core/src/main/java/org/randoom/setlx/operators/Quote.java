@@ -35,7 +35,7 @@ public class Quote extends AZeroOperator {
 
     @Override
     public Value evaluate(State state, Stack<Value> values) throws SetlException {
-        return argument.toTerm(state);
+        return argument.toTermQuoted(state);
     }
 
     @Override

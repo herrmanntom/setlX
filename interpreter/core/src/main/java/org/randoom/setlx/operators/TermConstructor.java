@@ -4,6 +4,7 @@ import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.operatorUtilities.OperatorExpression;
 import org.randoom.setlx.operatorUtilities.Stack;
+import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.CodeFragment;
@@ -71,6 +72,11 @@ public class TermConstructor extends AZeroOperator {
         }
 
         return result;
+    }
+
+    @Override
+    public Value buildQuotedTerm(State state, Stack<Value> termFragments) throws SetlException {
+        return this.evaluate(state, termFragments);
     }
 
     /**

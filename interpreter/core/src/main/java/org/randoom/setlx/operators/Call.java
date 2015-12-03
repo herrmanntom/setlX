@@ -89,7 +89,7 @@ public class Call extends AUnaryPostfixOperator {
         Value value = term.firstMember();
         if (value.getClass() == Term.class) {
             Term firstMember = (Term) value;
-            if (firstMember.getFunctionalCharacter().equalsIgnoreCase(Variable.getFunctionalCharacter())) {
+            if (firstMember.getFunctionalCharacter().equals(Variable.getFunctionalCharacterExternal())) {
                 term.setMember(state, 1, firstMember.firstMember());
             }
         }
@@ -108,6 +108,36 @@ public class Call extends AUnaryPostfixOperator {
         return term;
     }
 
+    @Override
+    public Value buildQuotedTerm(State state, Stack<Value> termFragments) throws SetlException {
+        Term term = new Term(generateFunctionalCharacter(this.getClass()), 3);
+        Value lhs = termFragments.poll();
+        if (lhs.getClass() == Term.class) {
+            Term lhsTerm = ((Term) lhs);
+            if (lhsTerm.getFunctionalCharacter().equals(Variable.getFunctionalCharacterExternal()) && lhsTerm.firstMember().getClass() == SetlString.class) {
+                term.addMember(state, lhs.firstMember(state));
+            } else {
+                term.addMember(state, lhs);
+            }
+        } else {
+            term.addMember(state, lhs);
+        }
+
+        final SetlList argumentTerms = new SetlList(arguments.size());
+        for (final OperatorExpression arg: arguments) {
+            argumentTerms.addMember(state, arg.evaluate(state).toTerm(state));
+        }
+        term.addMember(state, argumentTerms);
+
+        if (listArgument != null) {
+            term.addMember(state, listArgument.evaluate(state).toTerm(state));
+        } else {
+            term.addMember(state, SetlString.NIL);
+        }
+
+        return term;
+    }
+
     /**
      * Append the operator represented by a term to the supplied operator stack.
      *
@@ -123,7 +153,7 @@ public class Call extends AUnaryPostfixOperator {
             }
 
             final Value lhs = term.firstMember();
-            if (lhs instanceof SetlString) {
+            if (lhs.getClass() == SetlString.class) {
                 operatorStack.add(new Variable(lhs.getUnquotedString(state)));
             } else {
                 OperatorExpression.appendFromTerm(state, term.firstMember(), operatorStack);

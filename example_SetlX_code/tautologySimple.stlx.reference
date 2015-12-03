@@ -2,7 +2,7 @@ Please enter a formula to be checked if it is tautology
 
 That did not work out!
 Try again, but don't make this error again:
-rule stack: [initExpr, expr]
+rule stack: [initExpr, expr, exprContent]
 line 1:1 no viable alternative at input '%'
 1 syntax error(s) encountered.
 

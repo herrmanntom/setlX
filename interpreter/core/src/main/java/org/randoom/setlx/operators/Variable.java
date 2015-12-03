@@ -97,11 +97,13 @@ public class Variable extends AZeroOperator {
      * @throws TermConversionException If term is malformed.
      */
     public static void appendToOperatorStack(final State state, final Term term, FragmentList<AOperator> operatorStack) throws TermConversionException {
-        if (term.size() != 1 || ! (term.firstMember() instanceof SetlString)) {
-            throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER_EXTERNAL);
-        } else {
+        if (term.size() == 1 && term.firstMember().getClass() == SetlString.class) {
             final String id = term.firstMember().getUnquotedString(state);
             operatorStack.add(new Variable(id));
+        } else if (term.size() == 1 && term.firstMember().getClass() == Term.class && ((Term) term.firstMember()).getFunctionalCharacter().equals(FUNCTIONAL_CHARACTER_EXTERNAL)) {
+            TermConstructor.appendToOperatorStack(state, term, operatorStack);
+        } else {
+            throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER_EXTERNAL);
         }
     }
 

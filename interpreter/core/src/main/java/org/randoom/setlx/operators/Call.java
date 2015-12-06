@@ -85,15 +85,6 @@ public class Call extends AUnaryPostfixOperator {
 
     @Override
     public Value modifyTerm(State state, Term term) throws SetlException {
-        // Unbox first argument, if it is a variable
-        Value value = term.firstMember();
-        if (value.getClass() == Term.class) {
-            Term firstMember = (Term) value;
-            if (firstMember.getFunctionalCharacter().equals(Variable.getFunctionalCharacterExternal())) {
-                term.setMember(state, 1, firstMember.firstMember());
-            }
-        }
-
         final SetlList args = new SetlList(arguments.size());
         for (final OperatorExpression arg: arguments) {
             args.addMember(state, arg.toTerm(state));
@@ -111,17 +102,8 @@ public class Call extends AUnaryPostfixOperator {
     @Override
     public Value buildQuotedTerm(State state, Stack<Value> termFragments) throws SetlException {
         Term term = new Term(generateFunctionalCharacter(this.getClass()), 3);
-        Value lhs = termFragments.poll();
-        if (lhs.getClass() == Term.class) {
-            Term lhsTerm = ((Term) lhs);
-            if (lhsTerm.getFunctionalCharacter().equals(Variable.getFunctionalCharacterExternal()) && lhsTerm.firstMember().getClass() == SetlString.class) {
-                term.addMember(state, lhs.firstMember(state));
-            } else {
-                term.addMember(state, lhs);
-            }
-        } else {
-            term.addMember(state, lhs);
-        }
+
+        term.addMember(state, termFragments.poll());
 
         final SetlList argumentTerms = new SetlList(arguments.size());
         for (final OperatorExpression arg: arguments) {
@@ -152,12 +134,7 @@ public class Call extends AUnaryPostfixOperator {
                 throw new TermConversionException("malformed " + generateFunctionalCharacter(Call.class));
             }
 
-            final Value lhs = term.firstMember();
-            if (lhs.getClass() == SetlString.class) {
-                operatorStack.add(new Variable(lhs.getUnquotedString(state)));
-            } else {
-                OperatorExpression.appendFromTerm(state, term.firstMember(), operatorStack);
-            }
+            OperatorExpression.appendFromTerm(state, term.firstMember(), operatorStack);
 
             FragmentList<OperatorExpression> arguments = new FragmentList<OperatorExpression>();
             for (final Value argument : (SetlList) term.getMember(2)) {

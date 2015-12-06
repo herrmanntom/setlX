@@ -10,11 +10,11 @@ match: g = 1, h = 7
 [1, "foo", 7]
 failed to match
 
-^equals(^call("sqrt", [^sum(^power(^variable("a"), 2), ^power(^variable("b"), 2))], "nil"), ^variable("c"))
-match: sqrt: x = a ** 2, y = 2
-
-^call("sqrt", [^sum(^power(^variable("a"), 2), ^power(^variable("b"), 2))], "nil")
+^call(^variable("sqrt"), [^sum(^power(^variable("a"), 2), ^power(^variable("b"), 2))], "nil")
 match: fnc = sqrt, u = a ** 2, v = 2
+
+^equals(^call(^variable("sqrt"), [^sum(^power(^variable("a"), 2), ^power(^variable("b"), 2))], "nil"), ^variable("c"))
+match: sqrt: x = a ** 2, y = 2
 
 ^variable("u")
 match: z = u

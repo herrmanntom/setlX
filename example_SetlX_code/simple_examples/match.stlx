@@ -54,30 +54,29 @@ match (list) {
 
 print();
 
-exprString := "sqrt(a**2 + b**2) == c";
-exprTerm   := parse(exprString);
-
-print(canonical(exprTerm));
-
-match (exprTerm) {
-    case sqrt(x + _ ** y) == _ :  // match the function call only if it is exactly sqrt
-        print("match: sqrt: x = $x$, y = $y$");
-    default :
-        print("failed to match");
-}
-
-print();
-
 exprString := "sqrt(a**2 + b**2)";
 exprTerm   := parse(exprString);
 
 print(canonical(exprTerm));
 
 match (exprTerm) {
-    case fnc(u + _ ** v): // MUST NOT match, because it matches only a call to `fnc'
-        print("match: fnc: u = $u$, v = $v$");
-    case ^call(fnc, [u + _ ** v], "nil"): // matches all function calls with matching arguments
+    case fnc(u + _ ** v)              // because the function name is a variable, every function call with fitting arguments matches
+         | fnc == ^variable("sqrt"):  // thats why we further restrict it to match only the name of the sqrt function
         print("match: fnc = $fnc$, u = $u$, v = $v$");
+    default :
+        print("failed to match");
+}
+
+print();
+
+exprString := "sqrt(a**2 + b**2) == c";
+exprTerm   := parse(exprString);
+
+print(canonical(exprTerm));
+
+match (exprTerm) {
+    case fnc(x + _ ** y) == _ | evalTerm(fnc) == sqrt :  // match the function call only if it is exactly sqrt
+        print("match: sqrt: x = $x$, y = $y$");
     default :
         print("failed to match");
 }

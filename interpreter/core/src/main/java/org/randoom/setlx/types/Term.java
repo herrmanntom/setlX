@@ -628,16 +628,8 @@ public class Term extends IndexedCollectionValue {
                 return new MatchResult(false);
             }
             final String id = idStr.getUnquotedString(state);
-
-            // look up if this variable is currently defined
-            final Value       thisVal = state.findValue(id);
-            if (thisVal != Om.OM) {
-                return thisVal.matchesTerm(state, other);
-            } else {
-                // this undefined variable will be set to the value of `other' upon complete match
-                result.addBinding(id, other);
-                return result;
-            }
+            result.addBinding(id, other);
+            return result;
         } else if (functionalCharacter.equals(StringConstructor.getFunctionalCharacter()) && body.size() == 3 &&
                    other.isString() == SetlBoolean.TRUE) {
             // 'this' is a StringConstructor, which may match a simple string

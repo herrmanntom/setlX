@@ -54,7 +54,7 @@ if [ "$numberOfThreads" -lt 1 ]
     numberOfThreads="1"
 fi
 
-rm -f diff.*.result
+rm -f test_failure.*.result
 
 # discover all example files
 examples=()
@@ -159,7 +159,9 @@ for path in "${examplesAutomaticTest[@]}"
 
                         failedTests=("${failedTests[@]}" "${pathnames[$i]}")
 
-                        mv "$tmpFile" "$diffDir/diff.${filenames[$i]}.result"
+                        outputName="test_failure.${pathnames[$i]}.result"
+                        outputName="${outputName//\//.}"
+                        mv "$tmpFile" "$diffDir/$outputName"
                         message="${messages[$i]} failed ... (see diff.${filenames[$i]}.result)\n"
 
                     else

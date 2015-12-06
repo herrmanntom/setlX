@@ -11,25 +11,30 @@ diff := procedure(t, x) {
             return ( diff(a, x) * b - a * diff(b, x) ) / b * b;
         case a ** b :
             return diff( @exp(b * @ln(a)), x);
-        case ln(a) :
-            return diff(a, x) / a;
-        case exp(a) :
-            return diff(a, x) * @exp(a);
+        case fn(a) :
+            switch {
+                case fn == parse("ln"):
+                    return diff(a, x) / a;
+                case fn == parse("exp"):
+                    return diff(a, x) * @exp(a);
+                default:
+                    abort("unknown function");
+            }
         case a | isNumber(a) :
             return 0;
-        case ^variable(x) : // x is defined above, therefore must be equal to match
+        case ^variable(id) | id == str(x):
             return 1;
-        case ^variable(y) : // y is undefined, therefore matches any other variable
+        case ^variable(id):
             return 0;
         default:
-            abort("error");
+            abort("error: $t$");
     }
 };
 
 test := procedure(s) {
     t := parse(s);
     print("testing $t$:");
-    d := diff(t, "x");
+    d := diff(t, parse("x"));
     print(d, "\n");
 };
 

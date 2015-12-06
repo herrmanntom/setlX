@@ -1,5 +1,9 @@
 Changes (* notice | + feature added, replaced or improved | - feature removed | # bugfix):
 
+---v2.5.0--- 2015-12-06
+ + Changed confusing matching of variables and functions
+ # fixed minor bug in plotting functions
+
 ---v2.4.0--- 2015-07-05
  + added plotting functionality
 

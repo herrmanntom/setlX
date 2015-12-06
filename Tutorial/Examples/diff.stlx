@@ -17,30 +17,35 @@ diff := procedure(t, x) {
              return n * diff(f, x) * f ** (n-1);
         case f ** g :
              return diff( @exp(g * @ln(f)), x);
-        case sqrt(a) :
-             return 1/2 * diff(a, x) * a ** (-1/2);
-        case sin(a) :
-             return diff(a, x) * @cos(a);
-        case cos(a) :
-             return -diff(a, x) * @sin(a);
-        case tan(a) :
-             return diff(a, x) / @cos(x) ** 2;
-        case arcsin(a) :
-             return diff(a, x) / (1 - a ** 2) ** (1/2);
-        case arccos(a) :
-             return - diff(a, x) / (1 - a ** 2) ** (1/2);
-        case arctan(a) :
-             return diff(a,x) / (1 + a ** 2);
-        case ln(a) :
-             return diff(a, x) / a;
-        case exp(a) : 
-             return diff(a, x) * @exp(a);
-        case ^variable(x) : // x is defined above, therefore must be equal to match
+        case fn(a) :
+            switch {
+                case fn == parse("sqrt"):
+                    return 1/2 * diff(a, x) * a ** (-1/2);
+                case fn == parse("sin"):
+                    return diff(a, x) * @cos(a);
+                case fn == parse("cos"):
+                    return -diff(a, x) * @sin(a);
+                case fn == parse("tan"):
+                    return diff(a, x) / @cos(x) ** 2;
+                case fn == parse("arcsin"):
+                    return diff(a, x) / (1 - a ** 2) ** (1/2);
+                case fn == parse("arccos"):
+                    return - diff(a, x) / (1 - a ** 2) ** (1/2);
+                case fn == parse("arctan"):
+                    return diff(a,x) / (1 + a ** 2);
+                case fn == parse("ln"):
+                    return diff(a, x) / a;
+                case fn == parse("exp"):
+                    return diff(a, x) * @exp(a);
+                default:
+                    abort("unknown function");
+            }
+        case var | var == x :
              return 1;
-        case ^variable(y) : // y is undefined, therefore matches any other variable
+        case ^variable(id) :
              return 0;
         case t | isNumber(t):
-             return 0;    
+             return 0;
         default:
             abort("error: $t$");
     }
@@ -57,13 +62,13 @@ simplify := procedure(s) {
 };
 
 simplifyOneStep := procedure(e) {
-    match (simplifyParts(e)) { 
-        case 0 + t : return t;  
-        case t + 0 : return t;  
-        case t - t : return 0;  
-        case a - -b: return a + b;  
-        case t + t : return 2 * t;  
-        case n * t + m * t | isNumber(n) && isNumber(m): return (n + m) * t;  
+    match (simplifyParts(e)) {
+        case 0 + t : return t;
+        case t + 0 : return t;
+        case t - t : return 0;
+        case a - -b: return a + b;
+        case t + t : return 2 * t;
+        case n * t + m * t | isNumber(n) && isNumber(m): return (n + m) * t;
         case 0 * t : return 0;
         case t * 0 : return 0;
         case 1 * t : return t;
@@ -89,8 +94,8 @@ simplifyOneStep := procedure(e) {
         case 1 ** x: return 1;
         case 0 ** 0: return;  // returns Omega, the undefined value
         case t ** 0: return 1;
-        case cos(t) ** 2 + sin(t) ** 2: return 1;
-        case p : return p;        
+        case fn1(t) ** 2 + fn2(t) ** 2 | fn1 == parse("cos") && fn2 == parse("sin"): return 1;
+        case p : return p;
     }
 };
 
@@ -102,15 +107,22 @@ simplifyParts := procedure(e) {
         case s * t : return simplify(s) * simplify(t);
         case s / t : return simplify(s) / simplify(t);
         case s ** t: return simplify(s) ** simplify(t);
-        case ln(t) : return @ln(simplify(t));
-        case exp(t): return @exp(simplify(t));
+        case fn(t) :
+            switch {
+                case fn == parse("ln"):
+                    return @ln(simplify(t));
+                case fn == parse("exp"):
+                    return @exp(simplify(t));
+                default:
+                    return e;
+            }
         default    : return e;
     }
 };
 
 
 test := procedure(s) {
-    d := simplify(diff(parse(s), "x"));
+    d := simplify(diff(parse(s), parse("x")));
     print("d/dx($s$) = $d$\n");
 };
 

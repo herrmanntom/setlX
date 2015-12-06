@@ -151,8 +151,7 @@ rm -f "$binOnly.zip"
 rm -f "$examples.zip"
 rm -f "$devel.zip"
 # remove other stuff
-rm -f "diff.result"
-rm -f diff.*.result
+rm -f test_failure.*.result
 
 # create binary only zip
 echo -n "=> Creating binary only distribution ... "

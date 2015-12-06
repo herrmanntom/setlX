@@ -60,8 +60,9 @@ public class SwitchCaseBranch extends AbstractSwitchBranch {
         final List<String> unboundVariables,
         final List<String> usedVariables
     ) {
-        return condition.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables)
-            && statements.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
+        boolean conditionIsConstant = condition.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
+        boolean statementsAreConstant = statements.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
+        return conditionIsConstant && statementsAreConstant;
     }
 
     /* string operations */

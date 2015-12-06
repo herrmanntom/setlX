@@ -2,7 +2,7 @@ package org.randoom.setlx.utilities;
 
 
 import org.randoom.setlx.exceptions.SetlException;
-import org.randoom.setlx.expressions.Expr;
+import org.randoom.setlx.operatorUtilities.OperatorExpression;
 import org.randoom.setlx.types.SetlBoolean;
 import org.randoom.setlx.types.Value;
 
@@ -27,8 +27,8 @@ public class CalcFunction {
     public Double calcYfromX(Double x) throws SetlException {
         String value = x.toString();
         String localFunction = "closure(x) { return "+function+";}("+value+")";
-        Expr expr = ParseSetlX.parseStringToExpr(state, localFunction);
-        Value v = expr.eval(state);
+        OperatorExpression expr = ParseSetlX.parseStringToExpr(state, localFunction);
+        Value v = expr.evaluate(state);
         if (v.isDouble().equalTo(SetlBoolean.TRUE)) {
             return v.jDoubleValue();
         }

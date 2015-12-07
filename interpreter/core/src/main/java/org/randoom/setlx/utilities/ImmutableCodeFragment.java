@@ -1,8 +1,11 @@
 package org.randoom.setlx.utilities;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Base class for all immutable CodeFragments.
@@ -38,8 +41,10 @@ public abstract class ImmutableCodeFragment extends CodeFragment {
             }
             if (preExistingCodeFragment == null) {
                 preExistingCodeFragment = codeFragment;
-                synchronized (UNIFIED_CODE_FRAGMENTS) {
-                    UNIFIED_CODE_FRAGMENTS.put(codeFragment, preExistingCodeFragment);
+                if (UNIFIED_CODE_FRAGMENTS.size() < 370) {
+                    synchronized (UNIFIED_CODE_FRAGMENTS) {
+                        UNIFIED_CODE_FRAGMENTS.put(codeFragment, preExistingCodeFragment);
+                    }
                 }
             }
             return (CF) preExistingCodeFragment; // unchecked: preExistingCodeFragment always is of required type

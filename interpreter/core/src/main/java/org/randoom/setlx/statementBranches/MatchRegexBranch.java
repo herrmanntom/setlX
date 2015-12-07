@@ -91,7 +91,7 @@ public class MatchRegexBranch extends AbstractMatchScanBranch {
         this.assignTo       = unify(assignTo);
         this.assignTerm     = null;
         this.condition      = unify(condition);
-        this.statements     = unify(statements);
+        this.statements     = statements;
 
         // optimize pattern
         this.pattern.optimize(state);

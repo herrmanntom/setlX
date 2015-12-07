@@ -35,6 +35,7 @@ public class LambdaClosure extends Closure {
         super(parameters, new Block(new Return(ImmutableCodeFragment.unify(expr))));
         this.expr = ImmutableCodeFragment.unify(expr);
     }
+
     private LambdaClosure(
             final ParameterList      parameters,
             final Block              statements,

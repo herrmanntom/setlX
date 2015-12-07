@@ -42,8 +42,8 @@ public class TryCatch extends Statement {
      * @param tryList    List of catch branches.
      */
     public TryCatch(final Block blockToTry, final FragmentList<AbstractTryCatchBranch> tryList) {
-        this.blockToTry = unify(blockToTry);
-        this.tryList    = unify(tryList);
+        this.blockToTry = blockToTry;
+        this.tryList    = tryList;
     }
 
     @Override

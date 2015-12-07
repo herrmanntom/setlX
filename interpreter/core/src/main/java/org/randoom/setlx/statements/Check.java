@@ -40,8 +40,8 @@ public class Check extends Statement {
      * @param recovery   Statements to execute after backtracking.
      */
     public Check(final Block statements, final Block recovery) {
-        this.statements = unify(statements);
-        this.recovery   = unify(recovery);
+        this.statements = statements;
+        this.recovery   = recovery;
     }
 
     @Override

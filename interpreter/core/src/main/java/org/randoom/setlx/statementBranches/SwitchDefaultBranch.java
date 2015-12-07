@@ -35,7 +35,7 @@ public class SwitchDefaultBranch extends AbstractSwitchBranch {
      * @param statements Statements to execute.
      */
     public SwitchDefaultBranch(final Block statements) {
-        this.statements = unify(statements);
+        this.statements = statements;
     }
 
     @Override

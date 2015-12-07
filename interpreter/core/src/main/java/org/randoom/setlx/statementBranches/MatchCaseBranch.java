@@ -44,7 +44,7 @@ public class MatchCaseBranch extends AbstractMatchBranch {
         this.exprs      = unify(exprs);
         this.terms      = new ArrayList<Value>(exprs.size());
         this.condition  = unify(condition);
-        this.statements = unify(statements);
+        this.statements = statements;
     }
 
     @Override

@@ -35,7 +35,7 @@ public class IfThenElseBranch extends AbstractIfThenBranch {
      * @param statements Statements to execute.
      */
     public IfThenElseBranch(final Block statements){
-        this.statements = unify(statements);
+        this.statements = statements;
     }
 
     @Override

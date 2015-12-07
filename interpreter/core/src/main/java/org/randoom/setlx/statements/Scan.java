@@ -59,7 +59,7 @@ public class Scan extends Statement {
     public Scan(final OperatorExpression expr, final AssignableVariable posVar, final FragmentList<AbstractMatchScanBranch> branchList) {
         this.expr       = unify(expr);
         this.posVar     = unify(posVar);
-        this.branchList = unify(branchList);
+        this.branchList = branchList;
     }
 
     @Override

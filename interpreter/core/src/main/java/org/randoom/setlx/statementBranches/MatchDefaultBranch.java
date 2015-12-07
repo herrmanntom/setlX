@@ -39,7 +39,7 @@ public class MatchDefaultBranch extends AbstractMatchScanBranch {
      * @param statements Statements to execute.
      */
     public MatchDefaultBranch(final Block statements) {
-        this.statements = unify(statements);
+        this.statements = statements;
     }
 
     @Override

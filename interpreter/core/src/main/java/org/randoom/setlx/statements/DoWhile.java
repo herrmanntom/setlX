@@ -40,7 +40,7 @@ public class DoWhile extends Statement {
      */
     public DoWhile(final Condition condition, final Block statements) {
         this.condition  = unify(condition);
-        this.statements = unify(statements);
+        this.statements = statements;
     }
 
     @Override

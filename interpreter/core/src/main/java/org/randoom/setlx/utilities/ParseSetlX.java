@@ -278,7 +278,7 @@ public class ParseSetlX {
         public void exec(State state) {
             switch (type) {
                 case EXPR:
-                    result = parser.initExpr().oe;
+                    result = ImmutableCodeFragment.unify(parser.initExpr().oe);
                     break;
                 case BLOCK:
                     result = parser.initBlock().blk;
@@ -292,7 +292,7 @@ public class ParseSetlX {
         }
 
         public CodeFragment getResult() {
-            return ImmutableCodeFragment.unify(result);
+            return result;
         }
     }
 

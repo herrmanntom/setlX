@@ -82,7 +82,7 @@ public class For extends Statement {
     public For(final SetlIterator iterator, final Condition condition, final Block statements) {
         this.iterator   = unify(iterator);
         this.condition  = unify(condition);
-        this.statements = unify(statements);
+        this.statements = statements;
         this.exec       = new Exec(this.condition, this.statements);
     }
 

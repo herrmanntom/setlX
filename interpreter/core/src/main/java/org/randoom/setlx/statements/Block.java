@@ -55,7 +55,7 @@ public class Block extends Statement {
      * @param statements Statements in the new block.
      */
     public Block(final FragmentList<Statement> statements) {
-        this.statements = unify(statements);
+        this.statements = statements;
     }
 
     @Override

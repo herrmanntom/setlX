@@ -41,7 +41,7 @@ public class Match extends Statement {
      */
     public Match(final OperatorExpression expr, final FragmentList<AbstractMatchBranch> branchList) {
         this.expr       = unify(expr);
-        this.branchList = unify(branchList);
+        this.branchList = branchList;
     }
 
     @Override

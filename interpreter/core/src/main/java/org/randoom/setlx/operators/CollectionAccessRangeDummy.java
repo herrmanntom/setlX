@@ -25,6 +25,8 @@ import java.util.List;
  *            ====
  */
 public class CollectionAccessRangeDummy extends AZeroOperator {
+    private static final String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(CollectionAccess.class);
+
     /**
      * Singleton VariableIgnore expression.
      */
@@ -60,7 +62,7 @@ public class CollectionAccessRangeDummy extends AZeroOperator {
      */
     public static void appendToOperatorStack(final State state, final Term term, FragmentList<AOperator> operatorStack) throws TermConversionException {
         if (term.size() != 0) {
-            throw new TermConversionException("malformed " + generateFunctionalCharacter(CollectionAccess.class));
+            throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
             operatorStack.add(CARD);
         }

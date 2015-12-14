@@ -7,7 +7,6 @@ import org.randoom.setlx.operatorUtilities.OperatorExpression;
 import org.randoom.setlx.operatorUtilities.OperatorExpression.OptimizerData;
 import org.randoom.setlx.operatorUtilities.Stack;
 import org.randoom.setlx.types.Om;
-import org.randoom.setlx.types.SetlList;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.CodeFragment;
@@ -20,6 +19,8 @@ import java.util.List;
  * Operator that collects specific elements of a collection value and puts the result on the stack.
  */
 public class CollectMap extends AUnaryPostfixOperator {
+    private static final String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(CollectMap.class);
+
     private final OperatorExpression argument;
 
     /**
@@ -67,7 +68,7 @@ public class CollectMap extends AUnaryPostfixOperator {
 
     @Override
     public Value buildQuotedTerm(State state, Stack<Value> termFragments) throws SetlException {
-        Term term = new Term(generateFunctionalCharacter(this.getClass()), 2);
+        Term term = new Term(FUNCTIONAL_CHARACTER, 2);
         term.addMember(state, termFragments.poll());
         term.addMember(state, argument.evaluate(state).toTerm(state));
 
@@ -84,7 +85,7 @@ public class CollectMap extends AUnaryPostfixOperator {
      */
     public static void appendToOperatorStack(final State state, final Term term, FragmentList<AOperator> operatorStack) throws TermConversionException {
         if (term.size() != 2) {
-            throw new TermConversionException("malformed " + generateFunctionalCharacter(CollectMap.class));
+            throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         }
         OperatorExpression expression = OperatorExpression.createFromTerm(state, term.lastMember());
         appendToOperatorStack(state, term, operatorStack, new CollectMap(expression));

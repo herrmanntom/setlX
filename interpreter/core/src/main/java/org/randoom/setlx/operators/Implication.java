@@ -14,6 +14,8 @@ import org.randoom.setlx.utilities.State;
  */
 public class Implication extends ALazyBinaryInfixOperator {
 
+    private static final String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(Implication.class);
+
     /**
      * Create a new Implication operator.
      *
@@ -43,7 +45,7 @@ public class Implication extends ALazyBinaryInfixOperator {
      */
     public static void appendToOperatorStack(final State state, final Term term, FragmentList<AOperator> operatorStack) throws TermConversionException {
         if (term.size() != 2) {
-            throw new TermConversionException("malformed " + generateFunctionalCharacter(Implication.class));
+            throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
             Implication implication = new Implication(OperatorExpression.createFromTerm(state, term.lastMember()));
             appendToOperatorStack(state, term, operatorStack, implication);

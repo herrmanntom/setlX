@@ -17,6 +17,7 @@ import org.randoom.setlx.utilities.State;
  * Operator that load the the last object from the stack and put its given member on the stack.
  */
 public class MemberAccess extends AUnaryPostfixOperator {
+    private static final String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(MemberAccess.class);
 
     private final String id;
 
@@ -69,7 +70,7 @@ public class MemberAccess extends AUnaryPostfixOperator {
      */
     public static void appendToOperatorStack(final State state, final Term term, FragmentList<AOperator> operatorStack) throws TermConversionException {
         if (term.size() != 2 || ! (term.lastMember() instanceof SetlString)) {
-            throw new TermConversionException("malformed " + generateFunctionalCharacter(MemberAccess.class));
+            throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         }
         MemberAccess memberAccess = new MemberAccess(term.lastMember().getUnquotedString(state));
         appendToOperatorStack(state, term, operatorStack, memberAccess);

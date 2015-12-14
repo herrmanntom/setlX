@@ -14,6 +14,8 @@ import org.randoom.setlx.utilities.State;
  */
 public class Disjunction extends ALazyBinaryInfixOperator {
 
+    private static final String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(Disjunction.class);
+
     /**
      * Create a new Disjunction operator.
      *
@@ -43,7 +45,7 @@ public class Disjunction extends ALazyBinaryInfixOperator {
      */
     public static void appendToOperatorStack(final State state, final Term term, FragmentList<AOperator> operatorStack) throws TermConversionException {
         if (term.size() != 2) {
-            throw new TermConversionException("malformed " + generateFunctionalCharacter(Disjunction.class));
+            throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
             Disjunction disjunction = new Disjunction(OperatorExpression.createFromTerm(state, term.lastMember()));
             appendToOperatorStack(state, term, operatorStack, disjunction);

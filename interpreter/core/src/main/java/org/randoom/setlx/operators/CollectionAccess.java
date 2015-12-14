@@ -11,7 +11,6 @@ import org.randoom.setlx.operatorUtilities.OperatorExpression.OptimizerData;
 import org.randoom.setlx.operatorUtilities.Stack;
 import org.randoom.setlx.types.Om;
 import org.randoom.setlx.types.SetlList;
-import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.CodeFragment;
@@ -25,6 +24,8 @@ import java.util.List;
  * Operator that gets elements of a collection value and puts the result on the stack.
  */
 public class CollectionAccess extends AUnaryPostfixOperator {
+    private static final String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(CollectionAccess.class);
+
     private final FragmentList<OperatorExpression> arguments;
     private final boolean                          argumentsContainRange; // does args contain RangeDummy?
 
@@ -104,7 +105,7 @@ public class CollectionAccess extends AUnaryPostfixOperator {
 
     @Override
     public Value buildQuotedTerm(State state, Stack<Value> termFragments) throws SetlException {
-        Term term = new Term(generateFunctionalCharacter(this.getClass()), 2);
+        Term term = new Term(FUNCTIONAL_CHARACTER, 2);
         term.addMember(state, termFragments.poll());
 
         final SetlList argumentTerms = new SetlList(arguments.size());
@@ -127,7 +128,7 @@ public class CollectionAccess extends AUnaryPostfixOperator {
     public static void appendToOperatorStack(final State state, final Term term, FragmentList<AOperator> operatorStack) throws TermConversionException {
         try {
             if (term.size() != 2 || term.getMember(2).getClass() != SetlList.class) {
-                throw new TermConversionException("malformed " + generateFunctionalCharacter(CollectionAccess.class));
+                throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
             }
 
             OperatorExpression.appendFromTerm(state, term.firstMember(), operatorStack);
@@ -139,7 +140,7 @@ public class CollectionAccess extends AUnaryPostfixOperator {
 
             operatorStack.add(new CollectionAccess(arguments));
         } catch (SetlException se) {
-            throw new TermConversionException("malformed " + generateFunctionalCharacter(CollectionAccess.class), se);
+            throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER, se);
         }
     }
 

@@ -15,6 +15,8 @@ import java.util.List;
  * Wrapper Expression for SetlX Literals, which parses escape sequences at runtime.
  */
 public class LiteralConstructor extends AZeroOperator {
+    private static final String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(LiteralConstructor.class);
+
     private final String     originalLiteral;
     private final SetlString runtimeString;
 
@@ -72,7 +74,7 @@ public class LiteralConstructor extends AZeroOperator {
      */
     public static void appendToOperatorStack(final State state, final Term term, FragmentList<AOperator> operatorStack) throws TermConversionException {
         if (term.size() != 1 || ! (term.firstMember() instanceof SetlString)) {
-            throw new TermConversionException("malformed " + generateFunctionalCharacter(LiteralConstructor.class));
+            throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
             final SetlString runtimeString   = (SetlString) term.firstMember();
             final String     originalLiteral = "'" + runtimeString.getEscapedLiteral() + "'";

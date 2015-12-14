@@ -17,6 +17,8 @@ import java.util.List;
  * Operator that evaluates a function and puts the result on the stack.
  */
 public class Call extends AUnaryPostfixOperator {
+    private static final String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(Call.class);
+
     private final FragmentList<OperatorExpression> arguments;
     private final OperatorExpression listArgument;
 
@@ -101,7 +103,7 @@ public class Call extends AUnaryPostfixOperator {
 
     @Override
     public Value buildQuotedTerm(State state, Stack<Value> termFragments) throws SetlException {
-        Term term = new Term(generateFunctionalCharacter(this.getClass()), 3);
+        Term term = new Term(FUNCTIONAL_CHARACTER, 3);
 
         term.addMember(state, termFragments.poll());
 
@@ -131,7 +133,7 @@ public class Call extends AUnaryPostfixOperator {
     public static void appendToOperatorStack(final State state, final Term term, FragmentList<AOperator> operatorStack) throws TermConversionException {
         try {
             if (term.size() != 3 || term.getMember(2).getClass() != SetlList.class) {
-                throw new TermConversionException("malformed " + generateFunctionalCharacter(Call.class));
+                throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
             }
 
             OperatorExpression.appendFromTerm(state, term.firstMember(), operatorStack);
@@ -148,7 +150,7 @@ public class Call extends AUnaryPostfixOperator {
 
             operatorStack.add(new Call(arguments, listArgument));
         } catch (SetlException se) {
-            throw new TermConversionException("malformed " + generateFunctionalCharacter(Call.class), se);
+            throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER, se);
         }
     }
 

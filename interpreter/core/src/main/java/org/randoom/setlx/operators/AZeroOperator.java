@@ -14,6 +14,12 @@ import java.util.List;
  * They are in fact not really operators.
  */
 public abstract class AZeroOperator extends AOperator {
+    private final String FUNCTIONAL_CHARACTER;
+
+    /** Create a new ZeroOperator **/
+    protected AZeroOperator() {
+        FUNCTIONAL_CHARACTER = generateFunctionalCharacter(this.getClass());
+    }
 
     @Override
     public OptimizerData collectVariables(State state, List<String> boundVariables, List<String> unboundVariables, List<String> usedVariables, Stack<OptimizerData> optimizerData) {
@@ -49,7 +55,7 @@ public abstract class AZeroOperator extends AOperator {
 
     @Override
     public final Value buildTerm(State state, Stack<Value> termFragments) throws SetlException {
-        Term term = new Term(generateFunctionalCharacter(this.getClass()));
+        Term term = new Term(FUNCTIONAL_CHARACTER);
         return modifyTerm(state, term);
     }
 

@@ -17,6 +17,12 @@ import java.util.List;
  * Base class for binary infix operators.
  */
 public abstract class ABinaryInfixOperator extends AOperator {
+    private final String FUNCTIONAL_CHARACTER;
+
+    /** Create a new BinaryInfixOperator **/
+    protected ABinaryInfixOperator() {
+        FUNCTIONAL_CHARACTER = generateFunctionalCharacter(this.getClass());
+    }
 
     @Override
     public final boolean collectVariablesAndOptimize(State state, List<String> boundVariables, List<String> unboundVariables, List<String> usedVariables) {
@@ -61,7 +67,7 @@ public abstract class ABinaryInfixOperator extends AOperator {
     public Value buildTerm(State state, Stack<Value> termFragments) throws SetlException {
         Value rhs = termFragments.poll();
         Value lhs = termFragments.poll();
-        Term term = new Term(generateFunctionalCharacter(this.getClass()));
+        Term term = new Term(FUNCTIONAL_CHARACTER);
         term.addMember(state, lhs);
         term.addMember(state, rhs);
         return term;
@@ -76,9 +82,9 @@ public abstract class ABinaryInfixOperator extends AOperator {
      * @param operator                 Operator to append to the end.
      * @throws TermConversionException If term is malformed.
      */
-    protected static void appendToOperatorStack(State state, Term term, FragmentList<AOperator> operatorStack, AOperator operator) throws TermConversionException {
+    protected static void appendToOperatorStack(State state, Term term, FragmentList<AOperator> operatorStack, ABinaryInfixOperator operator) throws TermConversionException {
         if (term.size() != 2) {
-            throw new TermConversionException("malformed " + generateFunctionalCharacter(operator.getClass()));
+            throw new TermConversionException("malformed " + operator.FUNCTIONAL_CHARACTER);
         } else {
             OperatorExpression.appendFromTerm(state, term.firstMember(), operatorStack);
             OperatorExpression.appendFromTerm(state, term.lastMember(), operatorStack);

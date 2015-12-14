@@ -26,6 +26,8 @@ import java.util.Set;
  * Operator that puts true on the stack if its condition is true for any value from its iteration.
  */
 public class Exists extends AZeroOperator {
+    private static final String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(Exists.class);
+
     private final SetlIterator iterator;
     private final Condition    condition;
     private       Set<String>  iterationVariables;
@@ -98,7 +100,7 @@ public class Exists extends AZeroOperator {
         if (e.result == SetlBoolean.TRUE && e.sideEffectBindings != null) {
             // restore state in which condition is true
             for (final Map.Entry<String, Value> entry : e.sideEffectBindings.entrySet()) {
-                state.putValue(entry.getKey(), entry.getValue(), generateFunctionalCharacter(this.getClass()));
+                state.putValue(entry.getKey(), entry.getValue(), FUNCTIONAL_CHARACTER);
             }
         }
         return e.result;
@@ -130,7 +132,7 @@ public class Exists extends AZeroOperator {
      */
     public static void appendToOperatorStack(final State state, final Term term, FragmentList<AOperator> operatorStack) throws TermConversionException {
         if (term.size() != 2) {
-            throw new TermConversionException("malformed " + generateFunctionalCharacter(Exists.class));
+            throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
             SetlIterator iterator = SetlIterator.valueToIterator(state, term.firstMember());
             final Condition condition = TermUtilities.valueToCondition(state, term.lastMember());

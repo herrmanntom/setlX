@@ -16,6 +16,8 @@ import java.util.List;
  * Operator that quotes an expression.
  */
 public class Quote extends AZeroOperator {
+    private static final String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(Quote.class);
+
     private final OperatorExpression argument;
 
     /**
@@ -60,7 +62,7 @@ public class Quote extends AZeroOperator {
      */
     public static void appendToOperatorStack(final State state, final Term term, FragmentList<AOperator> operatorStack) throws TermConversionException {
         if (term.size() != 1) {
-            throw new TermConversionException("malformed " + generateFunctionalCharacter(Quote.class));
+            throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
             final OperatorExpression expression = OperatorExpression.createFromTerm(state, term.firstMember());
             operatorStack.add(new Quote(expression));

@@ -14,6 +14,8 @@ import org.randoom.setlx.utilities.State;
  */
 public class Conjunction extends ALazyBinaryInfixOperator {
 
+    private static final String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(Conjunction.class);
+
     /**
      * Create a new Conjunction operator.
      *
@@ -43,7 +45,7 @@ public class Conjunction extends ALazyBinaryInfixOperator {
      */
     public static void appendToOperatorStack(final State state, final Term term, FragmentList<AOperator> operatorStack) throws TermConversionException {
         if (term.size() != 2) {
-            throw new TermConversionException("malformed " + generateFunctionalCharacter(Conjunction.class));
+            throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
             Conjunction conjunction = new Conjunction(OperatorExpression.createFromTerm(state, term.lastMember()));
             appendToOperatorStack(state, term, operatorStack, conjunction);

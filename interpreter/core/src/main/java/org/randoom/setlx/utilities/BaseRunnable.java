@@ -12,7 +12,7 @@ public abstract class BaseRunnable implements Runnable {
     /**
      * Select how much Stack this thread should request
      */
-    public static enum StackSize {
+    public enum StackSize {
         /** request large stack size */
         LARGE,
         /** request medium stack size */
@@ -22,7 +22,7 @@ public abstract class BaseRunnable implements Runnable {
 
         private String threadNamePrefix;
 
-        private StackSize() {
+        StackSize() {
             threadNamePrefix = ":" + this.name();
         }
 

@@ -84,10 +84,10 @@ public class PD_readFile extends PreDefinedProcedure {
         final SetlList  fileContent = new SetlList();
 
         try {
-            fstream     = new FileInputStream(fileName);
-            fIn         = new DataInputStream(fstream);
-            fBr         = new BufferedReader(new InputStreamReader(fIn));
-            String line = null;
+            fstream = new FileInputStream(fileName);
+            fIn     = new DataInputStream(fstream);
+            fBr     = new BufferedReader(new InputStreamReader(fIn));
+            String line;
 
             while ((line = fBr.readLine()) != null) {
                 if (lineNumbers == null || lineNumbers.contains(++lineCounter)) {

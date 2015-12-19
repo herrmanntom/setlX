@@ -480,7 +480,8 @@ public class SetlString extends IndexedCollectionValue {
 
     @Override
     public Value getMembers(final State state, final Value low, final Value high) throws SetlException {
-        int lowInt = 0, highInt = 0;
+        int lowInt;
+        int highInt;
         if (low.isInteger() == SetlBoolean.TRUE) {
             lowInt = low.jIntValue();
         } else {

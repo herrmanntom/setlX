@@ -77,7 +77,7 @@ public class IfThen extends Statement {
                 boundHere.retainAll(boundTmp.subList(preBound, boundTmp.size()));
             }
         }
-        if (branchList.get(branchList.size() - 1) instanceof IfThenElseBranch) {
+        if (boundHere != null && branchList.get(branchList.size() - 1) instanceof IfThenElseBranch) {
             boundVariables.addAll(boundHere);
         }
         return false;

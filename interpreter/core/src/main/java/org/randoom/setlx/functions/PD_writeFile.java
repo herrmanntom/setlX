@@ -59,7 +59,7 @@ public class PD_writeFile extends PreDefinedProcedure {
         // get name of file to be written
         final String    fileName = fileArg.getUnquotedString(state);
         // get content to be written into the file
-        CollectionValue content  = null;
+        CollectionValue content;
         if (contentArg instanceof CollectionValue && ! (contentArg.isTerm() == SetlBoolean.TRUE || contentArg.isString() == SetlBoolean.TRUE)) {
             content = (CollectionValue) contentArg;
         } else {

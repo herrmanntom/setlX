@@ -20,7 +20,7 @@ import java.util.*;
  */
 public class ParseSetlX {
 
-    private static enum CodeType {
+    private enum CodeType {
         EXPR,
         BLOCK
     }

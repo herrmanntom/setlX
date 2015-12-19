@@ -75,7 +75,7 @@ public class Switch extends Statement {
                 boundHere.retainAll(boundTmp.subList(preBound, boundTmp.size()));
             }
         }
-        if (branchList.get(branchList.size() - 1) instanceof SwitchDefaultBranch) {
+        if (boundHere != null && branchList.get(branchList.size() - 1) instanceof SwitchDefaultBranch) {
             boundVariables.addAll(boundHere);
         }
         return false;

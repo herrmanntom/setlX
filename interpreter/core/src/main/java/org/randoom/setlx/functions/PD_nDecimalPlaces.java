@@ -48,16 +48,14 @@ public class PD_nDecimalPlaces extends PreDefinedProcedure {
         final Value         intPart = number.difference(state, rest);
 
         final StringBuilder result  = new StringBuilder();
-              Value         digit   = null;
-              Value         restMod1= null;
 
         intPart.appendString(state, result, 0);
         result.append(".");
         for (int i = 1; i <= n; ++i) {
-            rest    = rest.product(state, Rational.TEN);
-            restMod1= rest.modulo(state, Rational.ONE);
-            digit   = rest.difference(state, restMod1);
-            rest    = restMod1;
+            rest           = rest.product(state, Rational.TEN);
+            Value restMod1 = rest.modulo(state, Rational.ONE);
+            Value digit    = rest.difference(state, restMod1);
+            rest           = restMod1;
 
             digit.appendString(state, result, 0);
         }

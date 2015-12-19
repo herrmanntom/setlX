@@ -39,9 +39,9 @@ public class PD_run extends PreDefinedProcedure {
         final String command = args.get(COMMAND).getUnquotedString(state);
 
         try {
-            final String   os      = System.getProperty("os.name").toLowerCase(Locale.US);
-                  String   shell   = null;
-                  String   options = null;
+            final String   os = System.getProperty("os.name").toLowerCase(Locale.US);
+                  String   shell;
+                  String   options;
             if (os.contains("nix") || os.contains("nux")) { // Unix/Linux
                 shell   = "sh";
                 options = "-c";
@@ -66,7 +66,7 @@ public class PD_run extends PreDefinedProcedure {
             final SetlList       out    = new SetlList();
             final SetlList       err    = new SetlList();
 
-            String line = null;
+            String line;
             while ((line = output.readLine()) != null) {
                 out.addMember(state, new SetlString(line));
             }

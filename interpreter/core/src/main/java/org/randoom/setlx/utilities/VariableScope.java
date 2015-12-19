@@ -2,9 +2,9 @@ package org.randoom.setlx.utilities;
 
 import org.randoom.setlx.exceptions.IllegalRedefinitionException;
 import org.randoom.setlx.exceptions.SetlException;
+import org.randoom.setlx.types.Om;
 import org.randoom.setlx.types.SetlBoolean;
 import org.randoom.setlx.types.SetlClass;
-import org.randoom.setlx.types.Om;
 import org.randoom.setlx.types.SetlError;
 import org.randoom.setlx.types.SetlObject;
 import org.randoom.setlx.types.SetlString;
@@ -33,7 +33,7 @@ public class VariableScope {
     /**
      * Marker binding to signal that value is indeed set, but not allowed to be accessed.
      */
-    private     final static ScopeBinding ACCESS_DENIED_BINDING      = new ScopeBinding(Integer.MAX_VALUE, 0l, ACCESS_DENIED_VALUE);
+    private     final static ScopeBinding ACCESS_DENIED_BINDING      = new ScopeBinding(Integer.MAX_VALUE, 0L, ACCESS_DENIED_VALUE);
 
     private static class ScopeBindings {
         private final Timer                                     timer;
@@ -114,10 +114,10 @@ public class VariableScope {
     private VariableScope(final ScopeBindings scopeBindings, final int scopeStackDepth, final int restrictedToFunctionsBeneath) {
         this.scopeBindings = scopeBindings;
         if (scopeBindings.validScopeGenerations.size() > scopeStackDepth) {
-            this.scopeGeneration = scopeBindings.validScopeGenerations.get(scopeStackDepth) + 1l;
+            this.scopeGeneration = scopeBindings.validScopeGenerations.get(scopeStackDepth) + 1L;
             scopeBindings.validScopeGenerations.set(scopeStackDepth, this.scopeGeneration);
         } else {
-            this.scopeGeneration = 0l;
+            this.scopeGeneration = 0L;
             scopeBindings.validScopeGenerations.add(this.scopeGeneration);
         }
 
@@ -154,7 +154,7 @@ public class VariableScope {
      *
      * @return The new scope.
      */
-    public VariableScope createInteratorBlock() {
+    public VariableScope createIteratorBlock() {
         final VariableScope newScope     = this.createLinkedScope();
         newScope.writeAsDeepAs           = this.writeAsDeepAs;
         newScope.writeAsDeepAsGeneration = this.writeAsDeepAsGeneration;
@@ -288,8 +288,8 @@ public class VariableScope {
 
     private ScopeBinding getBinding(final State state, final LinkedList<ScopeBinding> locatedBindings, final String variable, final boolean checkObjects) throws SetlException {
         final boolean            isThisBinding = variable.equals("this");
-        LinkedList<ScopeBinding> bindings      = null;
         ScopeBinding             binding       = null;
+        LinkedList<ScopeBinding> bindings;
 
         if (isThisBinding) {
             bindings = scopeBindings.thisBindings;
@@ -450,8 +450,8 @@ public class VariableScope {
 
     private void setBinding(final LinkedList<ScopeBinding> locatedBindings, final String variable, final Value value) {
         final boolean            isThisBinding = variable.equals("this");
-        LinkedList<ScopeBinding> bindings      = null;
         ScopeBinding             binding       = null;
+        LinkedList<ScopeBinding> bindings;
 
         if (isThisBinding) {
             bindings = scopeBindings.thisBindings;

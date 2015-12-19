@@ -130,7 +130,7 @@ public class Scan extends Statement {
                 // execute branch which matches largest string
                 if (largestMatchBranch != null && largestMatchResult != null) {
                     // scope for execution
-                    final VariableScope innerScope = outerScope.createInteratorBlock();
+                    final VariableScope innerScope = outerScope.createIteratorBlock();
                     state.setScope(innerScope);
 
                     // force match variables to be local to this block
@@ -161,10 +161,9 @@ public class Scan extends Statement {
                     // find lineEndings
                     final String matched = string.getMembers(1, largestMatchSize).getUnquotedString(state);
                     int pos  = 0;
-                    int tmp  = 0;
-                    int size = 0;
+                    int size;
                     while (true) {
-                        tmp  = matched.indexOf("\r\n", pos);
+                        int tmp  = matched.indexOf("\r\n", pos);
                         size = 2;
                         if (tmp < 0) {
                             tmp  = matched.indexOf("\n", pos);
@@ -231,7 +230,7 @@ public class Scan extends Statement {
         while (boundVariables.size() > preBound) {
             boundVariables.remove(boundVariables.size() - 1);
         }
-        if (branchList.get(branchList.size() - 1) instanceof MatchDefaultBranch) {
+        if (boundHere != null && branchList.get(branchList.size() - 1) instanceof MatchDefaultBranch) {
             boundHere.removeAll(tempAssigned);
             boundVariables.addAll(boundHere);
         }

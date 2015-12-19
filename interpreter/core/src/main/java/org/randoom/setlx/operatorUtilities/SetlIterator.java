@@ -311,7 +311,7 @@ public class SetlIterator extends ImmutableCodeFragment {
         if (iterationValue instanceof CollectionValue) {
             final CollectionValue coll       = (CollectionValue) iterationValue;
             // scope for inner execution/next iterator
-            final VariableScope   innerScope = state.getScope().createInteratorBlock();
+            final VariableScope   innerScope = state.getScope().createIteratorBlock();
             // iterate over items
             for (final Value v: coll) {
                 if (state.executionStopped) {

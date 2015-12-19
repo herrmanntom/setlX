@@ -1,11 +1,8 @@
 package org.randoom.setlx.utilities;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Base class for all immutable CodeFragments.

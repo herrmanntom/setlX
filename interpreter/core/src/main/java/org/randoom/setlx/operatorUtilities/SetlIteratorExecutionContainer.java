@@ -20,7 +20,7 @@ public interface SetlIteratorExecutionContainer {
      * @return                   ReturnMessage containing the result of the execution.
      * @throws SetlException     Thrown in case of some (user) error.
      */
-    public abstract ReturnMessage execute(final State state, final Value lastIterationValue) throws SetlException;
+    ReturnMessage execute(final State state, final Value lastIterationValue) throws SetlException;
 
     /**
      * Gather all bound and unbound variables in this fragment and its siblings.
@@ -32,7 +32,7 @@ public interface SetlIteratorExecutionContainer {
      * @param usedVariables    Variables present in bound when used.
      * @return true iff this fragment may be optimized if it is constant.
      */
-    public abstract boolean collectVariablesAndOptimize(
+    boolean collectVariablesAndOptimize(
             final State state,
             final List<String> boundVariables,
             final List<String> unboundVariables,

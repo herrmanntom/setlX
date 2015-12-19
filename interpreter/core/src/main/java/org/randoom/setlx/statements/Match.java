@@ -53,7 +53,7 @@ public class Match extends Statement {
                 final MatchResult result = br.matches(state, term);
                 if (result.isMatch()) {
                     // scope for execution
-                    final VariableScope innerScope = outerScope.createInteratorBlock();
+                    final VariableScope innerScope = outerScope.createIteratorBlock();
                     state.setScope(innerScope);
 
                     // force match variables to be local to this block
@@ -112,7 +112,7 @@ public class Match extends Statement {
                 boundHere.retainAll(boundTmp.subList(preBound, boundTmp.size()));
             }
         }
-        if (branchList.get(branchList.size() - 1) instanceof MatchDefaultBranch) {
+        if (boundHere != null && branchList.get(branchList.size() - 1) instanceof MatchDefaultBranch) {
             boundVariables.addAll(boundHere);
         }
         return false;

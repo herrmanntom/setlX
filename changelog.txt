@@ -2,6 +2,7 @@ Changes (* notice | + feature added, replaced or improved | - feature removed | 
 
 ---v2.5.0--- 2015-12-06
  + Changed confusing matching of variables and functions
+ + added isVariable(term) function, that tests if given term represents a variable
  # fixed minor bug in plotting functions
 
 ---v2.4.0--- 2015-07-05

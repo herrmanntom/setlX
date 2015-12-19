@@ -89,7 +89,7 @@ exprTerm   := parse(exprString);
 print(canonical(exprTerm));
 
 match (exprTerm) {
-    case ^variable(z) :
+    case z | isVariable(z) :
         print("match: z = $z$");
     default :
         print("failed to match");

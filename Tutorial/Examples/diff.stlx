@@ -42,7 +42,7 @@ diff := procedure(t, x) {
             }
         case var | var == x :
              return 1;
-        case ^variable(id) :
+        case var | isVariable(var) :
              return 0;
         case t | isNumber(t):
              return 0;

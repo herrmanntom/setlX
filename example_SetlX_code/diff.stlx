@@ -22,9 +22,9 @@ diff := procedure(t, x) {
             }
         case a | isNumber(a) :
             return 0;
-        case ^variable(id) | id == str(x):
+        case a | a == x:
             return 1;
-        case ^variable(id):
+        case a | isVariable(a):
             return 0;
         default:
             abort("error: $t$");

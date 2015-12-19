@@ -14,8 +14,8 @@ getFormular := procedure() {
 
 collectVars := procedure(term) {
     match (term) {
-        case ^variable(a) :
-            return {a};
+        case a | isVariable(a) :
+            return {str(a)};
         case a <==> b, a => b, a && b, a || b :
             return collectVars(a) + collectVars(b);
         case ! a :

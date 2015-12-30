@@ -10,8 +10,17 @@ import org.randoom.setlx.types.SetlDouble.DoublePrintMode;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
 
+import java.io.IOException;
 import java.lang.reflect.Method;
-import java.util.*;
+import java.net.URL;
+import java.util.Enumeration;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Objects;
+import java.util.Random;
+import java.util.jar.Manifest;
 
 /**
  * This class represents the current state of the interpreter.
@@ -19,18 +28,53 @@ import java.util.*;
 public class State {
 
     /**
-     * Get detailed implementation version of this setlX binary.
+     * Get version of this setlX binary.
      *
      * @return Implementation version.
      */
-    public static String getSetlXSourceVersion() {
+    public static String getSetlXVersion() {
         String implementationVersion = State.class.getPackage().getImplementationVersion();
         if (implementationVersion == null) {
             implementationVersion = "unknown";
-        } else if (implementationVersion.startsWith("v")) {
-            implementationVersion = implementationVersion.substring(1);
         }
         return implementationVersion;
+    }
+
+    /**
+     * Get detailed implementation build number of this setlX binary.
+     *
+     * @return build identification.
+     */
+    public static String getSetlXBuildNumber() {
+        String buildNumber = null;
+
+        try {
+            Enumeration<URL> resources = State.class.getClassLoader().getResources("META-INF/MANIFEST.MF");
+            while (resources.hasMoreElements()) {
+                Manifest manifest = new Manifest(resources.nextElement().openStream());
+                // check that this is your manifest and do what you need or get the next one
+                String vendorId = manifest.getMainAttributes().getValue("Implementation-Vendor-Id");
+                String version = manifest.getMainAttributes().getValue("Implementation-Version");
+                String build = manifest.getMainAttributes().getValue("Implementation-Build");
+
+                if (
+                        "org.randoom.setlx".equals(vendorId)
+                        && Objects.equals(State.class.getPackage().getImplementationVersion(), version)
+                ) {
+                    buildNumber = build;
+                    break;
+                }
+            }
+        } catch (IOException e) {
+            buildNumber = null;
+        }
+
+        if (buildNumber == null) {
+            buildNumber = "unknown";
+        } else if (buildNumber.startsWith("v")) {
+            buildNumber = buildNumber.substring(1);
+        }
+        return buildNumber;
     }
 
     // public variables, available to allow slightly faster access...

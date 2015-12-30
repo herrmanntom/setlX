@@ -13,7 +13,6 @@
 /grammar_pure/grammar_tester/target
 /grammar_pure/grammar_tester/*.jar
 /grammar_pure/Pure.g4
-/interpreter/core/src/main/java/org/randoom/setlx/grammar
 /interpreter/*/target
 /interpreter/*.jar
 /Tutorial/*.?00pk
@@ -38,6 +37,5 @@
 /setlX_*.zip
 
 # IntelliJ Files
-/.idea
+.idea
 *.iml
-/out

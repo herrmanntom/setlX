@@ -18,7 +18,6 @@ import java.util.List;
  * Class containing main-function and other glue for the PC version of the setlX interpreter.
  */
 public class SetlX {
-    private final static String  VERSION                = "2.5.0";
     private final static String  SETLX_URL              = "http://setlX.randoom.org/";
     private final static String  C_YEARS                = "2011-2015";
     private final static String  VERSION_PREFIX         = "v";
@@ -82,8 +81,8 @@ public class SetlX {
         for (int i = 0; i < arguments.size(); ++i) {
             final String s = arguments.get(i);
             if (s.equals("--version")) {
-                state.outWriteLn(VERSION);
-                state.outWriteLn("(Source version: " + State.getSetlXSourceVersion() + ")");
+                state.outWriteLn(State.getSetlXVersion());
+                state.outWriteLn("(Source version: " + State.getSetlXBuildNumber() + ")");
 
                 System.exit(EXIT_OK);
 
@@ -445,9 +444,10 @@ public class SetlX {
 
     private static void printHeader(final State state) {
         // embed version number into header
-        final int     versionSize = VERSION.length() + VERSION_PREFIX.length();
+        String version = State.getSetlXVersion();
+        final int     versionSize = version.length() + VERSION_PREFIX.length();
         String  header      = HEADER.substring(0, HEADER.length() - (versionSize + 2) );
-        header             += VERSION_PREFIX + VERSION + HEADER.substring(HEADER.length() - 2);
+        header             += VERSION_PREFIX + version + HEADER.substring(HEADER.length() - 2);
         // print header
         state.outWriteLn("\n" + header);
     }

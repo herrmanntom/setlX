@@ -57,7 +57,7 @@ done < <( find "$setlXJarDirectory" -maxdepth 1 -name "*.jar" -print0 )
 
 if [ -n "$jarFiles" ]
   then
-    $java_call -cp "$jarFiles:$CLASSPATH" $javaParameters org.randoom.setlxUI.pc.SetlX "$@"
+    $java_call -cp "$jarFiles:$CLASSPATH" $javaParameters org.randoom.setlx.pc.ui.SetlX "$@"
     exit $?
 else
     echo "The setlX jar files cannot be found!"

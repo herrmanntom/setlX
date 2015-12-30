@@ -29,7 +29,7 @@ for %%g in (*.jar) do set class_path=%setlXJarDirectory%\%%g;!class_path!;
 popd
 
 IF NOT "a%class_path%"=="a%CLASSPATH%" (
-    java -cp "%class_path%" %javaParameters% org.randoom.setlxUI.pc.SetlX %*
+    java -cp "%class_path%" %javaParameters% org.randoom.setlx.pc.ui.SetlX %*
 ) ELSE (
     echo "The setlX jar files cannot be found!"
 )

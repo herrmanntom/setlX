@@ -1,6 +1,7 @@
 Changes (* notice | + feature added, replaced or improved | - feature removed | # bugfix):
 
 ---v2.5.0--- 2015-12-06
+ * Note: the setlX start scripts changed - please update yours!
  + Changed confusing matching of variables and functions
  + added isVariable(term) function, that tests if given term represents a variable
  # fixed minor bug in plotting functions

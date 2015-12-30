@@ -60,7 +60,7 @@ done < <( find "$setlXJarDirectory" -maxdepth 1 -name "*.jar" -print0 )
 if [ -n "$jarFiles" ]
   then
     time (
-        $java_call -cp "$jarFiles:$CLASSPATH" $javaParameters org.randoom.setlxUI.pc.SetlX "$@"
+        $java_call -cp "$jarFiles:$CLASSPATH" $javaParameters org.randoom.setlx.pc.ui.SetlX "$@"
         # strip out uninteresting stuff from profiling dump
         lnumber=$(grep -n 'CPU SAMPLES BEGIN' java.hprof.txt | awk -F: '{print $1}')
         tail -n +$lnumber java.hprof.txt

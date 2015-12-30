@@ -10,12 +10,12 @@
         <version>2.5.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>plot_addon</artifactId>
+    <artifactId>setlX-plot-addon</artifactId>
 
     <dependencies>
         <dependency>
             <groupId>org.randoom.setlx</groupId>
-            <artifactId>core</artifactId>
+            <artifactId>setlX-core</artifactId>
             <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>

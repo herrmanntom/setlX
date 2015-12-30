@@ -5,10 +5,13 @@ import org.randoom.setlx.exceptions.UndefinedOperationException;
 import org.randoom.setlx.plot.utilities.Canvas;
 import org.randoom.setlx.plot.utilities.ConnectJFreeChart;
 import org.randoom.setlx.plot.utilities.ConvertSetlTypes;
-import org.randoom.setlx.utilities.ParameterDef;
 import org.randoom.setlx.plot.utilities.PlotCheckType;
+import org.randoom.setlx.types.Rational;
+import org.randoom.setlx.types.SetlDouble;
+import org.randoom.setlx.types.SetlList;
+import org.randoom.setlx.types.Value;
+import org.randoom.setlx.utilities.ParameterDef;
 import org.randoom.setlx.utilities.State;
-import org.randoom.setlx.types.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -56,7 +59,7 @@ public class PD_plot_addBullets extends PreDefinedProcedure {
             throw new UndefinedOperationException("Tupel in second parameter have to be Numbers (Integer or Doubles) ");
         }
 
-        List<List<Double>> bulletList = ConvertSetlTypes.convertSetlListAsDouble(xylist, state);
+        List<List<Double>> bulletList = ConvertSetlTypes.convertSetlListToListOfListOfDouble(xylist, state);
         double bSize = ConvertSetlTypes.convertNumberToDouble(args.get(BULLETSIZE));
 
 
@@ -69,13 +72,13 @@ public class PD_plot_addBullets extends PreDefinedProcedure {
             if (!(rgblistSetl.size() == 3)) {
                 throw new UndefinedOperationException("Parameter RGBLIST must have exactly three entrys (eq: [0,0,0])");
             }
-            List<Integer> rgblist = ConvertSetlTypes.convertSetlListAsInteger(rgblistSetl);
+            List<Integer> rgblist = ConvertSetlTypes.convertSetlListToListOfInteger(rgblistSetl);
 
             return ConnectJFreeChart.getInstance().addBullets((Canvas) args.get(CANVAS), bulletList, rgblist, bSize);
         }
 
         //if the color parameter is not set
-        List colorList = new ArrayList();
+        List<Integer> colorList = new ArrayList<>();
         colorList.add(0);
         colorList.add(0);
         colorList.add(0);

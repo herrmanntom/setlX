@@ -9,6 +9,9 @@ import org.randoom.setlx.exceptions.FileNotWritableException;
 import org.randoom.setlx.exceptions.IllegalRedefinitionException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.UndefinedOperationException;
+import org.randoom.setlx.plot.types.Chart1D;
+import org.randoom.setlx.plot.types.Chart2D;
+import org.randoom.setlx.plot.types.Graph;
 import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.types.Value;
 
@@ -49,7 +52,7 @@ public class ConnectJFreeChart implements SetlXPlot {
     @Override
     public Graph addGraph(org.randoom.setlx.plot.utilities.Canvas canvas, String function, String name, State interpreterState, List<Integer> color, boolean plotArea) throws SetlException {
         if(canvas.getFrame().getFrameType() == FrameWrapper.VIRGIN_FRAME){
-            canvas.getFrame().setFrameType(canvas.getFrame().DRAW_FRAME);
+            canvas.getFrame().setFrameType(FrameWrapper.DRAW_FRAME);
             canvas.getFrame().setFrame(new DrawFrame(canvas.getTitle(), canvas.getFrame().getWidth(), canvas.getFrame().getHeight()));
         }
         else if(canvas.getFrame().getFrameType() >= FrameWrapper.BAR_FRAME){
@@ -88,7 +91,7 @@ public class ConnectJFreeChart implements SetlXPlot {
     }
 
     @Override
-    public Chart addBarChart(org.randoom.setlx.plot.utilities.Canvas canvas, List<Double> values, List<String> categories) throws IllegalRedefinitionException {
+    public Chart1D addBarChart(org.randoom.setlx.plot.utilities.Canvas canvas, List<Double> values, List<String> categories) throws IllegalRedefinitionException {
         if(canvas.getFrame().getFrameType() == FrameWrapper.DRAW_FRAME){
             throw new IllegalRedefinitionException("This canvas is defined for graphs. Create a new canvas to draw charts");
         }
@@ -104,7 +107,7 @@ public class ConnectJFreeChart implements SetlXPlot {
     }
 
     @Override
-    public Chart addBarChart(org.randoom.setlx.plot.utilities.Canvas canvas, List<Double> values, List<String> categories, String name) throws IllegalRedefinitionException {
+    public Chart1D addBarChart(org.randoom.setlx.plot.utilities.Canvas canvas, List<Double> values, List<String> categories, String name) throws IllegalRedefinitionException {
         if(canvas.getFrame().getFrameType() == FrameWrapper.DRAW_FRAME){
             throw new IllegalRedefinitionException("This canvas is defined for graphs. Create a new canvas to draw charts");
         }
@@ -121,7 +124,7 @@ public class ConnectJFreeChart implements SetlXPlot {
     }
 
     @Override
-    public Chart addPieChart(org.randoom.setlx.plot.utilities.Canvas canvas, List<Double> values, List<String> categories) throws IllegalRedefinitionException {
+    public Chart1D addPieChart(Canvas canvas, List<Double> values, List<String> categories) throws IllegalRedefinitionException {
         if(canvas.getFrame().getFrameType() == FrameWrapper.DRAW_FRAME){
             throw new IllegalRedefinitionException("This canvas is defined for graphs. Create a new canvas to draw charts");
         }
@@ -138,7 +141,7 @@ public class ConnectJFreeChart implements SetlXPlot {
     }
 
     @Override
-    public Chart addBoxChart(org.randoom.setlx.plot.utilities.Canvas canvas, List<List<Double>> values, List<String> categories) throws IllegalRedefinitionException {
+    public Chart2D addBoxChart(Canvas canvas, List<List<Double>> values, List<String> categories) throws IllegalRedefinitionException {
         if(canvas.getFrame().getFrameType() == FrameWrapper.DRAW_FRAME){
             throw new IllegalRedefinitionException("This canvas is defined for graphs. Create a new canvas to draw charts");
         }
@@ -155,7 +158,7 @@ public class ConnectJFreeChart implements SetlXPlot {
     }
 
     @Override
-    public Chart addBoxChart(org.randoom.setlx.plot.utilities.Canvas canvas, List<List<Double>> values, List<String> categories, String name) throws IllegalRedefinitionException {
+    public Chart2D addBoxChart(org.randoom.setlx.plot.utilities.Canvas canvas, List<List<Double>> values, List<String> categories, String name) throws IllegalRedefinitionException {
         if(canvas.getFrame().getFrameType() == FrameWrapper.DRAW_FRAME){
             throw new IllegalRedefinitionException("This canvas is defined for graphs. Create a new canvas to draw charts");
         }

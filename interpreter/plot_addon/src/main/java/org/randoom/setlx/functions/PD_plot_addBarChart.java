@@ -70,8 +70,8 @@ public class PD_plot_addBarChart extends PreDefinedProcedure {
 
 
         //convert setllists to native java lists
-        List valuesList = ConvertSetlTypes.convertSetlListAsDouble(values, state);
-        List categorieList = ConvertSetlTypes.convertSetlListAsString(categories);
+        List<Double> valuesList = ConvertSetlTypes.convertSetlListToListOfDouble(values, state);
+        List<String> categorieList = ConvertSetlTypes.convertSetlListToListOfString(categories);
 
         if (!(PlotCheckType.sameSize(valuesList, categorieList))) {
             throw new UndefinedOperationException("The lists in the second and third parameter have to be of equal length");

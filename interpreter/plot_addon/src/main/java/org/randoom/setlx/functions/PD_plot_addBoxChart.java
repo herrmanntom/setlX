@@ -70,8 +70,8 @@ public class PD_plot_addBoxChart extends PreDefinedProcedure {
         }
 
         //convert setllists to native java lists
-        List valuesList = ConvertSetlTypes.convertSetlListAsDouble(values, state);
-        List categorieList = ConvertSetlTypes.convertSetlListAsString(categories);
+        List<List<Double>> valuesList = ConvertSetlTypes.convertSetlListToListOfListOfDouble(values, state);
+        List<String> categorieList = ConvertSetlTypes.convertSetlListToListOfString(categories);
 
         if (!(PlotCheckType.sameSize(valuesList, categorieList))) {
             throw new UndefinedOperationException("The (outer) lists in the second and third parameter have to be of equal length (eq: [[1,2,3],[4,5],[6]] <-> [\"one\", \"two\", \"three\"]");

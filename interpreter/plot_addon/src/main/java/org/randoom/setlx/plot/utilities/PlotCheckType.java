@@ -101,7 +101,7 @@ public class PlotCheckType {
         return (p.isString().equalTo(SetlBoolean.TRUE));
     }
 
-    public static boolean sameSize(List one, List two) {
+    public static boolean sameSize(List<?> one, List<?> two) {
         return (one.size() == two.size());
     }
 

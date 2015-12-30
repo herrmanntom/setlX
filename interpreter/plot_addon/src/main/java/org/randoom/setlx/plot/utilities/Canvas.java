@@ -1,6 +1,7 @@
 package org.randoom.setlx.plot.utilities;
 
 
+import org.randoom.setlx.plot.types.Graph;
 import org.randoom.setlx.utilities.CodeFragment;
 import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.types.Value;

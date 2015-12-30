@@ -3,7 +3,6 @@ package org.randoom.setlx.plot.utilities;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.Axis;
-import org.jfree.chart.axis.ValueAxis;
 import org.jfree.chart.plot.Plot;
 import org.jfree.chart.title.LegendTitle;
 import org.randoom.setlx.exceptions.IllegalRedefinitionException;
@@ -13,8 +12,6 @@ import org.randoom.setlx.types.Value;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.geom.Dimension2D;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -68,8 +65,8 @@ public abstract class AbstractFrame extends JFrame {
 
 
     protected List<Value> functions;
-    protected abstract List getFunctions();
-    protected abstract void setFunctions(List fun);
+    protected abstract List<Value> getFunctions();
+    protected abstract void setFunctions(List<Value> fun);
     public int getChartCount(){
         return this.chartCount;
     }
@@ -126,7 +123,7 @@ public abstract class AbstractFrame extends JFrame {
     }
 
     public void removeGraph(Value value) throws SetlException {
-        List func = this.getFunctions();
+        List<Value> func = this.getFunctions();
 
         boolean ispresent = func.remove(value);
         if (!ispresent) {

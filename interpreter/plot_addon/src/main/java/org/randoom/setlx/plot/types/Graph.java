@@ -1,4 +1,4 @@
-package org.randoom.setlx.plot.utilities;
+package org.randoom.setlx.plot.types;
 
 
 import org.randoom.setlx.utilities.CodeFragment;

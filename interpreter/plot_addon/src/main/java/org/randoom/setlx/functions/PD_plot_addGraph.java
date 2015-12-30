@@ -93,12 +93,12 @@ public class PD_plot_addGraph extends PreDefinedProcedure {
                 throw new UndefinedOperationException("Forth parameter graphcolor (optional) must contain only Integers (eq. [0,0,0] ");
             }
 
-            List<Integer> colorList = ConvertSetlTypes.convertSetlListAsInteger(colorListSetl);
+            List<Integer> colorList = ConvertSetlTypes.convertSetlListToListOfInteger(colorListSetl);
             return ConnectJFreeChart.getInstance().addGraph(canvas, function, graphNameString, state, colorList, area);
         }
 
         //if no optional parameter is set
-        List colorList = new ArrayList();
+        List<Integer> colorList = new ArrayList<>();
         colorList.add(0);
         colorList.add(0);
         colorList.add(0);

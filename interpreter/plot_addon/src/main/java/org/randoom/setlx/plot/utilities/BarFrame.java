@@ -9,6 +9,7 @@ import org.jfree.chart.renderer.category.BarRenderer;
 import org.jfree.data.category.DefaultCategoryDataset;
 import org.jfree.ui.TextAnchor;
 import org.randoom.setlx.exceptions.SetlException;
+import org.randoom.setlx.plot.types.Chart1D;
 import org.randoom.setlx.types.Value;
 
 import java.util.ArrayList;
@@ -18,26 +19,35 @@ import java.util.List;
  * Created by arne on 03.06.15.
  */
 public class BarFrame extends AbstractFrame {
+    private static final long serialVersionUID = -3517032983648321103L;
+
     private CategoryPlot plot;
+
     @Override
     protected Plot getPlot() {
         return plot;
     }
 
-
     private DefaultCategoryDataset dataset = new DefaultCategoryDataset();
     private final BarRenderer renderer = new BarRenderer();
 
 
-    private List<Chart> functions = new ArrayList<Chart>();
+    private List<Chart1D> functions = new ArrayList<>();
+
     @Override
-    protected List getFunctions() {
-        return this.functions;
+    protected List<Value> getFunctions() {
+        return new ArrayList<Value>(this.functions);
     }
 
     @Override
-    protected void setFunctions(List fun) {
-        this.functions = fun;
+    protected void setFunctions(List<Value> fun) {
+        List<Chart1D> functions = new ArrayList<>();
+        for (Value value : fun) {
+            if (value instanceof Chart1D) {
+                functions.add((Chart1D) value);
+            }
+        }
+        this.functions = functions;
     }
 
     public BarFrame(String title, double width, double height) {
@@ -48,7 +58,7 @@ public class BarFrame extends AbstractFrame {
 
     @Override
     public Value addTextLabel(List<Double> coordinates, String text) {
-        Chart chart = new Chart(coordinates, null, text, true);
+        Chart1D chart = new Chart1D(coordinates, null, text, true);
         CategoryTextAnnotation label = new CategoryTextAnnotation(text,dataset.getColumnKey(coordinates.get(0).intValue()-1) ,coordinates.get(1));
         label.setTextAnchor(TextAnchor.BOTTOM_LEFT);
         functions.add(chart);
@@ -72,21 +82,21 @@ public class BarFrame extends AbstractFrame {
         chartCount = functions.size();
         dataset.clear();
         plot = new CategoryPlot(dataset, (CategoryAxis)xAxis, (NumberAxis)yAxis, renderer);
-        ArrayList<Chart> func = new ArrayList<Chart>(functions);
+        ArrayList<Chart1D> func = new ArrayList<>(functions);
         functions.clear();
-        for(Chart chart: func){
+        for(Chart1D chart: func){
             this.addBarChart(chart.getValues(), chart.getCategories(), chart.getName());
         }
 
     }
 
-    public Chart addBarChart(List<Double> values, List<String> categories, String name) {
+    public Chart1D addBarChart(List<Double> values, List<String> categories, String name) {
 
         for(int i = 0; i < values.size(); i++){
             dataset.addValue(values.get(i), name, categories.get(i));
         }
         renderer.setSeriesPaint(chartCount, getNewColor());
-        Chart chart = new Chart(values, categories, name, false);
+        Chart1D chart = new Chart1D(values, categories, name, false);
         plot = new CategoryPlot(dataset, (CategoryAxis)xAxis, (NumberAxis)yAxis, renderer);
 
         functions.add(chart);

@@ -42,23 +42,6 @@
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <configuration combine.self="override">
-                    <source>${setlX.java.version}</source>
-                    <target>${setlX.java.version}</target>
-                    <showWarnings>true</showWarnings>
-                    <compilerArguments>
-                       <!--  <Werror />  -->
-                        <Xlint:all />
-                    </compilerArguments>
-                    <debug>true</debug>
-                    <debuglevel>lines,source</debuglevel>
-                    <fork>true</fork>
-                </configuration>
-            </plugin>
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
                 <configuration>
                     <finalName>setlX-plot</finalName>

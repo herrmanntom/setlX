@@ -9,15 +9,18 @@ import org.jfree.chart.renderer.category.BoxAndWhiskerRenderer;
 import org.jfree.data.statistics.DefaultBoxAndWhiskerCategoryDataset;
 import org.jfree.ui.TextAnchor;
 import org.randoom.setlx.exceptions.SetlException;
+import org.randoom.setlx.plot.types.Chart2D;
 import org.randoom.setlx.types.Value;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
  * Created by arne on 03.06.15.
  */
 public class BoxFrame extends AbstractFrame {
+    private static final long serialVersionUID = 7030553931673985106L;
 
     private CategoryPlot plot;
 
@@ -29,22 +32,28 @@ public class BoxFrame extends AbstractFrame {
     private DefaultBoxAndWhiskerCategoryDataset dataset = new DefaultBoxAndWhiskerCategoryDataset();
     private final BoxAndWhiskerRenderer renderer = new BoxAndWhiskerRenderer();
 
-    private List<Chart> functions = new ArrayList<Chart>();
+    private List<Chart2D> functions = new ArrayList<>();
 
 
     @Override
-    protected List getFunctions() {
-        return this.functions;
+    protected List<Value> getFunctions() {
+        return new ArrayList<Value>(this.functions);
     }
 
     @Override
-    protected void setFunctions(List fun) {
-        this.functions = fun;
+    protected void setFunctions(List<Value> fun) {
+        List<Chart2D> functions = new ArrayList<>();
+        for (Value value : fun) {
+            if (value instanceof Chart2D) {
+                functions.add((Chart2D) value);
+            }
+        }
+        this.functions = functions;
     }
 
     @Override
     public Value addTextLabel(List<Double> coordinates, String text) {
-        Chart chart = new Chart(coordinates, null, text, true);
+        Chart2D chart = new Chart2D(Arrays.asList(coordinates), null, text, true);
         CategoryTextAnnotation label = new CategoryTextAnnotation(text,dataset.getColumnKey(coordinates.get(0).intValue()-1) ,coordinates.get(1));
         label.setTextAnchor(TextAnchor.BOTTOM_LEFT);
         functions.add(chart);
@@ -65,7 +74,7 @@ public class BoxFrame extends AbstractFrame {
     protected void remakeFunctions() throws SetlException {
         dataset.clear();
 
-        for(Chart item: functions){
+        for(Chart2D item: functions){
             this.addBoxChart(item.getValues(), item.getCategories(), item.getName());
         }
 
@@ -79,9 +88,9 @@ public class BoxFrame extends AbstractFrame {
         yAxis.setLabel(yLabel);
     }
 
-    public Chart addBoxChart(List<List<Double>> values, List<String> categories, String name) {
+    public Chart2D addBoxChart(List<List<Double>> values, List<String> categories, String name) {
 
-        Chart chart = new Chart(values, categories, name, false);
+        Chart2D chart = new Chart2D(values, categories, name, false);
         int i = 0;
         for(List<Double> item : values) {
             dataset.add(item, name, categories.get(i));

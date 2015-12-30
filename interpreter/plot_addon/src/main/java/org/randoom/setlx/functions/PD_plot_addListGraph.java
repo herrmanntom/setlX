@@ -62,7 +62,7 @@ public class PD_plot_addListGraph extends PreDefinedProcedure {
             throw new UndefinedOperationException("Second parameter valuelist has to be a List of Lists with Numbers (eq. [[1,2],[3,4],[5,6]])");
         }
 
-        List<List<Double>> valueList = ConvertSetlTypes.convertSetlListAsDouble(valueSetlList, state);
+        List<List<Double>> valueList = ConvertSetlTypes.convertSetlListToListOfListOfDouble(valueSetlList, state);
         Value graphColorV = args.get(GRAPHCOLOR);
         Value plotArea = args.get(PLOTAREA);
 
@@ -88,13 +88,13 @@ public class PD_plot_addListGraph extends PreDefinedProcedure {
                 throw new UndefinedOperationException("Fourth parameter graphcolor has to consist of exactly three values (eq. [0,0,0])");
             }
 
-            List<Integer> graphColor = ConvertSetlTypes.convertSetlListAsInteger(graphColorS);
+            List<Integer> graphColor = ConvertSetlTypes.convertSetlListToListOfInteger(graphColorS);
 
             return ConnectJFreeChart.getInstance().addListGraph(canvas, valueList, graphNameString, graphColor, area);
         }
 
         //if no optional parameter is set
-        List<Integer> graphColour = new ArrayList();
+        List<Integer> graphColour = new ArrayList<>();
         graphColour.add(0);
         graphColour.add(0);
         graphColour.add(0);

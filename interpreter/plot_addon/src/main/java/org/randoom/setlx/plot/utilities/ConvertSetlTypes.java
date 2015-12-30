@@ -5,64 +5,66 @@ import org.randoom.setlx.exceptions.IncompatibleTypeException;
 import org.randoom.setlx.exceptions.NotAnIntegerException;
 import org.randoom.setlx.exceptions.NumberToLargeException;
 import org.randoom.setlx.exceptions.SetlException;
-import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.types.SetlBoolean;
 import org.randoom.setlx.types.SetlList;
 import org.randoom.setlx.types.Value;
+import org.randoom.setlx.utilities.State;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class ConvertSetlTypes {
 
-    public static List convertSetlListAsDouble(SetlList setlList, State state) throws SetlException {
+    public static List<Double> convertSetlListToListOfDouble(SetlList setlList, State state) throws SetlException {
 
-        List returnList = new ArrayList();
+        List<Double> returnList = new ArrayList<>();
+        Value member;
+        for (int i = 1; i < setlList.size() + 1; i++) {
+            member = setlList.getMember(i);
+
+            double m = member.toDouble(state).jDoubleValue();
+
+            returnList.add(m);
+        }
+        return returnList;
+    }
+
+    public static List<List<Double>> convertSetlListToListOfListOfDouble(SetlList setlList, State state) throws SetlException {
+        List<List<Double>> returnList = new ArrayList<>();
         Value member;
         for (int i = 1; i < setlList.size() + 1; i++) {
             member = setlList.getMember(i);
             if (member instanceof SetlList) {
-                returnList.add(convertSetlListAsDouble((SetlList) member, state));
+                returnList.add(convertSetlListToListOfDouble((SetlList) member, state));
             } else {
-
-                double m = member.toDouble(state).jDoubleValue();
-
-                returnList.add(m);
+                throw new IncompatibleTypeException("List of List of numbers expected");
             }
         }
         return returnList;
     }
 
-    public static List convertSetlListAsInteger(SetlList setlList) throws SetlException {
-        List returnList = new ArrayList();
+    public static List<Integer> convertSetlListToListOfInteger(SetlList setlList) throws SetlException {
+        List<Integer> returnList = new ArrayList<>();
         Value member;
         for (int i = 1; i < setlList.size() + 1; i++) {
             member = setlList.getMember(i);
-            if (member instanceof SetlList) {
-                returnList.add(convertSetlListAsInteger((SetlList) member));
-            } else {
 
-                int m = member.jIntValue();
+            int m = member.jIntValue();
 
-                returnList.add(m);
-            }
+            returnList.add(m);
         }
         return returnList;
     }
 
-    public static List convertSetlListAsString(SetlList setlList) throws SetlException {
-        List returnList = new ArrayList();
+    public static List<String> convertSetlListToListOfString(SetlList setlList) throws SetlException {
+        List<String> returnList = new ArrayList<>();
         Value member;
         for (int i = 1; i < setlList.size() + 1; i++) {
             member = setlList.getMember(i);
-            if (member instanceof SetlList) {
-                returnList.add(convertSetlListAsString((SetlList) member));
-            } else {
 
-                String m = member.toString().replace("\"", "");
+            String m = member.toString().replace("\"", "");
 
-                returnList.add(m);
-            }
+            returnList.add(m);
         }
         return returnList;
     }

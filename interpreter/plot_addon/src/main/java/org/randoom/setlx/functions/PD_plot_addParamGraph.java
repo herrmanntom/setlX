@@ -82,7 +82,7 @@ public class PD_plot_addParamGraph extends PreDefinedProcedure {
             throw new UndefinedOperationException("Fifth parameter ParameterBounds has to consist of Numbers (eq. [-1, 3])");
         }
 
-        List<Double> limitsList = ConvertSetlTypes.convertSetlListAsDouble(limitsV, state);
+        List<Double> limitsList = ConvertSetlTypes.convertSetlListToListOfDouble(limitsV, state);
 
         Value graphColorV = args.get(GRAPHCOLOR);
         Value plotArea = args.get(PLOTAREA);
@@ -107,13 +107,13 @@ public class PD_plot_addParamGraph extends PreDefinedProcedure {
                 throw new UndefinedOperationException("Sixth parameter graphcolor has to consist of exactly three values (eq. [0,0,0])");
             }
 
-            List<Integer> graphColor = ConvertSetlTypes.convertSetlListAsInteger(graphColorS);
+            List<Integer> graphColor = ConvertSetlTypes.convertSetlListToListOfInteger(graphColorS);
             return ConnectJFreeChart.getInstance().addParamGraph(canvas, xFunction, yFunction, graphName, state, graphColor, area, limitsList);
         }
 
 
         //if no optional parameter is set
-        List<Integer> graphColor = new ArrayList();
+        List<Integer> graphColor = new ArrayList<>();
         graphColor.add(0);
         graphColor.add(0);
         graphColor.add(0);

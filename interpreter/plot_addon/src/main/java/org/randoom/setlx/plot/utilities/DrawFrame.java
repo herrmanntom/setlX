@@ -10,6 +10,7 @@ import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 import org.jfree.ui.TextAnchor;
 import org.randoom.setlx.exceptions.SetlException;
+import org.randoom.setlx.plot.types.Graph;
 import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.types.Value;
 
@@ -19,22 +20,31 @@ import java.util.List;
 
 
 public class DrawFrame extends AbstractFrame {
-    XYPlot plot;
+    private static final long serialVersionUID = 7233915032099797173L;
+
+    private XYPlot plot;
+
     @Override
     protected Plot getPlot() {
         return this.plot;
     }
 
-    protected List<Graph> functions = new ArrayList();
+    private List<Graph> functions = new ArrayList<>();
 
     @Override
-    protected List getFunctions() {
-        return this.functions;
+    protected List<Value> getFunctions() {
+        return new ArrayList<Value>(this.functions);
     }
 
     @Override
-    protected void setFunctions(List fun) {
-        this.functions = fun;
+    protected void setFunctions(List<Value> fun) {
+        List<Graph> functions = new ArrayList<>();
+        for (Value value : fun) {
+            if (value instanceof Graph) {
+                functions.add((Graph) value);
+            }
+        }
+        this.functions = functions;
     }
 
     public void setxAxis(ValueAxis xAxis) {
@@ -77,10 +87,11 @@ public class DrawFrame extends AbstractFrame {
         plot = null;
     }
 
+    @Override
     protected void remakeFunctions() throws SetlException {
         plot = new XYPlot(new XYSeriesCollection(), (ValueAxis)xAxis, (ValueAxis)yAxis, new XYLineAndShapeRenderer());
         this.redraw();
-        ArrayList<Graph> func = new ArrayList(functions);
+        ArrayList<Graph> func = new ArrayList<>(functions);
         functions.clear();
         for (Graph item : func) {
             if (!item.getFunctionstring().isEmpty()) {
@@ -168,6 +179,7 @@ public class DrawFrame extends AbstractFrame {
         return plotfun;
     }
 
+    @Override
     public void setLabel(String xLabel, String yLabel) {
         plot.getDomainAxis().setLabel(xLabel);
         plot.getRangeAxis().setLabel(yLabel);
@@ -175,6 +187,7 @@ public class DrawFrame extends AbstractFrame {
         yAxis.setLabel(yLabel);
     }
 
+    @Override
     public Value addTextLabel(List<Double> coordinates, String text) {
         Graph labelGraph = new Graph(text, false, new State());
         labelGraph.setCoordinates(coordinates);

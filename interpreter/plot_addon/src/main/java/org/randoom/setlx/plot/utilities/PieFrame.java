@@ -5,6 +5,7 @@ import org.jfree.chart.plot.Plot;
 import org.jfree.data.general.DefaultPieDataset;
 import org.randoom.setlx.exceptions.IllegalRedefinitionException;
 import org.randoom.setlx.exceptions.SetlException;
+import org.randoom.setlx.plot.types.Chart1D;
 import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.Value;
 
@@ -15,6 +16,8 @@ import java.util.List;
  * Created by arne on 03.06.15.
  */
 public class PieFrame extends AbstractFrame {
+    private static final long serialVersionUID = 3907053936452489199L;
+
     private PiePlot plot;
     @Override
     protected Plot getPlot() {
@@ -22,15 +25,22 @@ public class PieFrame extends AbstractFrame {
     }
 
     private DefaultPieDataset dataset = new DefaultPieDataset();
-    private List<Chart> functions = new ArrayList();
+    private List<Chart1D> functions = new ArrayList<>();
     @Override
-    protected List getFunctions() {
-        return this.functions;
+    protected List<Value> getFunctions() {
+        return new ArrayList<Value>(this.functions);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
-    protected void setFunctions(List fun) {
-        this.functions = fun;
+    protected void setFunctions(List<Value> fun) {
+        List<Chart1D> functions = new ArrayList<>();
+        for (Value value : fun) {
+            if (value instanceof Chart1D) {
+                functions.add((Chart1D) value);
+            }
+        }
+        this.functions = functions;
     }
 
     @Override
@@ -47,9 +57,9 @@ public class PieFrame extends AbstractFrame {
         chartCount = functions.size();
         dataset.clear();
         plot = null;
-        ArrayList<Chart> func = new ArrayList<Chart>(functions);
+        ArrayList<Chart1D> func = new ArrayList<>(functions);
         functions.clear();
-        for(Chart chart: func){
+        for(Chart1D chart: func){
             this.addPieChart(chart.getValues(), chart.getCategories());
         }
         this.redraw();
@@ -59,13 +69,13 @@ public class PieFrame extends AbstractFrame {
         throw new IllegalRedefinitionException("Pie Charts doesnt have Axis Labels.");
     }
 
-    public Chart addPieChart(List<Double> values, List<String> categories) {
+    public Chart1D addPieChart(List<Double> values, List<String> categories) {
         dataset.clear();
         functions.clear();
         for(int i = 0; i < values.size(); i++){
             dataset.setValue(categories.get(i), values.get(i));
         }
-        Chart chart = new Chart(values, categories, "series"+chartCount, false);
+        Chart1D chart = new Chart1D(values, categories, "series"+chartCount, false);
         plot = new PiePlot(dataset);
 
         functions.add(chart);

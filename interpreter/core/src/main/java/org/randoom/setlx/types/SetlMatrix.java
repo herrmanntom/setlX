@@ -747,7 +747,7 @@ public class SetlMatrix extends IndexedCollectionValue {
      * @return 3-tuple of matrices [U, S, V]
      */
     public SetlList singularValueDecomposition(State state) {
-        SingularValueDecomposition result = this.matrix.svd();
+        FixedSingularValueDecomposition result = new FixedSingularValueDecomposition(this.matrix.svd());
         SetlList container = new SetlList();
         container.addMember(state, new SetlMatrix(result.getU()));
         container.addMember(state, new SetlMatrix(result.getS()));

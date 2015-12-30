@@ -1,8 +1,9 @@
 #!/bin/sh
 
-sourceGrammar="../interpreter/core/src/main/antlr/SetlXgrammar.g"
-targetGrammar="Pure.g"
-EBNF_extractor="EBNF_extractor/EBNF.jar"
+sourceGrammar="../interpreter/core/src/main/antlr4/org/randoom/setlx/grammar/SetlXgrammar.g4"
+targetGrammar="Pure.g4"
+targetGrammarForTester="grammar_tester/src/main/antlr4/Pure.g4"
+EBNF_extractor="EBNF_extractor/EBNF_extractor-1.0.0-jar-with-dependencies.jar"
 
 tmpFileA=$(mktemp -t pure_g-XXXXXXXXXX)
 tmpFileB=$(mktemp -t pure_g-XXXXXXXXXX)
@@ -24,5 +25,6 @@ grep "^REMAINDER " "$sourceGrammar" >> "$tmpFileA"
 echo "" >> "$tmpFileA"
 
 mv "$tmpFileA" "$targetGrammar"
+cp "$targetGrammar" "$targetGrammarForTester"
 rm "$tmpFileB"
 

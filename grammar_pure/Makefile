@@ -1,24 +1,16 @@
-CLASSPATH=.:../interpreter/libs/antlr-4.4-complete.jar
 
-run: PureLexer.class PureParser.class ParsePure.class input.stlx
-	java  -cp $(CLASSPATH) ParsePure < input.stlx
+run: grammar_tester/grammar_tester-1.0.0-jar-with-dependencies.jar input.stlx
+	java  -jar grammar_tester/grammar_tester-1.0.0-jar-with-dependencies.jar < input.stlx
 
-PureLexer.class PureParser.class ParsePure.class: PureLexer.java PureParser.java ParsePure.java
-	javac -cp $(CLASSPATH) *.java
+grammar_tester/grammar_tester-1.0.0-jar-with-dependencies.jar: grammar_tester/src/main/antlr4/Pure.g4
+	cd grammar_tester; mvn verify; cd -
 
-Pure.tokens PureLexer.java PureParser.java: Pure.g
-	java  -cp $(CLASSPATH) org.antlr.v4.Tool -no-listener -Werror Pure.g
-
-Pure.g: ../interpreter/core/src/main/antlr/SetlXgrammar.g
-	cd EBNF_extractor; ant; cd -
+Pure.g4 grammar_tester/src/main/antlr4/Pure.g4: ../interpreter/core/src/main/antlr4/org/randoom/setlx/grammar/SetlXgrammar.g4
+	cd EBNF_extractor; mvn verify; cd -
 	sh create_pure_grammar.sh
 
-update: Pure.g
+update: Pure.g4
 
 clean:
-	rm -f *.class
-	rm -f Pure.tokens
-	rm -f PureLexer.java
-	rm -f PureLexer.tokens
-	rm -f PureParser.java
-	cd EBNF_extractor; ant dist-clean
+	cd grammar_tester; mvn clean -P dist-clean
+	cd EBNF_extractor; mvn clean -P dist-clean

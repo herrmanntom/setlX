@@ -1,5 +1,0 @@
-c := plot_createCanvas();
-bar0 := plot_addBarChart(c, [5000], ["no selfdefined name in legend"]);
-bar1 := plot_addBarChart(c, [4351, 1136, 971, 741, 39, 7238], ["Asia", "Africa", "America", "Europe", "Oceania", "World"], "worldpopulation 2014 (in mio.)");
-bar2 := plot_addBarChart(c, [5252, 2428, 1217, 726, 60, 9683], ["Asia", "Africa", "America", "Europe", "Oceania", "World"], "worldpopulation 2050 (in mio.)");
-plot_defineTitle(c, "worldpopulation in 2014 and 2050");

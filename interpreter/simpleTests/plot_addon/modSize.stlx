@@ -1,2 +1,0 @@
-c := plot_createCanvas();
-plot_modSize(c, [800, 600]);

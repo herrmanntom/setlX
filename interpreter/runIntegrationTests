@@ -1,0 +1,25 @@
+#!/bin/bash
+#
+#
+# launcher script for the setlX integration tests
+#
+#
+
+# rebuild the interpreter from scratch
+mvn clean install
+rc=$?
+
+if [[ $rc == 0 ]]; then
+
+    # discover all test files
+    tests=()
+    while read -r -d $'\0' path; do
+        tests=("${tests[@]}" "$path")
+    done < <( find -L "integrationTests" -name "*.stlx" -print0 )
+
+    for path in "${tests[@]}"; do
+        ./setlX --runtimeDebugging "$path"
+    done
+fi
+
+exit $rc

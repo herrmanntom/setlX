@@ -19,8 +19,8 @@ exampleDirs=("example_SetlX_code" "Tutorial/Examples")
 renice -n 10 $$
 
 # prepare the interpreter
-simpleTest="interpreter/simpleTests/core/test.stlx"
-cd interpreter; ant -emacs -logger org.apache.tools.ant.NoBannerLogger test >"$tmpFile" 2>&1; cd ..
+simpleTest="interpreter/IntegrationTest/core.stlx"
+cd interpreter; ./runIntegrationTests >"$tmpFile" 2>&1; cd ..
 
 # check for failed tests
 failedCount=$(grep -c "failed" "$tmpFile")

@@ -1,3 +1,0 @@
-c := plot_createCanvas();
-plot_defineTitle(c, "Title of Canvas");
-g := plot_addBullets(c, [[0,0]]);

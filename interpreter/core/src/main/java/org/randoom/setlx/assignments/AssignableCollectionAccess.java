@@ -5,8 +5,6 @@ import org.randoom.setlx.exceptions.UndefinedOperationException;
 import org.randoom.setlx.exceptions.UnknownFunctionException;
 import org.randoom.setlx.operatorUtilities.OperatorExpression;
 import org.randoom.setlx.operators.CollectionAccess;
-import org.randoom.setlx.operators.MemberAccess;
-import org.randoom.setlx.operators.Variable;
 import org.randoom.setlx.types.Om;
 import org.randoom.setlx.types.SetlList;
 import org.randoom.setlx.types.Value;

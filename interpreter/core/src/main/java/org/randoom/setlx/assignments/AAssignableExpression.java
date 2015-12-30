@@ -1,8 +1,6 @@
 package org.randoom.setlx.assignments;
 
 import org.randoom.setlx.exceptions.SetlException;
-import org.randoom.setlx.exceptions.UndefinedOperationException;
-import org.randoom.setlx.operatorUtilities.OperatorExpression;
 import org.randoom.setlx.utilities.Expression;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.State;

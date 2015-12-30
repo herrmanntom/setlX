@@ -4,7 +4,7 @@ import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.types.SetlBoolean;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.ParameterDef;
-import org.randoom.setlx.utilities.SetlXUserPanel;
+import org.randoom.setlx.gfx.utilities.SetlXUserPanel;
 import org.randoom.setlx.utilities.State;
 
 import java.util.HashMap;

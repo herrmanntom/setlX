@@ -4,7 +4,7 @@ import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.types.Rational;
 import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.Value;
-import org.randoom.setlx.utilities.ConnectJFreeChart;
+import org.randoom.setlx.plot.utilities.ConnectJFreeChart;
 import org.randoom.setlx.utilities.ParameterDef;
 import org.randoom.setlx.utilities.State;
 

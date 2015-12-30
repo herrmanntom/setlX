@@ -1,13 +1,12 @@
 package org.randoom.setlx.functions;
 
 import org.randoom.setlx.exceptions.SetlException;
-import org.randoom.setlx.types.Om;
 import org.randoom.setlx.types.SetlBoolean;
 import org.randoom.setlx.types.SetlDouble;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.ParameterDef;
 import org.randoom.setlx.utilities.State;
-import org.randoom.setlx.utilities.StdDraw;
+import org.randoom.setlx.gfx.utilities.StdDraw;
 
 import java.util.HashMap;
 

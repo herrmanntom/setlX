@@ -1,6 +1,6 @@
 package org.randoom.setlx.functions;
 
-import org.randoom.setlx.utilities.StdDraw;
+import org.randoom.setlx.gfx.utilities.StdDraw;
 
 public class PD_gfx_filledSquare extends GfxXYRFunction {
     public final static PreDefinedProcedure DEFINITION = new PD_gfx_filledSquare();

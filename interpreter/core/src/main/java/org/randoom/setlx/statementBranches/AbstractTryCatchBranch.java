@@ -5,8 +5,6 @@ import org.randoom.setlx.exceptions.CatchableInSetlXException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.exceptions.ThrownInSetlXException;
-import org.randoom.setlx.assignments.AAssignableExpression;
-import org.randoom.setlx.operators.Variable;
 import org.randoom.setlx.statements.Block;
 import org.randoom.setlx.types.SetlError;
 import org.randoom.setlx.types.Term;

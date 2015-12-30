@@ -12,7 +12,6 @@ import org.randoom.setlx.utilities.ParameterDef.ParameterType;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 /**
  * Base class for all procedures, which can be loaded at runtime by setlX.

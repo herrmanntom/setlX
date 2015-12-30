@@ -1,4 +1,7 @@
-package Jama;
+package org.randoom.setlx.utilities;
+
+import Jama.Matrix;
+import Jama.SingularValueDecomposition;
 
 import java.lang.reflect.Field;
 

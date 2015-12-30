@@ -176,7 +176,7 @@ echo "done"
 
 # remove the jars
 cd "$OVERRIDE_setlXJarDirectory"
-ant dist-clean
+mvn clean -P dist-clean
 cd ..
 
 # create development zip

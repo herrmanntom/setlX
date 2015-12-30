@@ -6,8 +6,8 @@
 
     <groupId>org.randoom.setlx</groupId>
     <artifactId>interpreter</artifactId>
-    <packaging>pom</packaging>
     <version>2.5.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -178,5 +178,11 @@
             </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <profile>
+            <id>dist-clean</id>
+        </profile>
+    </profiles>
 
 </project>

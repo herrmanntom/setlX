@@ -27,6 +27,7 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
                 <configuration>
+                    <attach>false</attach>
                     <finalName>setlX-gfx</finalName>
                     <appendAssemblyId>false</appendAssemblyId>
                     <outputDirectory>${project.basedir}/../</outputDirectory>

@@ -602,7 +602,7 @@ LITERAL         : '\'' ('\'\''|~('\''))* '\'';
 
 LINE_COMMENT    : '//' ~('\n' | '\r')*                      { skip(); } ;
 MULTI_COMMENT   : '/*' (~('*') | '*'+ ~('*'|'/'))* '*'+ '/' { skip(); } ;
-WS              : (' '|'\t'|'\n'|'\r')                      { skip(); } ;
+WS              : (' '|'\t'|'\n'|'\r')+                     { skip(); } ;
 
 /*
  * This is the desperate attempt at counting mismatched characters as errors

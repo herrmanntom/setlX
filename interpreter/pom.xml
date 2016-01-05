@@ -137,13 +137,12 @@
                     <source>${setlX.java.version}</source>
                     <target>${setlX.java.version}</target>
                     <showWarnings>true</showWarnings>
-                    <compilerArguments>
-                        <Werror />
-                        <Xlint:all />
-                    </compilerArguments>
+                    <compilerArgs>
+                        <arg>-Werror</arg>
+                        <arg>-Xlint:all</arg>
+                    </compilerArgs>
                     <debug>true</debug>
                     <debuglevel>lines,source</debuglevel>
-                    <fork>true</fork>
                 </configuration>
             </plugin>
 

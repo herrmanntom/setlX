@@ -610,7 +610,7 @@ WS              : (' '|'\t'|'\n'|'\r')+                     { skip(); } ;
  * consuming the character and continuing without counting it as an error.
  *
  * Using this rule all unknown characters are added to the token stream
- * and the parser will stumble over them, reporting "mismatched input"
+ * and the parser will stumble over them, reporting "mismatched input".
  *
  * Matching any character here works, because the lexer matches rules in order.
  */

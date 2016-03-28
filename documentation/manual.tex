@@ -9,9 +9,6 @@
 \globalDate{\today}
 \globalKeywords{readme}
 
-% frequently used configuration options
-\setboolean{linkHighlighting}{true}
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% setup %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \input{config/configuration}
@@ -46,7 +43,6 @@ Designed mostly by Karl Stroetmann, the \SetlX{} language is an evolution of \Se
 It was specifically conceived to make the unique features of \Setl{} more accessible to today's computer science students.
 
 The \setlX{} interpreter, which currently is the \SetlX{} reference implementation, was implemented by Tom Herrmann. Its official homepage is \url{http://setlX.randoom.org/}. You may send bug-reports and\slash{}or questions about the \setlX{} interpreter via e-mail to \mailto{setlx@randoom.org}, or create an issue on github (\url{https://github.com/herrmanntom/setlX}).
-
 
 \section{Installation}
 
@@ -136,7 +132,8 @@ The `file execution mode' will be started if one or more paths to code files are
 When no paths are supplied, the `interactive mode' will be started.\\
 Executing the `\command{exit;}' statement will terminate the interpreter.
 
-\nonSubsection{Additional parameters}
+\subsection*{Additional parameters}
+\addcontentsline{toc}{subsection}{--- Additional parameters}
 
 In addition to file-paths a number of options can be used when running \setlX{}:
 
@@ -227,6 +224,6 @@ However, the \command{setlX} and \command{setlX.cmd} scripts can also be used to
 
 \section{Disclaimer}
 
-\includeListing[e]{../license.txt}{}{license}{}{setlX license}
+\includeListing[h]{../license.txt}{}{license}{}{setlX license}
 
 \end{document}

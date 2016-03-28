@@ -1,22 +1,12 @@
 \documentclass[a4paper,oneside]{scrartcl}
-\def\myDocumentType{article}
-
-% conditionals
-\usepackage{ifthen}
 
 % enable special German/European characters
 %\usepackage[official]{eurosym}
 \usepackage{ucs}
 \usepackage[utf8x]{inputenc}
 
-%% set available languages
-%\usepackage[ngerman,english]{babel}
-
 % enable (code) listings
 \usepackage{listings}
-
-%% enable graphics
-%\usepackage{graphicx}
 
 % add hyperlinks
 \usepackage[
@@ -32,18 +22,44 @@
 % enable bold-face in typewriter
 \DeclareFontShape{OT1}{cmtt}{bx}{n}{<5><6><7><8><9><10><10.95><12><14.4><17.28><20.74><24.88>cmttb10}{}
 
-%%prerender some unicode characters, to enable their use in predefined commands like \title etc
-%\PrerenderUnicode{ÄäÖöÜüß}
-
-%% same for listings
-%\lstset{literate= {Ö}{{\"O}}1 {Ä}{{\"A}}1 {Ü}{{\"U}}1 {ß}{{\ss}}2 {ü}{{\"u}}1 {ä}{{\"a}}1 {ö}{{\"o}}1 }
-
-% booleans for settings
-\newboolean{linkHighlighting}
-\newboolean{tablesAsFigures}
-\newboolean{listingsAsFigures}
-\newboolean{tocAllingnNonChaptersWithNumberedChapters}
-\newboolean{tocAllingnNonSectionsWithNumberedSections}
-
 % load commands
-\input{config/commands}
+% new title etc commands, which set latex, pdf attribute and defines \gtitle etc for later use
+\newcommand{\globalTitle}[1]{
+	\title{#1}
+	\hypersetup{pdftitle={#1}}
+	\def\gTitle{#1}
+}
+\newcommand{\globalSubject}[1]{
+	\ifdefined\subject
+		\subject{#1}
+	\fi
+	\hypersetup{pdfsubject={#1}}
+	\def\gSubject{#1}
+}
+\newcommand{\globalAuthor}[1]{
+	\author{#1}
+	\hypersetup{pdfauthor={#1}}
+	\def\gAuthor{#1}
+}
+\newcommand{\globalDate}[1]{
+	\date{#1}
+	\def\gDate{#1}
+}
+\newcommand{\globalKeywords}[1]{
+	\hypersetup{pdfkeywords={#1}}
+	\def\gKeywords{#1}
+}
+
+% new listing command, which provides a caption and labels
+\newcommand{\includeListing}[6][h]{
+	\begin{figure}[#1] % position
+		\begin{center}
+		{\lstinputlisting[#3]{#2}} % content
+		\caption[#5]{#6\label{#4}} % short caption | caption | label
+		\end{center}
+	\end{figure}
+}
+
+% mail address with reduced margin for error
+\newcommand{\mailto}[1]{\mbox{\href{mailto:#1}{\texttt{#1}}}} % teletype style makes it look similar to \url{}
+

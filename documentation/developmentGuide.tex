@@ -7,10 +7,6 @@
 \globalSubject{setlX v\input{version}}
 \globalAuthor{Herrmann, Tom}
 \globalDate{\today}
-\globalKeywords{}
-
-% frequently used configuration options
-\setboolean{linkHighlighting}{true}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% setup %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -147,9 +143,10 @@ public final static PreDefinedProcedure
 
 A simple predefined procedure without parameters is shown in figure \ref{lblPDFunction}.
 
-\includeListing[e]{../interpreter/core/src/main/java/org/randoom/setlx/functions/PD_now.java}{}{lblPDFunction}{}{Predefined Procedure `\command{now()}'}
+\includeListing{../interpreter/core/src/main/java/org/randoom/setlx/functions/PD_now.java}{}{lblPDFunction}{}{Predefined Procedure `\command{now()}'}
 
-\nonSubsubsection{Using Parameters in Predefined Procedures}
+\subsubsection*{Using Parameters in Predefined Procedures}
+\addcontentsline{toc}{subsubsection}{--- Using Parameters in Predefined Procedures}
 
 If the predefined procedure uses parameters, they have to be defined as static constants before
 `\command{DEFINITION}' is initialized:
@@ -197,7 +194,7 @@ args.put(VALUE, Rational.TWO);
 
 A predefined procedure using a single read-write parameter is shown in figure \ref{lblPDFunctionRW}.
 
-\includeListing[e]{../interpreter/core/src/main/java/org/randoom/setlx/functions/PD_from.java}{showstringspaces=false}{lblPDFunctionRW}{}{Predefined Procedure `\command{from()}' using a read-write parameter}
+\includeListing{../interpreter/core/src/main/java/org/randoom/setlx/functions/PD_from.java}{showstringspaces=false}{lblPDFunctionRW}{}{Predefined Procedure `\command{from()}' using a read-write parameter}
 
 \section{Build Targets}
 

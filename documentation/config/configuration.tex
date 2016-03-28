@@ -8,25 +8,13 @@
 \areaset[5mm]{425pt}{675pt}
 
 % enable or disable all indication of links
-\ifthenelse{\boolean{linkHighlighting}} {
-  % then
-	\hypersetup{
-		colorlinks=true, % set all link colors to blue
-		linkcolor=blue,
-		citecolor=red,
-		pdfborder={0 0 0} % make sure border around links stays disabled
-	}
-}{
-  % else
-	\hypersetup{
-		colorlinks=false, % disable link colors
-		pdfborder={0 0 0} % make sure border around links stays disabled
-	}
-}
 
-% set this, if you use nonSections or nonSubsections on the same level as normal numbered sections or subsections
-\setboolean{tocAllingnNonChaptersWithNumberedChapters}{false}
-\setboolean{tocAllingnNonSectionsWithNumberedSections}{false}
+\hypersetup{
+	colorlinks=true, % set all link colors to blue
+	linkcolor=blue,
+	citecolor=red,
+	pdfborder={0 0 0} % make sure border around links stays disabled
+}
 
 % default settings for listings 
 \lstset{
@@ -42,13 +30,6 @@
 	extendedchars=false % disable special char handling
 	showstringspaces=false, % do not show special spaces character in strings
 }
-
-% set this to true, if tables should be treated as figures (also added to \listoffigures)
-\setboolean{tablesAsFigures}{true}
-% set this to true, if listings should be treated as figures (also added to \listoffigures)
-\setboolean{listingsAsFigures}{true}
-
-%%%%%%%%%%%%%%%%%%%%% special stuff for setlX project %%%%%%%%%%%%%%%%%%%%%
 
 %%% format aliases for reformation in a context sensitive way
 
@@ -76,3 +57,4 @@
 \def\SetlX{\textsc{SetlX}}    % SetlX --- the language
 \def\Setl{\textsc{Setl}}      % Setl  --- the language
 \def\SetlTwo{\textsc{Setl2}}  % Setl2 --- the language
+

@@ -28,7 +28,7 @@ import java.util.List;
  */
 public class Match extends Statement {
     // functional character used in terms
-    private final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(Match.class);
+    private final static String FUNCTIONAL_CHARACTER = TermUtilities.generateFunctionalCharacter(Match.class);
 
     private final OperatorExpression expr;
     private final FragmentList<AbstractMatchBranch> branchList;

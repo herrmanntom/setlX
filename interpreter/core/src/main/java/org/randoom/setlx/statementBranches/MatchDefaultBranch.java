@@ -25,7 +25,7 @@ import java.util.List;
  */
 public class MatchDefaultBranch extends AbstractMatchScanBranch {
     // functional character used in terms
-    private final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(MatchDefaultBranch.class);
+    private final static String FUNCTIONAL_CHARACTER = TermUtilities.generateFunctionalCharacter(MatchDefaultBranch.class);
     /**
      * Offset returned when the default branch matched.
      */

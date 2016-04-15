@@ -12,6 +12,7 @@ import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.CodeFragment;
 import org.randoom.setlx.utilities.FragmentList;
 import org.randoom.setlx.utilities.State;
+import org.randoom.setlx.utilities.TermUtilities;
 
 import java.util.List;
 
@@ -19,7 +20,7 @@ import java.util.List;
  * Operator that gets a variable from the current scope and puts it on the stack.
  */
 public class Assignment extends AUnaryPrefixOperator {
-    private final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(Assignment.class);
+    private final static String FUNCTIONAL_CHARACTER = TermUtilities.generateFunctionalCharacter(Assignment.class);
 
     private final AAssignableExpression assignableExpression;
 

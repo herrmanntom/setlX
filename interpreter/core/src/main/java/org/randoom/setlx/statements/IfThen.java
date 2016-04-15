@@ -11,6 +11,7 @@ import org.randoom.setlx.utilities.CodeFragment;
 import org.randoom.setlx.utilities.FragmentList;
 import org.randoom.setlx.utilities.ReturnMessage;
 import org.randoom.setlx.utilities.State;
+import org.randoom.setlx.utilities.TermUtilities;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,7 +33,7 @@ import java.util.List;
  */
 public class IfThen extends Statement {
     // functional character used in terms
-    private final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(IfThen.class);
+    private final static String FUNCTIONAL_CHARACTER = TermUtilities.generateFunctionalCharacter(IfThen.class);
 
     private final FragmentList<AbstractIfThenBranch> branchList;
 

@@ -244,11 +244,11 @@ formatedString := procedure() {
 formatedString();
 
 precedences := procedure() {
-    a := str(   ^conjunction(^disjunction(^disjunction(     ^variable("a"),       ^variable("b")   ),
-                                          ^conjunction(^not(^variable("a")), ^not(^variable("b"))  )
+    a := str(   ^^^conjunction(^^^disjunction(^^^disjunction(     ^^^variable("a"),       ^^^variable("b")   ),
+                                          ^^^conjunction(^^^not(^^^variable("a")), ^^^not(^^^variable("b"))  )
                                          ),
-                             ^disjunction(^disjunction(     ^variable("a"),       ^variable("b")   ),
-                                          ^conjunction(^not(^variable("a")), ^not(^variable("b"))  )
+                             ^^^disjunction(^^^disjunction(     ^^^variable("a"),       ^^^variable("b")   ),
+                                          ^^^conjunction(^^^not(^^^variable("a")), ^^^not(^^^variable("b"))  )
                                          )
                             )
             );
@@ -398,17 +398,17 @@ grammarTests := procedure() {
         }
 
         // negative numbers vs unary minus vs binary minus
-        if (parseStatements("x := -2;") == ^block([^assignment(^variable("x"), ^minus(2))])) {
+        if (parseStatements("x := -2;") == ^^^block([^^^assignment(^^^variable("x"), ^^^minus(2))])) {
             correct := correct && true;
         } else {
             correct := false;
         }
-        if (parseStatements("x:= x-2;") == ^block([^assignment(^variable("x"), ^difference(^variable("x"), 2))])) {
+        if (parseStatements("x:= x-2;") == ^^^block([^^^assignment(^^^variable("x"), ^^^difference(^^^variable("x"), 2))])) {
             correct := correct && true;
         } else {
             correct := false;
         }
-        if (parseStatements("x := x-2*x;") == ^block([^assignment(^variable("x"), ^difference(^variable("x"), ^product(2, ^variable("x"))))])) {
+        if (parseStatements("x := x-2*x;") == ^^^block([^^^assignment(^^^variable("x"), ^^^difference(^^^variable("x"), ^^^product(2, ^^^variable("x"))))])) {
             correct := correct && true;
         } else {
             correct := false;

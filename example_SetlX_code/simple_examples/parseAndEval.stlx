@@ -20,7 +20,7 @@ getInput := procedure() {
     getExpr := procedure() {
         try {
             expr:= parse(get("Please enter some SetlX expression using 'value' as variable: "));
-            if (! isTerm(expr) || "^variable(\"value\")" notin canonical(expr)) {
+            if (! isTerm(expr) || "^^^variable(\"value\")" notin canonical(expr)) {
                 throw("wrong!");
             }
             return expr;

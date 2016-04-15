@@ -32,7 +32,7 @@ import java.util.List;
  */
 public class SetlIterator extends ImmutableCodeFragment {
     // functional character used in terms
-    private final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(SetlIterator.class);
+    private final static String FUNCTIONAL_CHARACTER = TermUtilities.generateFunctionalCharacter(SetlIterator.class);
 
     private final AAssignableExpression assignable;
     private final OperatorExpression           collection;

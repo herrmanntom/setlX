@@ -24,7 +24,7 @@ import org.randoom.setlx.utilities.TermUtilities;
  */
 public class IntegerDivisionAssignment extends AbstractAssignment {
     // functional character used in terms
-    private final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(IntegerDivisionAssignment.class);
+    private final static String FUNCTIONAL_CHARACTER = TermUtilities.generateFunctionalCharacter(IntegerDivisionAssignment.class);
 
     /**
      * Create new IntegerDivisionAssignment.

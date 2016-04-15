@@ -8,6 +8,7 @@ import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.ParameterDef;
 import org.randoom.setlx.utilities.State;
+import org.randoom.setlx.utilities.TermUtilities;
 
 import java.util.HashMap;
 
@@ -45,7 +46,7 @@ public class PD_makeTerm extends PreDefinedProcedure {
         String fct = arg0.getUnquotedString(state);
 
         // check if name is usable as term (fist char is upper case or single quote ( ' ))
-        if (fct.length() > 0 && (fct.charAt(0) == '^' || Character.isUpperCase(fct.charAt(0)))) {
+        if (TermUtilities.isInternalFunctionalCharacter(fct) || (fct.length() > 0 && Character.isUpperCase(fct.charAt(0)))) {
             // use correct internal representation when user wants to create a variable
             if (fct.equals(Variable.getFunctionalCharacterExternal())) {
                 fct = Variable.getFunctionalCharacter();
@@ -54,7 +55,7 @@ public class PD_makeTerm extends PreDefinedProcedure {
             return new Term(fct, (SetlList) arg1);
         } else {
             throw new IncompatibleTypeException(
-                "FunctionalCharacter '" + fct + "' must start with an upper case letter or a hat ('^')."
+                "FunctionalCharacter '" + fct + "' must start with an upper case letter or three hats ('" + TermUtilities.getPrefixOfInternalFunctionalCharacters() + "')."
             );
         }
     }

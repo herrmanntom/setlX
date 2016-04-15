@@ -34,7 +34,7 @@ import java.util.regex.PatternSyntaxException;
  */
 public class MatchRegexBranch extends AbstractMatchScanBranch {
     // functional character used in terms
-    private final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(MatchRegexBranch.class);
+    private final static String FUNCTIONAL_CHARACTER = TermUtilities.generateFunctionalCharacter(MatchRegexBranch.class);
 
     private final OperatorExpression pattern;  // pattern to match
     private       Pattern runtimePattern;      // compiled pattern to match

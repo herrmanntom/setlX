@@ -8,13 +8,14 @@ import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.FragmentList;
 import org.randoom.setlx.utilities.State;
+import org.randoom.setlx.utilities.TermUtilities;
 
 /**
  * Operator that evaluates implication and puts the result on the stack.
  */
 public class Implication extends ALazyBinaryInfixOperator {
 
-    private static final String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(Implication.class);
+    private static final String FUNCTIONAL_CHARACTER = TermUtilities.generateFunctionalCharacter(Implication.class);
 
     /**
      * Create a new Implication operator.

@@ -9,6 +9,7 @@ import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.CodeFragment;
 import org.randoom.setlx.utilities.ReturnMessage;
 import org.randoom.setlx.utilities.State;
+import org.randoom.setlx.utilities.TermUtilities;
 
 import java.util.List;
 
@@ -27,7 +28,7 @@ import java.util.List;
  */
 public class ClassConstructor extends Statement {
     // functional character used in terms
-    private final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(ClassConstructor.class);
+    private final static String FUNCTIONAL_CHARACTER = TermUtilities.generateFunctionalCharacter(ClassConstructor.class);
 
     private final String    name;
     private final SetlClass classDefinition;

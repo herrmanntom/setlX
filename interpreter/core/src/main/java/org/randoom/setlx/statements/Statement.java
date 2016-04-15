@@ -23,7 +23,7 @@ import java.util.Map;
  * Base class for all SetlX statement.
  */
 public abstract class Statement extends ImmutableCodeFragment {
-    private final static Map<String, Method> STATEMENT_CONVERTERS = new HashMap<String, Method>();
+    private final static Map<String, Method> STATEMENT_CONVERTERS = new HashMap<>();
     /**
      * Code returned by executeWithErrorHandling().
      */
@@ -149,7 +149,7 @@ public abstract class Statement extends ImmutableCodeFragment {
             final Term term = (Term) value;
             final String functionalCharacter = term.getFunctionalCharacter();
 
-            if (functionalCharacter.length() >= 3 && functionalCharacter.charAt(0) == '^') { // all internally used terms start with ^
+            if (TermUtilities.isInternalFunctionalCharacter(functionalCharacter)) {
                 Method converter;
                 synchronized (STATEMENT_CONVERTERS) {
                     converter = STATEMENT_CONVERTERS.get(functionalCharacter);

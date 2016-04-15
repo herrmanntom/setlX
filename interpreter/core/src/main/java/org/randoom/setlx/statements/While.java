@@ -27,7 +27,7 @@ import java.util.List;
  */
 public class While extends Statement {
     // functional character used in terms
-    private final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(While.class);
+    private final static String FUNCTIONAL_CHARACTER = TermUtilities.generateFunctionalCharacter(While.class);
 
     private final Condition condition;
     private final Block     statements;

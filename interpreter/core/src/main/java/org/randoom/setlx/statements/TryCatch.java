@@ -30,7 +30,7 @@ import java.util.List;
  */
 public class TryCatch extends Statement {
     // functional character used in terms
-    private final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(TryCatch.class);
+    private final static String FUNCTIONAL_CHARACTER = TermUtilities.generateFunctionalCharacter(TryCatch.class);
 
     private final Block                                blockToTry;
     private final FragmentList<AbstractTryCatchBranch> tryList;

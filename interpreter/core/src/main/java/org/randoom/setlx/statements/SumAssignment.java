@@ -24,7 +24,7 @@ import org.randoom.setlx.utilities.TermUtilities;
  */
 public class SumAssignment extends AbstractAssignment {
     // functional character used in terms
-    private final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(SumAssignment.class);
+    private final static String FUNCTIONAL_CHARACTER = TermUtilities.generateFunctionalCharacter(SumAssignment.class);
 
     /**
      * Create new SumAssignment.

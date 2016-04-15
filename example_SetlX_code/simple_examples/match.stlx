@@ -60,8 +60,8 @@ exprTerm   := parse(exprString);
 print(canonical(exprTerm));
 
 match (exprTerm) {
-    case fnc(u + _ ** v)              // because the function name is a variable, every function call with fitting arguments matches
-         | fnc == ^variable("sqrt"):  // thats why we further restrict it to match only the name of the sqrt function
+    case fnc(u + _ ** v)                // because the function name is a variable, every function call with fitting arguments matches
+         | fnc == ^^^variable("sqrt"):  // thats why we further restrict it to match only the name of the sqrt function
         print("match: fnc = $fnc$, u = $u$, v = $v$");
     default :
         print("failed to match");

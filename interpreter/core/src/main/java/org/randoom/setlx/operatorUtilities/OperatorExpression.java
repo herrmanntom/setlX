@@ -360,7 +360,7 @@ public class OperatorExpression extends Expression {
             final Term term = (Term) value;
             final String functionalCharacter = term.getFunctionalCharacter();
 
-            if (functionalCharacter.length() >= 3 && functionalCharacter.charAt(0) == '^') { // all internally used terms start with ^
+            if (TermUtilities.isInternalFunctionalCharacter(functionalCharacter)) {
                 Method converter;
                 synchronized (OPERATOR_CONVERTERS) {
                     converter = OPERATOR_CONVERTERS.get(functionalCharacter);

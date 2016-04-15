@@ -25,7 +25,7 @@ import java.util.List;
  */
 public class Procedure extends ImmutableValue {
     // functional character used in terms
-    private   final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(Procedure.class);
+    private   final static String FUNCTIONAL_CHARACTER = TermUtilities.generateFunctionalCharacter(Procedure.class);
 
     /**
      * List of parameters.

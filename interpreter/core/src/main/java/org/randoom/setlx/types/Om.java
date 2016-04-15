@@ -2,13 +2,14 @@ package org.randoom.setlx.types;
 
 import org.randoom.setlx.utilities.CodeFragment;
 import org.randoom.setlx.utilities.State;
+import org.randoom.setlx.utilities.TermUtilities;
 
 /**
  * This class represents an undefined value.
  */
 public class Om extends ImmutableValue {
     // functional character used in terms
-    private final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(Om.class);
+    private final static String FUNCTIONAL_CHARACTER = TermUtilities.generateFunctionalCharacter(Om.class);
 
     /**
      * Singleton of the one and only undefined value in setlX.

@@ -8,13 +8,14 @@ import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.FragmentList;
 import org.randoom.setlx.utilities.State;
+import org.randoom.setlx.utilities.TermUtilities;
 
 /**
  * Operator that evaluates conjunction and puts the result on the stack.
  */
 public class Conjunction extends ALazyBinaryInfixOperator {
 
-    private static final String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(Conjunction.class);
+    private static final String FUNCTIONAL_CHARACTER = TermUtilities.generateFunctionalCharacter(Conjunction.class);
 
     /**
      * Create a new Conjunction operator.

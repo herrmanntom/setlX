@@ -14,7 +14,7 @@ Oh... you did that wrong... try again!
 
 expr	:= value + value
 Syntax-Tree:
-expr	:= ^sum(^variable("value"), ^variable("value"))
+expr	:= ^^^sum(^^^variable("value"), ^^^variable("value"))
 
 
 No, No, No... that did not work out!
@@ -25,7 +25,7 @@ value	:= 5
 
 expr	:= value ** value
 Syntax-Tree:
-expr	:= ^power(^variable("value"), ^variable("value"))
+expr	:= ^^^power(^^^variable("value"), ^^^variable("value"))
 
 result	:= 3125
 

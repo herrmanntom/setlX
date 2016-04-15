@@ -24,7 +24,7 @@ import java.util.TimerTask;
  */
 public class VariableScope {
     // functional characters used in terms
-    private     final static String       FUNCTIONAL_CHARACTER_SCOPE = "^scope";
+    private     final static String       FUNCTIONAL_CHARACTER_SCOPE = TermUtilities.generateFunctionalCharacter("Scope");
 
     /**
      * Marker value to signal that value is indeed set, but not allowed to be accessed.
@@ -47,8 +47,8 @@ public class VariableScope {
         private ScopeBindings() {
             timer                 = new Timer(Thread.currentThread().getName() + "::timer", true);
             currentScopeDepth     = 0;
-            validScopeGenerations = new ArrayList<Long>();
-            allBindings           = new HashMap<String, LinkedList<ScopeBinding>>();
+            validScopeGenerations = new ArrayList<>();
+            allBindings           = new HashMap<>();
             thisBindings          = null;
             cleanAllBindings      = false;
 
@@ -178,7 +178,7 @@ public class VariableScope {
      */
     /*package*/ void clearUndefinedAndInnerBindings() {
         scopeBindings.cleanAllBindings = false;
-        final HashMap<String, LinkedList<ScopeBinding>> cleanBindings = new HashMap<String, LinkedList<ScopeBinding>>();
+        final HashMap<String, LinkedList<ScopeBinding>> cleanBindings = new HashMap<>();
         for (final Map.Entry<String, LinkedList<ScopeBinding>> entry : scopeBindings.allBindings.entrySet()) {
             final LinkedList<ScopeBinding> bindings = entry.getValue();
             ScopeBinding last = clearDeprecatedBindings(bindings);
@@ -462,7 +462,7 @@ public class VariableScope {
         }
 
         if (bindings == null) {
-            bindings = new LinkedList<ScopeBinding>();
+            bindings = new LinkedList<>();
             if (isThisBinding) {
                 scopeBindings.thisBindings = bindings;
             } else {
@@ -500,8 +500,8 @@ public class VariableScope {
      * @return                 Map of all reachable bindings.
      * @throws SetlException   Thrown in case of some (user-) error.
      */
-    /*package*/ public SetlHashMap<Value> getAllVariablesInScope(final State state, final SetlHashMap<SetlClass> classDefinitions) throws SetlException {
-        final SetlHashMap<Value> allVars = new SetlHashMap<Value>();
+    public SetlHashMap<Value> getAllVariablesInScope(final State state, final SetlHashMap<SetlClass> classDefinitions) throws SetlException {
+        final SetlHashMap<Value> allVars = new SetlHashMap<>();
         // collect all bindings reachable from current scope
         this.collectBindings(state, allVars);
         if (classDefinitions != null) {

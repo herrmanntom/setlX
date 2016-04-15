@@ -11,6 +11,7 @@ import org.randoom.setlx.utilities.CodeFragment;
 import org.randoom.setlx.utilities.FragmentList;
 import org.randoom.setlx.utilities.MatchResult;
 import org.randoom.setlx.utilities.State;
+import org.randoom.setlx.utilities.TermUtilities;
 
 import java.util.List;
 
@@ -954,7 +955,7 @@ public abstract class Value extends CodeFragment {
         if (value.getClass() == Term.class) {
             final Term   term                = (Term) value;
             final String functionalCharacter = term.getFunctionalCharacter();
-            if (functionalCharacter.length() >= 3 && functionalCharacter.charAt(0) == '^') { // all internally used terms start with ^
+            if (TermUtilities.isInternalFunctionalCharacter(functionalCharacter)) {
                 // special cases
                 if (functionalCharacter.equals(CachedProcedure.getFunctionalCharacter())) {
                     return CachedProcedure.termToValue(state, term);

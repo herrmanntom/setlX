@@ -27,7 +27,7 @@ import java.util.List;
  */
 public class DoWhile extends Statement {
     // functional character used in terms
-    private final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(DoWhile.class);
+    private final static String FUNCTIONAL_CHARACTER = TermUtilities.generateFunctionalCharacter(DoWhile.class);
 
     private final Condition condition;
     private final Block     statements;

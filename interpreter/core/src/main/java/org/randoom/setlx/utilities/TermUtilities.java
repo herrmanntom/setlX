@@ -17,10 +17,44 @@ import java.util.Set;
  * Utilities for converting terms.
  */
 public class TermUtilities {
-    private final static Set<String> TERMS_NOT_FOUND = new HashSet<String>();
+    private static final String INTERNAL_FUNCTIONAL_CHARACTER_PREFIX = "^^^";
+    private static final int INTERNAL_FUNCTIONAL_CHARACTER_PREFIX_LENGTH = INTERNAL_FUNCTIONAL_CHARACTER_PREFIX.length();
+
+    private final static Set<String> TERMS_NOT_FOUND = new HashSet<>();
 
     private TermUtilities() {
         // no instantiation
+    }
+
+    /**
+     * Generate the functional character used in toTerm() based upon the
+     * simple name of the given class.
+     *
+     * @see CodeFragment#toTerm(State)
+     *
+     * @param _class Class from which to take the name.
+     * @return       Generated functional character.
+     */
+    public static String generateFunctionalCharacter(
+            final Class<? extends CodeFragment> _class
+    ) {
+        final String className = _class.getSimpleName();
+        return INTERNAL_FUNCTIONAL_CHARACTER_PREFIX + Character.toLowerCase(className.charAt(0)) + className.substring(1);
+    }
+
+    /**
+     * Generate the functional character used in toTerm() based upon the
+     * given simple name of a class.
+     *
+     * @see CodeFragment#toTerm(State)
+     *
+     * @param className Class name to use.
+     * @return       Generated functional character.
+     */
+    public static String generateFunctionalCharacter(
+            final String className
+    ) {
+        return INTERNAL_FUNCTIONAL_CHARACTER_PREFIX + Character.toLowerCase(className.charAt(0)) + className.substring(1);
     }
 
     /**
@@ -33,14 +67,14 @@ public class TermUtilities {
      */
     @SuppressWarnings("unchecked")
     public static <T extends CodeFragment> Class<? extends T> getClassForTerm(Class<T> baseClassInSamePackage, String functionalCharacter) {
-        if (functionalCharacter.length() >= 3 && functionalCharacter.charAt(0) == '^') {
+        if (isInternalFunctionalCharacter(functionalCharacter)) {
             String packageName = baseClassInSamePackage.getPackage().getName();
             boolean alreadySearched;
             synchronized (TERMS_NOT_FOUND) {
                 alreadySearched = TERMS_NOT_FOUND.contains(packageName + functionalCharacter);
             }
             if (!alreadySearched) {
-                final String expectedClassName = functionalCharacter.substring(1, 2).toUpperCase(Locale.US) + functionalCharacter.substring(2);
+                final String expectedClassName = functionalCharacter.substring(INTERNAL_FUNCTIONAL_CHARACTER_PREFIX_LENGTH, INTERNAL_FUNCTIONAL_CHARACTER_PREFIX_LENGTH + 1).toUpperCase(Locale.US) + functionalCharacter.substring(INTERNAL_FUNCTIONAL_CHARACTER_PREFIX_LENGTH + 1);
                 try {
                     return (Class<? extends T>) Class.forName(packageName + '.' + expectedClassName);
                 } catch (final Exception e1) {
@@ -52,6 +86,15 @@ public class TermUtilities {
             }
         }
         return null;
+    }
+
+    /**
+     * Check if the functionalCharacter starts like an internally used one
+     * @param functionalCharacter to check
+     * @return true, iff looks like internally used functional character
+     */
+    public static boolean isInternalFunctionalCharacter(String functionalCharacter) {
+        return functionalCharacter.length() > INTERNAL_FUNCTIONAL_CHARACTER_PREFIX_LENGTH && functionalCharacter.startsWith(INTERNAL_FUNCTIONAL_CHARACTER_PREFIX);
     }
 
     /**
@@ -113,5 +156,19 @@ public class TermUtilities {
         } else { // wrap into block
             return new Block(s);
         }
+    }
+
+    /**
+     * @return Prefix for terms used as internal representation of code fragments (statements, expressions, ...)
+     */
+    public static String getPrefixOfInternalFunctionalCharacters() {
+        return INTERNAL_FUNCTIONAL_CHARACTER_PREFIX;
+    }
+
+    /**
+     * @return Prefix for terms used as internal representation of code fragments (statements, expressions, ...)
+     */
+    public static int getPrefixLengthOfInternalFunctionalCharacters() {
+        return INTERNAL_FUNCTIONAL_CHARACTER_PREFIX_LENGTH;
     }
 }

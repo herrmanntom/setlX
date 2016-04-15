@@ -25,7 +25,7 @@ import java.util.List;
  */
 public class IfThenElseBranch extends AbstractIfThenBranch {
     // functional character used in terms
-    private final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(IfThenElseBranch.class);
+    private final static String FUNCTIONAL_CHARACTER = TermUtilities.generateFunctionalCharacter(IfThenElseBranch.class);
 
     private final Block statements;
 

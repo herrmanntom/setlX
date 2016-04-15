@@ -10,6 +10,7 @@ import org.randoom.setlx.types.*;
 import org.randoom.setlx.utilities.CodeFragment;
 import org.randoom.setlx.utilities.FragmentList;
 import org.randoom.setlx.utilities.State;
+import org.randoom.setlx.utilities.TermUtilities;
 
 import java.util.List;
 
@@ -17,7 +18,7 @@ import java.util.List;
  * Operator that evaluates a function and puts the result on the stack.
  */
 public class Call extends AUnaryPostfixOperator {
-    private static final String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(Call.class);
+    private static final String FUNCTIONAL_CHARACTER = TermUtilities.generateFunctionalCharacter(Call.class);
 
     private final FragmentList<OperatorExpression> arguments;
     private final OperatorExpression listArgument;

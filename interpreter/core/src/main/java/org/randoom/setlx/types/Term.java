@@ -624,7 +624,7 @@ public class Term extends IndexedCollectionValue {
             final MatchResult result  = new MatchResult(true);
             // get name of variable
             final Value       idStr   = body.firstMember(state);
-            if (idStr.isString() == SetlBoolean.FALSE) { // this is a wrong ^variable term
+            if (idStr.isString() == SetlBoolean.FALSE) { // this is a wrong variable term
                 return new MatchResult(false);
             }
             final String id = idStr.getUnquotedString(state);

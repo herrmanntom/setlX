@@ -21,7 +21,7 @@ import org.randoom.setlx.utilities.*;
  */
 public class LambdaProcedure extends Procedure {
     // functional character used in terms
-    private final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(LambdaProcedure.class);
+    private final static String FUNCTIONAL_CHARACTER = TermUtilities.generateFunctionalCharacter(LambdaProcedure.class);
 
     private final OperatorExpression expr; // expression in the body of the definition; used directly only for toString() and toTerm()
 

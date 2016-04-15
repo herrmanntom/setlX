@@ -43,7 +43,7 @@ import java.util.List;
  */
 public class Scan extends Statement {
     // functional character used in terms
-    private final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(Scan.class);
+    private final static String FUNCTIONAL_CHARACTER = TermUtilities.generateFunctionalCharacter(Scan.class);
 
     private final OperatorExpression expr;
     private final AssignableVariable posVar;

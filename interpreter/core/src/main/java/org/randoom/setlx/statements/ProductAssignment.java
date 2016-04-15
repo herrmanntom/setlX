@@ -24,7 +24,7 @@ import org.randoom.setlx.utilities.TermUtilities;
  */
 public class ProductAssignment extends AbstractAssignment {
     // functional character used in terms
-    private final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(ProductAssignment.class);
+    private final static String FUNCTIONAL_CHARACTER = TermUtilities.generateFunctionalCharacter(ProductAssignment.class);
 
     /**
      * Create new ProductAssignment.

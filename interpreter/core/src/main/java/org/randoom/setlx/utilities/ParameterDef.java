@@ -24,9 +24,9 @@ import java.util.List;
  */
 public class ParameterDef extends ImmutableCodeFragment {
     // functional character used in terms
-    private final static String FUNCTIONAL_CHARACTER      = "^parameter";
-    private final static String FUNCTIONAL_CHARACTER_RW   = "^rwParameter";
-    private final static String FUNCTIONAL_CHARACTER_LIST = "^listParameter";
+    private final static String FUNCTIONAL_CHARACTER      = TermUtilities.generateFunctionalCharacter("Parameter");
+    private final static String FUNCTIONAL_CHARACTER_RW   = TermUtilities.generateFunctionalCharacter("RwParameter");
+    private final static String FUNCTIONAL_CHARACTER_LIST = TermUtilities.generateFunctionalCharacter("ListParameter");
 
     /**
      * Type of parameter.

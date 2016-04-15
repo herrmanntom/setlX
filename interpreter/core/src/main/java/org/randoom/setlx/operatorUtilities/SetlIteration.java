@@ -28,7 +28,7 @@ import java.util.List;
  *       expr       iterator         condition
  */
 public class SetlIteration extends CollectionBuilder {
-    private final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(SetlIteration.class);
+    private final static String FUNCTIONAL_CHARACTER = TermUtilities.generateFunctionalCharacter(SetlIteration.class);
 
     private final OperatorExpression expr;
     private final SetlIterator iterator;

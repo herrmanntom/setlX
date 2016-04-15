@@ -24,7 +24,7 @@ import org.randoom.setlx.utilities.TermUtilities;
  */
 public class QuotientAssignment extends AbstractAssignment {
     // functional character used in terms
-    private final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(QuotientAssignment.class);
+    private final static String FUNCTIONAL_CHARACTER = TermUtilities.generateFunctionalCharacter(QuotientAssignment.class);
 
     /**
      * Create new QuotientAssignment.

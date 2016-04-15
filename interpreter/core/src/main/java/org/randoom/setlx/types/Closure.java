@@ -34,7 +34,7 @@ import java.util.Map;
  */
 public class Closure extends Procedure {
     // functional character used in terms
-    private   final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(Closure.class);
+    private   final static String FUNCTIONAL_CHARACTER = TermUtilities.generateFunctionalCharacter(Closure.class);
 
     /**
      * Variables and values used in closure.

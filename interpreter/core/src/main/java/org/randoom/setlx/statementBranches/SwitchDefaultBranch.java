@@ -25,7 +25,7 @@ import java.util.List;
  */
 public class SwitchDefaultBranch extends AbstractSwitchBranch {
     // functional character used in terms
-    private final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(SwitchDefaultBranch.class);
+    private final static String FUNCTIONAL_CHARACTER = TermUtilities.generateFunctionalCharacter(SwitchDefaultBranch.class);
 
     private final Block statements;
 

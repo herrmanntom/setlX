@@ -26,7 +26,7 @@ import java.util.Set;
  * Operator that puts true on the stack if its condition is true for all values from its iteration.
  */
 public class Forall extends AZeroOperator {
-    private static final String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(Forall.class);
+    private static final String FUNCTIONAL_CHARACTER = TermUtilities.generateFunctionalCharacter(Forall.class);
 
     private final SetlIterator iterator;
     private final Condition    condition;

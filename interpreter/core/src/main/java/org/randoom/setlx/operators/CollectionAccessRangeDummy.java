@@ -10,6 +10,7 @@ import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.CodeFragment;
 import org.randoom.setlx.utilities.FragmentList;
 import org.randoom.setlx.utilities.State;
+import org.randoom.setlx.utilities.TermUtilities;
 
 import java.util.List;
 
@@ -25,7 +26,7 @@ import java.util.List;
  *            ====
  */
 public class CollectionAccessRangeDummy extends AZeroOperator {
-    private static final String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(CollectionAccess.class);
+    private static final String FUNCTIONAL_CHARACTER = TermUtilities.generateFunctionalCharacter(CollectionAccess.class);
 
     /**
      * Singleton VariableIgnore expression.

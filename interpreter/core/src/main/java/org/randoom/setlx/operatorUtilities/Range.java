@@ -9,6 +9,7 @@ import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.CodeFragment;
 import org.randoom.setlx.utilities.State;
+import org.randoom.setlx.utilities.TermUtilities;
 
 import java.util.List;
 
@@ -25,7 +26,7 @@ import java.util.List;
  *       start    second       stop
  */
 public class Range extends CollectionBuilder {
-    private final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(Range.class);
+    private final static String FUNCTIONAL_CHARACTER = TermUtilities.generateFunctionalCharacter(Range.class);
 
     private final OperatorExpression start;
     private final OperatorExpression second;

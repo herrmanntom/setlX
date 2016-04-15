@@ -27,7 +27,7 @@ import java.util.List;
  */
 public class SwitchCaseBranch extends AbstractSwitchBranch {
     // functional character used in terms
-    private final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(SwitchCaseBranch.class);
+    private final static String FUNCTIONAL_CHARACTER = TermUtilities.generateFunctionalCharacter(SwitchCaseBranch.class);
 
     private final Condition condition;
     private final Block     statements;

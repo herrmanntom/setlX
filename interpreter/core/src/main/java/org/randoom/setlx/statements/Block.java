@@ -29,7 +29,7 @@ import java.util.List;
  */
 public class Block extends Statement {
     // functional character used in terms
-    private final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(Block.class);
+    private final static String FUNCTIONAL_CHARACTER = TermUtilities.generateFunctionalCharacter(Block.class);
 
     private final FragmentList<Statement> statements;
 

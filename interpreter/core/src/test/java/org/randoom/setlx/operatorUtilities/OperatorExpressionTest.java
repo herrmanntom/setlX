@@ -8,6 +8,7 @@ import org.randoom.setlx.types.Rational;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.FragmentList;
 import org.randoom.setlx.utilities.State;
+import org.randoom.setlx.utilities.TermUtilities;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
@@ -15,6 +16,7 @@ import static org.junit.Assert.assertTrue;
 
 @SuppressWarnings("JavaDoc")
 public class OperatorExpressionTest {
+    private static final String INTERNAL_TERM_PREFIX = TermUtilities.getPrefixOfInternalFunctionalCharacters();
     private State state;
 
     @Before
@@ -25,7 +27,7 @@ public class OperatorExpressionTest {
     @Test
     public void givenSumExpressionWhenEvaluatingOperatorsThenResultIsCorrect() throws SetlException {
         // given
-        FragmentList<AOperator> operators = new FragmentList<AOperator>();
+        FragmentList<AOperator> operators = new FragmentList<>();
         addNumber(operators, 10);
         addNumber(operators, 20);
         operators.add(Sum.S);
@@ -35,14 +37,14 @@ public class OperatorExpressionTest {
 
         // then
         assertEquals("10 + 20", result.getExpression());
-        assertEquals("^sum(10, 20)", result.getExpressionTerm());
+        assertEquals(INTERNAL_TERM_PREFIX + "sum(10, 20)", result.getExpressionTerm());
         assertEquals(30, result.getResultAsInt());
     }
 
     @Test
-    public void givenSumAndMultiplicationExpressionWhenEvaluatingOperatorsThenResultIsCorrect() throws SetlException {
+    public void givenSumAndMultiplicationExpressionWhenEvaluatingOperatorsThenResultingTermIsCorrectlyFormed() throws SetlException {
         // given
-        FragmentList<AOperator> operators = new FragmentList<AOperator>();
+        FragmentList<AOperator> operators = new FragmentList<>();
         addNumber(operators, 10);
         addNumber(operators, 20);
         addNumber(operators, 2);
@@ -54,14 +56,14 @@ public class OperatorExpressionTest {
 
         // then
         assertEquals("10 + 20 * 2", result.getExpression());
-        assertEquals("^sum(10, ^product(20, 2))", result.getExpressionTerm());
+        assertEquals(INTERNAL_TERM_PREFIX + "sum(10, " + INTERNAL_TERM_PREFIX + "product(20, 2))", result.getExpressionTerm());
         assertEquals(50, result.getResultAsInt());
     }
 
     @Test
-    public void givenMultiplicationAndSumExpressionWhenEvaluatingOperatorsThenResultIsCorrect() throws SetlException {
+    public void givenMultiplicationAndSumExpressionWhenEvaluatingOperatorsThenResultingTermIsCorrectlyFormed() throws SetlException {
         // given
-        FragmentList<AOperator> operators = new FragmentList<AOperator>();
+        FragmentList<AOperator> operators = new FragmentList<>();
         addNumber(operators, 10);
         addNumber(operators, 2);
         operators.add(Product.P);
@@ -73,14 +75,14 @@ public class OperatorExpressionTest {
 
         // then
         assertEquals("10 * 2 + 20", result.getExpression());
-        assertEquals("^sum(^product(10, 2), 20)", result.getExpressionTerm());
+        assertEquals(INTERNAL_TERM_PREFIX + "sum(" + INTERNAL_TERM_PREFIX + "product(10, 2), 20)", result.getExpressionTerm());
         assertEquals(40, result.getResultAsInt());
     }
 
     @Test
-    public void givenMultiplicationAndNegationAndSumExpressionWhenEvaluatingOperatorsThenResultIsCorrect() throws SetlException {
+    public void givenMultiplicationAndNegationAndSumExpressionWhenEvaluatingOperatorsThenResultingTermIsCorrectlyFormed() throws SetlException {
         // given
-        FragmentList<AOperator> operators = new FragmentList<AOperator>();
+        FragmentList<AOperator> operators = new FragmentList<>();
         addNumber(operators, 10);
         addNumber(operators, 2);
         operators.add(Minus.M);
@@ -93,14 +95,14 @@ public class OperatorExpressionTest {
 
         // then
         assertEquals("10 * -2 + 20", result.getExpression());
-        assertEquals("^sum(^product(10, ^minus(2)), 20)", result.getExpressionTerm());
+        assertEquals(INTERNAL_TERM_PREFIX + "sum(" + INTERNAL_TERM_PREFIX + "product(10, " + INTERNAL_TERM_PREFIX + "minus(2)), 20)", result.getExpressionTerm());
         assertEquals(0, result.getResultAsInt());
     }
 
     @Test
-    public void givenBracketedSumAndMultiplicationExpressionWhenEvaluatingOperatorsThenResultIsCorrect() throws SetlException {
+    public void givenBracketedSumAndMultiplicationExpressionWhenEvaluatingOperatorsThenResultingTermIsCorrectlyFormed() throws SetlException {
         // given
-        FragmentList<AOperator> operators = new FragmentList<AOperator>();
+        FragmentList<AOperator> operators = new FragmentList<>();
         addNumber(operators, 10);
         addNumber(operators, 2);
         operators.add(Sum.S);
@@ -112,14 +114,14 @@ public class OperatorExpressionTest {
 
         // then
         assertEquals("(10 + 2) * 20", result.getExpression());
-        assertEquals("^product(^sum(10, 2), 20)", result.getExpressionTerm());
+        assertEquals(INTERNAL_TERM_PREFIX + "product(" + INTERNAL_TERM_PREFIX + "sum(10, 2), 20)", result.getExpressionTerm());
         assertEquals(240, result.getResultAsInt());
     }
 
     @Test
-    public void givenDifferenceAndSumExpressionWhenEvaluatingOperatorsThenResultIsCorrect() throws SetlException {
+    public void givenDifferenceAndSumExpressionWhenEvaluatingOperatorsThenResultingTermIsCorrectlyFormed() throws SetlException {
         // given
-        FragmentList<AOperator> operators = new FragmentList<AOperator>();
+        FragmentList<AOperator> operators = new FragmentList<>();
         addNumber(operators, 10);
         addNumber(operators, 5);
         operators.add(Difference.D);
@@ -131,14 +133,14 @@ public class OperatorExpressionTest {
 
         // then
         assertEquals("10 - 5 + 3", result.getExpression());
-        assertEquals("^sum(^difference(10, 5), 3)", result.getExpressionTerm());
+        assertEquals(INTERNAL_TERM_PREFIX + "sum(" + INTERNAL_TERM_PREFIX + "difference(10, 5), 3)", result.getExpressionTerm());
         assertEquals(8, result.getResultAsInt());
     }
 
     @Test
-    public void givenDifferenceAndBracketedSumExpressionWhenEvaluatingOperatorsThenResultIsCorrect() throws SetlException {
+    public void givenDifferenceAndBracketedSumExpressionWhenEvaluatingOperatorsThenResultingTermIsCorrectlyFormed() throws SetlException {
         // given
-        FragmentList<AOperator> operators = new FragmentList<AOperator>();
+        FragmentList<AOperator> operators = new FragmentList<>();
         addNumber(operators, 10);
         addNumber(operators, 5);
         addNumber(operators, 3);
@@ -150,14 +152,14 @@ public class OperatorExpressionTest {
 
         // then
         assertEquals("10 - (5 + 3)", result.getExpression());
-        assertEquals("^difference(10, ^sum(5, 3))", result.getExpressionTerm());
+        assertEquals(INTERNAL_TERM_PREFIX + "difference(10, " + INTERNAL_TERM_PREFIX + "sum(5, 3))", result.getExpressionTerm());
         assertEquals(2, result.getResultAsInt());
     }
 
     @Test
-    public void givenDifferenceAndDifferenceExpressionWhenEvaluatingOperatorsThenResultIsCorrect() throws SetlException {
+    public void givenDifferenceAndDifferenceExpressionWhenEvaluatingOperatorsThenResultingTermIsCorrectlyFormed() throws SetlException {
         // given
-        FragmentList<AOperator> operators = new FragmentList<AOperator>();
+        FragmentList<AOperator> operators = new FragmentList<>();
         addNumber(operators, 1);
         addNumber(operators, 5);
         operators.add(Difference.D);
@@ -169,14 +171,14 @@ public class OperatorExpressionTest {
 
         // then
         assertEquals("1 - 5 - 3", result.getExpression());
-        assertEquals("^difference(^difference(1, 5), 3)", result.getExpressionTerm());
+        assertEquals(INTERNAL_TERM_PREFIX + "difference(" + INTERNAL_TERM_PREFIX + "difference(1, 5), 3)", result.getExpressionTerm());
         assertEquals(-7, result.getResultAsInt());
     }
 
     @Test
-    public void givenDifferenceAndBracketedDifferenceExpressionWhenEvaluatingOperatorsThenResultIsCorrect() throws SetlException {
+    public void givenDifferenceAndBracketedDifferenceExpressionWhenEvaluatingOperatorsThenResultingTermIsCorrectlyFormed() throws SetlException {
         // given
-        FragmentList<AOperator> operators = new FragmentList<AOperator>();
+        FragmentList<AOperator> operators = new FragmentList<>();
         addNumber(operators, 1);
         addNumber(operators, 5);
         addNumber(operators, 3);
@@ -188,20 +190,20 @@ public class OperatorExpressionTest {
 
         // then
         assertEquals("1 - (5 - 3)", result.getExpression());
-        assertEquals("^difference(1, ^difference(5, 3))", result.getExpressionTerm());
+        assertEquals(INTERNAL_TERM_PREFIX + "difference(1, " + INTERNAL_TERM_PREFIX + "difference(5, 3))", result.getExpressionTerm());
         assertEquals(-1, result.getResultAsInt());
     }
 
     @Test
-    public void givenThreeDifferentExpressionWhenComparingThenResultIsCorrect() throws SetlException {
+    public void givenThreeDifferentExpressionWhenComparingThenResultingTermIsCorrectlyFormed() throws SetlException {
         // given
-        FragmentList<AOperator> operatorsA = new FragmentList<AOperator>();
+        FragmentList<AOperator> operatorsA = new FragmentList<>();
         addNumber(operatorsA, 10);
         addNumber(operatorsA, 20);
         operatorsA.add(Sum.S);
         OperatorExpression expressionA = new OperatorExpression(operatorsA);
 
-        FragmentList<AOperator> operatorsB = new FragmentList<AOperator>();
+        FragmentList<AOperator> operatorsB = new FragmentList<>();
         addNumber(operatorsB, 10);
         addNumber(operatorsB, 5);
         operatorsB.add(Difference.D);
@@ -209,7 +211,7 @@ public class OperatorExpressionTest {
         operatorsB.add(Sum.S);
         OperatorExpression expressionB = new OperatorExpression(operatorsB);
 
-        FragmentList<AOperator> operatorsC = new FragmentList<AOperator>();
+        FragmentList<AOperator> operatorsC = new FragmentList<>();
         addNumber(operatorsC, 10);
         addNumber(operatorsC, 2);
         operatorsC.add(Sum.S);
@@ -284,9 +286,9 @@ public class OperatorExpressionTest {
     }
 
     @Test
-    public void givenTwoEqualExpressionWhenComparingThenResultIsCorrect() throws SetlException {
+    public void givenTwoEqualExpressionWhenComparingThenResultingTermIsCorrectlyFormed() throws SetlException {
         // given
-        FragmentList<AOperator> operatorsA = new FragmentList<AOperator>();
+        FragmentList<AOperator> operatorsA = new FragmentList<>();
         addNumber(operatorsA, 10);
         addNumber(operatorsA, 5);
         operatorsA.add(Difference.D);
@@ -294,7 +296,7 @@ public class OperatorExpressionTest {
         operatorsA.add(Sum.S);
         OperatorExpression expressionA = new OperatorExpression(operatorsA);
 
-        FragmentList<AOperator> operatorsB = new FragmentList<AOperator>();
+        FragmentList<AOperator> operatorsB = new FragmentList<>();
         addNumber(operatorsB, 10);
         addNumber(operatorsB, 5);
         operatorsB.add(Difference.D);
@@ -333,25 +335,25 @@ public class OperatorExpressionTest {
         private String expressionTerm;
         private Value  result;
 
-        public EvaluationResult(String expression, String expressionTerm, Value result) {
+        /*package*/ EvaluationResult(String expression, String expressionTerm, Value result) {
             this.expression     = expression;
             this.expressionTerm = expressionTerm;
             this.result         = result;
         }
 
-        public String getExpression() {
+        /*package*/ String getExpression() {
             return expression;
         }
 
-        public String getExpressionTerm() {
+        /*package*/ String getExpressionTerm() {
             return expressionTerm;
         }
 
-        public Value getResult() {
+        /*package*/ Value getResult() {
             return result;
         }
 
-        public int getResultAsInt() {
+        /*package*/ int getResultAsInt() {
             try {
                 return getResult().jIntValue();
             } catch (SetlException e) {

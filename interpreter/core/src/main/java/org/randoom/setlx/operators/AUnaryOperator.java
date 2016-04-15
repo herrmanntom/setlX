@@ -9,6 +9,7 @@ import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.FragmentList;
 import org.randoom.setlx.utilities.State;
+import org.randoom.setlx.utilities.TermUtilities;
 
 import java.util.List;
 
@@ -20,7 +21,7 @@ public abstract class AUnaryOperator extends AOperator {
 
     /** Create a new UnaryOperator **/
     protected AUnaryOperator() {
-        FUNCTIONAL_CHARACTER = generateFunctionalCharacter(this.getClass());
+        FUNCTIONAL_CHARACTER = TermUtilities.generateFunctionalCharacter(this.getClass());
     }
 
     @Override

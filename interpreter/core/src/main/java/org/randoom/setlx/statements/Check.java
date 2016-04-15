@@ -28,7 +28,7 @@ import java.util.List;
  */
 public class Check extends Statement {
     // functional character used in terms
-    private final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(Check.class);
+    private final static String FUNCTIONAL_CHARACTER = TermUtilities.generateFunctionalCharacter(Check.class);
 
     private final Block statements;
     private final Block recovery;

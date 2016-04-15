@@ -36,7 +36,7 @@ import java.util.HashMap;
  */
 public class CachedProcedure extends Procedure {
     // functional character used in terms
-    private final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(CachedProcedure.class);
+    private final static String FUNCTIONAL_CHARACTER = TermUtilities.generateFunctionalCharacter(CachedProcedure.class);
 
     private final HashMap<SetlList, SoftReference<Value>> cache;
     private       int                                     cacheHits;

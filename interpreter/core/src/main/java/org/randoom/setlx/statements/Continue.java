@@ -5,6 +5,7 @@ import org.randoom.setlx.types.Term;
 import org.randoom.setlx.utilities.CodeFragment;
 import org.randoom.setlx.utilities.ReturnMessage;
 import org.randoom.setlx.utilities.State;
+import org.randoom.setlx.utilities.TermUtilities;
 
 import java.util.List;
 
@@ -19,7 +20,7 @@ import java.util.List;
  */
 public class Continue extends Statement {
     // functional character used in terms
-    private final static String   FUNCTIONAL_CHARACTER = generateFunctionalCharacter(Continue.class);
+    private final static String   FUNCTIONAL_CHARACTER = TermUtilities.generateFunctionalCharacter(Continue.class);
 
     /**
      * Singleton Continue statement.

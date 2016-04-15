@@ -29,7 +29,7 @@ import java.util.List;
  */
 public class Assert extends Statement {
     // functional character used in terms
-    private final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(Assert.class);
+    private final static String FUNCTIONAL_CHARACTER = TermUtilities.generateFunctionalCharacter(Assert.class);
 
     private final Condition condition;
     private final OperatorExpression message;

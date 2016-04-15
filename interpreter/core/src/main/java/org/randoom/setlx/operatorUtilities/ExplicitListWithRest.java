@@ -11,6 +11,7 @@ import org.randoom.setlx.utilities.CodeFragment;
 import org.randoom.setlx.utilities.FragmentList;
 import org.randoom.setlx.utilities.MatchResult;
 import org.randoom.setlx.utilities.State;
+import org.randoom.setlx.utilities.TermUtilities;
 
 import java.util.List;
 
@@ -27,7 +28,7 @@ import java.util.List;
  *               list               rest
  */
 public class ExplicitListWithRest extends ExplicitList {
-    private final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(ExplicitListWithRest.class);
+    private final static String FUNCTIONAL_CHARACTER = TermUtilities.generateFunctionalCharacter(ExplicitListWithRest.class);
 
     private final OperatorExpression rest;
 

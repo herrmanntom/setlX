@@ -19,7 +19,7 @@ import java.util.HashMap;
 @SuppressWarnings("AbstractClassExtendsConcreteClass")
 public abstract class PreDefinedProcedure extends Procedure {
     // functional characters used in terms
-    private final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(PreDefinedProcedure.class);
+    private final static String FUNCTIONAL_CHARACTER = TermUtilities.generateFunctionalCharacter(PreDefinedProcedure.class);
 
     private String name;
 

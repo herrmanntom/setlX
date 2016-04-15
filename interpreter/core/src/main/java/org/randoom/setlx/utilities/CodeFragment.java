@@ -37,9 +37,9 @@ public abstract class CodeFragment implements Comparable<CodeFragment> {
      * @param state Current state of the running setlX program.
      */
     public final void optimize(final State state) {
-        final List<String> boundVariables   = new ArrayList<String>();
-        final List<String> unboundVariables = new ArrayList<String>();
-        final List<String> usedVariables    = new ArrayList<String>();
+        final List<String> boundVariables   = new ArrayList<>();
+        final List<String> unboundVariables = new ArrayList<>();
+        final List<String> usedVariables    = new ArrayList<>();
         collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
     }
 
@@ -114,22 +114,6 @@ public abstract class CodeFragment implements Comparable<CodeFragment> {
     public abstract int hashCode();
 
     /**
-     * Generate the functional character used in toTerm() based upon the
-     * simple name of the given class.
-     *
-     * @see org.randoom.setlx.utilities.CodeFragment#toTerm(State)
-     *
-     * @param _class Class from which to take the name.
-     * @return       Generated functional character.
-     */
-    protected final static String generateFunctionalCharacter(
-            final Class<? extends CodeFragment> _class
-    ) {
-        final String className = _class.getSimpleName();
-        return "^" + Character.toLowerCase(className.charAt(0)) + className.substring(1);
-    }
-
-    /**
      * Generate the number representing the order of this type in compareTo().
      *
      * @see org.randoom.setlx.utilities.CodeFragment#compareToOrdering()
@@ -137,7 +121,7 @@ public abstract class CodeFragment implements Comparable<CodeFragment> {
      * @param _class Class for which to generate the number.
      * @return       Generated number.
      */
-    protected final static long generateCompareToOrderConstant(
+    protected static long generateCompareToOrderConstant(
             final Class<? extends CodeFragment> _class
     ) {
         final int    multiplicand = (int) 'z' - (int) '^';

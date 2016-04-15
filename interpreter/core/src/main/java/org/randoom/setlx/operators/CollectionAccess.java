@@ -16,6 +16,7 @@ import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.CodeFragment;
 import org.randoom.setlx.utilities.FragmentList;
 import org.randoom.setlx.utilities.State;
+import org.randoom.setlx.utilities.TermUtilities;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,7 +25,7 @@ import java.util.List;
  * Operator that gets elements of a collection value and puts the result on the stack.
  */
 public class CollectionAccess extends AUnaryPostfixOperator {
-    private static final String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(CollectionAccess.class);
+    private static final String FUNCTIONAL_CHARACTER = TermUtilities.generateFunctionalCharacter(CollectionAccess.class);
 
     private final FragmentList<OperatorExpression> arguments;
     private final boolean                          argumentsContainRange; // does args contain RangeDummy?

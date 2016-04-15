@@ -32,7 +32,7 @@ import java.util.List;
  */
 public class For extends Statement {
     // functional character used in terms
-    private final static String  FUNCTIONAL_CHARACTER = generateFunctionalCharacter(For.class);
+    private final static String  FUNCTIONAL_CHARACTER = TermUtilities.generateFunctionalCharacter(For.class);
 
     private final SetlIterator iterator;
     private final Condition condition;

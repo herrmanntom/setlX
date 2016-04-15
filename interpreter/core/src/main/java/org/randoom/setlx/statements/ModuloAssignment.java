@@ -24,7 +24,7 @@ import org.randoom.setlx.utilities.TermUtilities;
  */
 public class ModuloAssignment extends AbstractAssignment {
     // functional character used in terms
-    private final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(ModuloAssignment.class);
+    private final static String FUNCTIONAL_CHARACTER = TermUtilities.generateFunctionalCharacter(ModuloAssignment.class);
 
     /**
      * Create new ModuloAssignment.

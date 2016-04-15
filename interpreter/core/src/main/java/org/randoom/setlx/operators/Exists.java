@@ -26,7 +26,7 @@ import java.util.Set;
  * Operator that puts true on the stack if its condition is true for any value from its iteration.
  */
 public class Exists extends AZeroOperator {
-    private static final String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(Exists.class);
+    private static final String FUNCTIONAL_CHARACTER = TermUtilities.generateFunctionalCharacter(Exists.class);
 
     private final SetlIterator iterator;
     private final Condition    condition;

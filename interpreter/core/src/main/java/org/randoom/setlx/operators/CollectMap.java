@@ -12,6 +12,7 @@ import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.CodeFragment;
 import org.randoom.setlx.utilities.FragmentList;
 import org.randoom.setlx.utilities.State;
+import org.randoom.setlx.utilities.TermUtilities;
 
 import java.util.List;
 
@@ -19,7 +20,7 @@ import java.util.List;
  * Operator that collects specific elements of a collection value and puts the result on the stack.
  */
 public class CollectMap extends AUnaryPostfixOperator {
-    private static final String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(CollectMap.class);
+    private static final String FUNCTIONAL_CHARACTER = TermUtilities.generateFunctionalCharacter(CollectMap.class);
 
     private final OperatorExpression argument;
 

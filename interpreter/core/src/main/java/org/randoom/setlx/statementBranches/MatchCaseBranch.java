@@ -26,7 +26,7 @@ import java.util.List;
  */
 public class MatchCaseBranch extends AbstractMatchBranch {
     // functional character used in terms
-    private final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(MatchCaseBranch.class);
+    private final static String FUNCTIONAL_CHARACTER = TermUtilities.generateFunctionalCharacter(MatchCaseBranch.class);
 
     private final FragmentList<OperatorExpression> exprs; // expressions which creates terms to match
     private final List<Value> terms;                      // terms to match

@@ -12,6 +12,7 @@ import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.CodeFragment;
 import org.randoom.setlx.utilities.FragmentList;
 import org.randoom.setlx.utilities.State;
+import org.randoom.setlx.utilities.TermUtilities;
 
 import java.util.List;
 
@@ -20,9 +21,9 @@ import java.util.List;
  */
 public class Variable extends AZeroOperator {
     // This functional character is used internally
-    private final static String FUNCTIONAL_CHARACTER          = "^Variable";
+    private final static String FUNCTIONAL_CHARACTER          = TermUtilities.getPrefixOfInternalFunctionalCharacters() + "Variable";
     // this one is used externally (e.g. during toString)
-    private final static String FUNCTIONAL_CHARACTER_EXTERNAL = "^variable";
+    private final static String FUNCTIONAL_CHARACTER_EXTERNAL = TermUtilities.generateFunctionalCharacter(Variable.class);
     /* both are equal during matching and compare. However while terms with the
      * internal one always bind anything, terms with the external one only match
      * and do not bind.

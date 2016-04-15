@@ -12,12 +12,13 @@ import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.CodeFragment;
 import org.randoom.setlx.utilities.FragmentList;
 import org.randoom.setlx.utilities.State;
+import org.randoom.setlx.utilities.TermUtilities;
 
 /**
  * Operator that load the the last object from the stack and put its given member on the stack.
  */
 public class MemberAccess extends AUnaryPostfixOperator {
-    private static final String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(MemberAccess.class);
+    private static final String FUNCTIONAL_CHARACTER = TermUtilities.generateFunctionalCharacter(MemberAccess.class);
 
     private final String id;
 

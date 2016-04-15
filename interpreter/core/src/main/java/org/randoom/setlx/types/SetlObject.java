@@ -18,7 +18,7 @@ import java.util.Map.Entry;
  */
 public class SetlObject extends Value {
     // functional character used in terms
-    private final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(SetlObject.class);
+    private final static String FUNCTIONAL_CHARACTER = TermUtilities.generateFunctionalCharacter(SetlObject.class);
 
     private final static String GET_CLASS_MEMBER     = "getClass";
 
@@ -54,7 +54,7 @@ public class SetlObject extends Value {
      * @param classDefinition Basis class of this object.
      * @return                New SetlObject.
      */
-    public static SetlObject createNew(final SetlHashMap<Value> members, final SetlClass classDefinition) {
+    /*package*/ static SetlObject createNew(final SetlHashMap<Value> members, final SetlClass classDefinition) {
         return new SetlObject(members, classDefinition, null);
     }
 
@@ -94,7 +94,7 @@ public class SetlObject extends Value {
      */
     private void separateFromOriginal() {
         if (isCloned) {
-            final SetlHashMap<Value> members = new SetlHashMap<Value>();
+            final SetlHashMap<Value> members = new SetlHashMap<>();
             for (final Entry<String, Value> entry: this.members.entrySet()) {
                 members.put(entry.getKey(), entry.getValue().clone());
             }
@@ -106,7 +106,7 @@ public class SetlObject extends Value {
     private Value overload(final State  state,
                            final String member
     ) throws SetlException {
-        final FragmentList<OperatorExpression> args = new FragmentList<OperatorExpression>();
+        final FragmentList<OperatorExpression> args = new FragmentList<>();
         return overloadQuery(state, member).call(state, args, null);
     }
 
@@ -128,7 +128,7 @@ public class SetlObject extends Value {
                            final String member,
                            final Value  other
     ) throws SetlException {
-        final FragmentList<OperatorExpression> args = new FragmentList<OperatorExpression>();
+        final FragmentList<OperatorExpression> args = new FragmentList<>();
         args.add(new OperatorExpression(new ValueOperator(other)));
         return overloadQuery(state, member).call(state, args, null);
     }
@@ -159,7 +159,7 @@ public class SetlObject extends Value {
         );
     }
     private static String createOverloadVariable(final Class<? extends CodeFragment> clazz) {
-        return CodeFragment.generateFunctionalCharacter(clazz).substring(1);
+        return TermUtilities.generateFunctionalCharacter(clazz).substring(TermUtilities.getPrefixLengthOfInternalFunctionalCharacters());
     }
     private static String createOverloadVariable(final PreDefinedProcedure function) {
         return "f_" + function.getName();
@@ -610,7 +610,7 @@ public class SetlObject extends Value {
      * @return                         Resulting SetlObject.
      * @throws TermConversionException Thrown in case of an malformed term.
      */
-    public static SetlObject termToValue(final State state, final Term term) throws TermConversionException {
+    /*package*/ static SetlObject termToValue(final State state, final Term term) throws TermConversionException {
         if (term.size() == 2 && term.lastMember().getClass() == Term.class) {
             final SetlHashMap<Value> members         = SetlHashMap.valueToSetlHashMap(state, term.firstMember());
             final SetlClass          classDefinition = SetlClass.termToValue(state, (Term) term.lastMember());

@@ -8,13 +8,14 @@ import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.FragmentList;
 import org.randoom.setlx.utilities.State;
+import org.randoom.setlx.utilities.TermUtilities;
 
 /**
  * Operator that evaluates disjunction and puts the result on the stack.
  */
 public class Disjunction extends ALazyBinaryInfixOperator {
 
-    private static final String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(Disjunction.class);
+    private static final String FUNCTIONAL_CHARACTER = TermUtilities.generateFunctionalCharacter(Disjunction.class);
 
     /**
      * Create a new Disjunction operator.

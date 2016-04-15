@@ -1,6 +1,5 @@
 package org.randoom.setlx.types;
 
-import org.antlr.v4.runtime.atn.SemanticContext.Operator;
 import org.randoom.setlx.assignments.AssignableVariable;
 import org.randoom.setlx.exceptions.IncorrectNumberOfParametersException;
 import org.randoom.setlx.exceptions.SetlException;
@@ -43,7 +42,7 @@ import java.util.Map.Entry;
  */
 public class SetlClass extends Value {
     // functional character used in terms
-    private final static String FUNCTIONAL_CHARACTER      = generateFunctionalCharacter(SetlClass.class);
+    private final static String FUNCTIONAL_CHARACTER      = TermUtilities.generateFunctionalCharacter(SetlClass.class);
     private final static long   COMPARE_TO_ORDER_CONSTANT = generateCompareToOrderConstant(SetlClass.class);
     private final static Block  REBUILD_MARKER            = new Block(new Return(new OperatorExpression(new ValueOperator(new SetlString(FUNCTIONAL_CHARACTER + COMPARE_TO_ORDER_CONSTANT)))));
 

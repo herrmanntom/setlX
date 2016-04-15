@@ -26,7 +26,7 @@ import org.randoom.setlx.utilities.TermUtilities;
  */
 public class TryCatchLngBranch extends AbstractTryCatchBranch {
     // functional character used in terms
-    private final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(TryCatchLngBranch.class);
+    private final static String FUNCTIONAL_CHARACTER = TermUtilities.generateFunctionalCharacter(TryCatchLngBranch.class);
 
     /**
      * Create new catchLng-branch.

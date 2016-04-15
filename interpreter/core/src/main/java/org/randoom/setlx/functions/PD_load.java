@@ -6,7 +6,7 @@ import org.randoom.setlx.types.SetlBoolean;
 import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.statements.Block;
-import org.randoom.setlx.utilities.ParameterDef;
+import org.randoom.setlx.parameters.ParameterDefinition;
 import org.randoom.setlx.utilities.ParseSetlX;
 import org.randoom.setlx.utilities.State;
 
@@ -17,7 +17,7 @@ import java.util.HashMap;
  */
 public class PD_load extends PreDefinedProcedure {
 
-    private final static ParameterDef        PATH_TO_SETLX_FILE = createParameter("pathToSetlXfile");
+    private final static ParameterDefinition PATH_TO_SETLX_FILE = createParameter("pathToSetlXfile");
 
     /** Definition of the PreDefinedProcedure `load'. */
     public  final static PreDefinedProcedure DEFINITION         = new PD_load();
@@ -28,7 +28,7 @@ public class PD_load extends PreDefinedProcedure {
     }
 
     @Override
-    public Value execute(final State state, final HashMap<ParameterDef, Value> args) throws SetlException {
+    public Value execute(final State state, final HashMap<ParameterDefinition, Value> args) throws SetlException {
         final Value filePath = args.get(PATH_TO_SETLX_FILE);
         if ( ! (filePath instanceof SetlString)) {
             throw new IncompatibleTypeException(

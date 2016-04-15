@@ -4,7 +4,7 @@ import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.UndefinedOperationException;
 import org.randoom.setlx.plot.utilities.Canvas;
 import org.randoom.setlx.plot.utilities.ConnectJFreeChart;
-import org.randoom.setlx.utilities.ParameterDef;
+import org.randoom.setlx.parameters.ParameterDefinition;
 import org.randoom.setlx.plot.utilities.PlotCheckType;
 import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.types.SetlBoolean;
@@ -15,8 +15,8 @@ import java.util.HashMap;
 
 public class PD_plot_legendVisible extends PreDefinedProcedure {
 
-    private final static ParameterDef CANVAS = createParameter("canvas");
-    private final static ParameterDef VISIBLE = createParameter("visible");
+    private final static ParameterDefinition CANVAS = createParameter("canvas");
+    private final static ParameterDefinition VISIBLE = createParameter("visible");
 
     public final static PreDefinedProcedure DEFINITION = new PD_plot_legendVisible();
 
@@ -27,7 +27,7 @@ public class PD_plot_legendVisible extends PreDefinedProcedure {
     }
 
     @Override
-    protected Value execute(State state, HashMap<ParameterDef, Value> args) throws SetlException {
+    protected Value execute(State state, HashMap<ParameterDefinition, Value> args) throws SetlException {
 
         if(!PlotCheckType.isCanvas(args.get(CANVAS))){
             throw new UndefinedOperationException("First parameter has to be of object Canvas");

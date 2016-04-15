@@ -2,7 +2,7 @@ package org.randoom.setlx.functions;
 
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.types.Value;
-import org.randoom.setlx.utilities.ParameterDef;
+import org.randoom.setlx.parameters.ParameterDefinition;
 import org.randoom.setlx.utilities.State;
 
 import java.util.HashMap;
@@ -13,7 +13,7 @@ import java.util.HashMap;
  */
 public class PD_nextPermutation extends PreDefinedProcedure {
 
-    private final static ParameterDef        LIST       = createParameter("list");
+    private final static ParameterDefinition LIST       = createParameter("list");
 
     /** Definition of the PreDefinedProcedure `nextPermutation'. */
     public  final static PreDefinedProcedure DEFINITION = new PD_nextPermutation();
@@ -24,7 +24,7 @@ public class PD_nextPermutation extends PreDefinedProcedure {
     }
 
     @Override
-    public Value execute(final State state, final HashMap<ParameterDef, Value> args) throws SetlException {
+    public Value execute(final State state, final HashMap<ParameterDefinition, Value> args) throws SetlException {
 
         return args.get(LIST).nextPermutation(state);
 

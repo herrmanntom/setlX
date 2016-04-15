@@ -3,7 +3,7 @@ package org.randoom.setlx.functions;
 import org.randoom.setlx.exceptions.IncompatibleTypeException;
 import org.randoom.setlx.types.SetlBoolean;
 import org.randoom.setlx.types.Value;
-import org.randoom.setlx.utilities.ParameterDef;
+import org.randoom.setlx.parameters.ParameterDefinition;
 import org.randoom.setlx.utilities.State;
 
 import java.util.HashMap;
@@ -13,7 +13,7 @@ import java.util.HashMap;
  */
 public class PD_multiLineMode extends PreDefinedProcedure {
 
-    private final static ParameterDef        TOGGLE     = createParameter("toggle");
+    private final static ParameterDefinition TOGGLE     = createParameter("toggle");
 
     /** Definition of the PreDefinedProcedure `multiLineMode'. */
     public  final static PreDefinedProcedure DEFINITION = new PD_multiLineMode();
@@ -24,7 +24,7 @@ public class PD_multiLineMode extends PreDefinedProcedure {
     }
 
     @Override
-    public Value execute(final State state, final HashMap<ParameterDef, Value> args) throws IncompatibleTypeException {
+    public Value execute(final State state, final HashMap<ParameterDefinition, Value> args) throws IncompatibleTypeException {
         final Value   toggle  = args.get(TOGGLE);
         if ( ! (toggle instanceof SetlBoolean)) {
             throw new IncompatibleTypeException(

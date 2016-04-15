@@ -5,7 +5,7 @@ import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.operatorUtilities.OperatorExpression;
 import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.Value;
-import org.randoom.setlx.utilities.ParameterDef;
+import org.randoom.setlx.parameters.ParameterDefinition;
 import org.randoom.setlx.utilities.ParseSetlX;
 import org.randoom.setlx.utilities.State;
 
@@ -16,7 +16,7 @@ import java.util.HashMap;
  */
 public class PD_parse extends PreDefinedProcedure {
 
-    private final static ParameterDef        SETLX_EXPRESSION = createParameter("setlX_expression");
+    private final static ParameterDefinition SETLX_EXPRESSION = createParameter("setlX_expression");
 
     /** Definition of the PreDefinedProcedure `parse'. */
     public  final static PreDefinedProcedure DEFINITION       = new PD_parse();
@@ -27,7 +27,7 @@ public class PD_parse extends PreDefinedProcedure {
     }
 
     @Override
-    public Value execute(final State state, final HashMap<ParameterDef, Value> args) throws SetlException {
+    public Value execute(final State state, final HashMap<ParameterDefinition, Value> args) throws SetlException {
         final Value   exprArg = args.get(SETLX_EXPRESSION);
         if ( ! (exprArg instanceof SetlString)) {
             throw new IncompatibleTypeException("Expression-argument '" + exprArg.toString(state) + "' is not a string.");

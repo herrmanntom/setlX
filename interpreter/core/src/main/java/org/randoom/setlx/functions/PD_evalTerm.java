@@ -7,7 +7,7 @@ import org.randoom.setlx.statements.Statement;
 import org.randoom.setlx.types.Om;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.CodeFragment;
-import org.randoom.setlx.utilities.ParameterDef;
+import org.randoom.setlx.parameters.ParameterDefinition;
 import org.randoom.setlx.utilities.State;
 
 import java.util.HashMap;
@@ -17,7 +17,7 @@ import java.util.HashMap;
  */
 public class PD_evalTerm extends PreDefinedProcedure {
 
-    private final static ParameterDef        TERM       = createParameter("term");
+    private final static ParameterDefinition TERM       = createParameter("term");
 
     /** Definition of the PreDefinedProcedure `evalTerm'. */
     public  final static PreDefinedProcedure DEFINITION = new PD_evalTerm();
@@ -28,7 +28,7 @@ public class PD_evalTerm extends PreDefinedProcedure {
     }
 
     @Override
-    public Value execute(final State state, final HashMap<ParameterDef, Value> args) throws SetlException {
+    public Value execute(final State state, final HashMap<ParameterDefinition, Value> args) throws SetlException {
         final Value        termArg  = args.get(TERM);
 
         // get code to be executed

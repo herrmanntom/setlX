@@ -1,4 +1,4 @@
-package org.randoom.setlx.utilities;
+package org.randoom.setlx.parameters;
 
 import org.randoom.setlx.exceptions.IncorrectNumberOfParametersException;
 import org.randoom.setlx.exceptions.SetlException;
@@ -7,6 +7,9 @@ import org.randoom.setlx.operatorUtilities.OperatorExpression;
 import org.randoom.setlx.types.Om;
 import org.randoom.setlx.types.SetlList;
 import org.randoom.setlx.types.Value;
+import org.randoom.setlx.utilities.FragmentList;
+import org.randoom.setlx.utilities.State;
+import org.randoom.setlx.utilities.WriteBackAgent;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -15,7 +18,7 @@ import java.util.List;
 /**
  * A list of parameter definitions.
  */
-public class ParameterList extends FragmentList<ParameterDef> {
+public class ParameterList extends FragmentList<ParameterDefinition> {
     private int     rwParameters;
     private int     numberOfParametersWithOutDefault;
     private boolean isLastParameterOfTypeList;
@@ -44,11 +47,11 @@ public class ParameterList extends FragmentList<ParameterDef> {
      * @param element Parameter definition to append.
      */
     @Override
-    public void add(ParameterDef element) {
+    public void add(ParameterDefinition element) {
         isLastParameterOfTypeList = false;
-        if (element.getType() == ParameterDef.ParameterType.READ_WRITE) {
+        if (element.getClass() == ReadWriteParameter.class) {
             ++rwParameters;
-        } else if (element.getType() == ParameterDef.ParameterType.LIST) {
+        } else if (element.getClass() == ListParameter.class) {
             isLastParameterOfTypeList = true;
         }
         if (! element.hasDefaultValue()) {
@@ -75,12 +78,12 @@ public class ParameterList extends FragmentList<ParameterDef> {
      * @param usedVariables    Variables present in bound when used.
      */
     public void collectVariablesAndOptimize (
-            final State        state,
+            final State state,
             final List<String> boundVariables,
             final List<String> unboundVariables,
             final List<String> usedVariables
     ) {
-        for (final ParameterDef def : fragmentList) {
+        for (final ParameterDefinition def : fragmentList) {
             def.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
         }
     }
@@ -165,7 +168,7 @@ public class ParameterList extends FragmentList<ParameterDef> {
         final int numberOfValues = values.size();
         final int size           = fragmentList.size();
         for (int i = 0; i < size; ++i) {
-            final ParameterDef param = fragmentList.get(i);
+            final ParameterDefinition param = fragmentList.get(i);
                   Value        value = null;
             if (i < numberOfValues) {
                 value = values.get(i);
@@ -175,9 +178,9 @@ public class ParameterList extends FragmentList<ParameterDef> {
             if (value == null) {
                 value = Om.OM;
             }
-            if (param.getType() == ParameterDef.ParameterType.READ_WRITE) {
+            if (param.getClass() == ReadWriteParameter.class) {
                 param.assign(state, value, assignmentContext);
-            } else if (param.getType() == ParameterDef.ParameterType.LIST) {
+            } else if (param.getClass() == ListParameter.class) {
                 SetlList parameters = new SetlList();
                 for (int valueIndex = i; valueIndex < numberOfValues; ++valueIndex) {
                     parameters.addMember(state, values.get(valueIndex));
@@ -199,12 +202,12 @@ public class ParameterList extends FragmentList<ParameterDef> {
      * @return                  Map of parameters and their values.
      * @throws SetlException    Thrown in case of some (user-) error.
      */
-    public HashMap<ParameterDef, Value> putParameterValuesIntoMap(final State state, final List<Value> values) throws SetlException {
-        final HashMap<ParameterDef, Value> assignments    = new HashMap<ParameterDef, Value>();
+    public HashMap<ParameterDefinition, Value> putParameterValuesIntoMap(final State state, final List<Value> values) throws SetlException {
+        final HashMap<ParameterDefinition, Value> assignments    = new HashMap<>();
         final int                          numberOfValues = values.size();
         final int                          size           = fragmentList.size();
         for (int i = 0; i < size; ++i) {
-            final ParameterDef param = fragmentList.get(i);
+            final ParameterDefinition param = fragmentList.get(i);
                   Value        value = null;
             if (i < numberOfValues) {
                 value = values.get(i);
@@ -214,9 +217,9 @@ public class ParameterList extends FragmentList<ParameterDef> {
             if (value == null) {
                 value = Om.OM;
             }
-            if (param.getType() == ParameterDef.ParameterType.READ_WRITE) {
+            if (param.getClass() == ReadWriteParameter.class) {
                 assignments.put(param, value);
-            } else if (param.getType() == ParameterDef.ParameterType.LIST) {
+            } else if (param.getClass() == ListParameter.class) {
                 SetlList parameters = new SetlList();
                 for (int valueIndex = i; valueIndex < numberOfValues; ++valueIndex) {
                     parameters.addMember(state, values.get(valueIndex));
@@ -246,8 +249,8 @@ public class ParameterList extends FragmentList<ParameterDef> {
 
             final int size = Math.min(fragmentList.size(), args.size());
             for (int i = 0; i < size; ++i) {
-                final ParameterDef param = fragmentList.get(i);
-                if (param.getType() == ParameterDef.ParameterType.READ_WRITE) {
+                final ParameterDefinition param = fragmentList.get(i);
+                if (param.getClass() == ReadWriteParameter.class) {
                     // value of parameter after execution
                     final Value postValue = param.getValue(state);
                     // expression used to fill parameter before execution
@@ -270,7 +273,7 @@ public class ParameterList extends FragmentList<ParameterDef> {
      * @return               WriteBackAgent containing expressions and their current values
      * @throws SetlException Thrown in case of some (user-) error.
      */
-    public WriteBackAgent extractRwParametersFromMap(final HashMap<ParameterDef, Value> assignments, final FragmentList<OperatorExpression> args) throws SetlException {
+    public WriteBackAgent extractRwParametersFromMap(final HashMap<ParameterDefinition, Value> assignments, final FragmentList<OperatorExpression> args) throws SetlException {
         WriteBackAgent wba = null;
 
         if (rwParameters > 0) {
@@ -278,8 +281,8 @@ public class ParameterList extends FragmentList<ParameterDef> {
 
             final int size = Math.min(fragmentList.size(), args.size());
             for (int i = 0; i < size; ++i) {
-                final ParameterDef param = fragmentList.get(i);
-                if (param.getType() == ParameterDef.ParameterType.READ_WRITE) {
+                final ParameterDefinition param = fragmentList.get(i);
+                if (param.getClass() == ReadWriteParameter.class) {
                     // value of parameter after execution
                     final Value postValue = assignments.get(param);
                     // expression used to fill parameter before execution
@@ -304,7 +307,7 @@ public class ParameterList extends FragmentList<ParameterDef> {
      * @param sb    StringBuilder to append to.
      */
     public void appendString(State state, StringBuilder sb) {
-        final Iterator<ParameterDef> iterator = fragmentList.iterator();
+        final Iterator<ParameterDefinition> iterator = fragmentList.iterator();
         while (iterator.hasNext()) {
             iterator.next().appendString(state, sb, 0);
             if (iterator.hasNext()) {
@@ -324,7 +327,7 @@ public class ParameterList extends FragmentList<ParameterDef> {
      */
     public Value toTerm(final State state) throws SetlException {
         final SetlList paramList = new SetlList(fragmentList.size());
-        for (final ParameterDef param: fragmentList) {
+        for (final ParameterDefinition param: fragmentList) {
             paramList.addMember(state, param.toTerm(state));
         }
         return paramList;
@@ -345,7 +348,7 @@ public class ParameterList extends FragmentList<ParameterDef> {
             final SetlList      paramList  = (SetlList) termFragment;
             final ParameterList parameters = new ParameterList(paramList.size());
             for (final Value v : paramList) {
-                parameters.add(ParameterDef.valueToParameterDef(state, v));
+                parameters.add(ParameterDefinition.valueToParameterDef(state, v));
             }
             return parameters;
         }

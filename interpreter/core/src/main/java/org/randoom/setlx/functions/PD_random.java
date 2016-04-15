@@ -5,7 +5,7 @@ import org.randoom.setlx.types.NumberValue;
 import org.randoom.setlx.types.Rational;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.types.SetlDouble;
-import org.randoom.setlx.utilities.ParameterDef;
+import org.randoom.setlx.parameters.ParameterDefinition;
 import org.randoom.setlx.utilities.State;
 
 import java.util.HashMap;
@@ -16,7 +16,7 @@ import java.util.HashMap;
  */
 public class PD_random extends PreDefinedProcedure {
 
-    private final static ParameterDef        UPPER_BOUND = createOptionalParameter("upperBound", SetlDouble.ONE);
+    private final static ParameterDefinition UPPER_BOUND = createOptionalParameter("upperBound", SetlDouble.ONE);
 
     /** Definition of the PreDefinedProcedure `random'. */
     public  final static PreDefinedProcedure DEFINITION  = new PD_random();
@@ -27,7 +27,7 @@ public class PD_random extends PreDefinedProcedure {
     }
 
     @Override
-    public Value execute(final State state, final HashMap<ParameterDef, Value> args) throws SetlException {
+    public Value execute(final State state, final HashMap<ParameterDefinition, Value> args) throws SetlException {
         final NumberValue random = SetlDouble.valueOf(state.getRandomDouble());
         final Value       arg    = args.get(UPPER_BOUND);
         if (arg.equalTo(Rational.ZERO)) {

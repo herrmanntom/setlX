@@ -4,7 +4,7 @@ import org.randoom.setlx.exceptions.IncompatibleTypeException;
 import org.randoom.setlx.types.Rational;
 import org.randoom.setlx.types.SetlBoolean;
 import org.randoom.setlx.types.Value;
-import org.randoom.setlx.utilities.ParameterDef;
+import org.randoom.setlx.parameters.ParameterDefinition;
 import org.randoom.setlx.utilities.State;
 
 import java.util.HashMap;
@@ -18,7 +18,7 @@ import java.util.HashMap;
  */
 public class PD_isProbablePrime extends PreDefinedProcedure {
 
-    private final static ParameterDef        INTEGER    = createParameter("integer");
+    private final static ParameterDefinition INTEGER    = createParameter("integer");
 
     /** Definition of the PreDefinedProcedure `isProbablePrime'. */
     public  final static PreDefinedProcedure DEFINITION = new PD_isProbablePrime();
@@ -29,7 +29,7 @@ public class PD_isProbablePrime extends PreDefinedProcedure {
     }
 
     @Override
-    public SetlBoolean execute(final State state, final HashMap<ParameterDef, Value> args) throws IncompatibleTypeException {
+    public SetlBoolean execute(final State state, final HashMap<ParameterDefinition, Value> args) throws IncompatibleTypeException {
         final Value integer  = args.get(INTEGER);
         if (integer.isInteger() != SetlBoolean.TRUE) {
             throw new IncompatibleTypeException("Argument '" + integer + "' is not an integer.");

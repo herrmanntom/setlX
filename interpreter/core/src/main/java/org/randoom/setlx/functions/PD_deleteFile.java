@@ -4,7 +4,7 @@ import org.randoom.setlx.exceptions.IncompatibleTypeException;
 import org.randoom.setlx.types.SetlBoolean;
 import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.Value;
-import org.randoom.setlx.utilities.ParameterDef;
+import org.randoom.setlx.parameters.ParameterDefinition;
 import org.randoom.setlx.utilities.State;
 
 import java.io.File;
@@ -15,7 +15,7 @@ import java.util.HashMap;
  */
 public class PD_deleteFile extends PreDefinedProcedure {
 
-    private final static ParameterDef        FILE_NAME  = createParameter("fileName");
+    private final static ParameterDefinition FILE_NAME  = createParameter("fileName");
 
     /** Definition of the PreDefinedProcedure `deleteFile'. */
     public  final static PreDefinedProcedure DEFINITION = new PD_deleteFile();
@@ -26,7 +26,7 @@ public class PD_deleteFile extends PreDefinedProcedure {
     }
 
     @Override
-    public Value execute(final State state, final HashMap<ParameterDef, Value> args) throws IncompatibleTypeException {
+    public Value execute(final State state, final HashMap<ParameterDefinition, Value> args) throws IncompatibleTypeException {
         final Value filePath = args.get(FILE_NAME);
         if ( ! (filePath instanceof SetlString)) {
             throw new IncompatibleTypeException(

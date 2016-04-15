@@ -4,6 +4,7 @@ import org.randoom.setlx.exceptions.*;
 import org.randoom.setlx.functions.*;
 import org.randoom.setlx.operatorUtilities.OperatorExpression;
 import org.randoom.setlx.operators.*;
+import org.randoom.setlx.parameters.ParameterList;
 import org.randoom.setlx.utilities.*;
 
 import java.util.Map;

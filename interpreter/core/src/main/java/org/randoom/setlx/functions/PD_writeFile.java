@@ -7,7 +7,7 @@ import org.randoom.setlx.types.CollectionValue;
 import org.randoom.setlx.types.SetlBoolean;
 import org.randoom.setlx.types.SetlList;
 import org.randoom.setlx.types.Value;
-import org.randoom.setlx.utilities.ParameterDef;
+import org.randoom.setlx.parameters.ParameterDefinition;
 import org.randoom.setlx.utilities.WriteFile;
 import org.randoom.setlx.utilities.State;
 
@@ -19,8 +19,8 @@ import java.util.HashMap;
  */
 public class PD_writeFile extends PreDefinedProcedure {
 
-    private final static ParameterDef        FILE_NAME  = createParameter("fileName");
-    private final static ParameterDef        CONTENTS   = createParameter("contents");
+    private final static ParameterDefinition FILE_NAME  = createParameter("fileName");
+    private final static ParameterDefinition CONTENTS   = createParameter("contents");
 
     /** Definition of the PreDefinedProcedure `writeFile'. */
     public  final static PreDefinedProcedure DEFINITION = new PD_writeFile();
@@ -35,7 +35,7 @@ public class PD_writeFile extends PreDefinedProcedure {
     }
 
     @Override
-    public Value execute(final State state, final HashMap<ParameterDef, Value> args) throws SetlException {
+    public Value execute(final State state, final HashMap<ParameterDefinition, Value> args) throws SetlException {
         return exec(state, args, false);
     }
 
@@ -49,7 +49,7 @@ public class PD_writeFile extends PreDefinedProcedure {
      * @throws IncompatibleTypeException Thrown in case the wrong parameters are supplied.
      * @throws FileNotWritableException File to be written cannot be written.
      */
-    protected Value exec(final State state, final HashMap<ParameterDef, Value> args, final boolean append) throws SetlException {
+    protected Value exec(final State state, final HashMap<ParameterDefinition, Value> args, final boolean append) throws SetlException {
         final Value  fileArg = args.get(FILE_NAME);
         if (fileArg.isString() == SetlBoolean.FALSE) {
             throw new IncompatibleTypeException("FileName-argument '" + fileArg.toString(state) + "' is not a string.");

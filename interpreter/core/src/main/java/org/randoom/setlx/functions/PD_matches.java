@@ -9,7 +9,7 @@ import org.randoom.setlx.types.SetlList;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.types.SetlBoolean;
 import org.randoom.setlx.types.SetlString;
-import org.randoom.setlx.utilities.ParameterDef;
+import org.randoom.setlx.parameters.ParameterDefinition;
 import org.randoom.setlx.utilities.ScanResult;
 import org.randoom.setlx.utilities.State;
 
@@ -25,9 +25,9 @@ import java.util.regex.PatternSyntaxException;
  */
 public class PD_matches extends PreDefinedProcedure {
 
-    private final static ParameterDef        STRING         = createParameter("string");
-    private final static ParameterDef        PATTERN        = createParameter("pattern");
-    private final static ParameterDef        CAPTURE_GROUPS = createOptionalParameter("captureGroups", SetlBoolean.FALSE);
+    private final static ParameterDefinition STRING         = createParameter("string");
+    private final static ParameterDefinition PATTERN        = createParameter("pattern");
+    private final static ParameterDefinition CAPTURE_GROUPS = createOptionalParameter("captureGroups", SetlBoolean.FALSE);
 
     /** Definition of the PreDefinedProcedure `matches'. */
     public  final static PreDefinedProcedure DEFINITION     = new PD_matches();
@@ -44,7 +44,7 @@ public class PD_matches extends PreDefinedProcedure {
     }
 
     @Override
-    public Value execute(final State state, final HashMap<ParameterDef, Value> args) throws SetlException {
+    public Value execute(final State state, final HashMap<ParameterDefinition, Value> args) throws SetlException {
         final Value string     = args.get(STRING);
         final Value patternStr = args.get(PATTERN);
         final Value capture    = args.get(CAPTURE_GROUPS);

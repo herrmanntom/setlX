@@ -10,7 +10,7 @@ import org.randoom.setlx.types.Rational;
 import org.randoom.setlx.types.SetlDouble;
 import org.randoom.setlx.types.SetlList;
 import org.randoom.setlx.types.Value;
-import org.randoom.setlx.utilities.ParameterDef;
+import org.randoom.setlx.parameters.ParameterDefinition;
 import org.randoom.setlx.utilities.State;
 
 import java.util.ArrayList;
@@ -19,10 +19,10 @@ import java.util.List;
 
 public class PD_plot_addBullets extends PreDefinedProcedure {
 
-    private final static ParameterDef CANVAS = createParameter("canvas");
-    private final static ParameterDef XYTUPEL = createParameter("xyTupel");
-    private final static ParameterDef RGBLIST = createOptionalParameter("RGBList", Rational.ONE);
-    private final static ParameterDef BULLETSIZE = createOptionalParameter("Bulletsize", SetlDouble.FIVE);
+    private final static ParameterDefinition CANVAS = createParameter("canvas");
+    private final static ParameterDefinition XYTUPEL = createParameter("xyTupel");
+    private final static ParameterDefinition RGBLIST = createOptionalParameter("RGBList", Rational.ONE);
+    private final static ParameterDefinition BULLETSIZE = createOptionalParameter("Bulletsize", SetlDouble.FIVE);
     public final static PreDefinedProcedure DEFINITION = new PD_plot_addBullets();
 
     private PD_plot_addBullets() {
@@ -34,7 +34,7 @@ public class PD_plot_addBullets extends PreDefinedProcedure {
     }
 
     @Override
-    protected Value execute(State state, HashMap<ParameterDef, Value> args) throws SetlException {
+    protected Value execute(State state, HashMap<ParameterDefinition, Value> args) throws SetlException {
         Canvas canvas;
         SetlList xylist;
 

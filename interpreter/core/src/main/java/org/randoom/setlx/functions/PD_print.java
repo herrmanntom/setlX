@@ -3,7 +3,7 @@ package org.randoom.setlx.functions;
 import org.randoom.setlx.types.Om;
 import org.randoom.setlx.types.SetlList;
 import org.randoom.setlx.types.Value;
-import org.randoom.setlx.utilities.ParameterDef;
+import org.randoom.setlx.parameters.ParameterDefinition;
 import org.randoom.setlx.utilities.State;
 
 import java.util.HashMap;
@@ -13,7 +13,7 @@ import java.util.HashMap;
  */
 public class PD_print extends PreDefinedProcedure {
 
-    private final static ParameterDef        VALUE      = createListParameter("value");
+    private final static ParameterDefinition VALUE      = createListParameter("value");
 
     /** Definition of the PreDefinedProcedure `print'. */
     public  final static PreDefinedProcedure DEFINITION = new PD_print();
@@ -27,7 +27,7 @@ public class PD_print extends PreDefinedProcedure {
     }
 
     @Override
-    public Value execute(final State state, final HashMap<ParameterDef, Value> args) {
+    public Value execute(final State state, final HashMap<ParameterDefinition, Value> args) {
         final StringBuilder out = new StringBuilder();
         for (final Value arg : (SetlList) args.get(VALUE)) {
             arg.appendUnquotedString(state, out, 0);

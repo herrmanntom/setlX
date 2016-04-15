@@ -5,7 +5,7 @@ import org.randoom.setlx.exceptions.UndefinedOperationException;
 import org.randoom.setlx.plot.utilities.Canvas;
 import org.randoom.setlx.plot.utilities.ConnectJFreeChart;
 import org.randoom.setlx.plot.utilities.ConvertSetlTypes;
-import org.randoom.setlx.utilities.ParameterDef;
+import org.randoom.setlx.parameters.ParameterDefinition;
 import org.randoom.setlx.plot.utilities.PlotCheckType;
 import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.types.SetlList;
@@ -16,9 +16,9 @@ import java.util.List;
 
 public class PD_plot_addPieChart extends PreDefinedProcedure {
 
-    private final static ParameterDef CANVAS = createParameter("canvas");
-    private final static ParameterDef VALUES = createParameter("values");
-    private final static ParameterDef CATEGORIES = createParameter("categories");
+    private final static ParameterDefinition CANVAS = createParameter("canvas");
+    private final static ParameterDefinition VALUES = createParameter("values");
+    private final static ParameterDefinition CATEGORIES = createParameter("categories");
     public final static PreDefinedProcedure DEFINITION = new PD_plot_addPieChart();
 
     private PD_plot_addPieChart() {
@@ -29,7 +29,7 @@ public class PD_plot_addPieChart extends PreDefinedProcedure {
     }
 
     @Override
-    protected Value execute(State state, HashMap<ParameterDef, Value> args) throws SetlException {
+    protected Value execute(State state, HashMap<ParameterDefinition, Value> args) throws SetlException {
         Canvas canvas;
         SetlList values;
         SetlList categories;

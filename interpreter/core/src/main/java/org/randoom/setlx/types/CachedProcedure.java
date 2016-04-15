@@ -8,7 +8,7 @@ import org.randoom.setlx.operatorUtilities.OperatorExpression;
 import org.randoom.setlx.statements.Block;
 import org.randoom.setlx.utilities.CodeFragment;
 import org.randoom.setlx.utilities.FragmentList;
-import org.randoom.setlx.utilities.ParameterList;
+import org.randoom.setlx.parameters.ParameterList;
 import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.TermUtilities;
 

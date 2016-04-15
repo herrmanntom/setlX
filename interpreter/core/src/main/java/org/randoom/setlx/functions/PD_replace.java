@@ -4,7 +4,7 @@ import org.randoom.setlx.exceptions.IncompatibleTypeException;
 import org.randoom.setlx.exceptions.SyntaxErrorException;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.types.SetlString;
-import org.randoom.setlx.utilities.ParameterDef;
+import org.randoom.setlx.parameters.ParameterDefinition;
 import org.randoom.setlx.utilities.State;
 
 import java.util.HashMap;
@@ -18,9 +18,9 @@ import java.util.regex.PatternSyntaxException;
  */
 public class PD_replace extends PreDefinedProcedure {
 
-    private final static ParameterDef        STRING      = createParameter("string");
-    private final static ParameterDef        PATTERN     = createParameter("pattern");
-    private final static ParameterDef        REPLACEMENT = createParameter("replacement");
+    private final static ParameterDefinition STRING      = createParameter("string");
+    private final static ParameterDefinition PATTERN     = createParameter("pattern");
+    private final static ParameterDefinition REPLACEMENT = createParameter("replacement");
 
     /** Definition of the PreDefinedProcedure `replace'. */
     public  final static PreDefinedProcedure DEFINITION  = new PD_replace();
@@ -33,7 +33,7 @@ public class PD_replace extends PreDefinedProcedure {
     }
 
     @Override
-    public Value execute(final State state, final HashMap<ParameterDef, Value> args) throws IncompatibleTypeException, SyntaxErrorException {
+    public Value execute(final State state, final HashMap<ParameterDefinition, Value> args) throws IncompatibleTypeException, SyntaxErrorException {
         final Value string      = args.get(STRING);
         final Value pattern     = args.get(PATTERN);
         final Value replacement = args.get(REPLACEMENT);

@@ -4,7 +4,7 @@ import org.randoom.setlx.exceptions.IncompatibleTypeException;
 import org.randoom.setlx.types.CachedProcedure;
 import org.randoom.setlx.types.Om;
 import org.randoom.setlx.types.Value;
-import org.randoom.setlx.utilities.ParameterDef;
+import org.randoom.setlx.parameters.ParameterDefinition;
 import org.randoom.setlx.utilities.State;
 
 import java.util.HashMap;
@@ -14,7 +14,7 @@ import java.util.HashMap;
  */
 public class PD_clearCache extends PreDefinedProcedure {
 
-    private final static ParameterDef        CACHED_PROCEDURE = createParameter("cachedProcedure");
+    private final static ParameterDefinition CACHED_PROCEDURE = createParameter("cachedProcedure");
 
     /** Definition of the PreDefinedProcedure `clearCache'. */
     public  final static PreDefinedProcedure DEFINITION       = new PD_clearCache();
@@ -25,7 +25,7 @@ public class PD_clearCache extends PreDefinedProcedure {
     }
 
     @Override
-    public Value execute(final State state, final HashMap<ParameterDef, Value> args) throws IncompatibleTypeException {
+    public Value execute(final State state, final HashMap<ParameterDefinition, Value> args) throws IncompatibleTypeException {
         final Value cachedProcedure = args.get(CACHED_PROCEDURE);
         if ( ! (cachedProcedure instanceof CachedProcedure)) {
             throw new IncompatibleTypeException(

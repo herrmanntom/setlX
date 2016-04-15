@@ -3,7 +3,7 @@ package org.randoom.setlx.functions;
 import org.randoom.setlx.exceptions.AbortException;
 import org.randoom.setlx.types.SetlList;
 import org.randoom.setlx.types.Value;
-import org.randoom.setlx.utilities.ParameterDef;
+import org.randoom.setlx.parameters.ParameterDefinition;
 import org.randoom.setlx.utilities.State;
 
 import java.util.HashMap;
@@ -13,7 +13,7 @@ import java.util.HashMap;
  */
 public class PD_abort extends PreDefinedProcedure {
 
-    private final static ParameterDef        MESSAGE    = createListParameter("message");
+    private final static ParameterDefinition MESSAGE    = createListParameter("message");
 
     /** Definition of the PreDefinedProcedure `abort'. */
     public  final static PreDefinedProcedure DEFINITION = new PD_abort();
@@ -24,7 +24,7 @@ public class PD_abort extends PreDefinedProcedure {
     }
 
     @Override
-    public Value execute(final State state, final HashMap<ParameterDef, Value> args) throws AbortException {
+    public Value execute(final State state, final HashMap<ParameterDefinition, Value> args) throws AbortException {
         final StringBuilder message = new StringBuilder();
         message.append("abort: ");
         for (final Value arg : (SetlList) args.get(MESSAGE)) {

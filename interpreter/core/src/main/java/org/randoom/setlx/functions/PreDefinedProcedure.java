@@ -5,10 +5,14 @@ import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.UndefinedOperationException;
 import org.randoom.setlx.operatorUtilities.OperatorExpression;
 import org.randoom.setlx.operators.ValueOperator;
+import org.randoom.setlx.parameters.ListParameter;
+import org.randoom.setlx.parameters.Parameter;
+import org.randoom.setlx.parameters.ParameterDefinition;
+import org.randoom.setlx.parameters.ParameterList;
+import org.randoom.setlx.parameters.ReadWriteParameter;
 import org.randoom.setlx.statements.Block;
 import org.randoom.setlx.types.*;
 import org.randoom.setlx.utilities.*;
-import org.randoom.setlx.utilities.ParameterDef.ParameterType;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -64,8 +68,8 @@ public abstract class PreDefinedProcedure extends Procedure {
      * @param param Parameter name.
      * @return new ParameterDef
      */
-    protected static ParameterDef createParameter(final String param) {
-        return new ParameterDef(param, ParameterType.READ_ONLY);
+    protected static Parameter createParameter(final String param) {
+        return new Parameter(param);
     }
 
     /**
@@ -74,8 +78,8 @@ public abstract class PreDefinedProcedure extends Procedure {
      * @param param Parameter name.
      * @return new ParameterDef
      */
-    protected static ParameterDef createRwParameter(final String param) {
-        return new ParameterDef(param, ParameterType.READ_WRITE);
+    protected static ReadWriteParameter createRwParameter(final String param) {
+        return new ReadWriteParameter(param);
     }
 
     /**
@@ -85,8 +89,8 @@ public abstract class PreDefinedProcedure extends Procedure {
      * @param defaultValue Value to use as default.
      * @return new ParameterDef
      */
-    protected static ParameterDef createOptionalParameter(final String param, final Value defaultValue) {
-        return new ParameterDef(param, ParameterType.READ_ONLY, new OperatorExpression(new ValueOperator(defaultValue)));
+    protected static Parameter createOptionalParameter(final String param, final Value defaultValue) {
+        return new Parameter(param, new OperatorExpression(new ValueOperator(defaultValue)));
     }
 
     /**
@@ -95,8 +99,8 @@ public abstract class PreDefinedProcedure extends Procedure {
      * @param param Parameter name.
      * @return new ParameterDef
      */
-    protected static ParameterDef createListParameter(final String param) {
-        return new ParameterDef(param, ParameterType.LIST);
+    protected static ListParameter createListParameter(final String param) {
+        return new ListParameter(param);
     }
 
     /**
@@ -104,7 +108,7 @@ public abstract class PreDefinedProcedure extends Procedure {
      *
      * @param parameter Parameter to add.
      */
-    protected final void addParameter(final ParameterDef parameter) {
+    protected final void addParameter(final ParameterDefinition parameter) {
         parameters.add(parameter);
     }
 
@@ -116,7 +120,7 @@ public abstract class PreDefinedProcedure extends Procedure {
      * @return               Resulting value of the call.
      * @throws SetlException Can be thrown in case of some (user-) error.
      */
-    protected abstract Value execute(final State state, final HashMap<ParameterDef, Value> args) throws SetlException;
+    protected abstract Value execute(final State state, final HashMap<ParameterDefinition, Value> args) throws SetlException;
 
     // this function is called from within SetlX
     @Override
@@ -147,7 +151,7 @@ public abstract class PreDefinedProcedure extends Procedure {
         }
 
         // evaluate arguments
-        final ArrayList<Value> values = new ArrayList<Value>(nArguments);
+        final ArrayList<Value> values = new ArrayList<>(nArguments);
         for (final OperatorExpression arg : args) {
             values.add(arg.evaluate(state).clone());
         }
@@ -158,7 +162,7 @@ public abstract class PreDefinedProcedure extends Procedure {
         }
 
         // assign parameters
-        HashMap<ParameterDef, Value> assignments = parameters.putParameterValuesIntoMap(state, values);
+        HashMap<ParameterDefinition, Value> assignments = parameters.putParameterValuesIntoMap(state, values);
 
         // call predefined function (which may add writeBack-values to List)
         final Value result  = this.execute(state, assignments);

@@ -4,7 +4,7 @@ import org.randoom.setlx.exceptions.IncompatibleTypeException;
 import org.randoom.setlx.exceptions.FileNotReadableException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.types.*;
-import org.randoom.setlx.utilities.ParameterDef;
+import org.randoom.setlx.parameters.ParameterDefinition;
 import org.randoom.setlx.utilities.State;
 
 import java.io.BufferedReader;
@@ -25,8 +25,8 @@ import java.util.HashSet;
  */
 public class PD_readFile extends PreDefinedProcedure {
 
-    private final static ParameterDef        FILE_NAME            = createParameter("fileName");
-    private final static ParameterDef        LIST_OF_LINE_NUMBERS = createOptionalParameter("listOfLineNumbers", Om.OM);
+    private final static ParameterDefinition FILE_NAME            = createParameter("fileName");
+    private final static ParameterDefinition LIST_OF_LINE_NUMBERS = createOptionalParameter("listOfLineNumbers", Om.OM);
 
     /** Definition of the PreDefinedProcedure `readFile'. */
     public  final static PreDefinedProcedure DEFINITION           = new PD_readFile();
@@ -38,7 +38,7 @@ public class PD_readFile extends PreDefinedProcedure {
     }
 
     @Override
-    public Value execute(final State state, final HashMap<ParameterDef, Value> args) throws SetlException {
+    public Value execute(final State state, final HashMap<ParameterDefinition, Value> args) throws SetlException {
         final Value fileArg = args.get(FILE_NAME);
         if ( ! (fileArg instanceof SetlString)) {
             throw new IncompatibleTypeException(

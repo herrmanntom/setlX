@@ -5,7 +5,7 @@ import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.types.Om;
 import org.randoom.setlx.types.Rational;
 import org.randoom.setlx.types.Value;
-import org.randoom.setlx.utilities.ParameterDef;
+import org.randoom.setlx.parameters.ParameterDefinition;
 import org.randoom.setlx.utilities.State;
 
 import java.util.HashMap;
@@ -16,7 +16,7 @@ import java.util.Map.Entry;
  *               limited debugging functionality.
  */
 public class PD_stop extends PreDefinedProcedure {
-    private final static ParameterDef        ID           = createOptionalParameter("id", Om.OM);
+    private final static ParameterDefinition ID           = createOptionalParameter("id", Om.OM);
 
     /** Definition of the PreDefinedProcedure `stop'. */
     public  final static PreDefinedProcedure DEFINITION   = new PD_stop();
@@ -29,7 +29,7 @@ public class PD_stop extends PreDefinedProcedure {
     }
 
     @Override
-    public Value execute(final State state, final HashMap<ParameterDef, Value> args) throws SetlException {
+    public Value execute(final State state, final HashMap<ParameterDefinition, Value> args) throws SetlException {
         String message = this.getName() + "(";
         if (args.get(ID) != Om.OM) {
             message += args.get(ID).toString(state);

@@ -4,7 +4,7 @@ import org.randoom.setlx.exceptions.IncompatibleTypeException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.types.SetlMatrix;
 import org.randoom.setlx.types.Value;
-import org.randoom.setlx.utilities.ParameterDef;
+import org.randoom.setlx.parameters.ParameterDefinition;
 import org.randoom.setlx.utilities.State;
 
 import java.util.HashMap;
@@ -14,7 +14,7 @@ import java.util.HashMap;
  */
 public class PD_la_pseudoInverse extends PreDefinedProcedure {
 
-    private final static ParameterDef        MATRIX     = createParameter("matrix");
+    private final static ParameterDefinition MATRIX     = createParameter("matrix");
 
     /** Definition of the PreDefinedProcedure `la_pseudoInverse'. */
     public  final static PreDefinedProcedure DEFINITION = new PD_la_pseudoInverse();
@@ -25,7 +25,7 @@ public class PD_la_pseudoInverse extends PreDefinedProcedure {
     }
 
     @Override
-    public Value execute(State state, HashMap<ParameterDef, Value> args) throws SetlException {
+    public Value execute(State state, HashMap<ParameterDefinition, Value> args) throws SetlException {
         if (!(args.get(MATRIX) instanceof SetlMatrix)) {
             throw new IncompatibleTypeException("The Parameter needs to be a Matrix.");
         }

@@ -5,14 +5,14 @@ import org.randoom.setlx.types.Rational;
 import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.plot.utilities.ConnectJFreeChart;
-import org.randoom.setlx.utilities.ParameterDef;
+import org.randoom.setlx.parameters.ParameterDefinition;
 import org.randoom.setlx.utilities.State;
 
 import java.util.HashMap;
 
 public class PD_plot_createCanvas extends PreDefinedProcedure {
 
-    private final static ParameterDef NAME = createOptionalParameter("name", Rational.ONE);
+    private final static ParameterDefinition NAME = createOptionalParameter("name", Rational.ONE);
 
 
     public final static PreDefinedProcedure
@@ -24,7 +24,7 @@ public class PD_plot_createCanvas extends PreDefinedProcedure {
     }
 
     @Override
-    protected Value execute(State state, HashMap<ParameterDef, Value> args) throws SetlException {
+    protected Value execute(State state, HashMap<ParameterDefinition, Value> args) throws SetlException {
         Value nameV = args.get(NAME);
         if(!nameV.equalTo(Rational.ONE)){
             SetlString nameS =  (SetlString)nameV;

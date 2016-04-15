@@ -3,7 +3,7 @@ package org.randoom.setlx.functions;
 import org.randoom.setlx.exceptions.IncompatibleTypeException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.types.Value;
-import org.randoom.setlx.utilities.ParameterDef;
+import org.randoom.setlx.parameters.ParameterDefinition;
 import org.randoom.setlx.utilities.State;
 
 import java.util.HashMap;
@@ -13,7 +13,7 @@ import java.util.HashMap;
  *                                 member from `collectionValue'
  */
 public class PD_from extends PreDefinedProcedure {
-    private final static ParameterDef        COLLECTION_VALUE
+    private final static ParameterDefinition COLLECTION_VALUE
                            = createRwParameter("collectionValue");
 
     /** Definition of the PreDefinedProcedure `from'. */
@@ -28,7 +28,7 @@ public class PD_from extends PreDefinedProcedure {
     @Override
     public Value execute(
             final State                        state,
-            final HashMap<ParameterDef, Value> args
+            final HashMap<ParameterDefinition, Value> args
     ) throws SetlException
     {
         final Value collection = args.get(COLLECTION_VALUE);

@@ -2,7 +2,7 @@ package org.randoom.setlx.functions;
 
 import org.randoom.setlx.types.Rational;
 import org.randoom.setlx.types.Value;
-import org.randoom.setlx.utilities.ParameterDef;
+import org.randoom.setlx.parameters.ParameterDefinition;
 import org.randoom.setlx.utilities.State;
 
 import java.util.HashMap;
@@ -19,7 +19,7 @@ public class PD_nCPUs extends PreDefinedProcedure {
     }
 
     @Override
-    public Value execute(final State state, final HashMap<ParameterDef, Value> args) {
+    public Value execute(final State state, final HashMap<ParameterDefinition, Value> args) {
         return Rational.valueOf(state.getNumberOfCores());
     }
 }

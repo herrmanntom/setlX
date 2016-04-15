@@ -204,10 +204,14 @@ if [ "${#failedTests[@]}" -gt "0" ]
     done
     echo
     echo "!! ${#failedTests[@]} examples did fail this test !!"
+    echo
+    "$setlXlaunchScript" --version
     exit 1
 else
     echo
     echo "Everything is fabulous. Well done sir!"
+    echo
+    "$setlXlaunchScript" --version
     exit 0
 fi
 

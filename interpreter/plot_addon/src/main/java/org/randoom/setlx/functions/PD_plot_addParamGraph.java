@@ -5,7 +5,7 @@ import org.randoom.setlx.exceptions.UndefinedOperationException;
 import org.randoom.setlx.plot.utilities.Canvas;
 import org.randoom.setlx.plot.utilities.ConnectJFreeChart;
 import org.randoom.setlx.plot.utilities.ConvertSetlTypes;
-import org.randoom.setlx.utilities.ParameterDef;
+import org.randoom.setlx.parameters.ParameterDefinition;
 import org.randoom.setlx.plot.utilities.PlotCheckType;
 import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.types.*;
@@ -16,13 +16,13 @@ import java.util.List;
 
 public class PD_plot_addParamGraph extends PreDefinedProcedure {
 
-    private final static ParameterDef CANVAS = createParameter("canvas");
-    private final static ParameterDef XFUNCTION = createParameter("xFunction");
-    private final static ParameterDef YFUNCTION = createParameter("yFunction");
-    private final static ParameterDef GRAPHNAME = createParameter("graphname");
-    private final static ParameterDef PARAMBOUND = createParameter("ParameterBounds");
-    private final static ParameterDef GRAPHCOLOR = createOptionalParameter("graphcolor (RGB)", Rational.ONE);
-    private final static ParameterDef PLOTAREA = createOptionalParameter("plotArea", SetlBoolean.FALSE);
+    private final static ParameterDefinition CANVAS = createParameter("canvas");
+    private final static ParameterDefinition XFUNCTION = createParameter("xFunction");
+    private final static ParameterDefinition YFUNCTION = createParameter("yFunction");
+    private final static ParameterDefinition GRAPHNAME = createParameter("graphname");
+    private final static ParameterDefinition PARAMBOUND = createParameter("ParameterBounds");
+    private final static ParameterDefinition GRAPHCOLOR = createOptionalParameter("graphcolor (RGB)", Rational.ONE);
+    private final static ParameterDefinition PLOTAREA = createOptionalParameter("plotArea", SetlBoolean.FALSE);
     public final static PreDefinedProcedure DEFINITION = new PD_plot_addParamGraph();
 
     private PD_plot_addParamGraph() {
@@ -37,7 +37,7 @@ public class PD_plot_addParamGraph extends PreDefinedProcedure {
     }
 
     @Override
-    protected Value execute(State state, HashMap<ParameterDef, Value> args) throws SetlException {
+    protected Value execute(State state, HashMap<ParameterDefinition, Value> args) throws SetlException {
 
         if (!PlotCheckType.isCanvas(args.get(CANVAS))) {
             throw new UndefinedOperationException("First parameter canvas has to be a Canvas object (eg. created with plot_createCanvas() )");

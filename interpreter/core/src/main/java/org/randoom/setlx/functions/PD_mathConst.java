@@ -4,7 +4,7 @@ import org.randoom.setlx.exceptions.IncompatibleTypeException;
 import org.randoom.setlx.exceptions.UndefinedOperationException;
 import org.randoom.setlx.types.SetlDouble;
 import org.randoom.setlx.types.Value;
-import org.randoom.setlx.utilities.ParameterDef;
+import org.randoom.setlx.parameters.ParameterDefinition;
 import org.randoom.setlx.utilities.State;
 
 import java.util.HashMap;
@@ -14,7 +14,7 @@ import java.util.HashMap;
  */
 public class PD_mathConst extends PreDefinedProcedure {
 
-    private final static ParameterDef        NAME_OF_CONSTANT = createParameter("nameOfConstant");
+    private final static ParameterDefinition NAME_OF_CONSTANT = createParameter("nameOfConstant");
 
     /** Definition of the PreDefinedProcedure `mathConst'. */
     public  final static PreDefinedProcedure DEFINITION       = new PD_mathConst();
@@ -25,7 +25,7 @@ public class PD_mathConst extends PreDefinedProcedure {
     }
 
     @Override
-    public Value execute(final State state, final HashMap<ParameterDef, Value> args)
+    public Value execute(final State state, final HashMap<ParameterDefinition, Value> args)
         throws UndefinedOperationException, IncompatibleTypeException
     {
         final Value name = args.get(NAME_OF_CONSTANT);

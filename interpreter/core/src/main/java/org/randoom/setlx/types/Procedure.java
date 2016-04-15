@@ -5,6 +5,7 @@ import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.exceptions.UndefinedOperationException;
 import org.randoom.setlx.operatorUtilities.OperatorExpression;
+import org.randoom.setlx.parameters.ParameterList;
 import org.randoom.setlx.statements.Block;
 import org.randoom.setlx.utilities.*;
 

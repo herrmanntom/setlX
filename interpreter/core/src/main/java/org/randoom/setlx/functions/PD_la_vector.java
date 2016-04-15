@@ -6,7 +6,7 @@ import org.randoom.setlx.types.CollectionValue;
 import org.randoom.setlx.types.SetlMatrix;
 import org.randoom.setlx.types.SetlVector;
 import org.randoom.setlx.types.Value;
-import org.randoom.setlx.utilities.ParameterDef;
+import org.randoom.setlx.parameters.ParameterDefinition;
 import org.randoom.setlx.utilities.State;
 
 import java.util.HashMap;
@@ -18,7 +18,7 @@ import java.util.HashMap;
  */
 public class PD_la_vector extends PreDefinedProcedure {
 
-    private final static ParameterDef        COLLECTION_VALUE = createParameter("collectionValue");
+    private final static ParameterDefinition COLLECTION_VALUE = createParameter("collectionValue");
 
     public  final static PreDefinedProcedure DEFINITION       = new PD_la_vector();
 
@@ -28,7 +28,7 @@ public class PD_la_vector extends PreDefinedProcedure {
     }
 
     @Override
-    public Value execute(State state, HashMap<ParameterDef, Value> args) throws SetlException {
+    public Value execute(State state, HashMap<ParameterDefinition, Value> args) throws SetlException {
         if (args.get(COLLECTION_VALUE) instanceof SetlMatrix) {
             return ((SetlMatrix) args.get(COLLECTION_VALUE)).toVector();
         } else if ((args.get(COLLECTION_VALUE) instanceof CollectionValue)) {

@@ -5,7 +5,7 @@ import org.randoom.setlx.types.Value;
 import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.SetlList;
 import org.randoom.setlx.types.Om;
-import org.randoom.setlx.utilities.ParameterDef;
+import org.randoom.setlx.parameters.ParameterDefinition;
 import org.randoom.setlx.utilities.State;
 
 import java.util.HashMap;
@@ -18,7 +18,7 @@ import java.io.BufferedReader;
  */
 public class PD_run extends PreDefinedProcedure {
 
-    private final static ParameterDef        COMMAND    = createParameter("command");
+    private final static ParameterDefinition COMMAND    = createParameter("command");
 
     /** Definition of the PreDefinedProcedure `run'. */
     public  final static PreDefinedProcedure DEFINITION = new PD_run();
@@ -29,7 +29,7 @@ public class PD_run extends PreDefinedProcedure {
     }
 
     @Override
-    public Value execute(final State state, final HashMap<ParameterDef, Value> args) throws IncompatibleTypeException {
+    public Value execute(final State state, final HashMap<ParameterDefinition, Value> args) throws IncompatibleTypeException {
         if ( ! (args.get(COMMAND) instanceof SetlString)) {
             throw new IncompatibleTypeException(
                 "Argument '" + args.get(COMMAND).toString(state) + "' is not a string."

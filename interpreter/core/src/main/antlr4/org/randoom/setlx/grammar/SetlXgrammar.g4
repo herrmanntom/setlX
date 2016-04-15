@@ -6,11 +6,11 @@ grammar SetlXgrammar;
     import org.randoom.setlx.operators.*;
     import org.randoom.setlx.operators.SetListConstructor.CollectionType;
     import org.randoom.setlx.operatorUtilities.*;
+    import org.randoom.setlx.parameters.*;
     import org.randoom.setlx.statements.*;
     import org.randoom.setlx.statementBranches.*;
     import org.randoom.setlx.types.*;
     import org.randoom.setlx.utilities.*;
-    import org.randoom.setlx.utilities.ParameterDef.ParameterType;
 
     import java.util.ArrayList;
     import java.util.List;
@@ -269,12 +269,12 @@ lambdaParameters returns [ParameterList paramList]
     @init {
         $paramList = new ParameterList();
     }
-    : variable             { $paramList.add(new ParameterDef($variable.v.getId(), ParameterType.READ_ONLY)); }
+    : variable             { $paramList.add(new Parameter($variable.v.getId())); }
     | '['
       (
-       v1 = variable       { $paramList.add(new ParameterDef($v1.v.getId(), ParameterType.READ_ONLY));       }
+       v1 = variable       { $paramList.add(new Parameter($v1.v.getId()));       }
        (
-         ',' v2 = variable { $paramList.add(new ParameterDef($v2.v.getId(), ParameterType.READ_ONLY));       }
+         ',' v2 = variable { $paramList.add(new Parameter($v2.v.getId()));       }
        )*
       )?
       ']'
@@ -425,17 +425,17 @@ procedureParameters [boolean enableRw] returns [ParameterList paramList]
     | /* epsilon */
     ;
 
-procedureParameter [boolean enableRw] returns [ParameterDef param]
-    : {$enableRw}? 'rw' assignableVariable { $param = new ParameterDef($assignableVariable.v.getId(), ParameterType.READ_WRITE); }
-    | variable                             { $param = new ParameterDef($variable.v.getId(), ParameterType.READ_ONLY);  }
+procedureParameter [boolean enableRw] returns [ParameterDefinition param]
+    : {$enableRw}? 'rw' assignableVariable { $param = new ReadWriteParameter($assignableVariable.v.getId()); }
+    | variable                             { $param = new Parameter($variable.v.getId());  }
     ;
 
-procedureDefaultParameter returns [ParameterDef param]
-    : assignableVariable ':=' expr[false] { $param = new ParameterDef($assignableVariable.v.getId(), ParameterType.READ_ONLY, $expr.ex); }
+procedureDefaultParameter returns [Parameter param]
+    : assignableVariable ':=' expr[false] { $param = new Parameter($assignableVariable.v.getId(), $expr.ex); }
     ;
 
-procedureListParameter returns [ParameterDef param]
-    : '*' variable { $param = new ParameterDef($variable.v.getId(), ParameterType.LIST); }
+procedureListParameter returns [ListParameter param]
+    : '*' variable { $param = new ListParameter($variable.v.getId()); }
     ;
 
 call [boolean enableIgnore] returns [AOperator c]

@@ -2,7 +2,7 @@ package org.randoom.setlx.functions;
 
 import org.randoom.setlx.types.Rational;
 import org.randoom.setlx.types.Value;
-import org.randoom.setlx.utilities.ParameterDef;
+import org.randoom.setlx.parameters.ParameterDefinition;
 import org.randoom.setlx.utilities.State;
 
 import java.util.HashMap;
@@ -17,8 +17,8 @@ import java.util.HashMap;
  */
 public class PD_compare extends PreDefinedProcedure {
 
-    private final static ParameterDef        VALUE_A      = createParameter("valueA");
-    private final static ParameterDef        VALUE_B      = createParameter("valueB");
+    private final static ParameterDefinition VALUE_A      = createParameter("valueA");
+    private final static ParameterDefinition VALUE_B      = createParameter("valueB");
 
     /** Definition of the PreDefinedProcedure `compare'. */
     public  final static PreDefinedProcedure DEFINITION   = new PD_compare();
@@ -30,7 +30,7 @@ public class PD_compare extends PreDefinedProcedure {
     }
 
     @Override
-    public Value execute(final State state, final HashMap<ParameterDef, Value> args) {
+    public Value execute(final State state, final HashMap<ParameterDefinition, Value> args) {
         return Rational.valueOf(args.get(VALUE_A).compareTo(args.get(VALUE_B)));
     }
 }

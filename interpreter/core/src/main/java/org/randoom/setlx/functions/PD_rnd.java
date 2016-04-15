@@ -3,7 +3,7 @@ package org.randoom.setlx.functions;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.types.Om;
 import org.randoom.setlx.types.Value;
-import org.randoom.setlx.utilities.ParameterDef;
+import org.randoom.setlx.parameters.ParameterDefinition;
 import org.randoom.setlx.utilities.State;
 
 import java.util.HashMap;
@@ -23,8 +23,8 @@ import java.util.HashMap;
  */
 public class PD_rnd extends PreDefinedProcedure {
 
-    private final static ParameterDef        NUMBER_OR_COLLECTION = createParameter("numberOrCollection");
-    private final static ParameterDef        NUMBER_OF_CHOICES    = createOptionalParameter("numberOfChoices", Om.OM);
+    private final static ParameterDefinition NUMBER_OR_COLLECTION = createParameter("numberOrCollection");
+    private final static ParameterDefinition NUMBER_OF_CHOICES    = createOptionalParameter("numberOfChoices", Om.OM);
 
     /** Definition of the PreDefinedProcedure `rnd'. */
     public  final static PreDefinedProcedure DEFINITION           = new PD_rnd();
@@ -36,7 +36,7 @@ public class PD_rnd extends PreDefinedProcedure {
     }
 
     @Override
-    public Value execute(final State state, final HashMap<ParameterDef, Value> args) throws SetlException {
+    public Value execute(final State state, final HashMap<ParameterDefinition, Value> args) throws SetlException {
         if (args.get(NUMBER_OF_CHOICES) == Om.OM) {
             return args.get(NUMBER_OR_COLLECTION).rnd(state);
         } else /* if (args.get(NUMBER_OF_CHOICES) != Om.OM) */ {

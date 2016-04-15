@@ -5,7 +5,7 @@ import org.randoom.setlx.types.Om;
 import org.randoom.setlx.types.SetlList;
 import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.Value;
-import org.randoom.setlx.utilities.ParameterDef;
+import org.randoom.setlx.parameters.ParameterDefinition;
 import org.randoom.setlx.utilities.State;
 
 import java.util.HashMap;
@@ -15,7 +15,7 @@ import java.util.HashMap;
  */
 public class PD_get extends PreDefinedProcedure {
 
-    private final static ParameterDef        MESSAGE    = createListParameter("message");
+    private final static ParameterDefinition MESSAGE    = createListParameter("message");
 
     /** Definition of the PreDefinedProcedure `get'. */
     public  final static PreDefinedProcedure DEFINITION = new PD_get();
@@ -26,7 +26,7 @@ public class PD_get extends PreDefinedProcedure {
     }
 
     @Override
-    public Value execute(final State state, final HashMap<ParameterDef, Value> args) {
+    public Value execute(final State state, final HashMap<ParameterDefinition, Value> args) {
         Value               inputValue = Om.OM;
         String              input      = null;
         final StringBuilder prompt     = new StringBuilder();

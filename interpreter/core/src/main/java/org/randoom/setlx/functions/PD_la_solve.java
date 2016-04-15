@@ -5,7 +5,7 @@ import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.types.SetlMatrix;
 import org.randoom.setlx.types.SetlVector;
 import org.randoom.setlx.types.Value;
-import org.randoom.setlx.utilities.ParameterDef;
+import org.randoom.setlx.parameters.ParameterDefinition;
 import org.randoom.setlx.utilities.State;
 
 import java.util.HashMap;
@@ -17,8 +17,8 @@ import java.util.HashMap;
  */
 public class PD_la_solve extends PreDefinedProcedure {
 
-    private final static ParameterDef        MATRIX_A   = createParameter("matrixA");
-    private final static ParameterDef        MATRIX_B   = createParameter("matrixB");
+    private final static ParameterDefinition MATRIX_A   = createParameter("matrixA");
+    private final static ParameterDefinition MATRIX_B   = createParameter("matrixB");
 
     public  final static PreDefinedProcedure DEFINITION = new PD_la_solve();
 
@@ -29,7 +29,7 @@ public class PD_la_solve extends PreDefinedProcedure {
     }
 
     @Override
-    public Value execute(State state, HashMap<ParameterDef, Value> args) throws SetlException {
+    public Value execute(State state, HashMap<ParameterDefinition, Value> args) throws SetlException {
         SetlMatrix a;
         SetlMatrix b;
         if (args.get(MATRIX_A) instanceof SetlMatrix) {

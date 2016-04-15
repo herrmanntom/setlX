@@ -5,7 +5,7 @@ import org.randoom.setlx.types.Om;
 import org.randoom.setlx.types.Rational;
 import org.randoom.setlx.types.SetlBoolean;
 import org.randoom.setlx.types.Value;
-import org.randoom.setlx.utilities.ParameterDef;
+import org.randoom.setlx.parameters.ParameterDefinition;
 import org.randoom.setlx.utilities.State;
 
 import java.util.HashMap;
@@ -15,7 +15,7 @@ import java.util.HashMap;
  */
 public class PD_sleep extends PreDefinedProcedure {
 
-    private final static ParameterDef        TIME_IN_MS = createParameter("timeInMs");
+    private final static ParameterDefinition TIME_IN_MS = createParameter("timeInMs");
 
     /** Definition of the PreDefinedProcedure `sleep'. */
     public  final static PreDefinedProcedure DEFINITION = new PD_sleep();
@@ -26,7 +26,7 @@ public class PD_sleep extends PreDefinedProcedure {
     }
 
     @Override
-    public Value execute(final State state, final HashMap<ParameterDef, Value> args) throws IncompatibleTypeException {
+    public Value execute(final State state, final HashMap<ParameterDefinition, Value> args) throws IncompatibleTypeException {
         Value value = args.get(TIME_IN_MS);
         if (value.isInteger() == SetlBoolean.FALSE || value.compareTo(Rational.ONE) < 0 ) {
             throw new IncompatibleTypeException(

@@ -4,7 +4,7 @@ import org.randoom.setlx.exceptions.JVMIOException;
 import org.randoom.setlx.exceptions.StopExecutionException;
 import org.randoom.setlx.types.Rational;
 import org.randoom.setlx.types.Value;
-import org.randoom.setlx.utilities.ParameterDef;
+import org.randoom.setlx.parameters.ParameterDefinition;
 import org.randoom.setlx.utilities.State;
 
 import java.util.HashMap;
@@ -127,7 +127,7 @@ public class PD_logo extends PreDefinedProcedure {
     }
 
     @Override
-    public Value execute(final State state, final HashMap<ParameterDef, Value> args) throws StopExecutionException {
+    public Value execute(final State state, final HashMap<ParameterDefinition, Value> args) throws StopExecutionException {
         String  logo;
         int     payUp = 0;
         while(payUp <= 0 && payUp > -3 && count < 3) {

@@ -7,8 +7,8 @@ import org.randoom.setlx.operatorUtilities.OperatorExpression;
 import org.randoom.setlx.statements.Block;
 import org.randoom.setlx.utilities.CodeFragment;
 import org.randoom.setlx.utilities.FragmentList;
-import org.randoom.setlx.utilities.ParameterDef;
-import org.randoom.setlx.utilities.ParameterList;
+import org.randoom.setlx.parameters.ParameterDefinition;
+import org.randoom.setlx.parameters.ParameterList;
 import org.randoom.setlx.utilities.ReturnMessage;
 import org.randoom.setlx.utilities.SetlHashMap;
 import org.randoom.setlx.utilities.State;
@@ -232,7 +232,7 @@ public class Closure extends Procedure {
             final SetlList      paramList  = (SetlList) term.firstMember();
             final ParameterList parameters = new ParameterList(paramList.size());
             for (final Value v : paramList) {
-                parameters.add(ParameterDef.valueToParameterDef(state, v));
+                parameters.add(ParameterDefinition.valueToParameterDef(state, v));
             }
             final Block              block      = TermUtilities.valueToBlock(state, term.lastMember());
             return new Closure(parameters, block);

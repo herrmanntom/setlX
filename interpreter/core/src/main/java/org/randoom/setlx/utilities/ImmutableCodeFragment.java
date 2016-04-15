@@ -1,5 +1,7 @@
 package org.randoom.setlx.utilities;
 
+import org.randoom.setlx.parameters.ParameterList;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

@@ -2,7 +2,7 @@ package org.randoom.setlx.functions;
 
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.types.Value;
-import org.randoom.setlx.utilities.ParameterDef;
+import org.randoom.setlx.parameters.ParameterDefinition;
 import org.randoom.setlx.utilities.State;
 
 import java.util.HashMap;
@@ -12,7 +12,7 @@ import java.util.HashMap;
  */
 public class PD_domain extends PreDefinedProcedure {
 
-    private final static ParameterDef        MAP        = createParameter("map");
+    private final static ParameterDefinition MAP        = createParameter("map");
 
     /** Definition of the PreDefinedProcedure `domain'. */
     public  final static PreDefinedProcedure DEFINITION = new PD_domain();
@@ -23,7 +23,7 @@ public class PD_domain extends PreDefinedProcedure {
     }
 
     @Override
-    public Value execute(final State state, final HashMap<ParameterDef, Value> args) throws SetlException {
+    public Value execute(final State state, final HashMap<ParameterDefinition, Value> args) throws SetlException {
         return args.get(MAP).domain(state);
     }
 }

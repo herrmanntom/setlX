@@ -2,7 +2,7 @@ package org.randoom.setlx.functions;
 
 import org.randoom.setlx.types.SetlBoolean;
 import org.randoom.setlx.types.Value;
-import org.randoom.setlx.utilities.ParameterDef;
+import org.randoom.setlx.parameters.ParameterDefinition;
 import org.randoom.setlx.utilities.State;
 
 import java.util.HashMap;
@@ -12,7 +12,7 @@ import java.util.HashMap;
  */
 public class PD_isNumber extends PreDefinedProcedure {
 
-    private final static ParameterDef        VALUE      = createParameter("value");
+    private final static ParameterDefinition VALUE      = createParameter("value");
 
     /** Definition of the PreDefinedProcedure `isNumber'. */
     public  final static PreDefinedProcedure DEFINITION = new PD_isNumber();
@@ -23,7 +23,7 @@ public class PD_isNumber extends PreDefinedProcedure {
     }
 
     @Override
-    public Value execute(final State state, final HashMap<ParameterDef, Value> args) {
+    public Value execute(final State state, final HashMap<ParameterDefinition, Value> args) {
         final Value arg = args.get(VALUE);
         if (arg.isRational() == SetlBoolean.TRUE || arg.isDouble() == SetlBoolean.TRUE) {
             return SetlBoolean.TRUE;

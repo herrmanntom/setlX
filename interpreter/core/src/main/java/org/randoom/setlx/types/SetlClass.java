@@ -15,7 +15,7 @@ import org.randoom.setlx.statements.Return;
 import org.randoom.setlx.statements.Statement;
 import org.randoom.setlx.utilities.CodeFragment;
 import org.randoom.setlx.utilities.FragmentList;
-import org.randoom.setlx.utilities.ParameterList;
+import org.randoom.setlx.parameters.ParameterList;
 import org.randoom.setlx.utilities.SetlHashMap;
 import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.TermUtilities;

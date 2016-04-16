@@ -1,9 +1,12 @@
 Changes (* notice | + feature added, replaced or improved | - feature removed | # bugfix):
 
----v2.5.0--- 2015-12-06
+---v2.5.0--- 2016-04-16
  * Note: the setlX start scripts changed - please update yours!
  + Changed confusing matching of variables and functions
- + added isVariable(term) function, that tests if given term represents a variable
+   + terms must start with a hat symbol ('^') instead of an upper case letter
+   + variables can start with upper case letters
+   + added isVariable(term) function, that tests if given term represents a variable
+   * 'internal' terms start with three hats ('^^^') instead of one
  # fixed minor bug in plotting functions
 
 ---v2.4.0--- 2015-07-05

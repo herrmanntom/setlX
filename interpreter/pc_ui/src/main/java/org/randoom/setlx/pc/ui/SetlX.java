@@ -19,7 +19,7 @@ import java.util.List;
  */
 public class SetlX {
     private final static String  SETLX_URL              = "http://setlX.randoom.org/";
-    private final static String  C_YEARS                = "2011-2015";
+    private final static String  C_YEARS                = "2011-2016";
     private final static String  VERSION_PREFIX         = "v";
     private final static String  HEADER                 = "-====================================setlX====================================-";
 
@@ -47,7 +47,7 @@ public class SetlX {
 
         String              expression   = null;  // expression to be evaluated using -ev option
         String              statement    = null;  // code to be executed when using -ex option
-        final List<String>  files        = new ArrayList<String>();
+        final List<String>  files        = new ArrayList<>();
 
         String              libraryPath;
         if ((libraryPath = System.getenv("SETLX_LIBRARY_PATH")) == null) {
@@ -67,7 +67,7 @@ public class SetlX {
         state.setMaxExceptionMessages(MAX_EXCEPTION_MESSAGES);
 
         // split combined short options like -amn into -a -m -n
-        final List<String> arguments = new ArrayList<String>(args.length);
+        final List<String> arguments = new ArrayList<>(args.length);
         for (final String arg : args) {
             if (arg.matches("-\\{2,}")) {
                 for (final char c : arg.substring(1).toCharArray()) {
@@ -291,7 +291,7 @@ public class SetlX {
         } else if (statement != null) {
             nPrograms += 1;
         }
-        List<Block> programs = new ArrayList<Block>(nPrograms);
+        List<Block> programs = new ArrayList<>(nPrograms);
 
         // parse content of all files
         try {
@@ -348,7 +348,7 @@ public class SetlX {
         }
 
         if (termLoop) {
-            ArrayList<Block> termConvertedPrograms = new ArrayList<Block>(nPrograms);
+            ArrayList<Block> termConvertedPrograms = new ArrayList<>(nPrograms);
             for (Block program : programs) {
                 try {
                     Term term = program.toTerm(state);

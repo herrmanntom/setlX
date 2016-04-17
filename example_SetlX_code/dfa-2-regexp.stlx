@@ -13,7 +13,7 @@ regexpSum := procedure(s) {
         case { r }:
              return r;
         case { r | rs }:
-             return Or(r, regexpSum(rs));
+             return ^Or(r, regexpSum(rs));
     }
 };
 // compute the regular expression to get from state p1 to state p2
@@ -27,7 +27,7 @@ rpq := procedure(p1, p2, sigma, delta, allowed) {
                  if (allChars == {}) {
                      return "";
                  } else {
-                     return Or("", sum);
+                     return ^Or("", sum);
                  }
              } else {
                  return sum;
@@ -37,7 +37,7 @@ rpq := procedure(p1, p2, sigma, delta, allowed) {
              rkp1qk := rpq(p1, qk, sigma, delta, restAllowed);
              rkqkqk := rpq(qk, qk, sigma, delta, restAllowed);
              rkqkp2 := rpq(qk, p2, sigma, delta, restAllowed);
-             return simplify(Or(rkp1p2, Cat(Cat(rkp1qk, Star(rkqkqk)), rkqkp2)));
+             return simplify(^Or(rkp1p2, ^Cat(^Cat(rkp1qk, ^Star(rkqkqk)), rkqkp2)));
     }    
 };
 simplify := procedure(r) {
@@ -57,54 +57,54 @@ simplifyOnce := procedure(r) {
              return "";
         case c | isString(c):
              return c;
-        case Or(0, s):  
+        case ^Or(0, s):  
              return simplifyOnce(s);
-        case Or(s, 0):  
+        case ^Or(s, 0):  
              return simplifyOnce(s);
-        case Or(s, s):  
+        case ^Or(s, s):  
              return simplifyOnce(s);
-        case Or("", Cat(t, Star(t))):
-             return Star(t);
-        case Or("", Cat(Star(t), t)):
-             return Star(t);
-        case Or(Cat(t, Star(t)), ""):
-             return Star(t);
-        case Or(Cat(Star(t), t), ""):
-             return Star(t);
-        case Or(s, Cat(s,t)):
-             return simplifyOnce(Cat(s, Or("", t)));
-        case Or(s, Cat(t,s)):
-             return simplifyOnce(Cat(Or("", t), s));
-        case Or(s, t):  
-             return Or(simplifyOnce(s), simplifyOnce(t));
-        case Cat(0, s): 
+        case ^Or("", ^Cat(t, ^Star(t))):
+             return ^Star(t);
+        case ^Or("", ^Cat(^Star(t), t)):
+             return ^Star(t);
+        case ^Or(^Cat(t, ^Star(t)), ""):
+             return ^Star(t);
+        case ^Or(^Cat(^Star(t), t), ""):
+             return ^Star(t);
+        case ^Or(s, ^Cat(s,t)):
+             return simplifyOnce(^Cat(s, ^Or("", t)));
+        case ^Or(s, ^Cat(t,s)):
+             return simplifyOnce(^Cat(^Or("", t), s));
+        case ^Or(s, t):  
+             return ^Or(simplifyOnce(s), simplifyOnce(t));
+        case ^Cat(0, s): 
              return 0;
-        case Cat(s, 0): 
+        case ^Cat(s, 0): 
              return 0;
-        case Cat("", s): 
+        case ^Cat("", s): 
              return s;
-        case Cat(s, ""): 
+        case ^Cat(s, ""): 
              return s;
-        case Cat(Or("", s), Star(s)):
-             return Star(simplifyOnce(s));
-        case Cat(Or(s, ""), Star(s)):
-             return Star(simplifyOnce(s));
-        case Cat(Star(s), Or(s, "")):
-             return Star(simplifyOnce(s));
-        case Cat(Star(s), Or("", s)):
-             return Star(simplifyOnce(s));
-        case Cat(s, t): 
-             return Cat(simplifyOnce(s), simplifyOnce(t));
-        case Star(0):
+        case ^Cat(^Or("", s), ^Star(s)):
+             return ^Star(simplifyOnce(s));
+        case ^Cat(^Or(s, ""), ^Star(s)):
+             return ^Star(simplifyOnce(s));
+        case ^Cat(^Star(s), ^Or(s, "")):
+             return ^Star(simplifyOnce(s));
+        case ^Cat(^Star(s), ^Or("", s)):
+             return ^Star(simplifyOnce(s));
+        case ^Cat(s, t): 
+             return ^Cat(simplifyOnce(s), simplifyOnce(t));
+        case ^Star(0):
              return "";
-        case Star(""):
+        case ^Star(""):
              return "";
-        case Star(Or("", s)):
-             return simplifyOnce(Star(s));
-        case Star(Or(s, "")):
-             return simplifyOnce(Star(s));
-        case Star(c):
-             return Star(simplifyOnce(c));
+        case ^Star(^Or("", s)):
+             return simplifyOnce(^Star(s));
+        case ^Star(^Or(s, "")):
+             return simplifyOnce(^Star(s));
+        case ^Star(c):
+             return ^Star(simplifyOnce(c));
         default:        
         abort("Syntax error in simplifyOnce($r$)");
     }
@@ -118,11 +118,11 @@ regexp2String := procedure(r) {
              return "\"\"";
         case c | isString(c) && #c == 1: 
              return c;
-        case Cat(r1, r2): 
+        case ^Cat(r1, r2): 
              return regexp2String(r1) + regexp2String(r2);        
-        case Or(r1, r2) : 
+        case ^Or(r1, r2) : 
              return "(" + regexp2String(r1) + "+" + regexp2String(r2) + ")";
-        case Star(r0) : 
+        case ^Star(r0) : 
              return "(" + regexp2String(r0) + ")*";
         default: abort("$r$ is not a suitable regular expression");
     }

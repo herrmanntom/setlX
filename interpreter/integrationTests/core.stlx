@@ -74,7 +74,7 @@ listAssignments := procedure() {
     [a, b, c] := [1, 2, 3];
     [[d, e], f] := [[4, 5], 6];
     [g, h, i] := "123";
-    [j, k, l] := Term("foobar", 99, sin);
+    [j, k, l] := ^term("foobar", 99, sin);
 
     tester(a == 1   && b == 2   && c == 3   && d == 4        && e == 5  && f == 6            &&
            g == "1" && h == "2" && i == "3" && j == "foobar" && k == 99 && l == getTerm(sin),

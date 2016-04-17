@@ -32,7 +32,7 @@ print();
   canonical(term)               // returns a string of a term in its true form
 */
 
-t := makeTerm("Arrr",["said","the","pirate"]);
+t := makeTerm("^Arrr",["said","the","pirate"]);
 a := str(args(t));
 print(canonical(t));
 print(fct(t), "(", a[2 .. #a-1], ")");

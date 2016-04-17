@@ -17,6 +17,8 @@ import java.util.Set;
  * Utilities for converting terms.
  */
 public class TermUtilities {
+    private static final String FUNCTIONAL_CHARACTER_PREFIX = "^";
+    private static final int FUNCTIONAL_CHARACTER_PREFIX_LENGTH  = FUNCTIONAL_CHARACTER_PREFIX.length();
     private static final String INTERNAL_FUNCTIONAL_CHARACTER_PREFIX = "^^^";
     private static final int INTERNAL_FUNCTIONAL_CHARACTER_PREFIX_LENGTH = INTERNAL_FUNCTIONAL_CHARACTER_PREFIX.length();
 
@@ -89,12 +91,21 @@ public class TermUtilities {
     }
 
     /**
+     * Check if the functionalCharacter is allowed to be used for a term
+     * @param functionalCharacter to check
+     * @return true, iff functional character is legal
+     */
+    public static boolean isFunctionalCharacter(String functionalCharacter) {
+        return functionalCharacter != null && functionalCharacter.length() > FUNCTIONAL_CHARACTER_PREFIX_LENGTH && functionalCharacter.startsWith(FUNCTIONAL_CHARACTER_PREFIX);
+    }
+
+    /**
      * Check if the functionalCharacter starts like an internally used one
      * @param functionalCharacter to check
      * @return true, iff looks like internally used functional character
      */
     public static boolean isInternalFunctionalCharacter(String functionalCharacter) {
-        return functionalCharacter.length() > INTERNAL_FUNCTIONAL_CHARACTER_PREFIX_LENGTH && functionalCharacter.startsWith(INTERNAL_FUNCTIONAL_CHARACTER_PREFIX);
+        return functionalCharacter != null && functionalCharacter.length() > INTERNAL_FUNCTIONAL_CHARACTER_PREFIX_LENGTH && functionalCharacter.startsWith(INTERNAL_FUNCTIONAL_CHARACTER_PREFIX);
     }
 
     /**
@@ -159,6 +170,20 @@ public class TermUtilities {
     }
 
     /**
+     * @return Prefix for terms
+     */
+    public static String getFunctionalCharacterPrefix() {
+        return FUNCTIONAL_CHARACTER_PREFIX;
+    }
+
+    /**
+     * @return Length of prefix for terms used as internal representation of code fragments (statements, expressions, ...)
+     */
+    public static int getLengthOfFunctionalCharacterPrefix() {
+        return FUNCTIONAL_CHARACTER_PREFIX_LENGTH;
+    }
+
+    /**
      * @return Prefix for terms used as internal representation of code fragments (statements, expressions, ...)
      */
     public static String getPrefixOfInternalFunctionalCharacters() {
@@ -166,7 +191,7 @@ public class TermUtilities {
     }
 
     /**
-     * @return Prefix for terms used as internal representation of code fragments (statements, expressions, ...)
+     * @return Length of prefix for terms used as internal representation of code fragments (statements, expressions, ...)
      */
     public static int getPrefixLengthOfInternalFunctionalCharacters() {
         return INTERNAL_FUNCTIONAL_CHARACTER_PREFIX_LENGTH;

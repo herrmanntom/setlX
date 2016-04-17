@@ -449,22 +449,16 @@ public class Term extends IndexedCollectionValue {
 
     @Override
     public SetlString functionalCharacter(final State state) {
-        return functionalCharacter();
+        String functionalCharacter = getFunctionalCharacter();
+        if ( ! TermUtilities.isInternalFunctionalCharacter(functionalCharacter)) {
+            // remove prefix for non-internal terms
+            functionalCharacter = functionalCharacter.substring(TermUtilities.getLengthOfFunctionalCharacterPrefix());
+        }
+        return new SetlString(functionalCharacter);
     }
 
     /**
-     * Get the functional character of this term.
-     *
-     * @return functional character of this value.
-     */
-    public SetlString functionalCharacter() {
-        return new SetlString(getFunctionalCharacter());
-    }
-
-    /**
-     * Get the functional character of this term.
-     *
-     * @return functional character of this value.
+     * @return functional character of this Term.
      */
     public String getFunctionalCharacter() {
         if (functionalCharacter.equals(Variable.getFunctionalCharacter())) {

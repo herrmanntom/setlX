@@ -860,7 +860,7 @@ public class SetlString extends IndexedCollectionValue {
         } else if (other.getClass() == Term.class) {
             final Term o = (Term) other;
             try {
-                if (o.functionalCharacter(state).getUnquotedString(state).equals(StringConstructor.getFunctionalCharacter())
+                if (o.getFunctionalCharacter().equals(StringConstructor.getFunctionalCharacter())
                     && o.size() == 3 && o.getMember(2).size() == 1 && o.lastMember().size() == 0
                 ) {
                     return matchesTerm(state, o.getMember(2).firstMember(state));

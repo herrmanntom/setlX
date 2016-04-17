@@ -1,19 +1,19 @@
 map := procedure() {
-    return Nil();
+    return ^Nil();
 };
 
 insert := procedure(m, k1) {
     switch {
         case fct(m) == "Nil" : 
-             return Node(k1, Nil(), Nil());
+             return ^Node(k1, ^Nil(), ^Nil());
         case fct(m) == "Node": 
              [ k2, l, r ] := args(m);
              if (k1 == k2) {
-                 return Node(k1, l, r);
+                 return ^Node(k1, l, r);
              } else if (compare(k1, k2) < 0) { 
-                 return Node(k2, insert(l, k1), r);
+                 return ^Node(k2, insert(l, k1), r);
              } else {
-                 return Node(k2, l, insert(r, k1));
+                 return ^Node(k2, l, insert(r, k1));
              }
         default: abort("Error in insert($m$, $k1$)");
     }
@@ -21,9 +21,9 @@ insert := procedure(m, k1) {
 
 toString := procedure(m, n) {
     match (m) {
-        case Nil() :
+        case ^Nil() :
              return " " * n + "Nil";
-        case Node(k, l, r) :
+        case ^Node(k, l, r) :
              return toString(l, n + 4) + "\n" + 
                     " " * n + "<" + k + ">\n" +
                     toString(r, n + 4);

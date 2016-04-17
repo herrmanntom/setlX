@@ -8,15 +8,15 @@ tokens := [];
 // create token list
 scan (str) using charPos {
     regex '<' :
-        tokens += [OpenTag()];
+        tokens += [^OpenTag()];
     regex '/>' :
-        tokens += [CloseTag()];
+        tokens += [^CloseTag()];
     regex '\w+' as [id]:
-        tokens += [Id(id)];
+        tokens += [^Id(id)];
     regex '=':
-        tokens += [Assign()];
+        tokens += [^Assign()];
     regex '"(\S+)"' as [_, text]:
-        tokens += [String(text)];
+        tokens += [^String(text)];
     regex '\s+':
         // skip whitespace
     regex '.' as x:
@@ -32,11 +32,11 @@ scan (str) using charPos {
 while (#tokens > 0) {
     match(tokens) {
         // match normal tag
-        case [OpenTag(), Id(id), CloseTag() | rest]:
+        case [^OpenTag(), ^Id(id), ^CloseTag() | rest]:
             print("<$id$/>");
             tokens := rest;
         // tag with exactly one attribute
-        case [OpenTag(), Id(id), Id(id2), Assign(), String(text), CloseTag() | rest]:
+        case [^OpenTag(), ^Id(id), ^Id(id2), ^Assign(), ^String(text), ^CloseTag() | rest]:
             print("<$id$ $id2$=\"$text$\"/>");
             tokens := rest;
         default:

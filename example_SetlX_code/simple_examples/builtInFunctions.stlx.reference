@@ -6,7 +6,7 @@ variables in outer scope: ^^^scope({["circumference", r |-> 2 * mathConst("pi") 
 variables in inner scope: ^^^scope({["circumference", r |-> 2 * mathConst("pi") * r], ["getScope", ^^^preDefinedProcedure("getScope")], ["log", ^^^preDefinedProcedure("log")], ["mathConst", ^^^preDefinedProcedure("mathConst")], ["print", ^^^preDefinedProcedure("print")], ["printInnerScope", procedure() { secretVariable := 42; print("variables in inner scope: ", getScope()); }], ["resetRandom", ^^^preDefinedProcedure("resetRandom")], ["secretVariable", 42]})
 variables in outer scope: ^^^scope({["circumference", r |-> 2 * mathConst("pi") * r], ["getScope", ^^^preDefinedProcedure("getScope")], ["log", ^^^preDefinedProcedure("log")], ["mathConst", ^^^preDefinedProcedure("mathConst")], ["params", []], ["print", ^^^preDefinedProcedure("print")], ["printInnerScope", procedure() { secretVariable := 42; print("variables in inner scope: ", getScope()); }], ["resetRandom", ^^^preDefinedProcedure("resetRandom")]})
 
-Arrr("said", "the", "pirate")
+^Arrr("said", "the", "pirate")
 Arrr("said", "the", "pirate")
 
 46656 == 46656

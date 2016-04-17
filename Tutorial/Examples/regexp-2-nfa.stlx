@@ -79,11 +79,11 @@ regexp2NFA := procedure(r, rw ctr) {
     match (r) {
         case c | isString(c): 
              return genCharNFA(c, ctr);
-        case Cat(r1, r2): 
+        case ^Cat(r1, r2): 
              return catenate(regexp2NFA(r1, ctr), regexp2NFA(r2, ctr)); 
-        case Or(r1, r2): 
+        case ^Or(r1, r2): 
              return disjunction(regexp2NFA(r1, ctr), regexp2NFA(r2, ctr), ctr);
-        case Star(r0): 
+        case ^Star(r0): 
              return kleene(regexp2NFA(r0, ctr), ctr);
     }
 };

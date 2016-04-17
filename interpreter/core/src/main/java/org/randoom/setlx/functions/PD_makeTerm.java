@@ -45,19 +45,26 @@ public class PD_makeTerm extends PreDefinedProcedure {
         }
         String fct = arg0.getUnquotedString(state);
 
-        // check if name is usable as term (fist char is upper case or single quote ( ' ))
-        if (TermUtilities.isInternalFunctionalCharacter(fct) || (fct.length() > 0 && Character.isUpperCase(fct.charAt(0)))) {
+        if (TermUtilities.isInternalFunctionalCharacter(fct)) {
             // use correct internal representation when user wants to create a variable
             if (fct.equals(Variable.getFunctionalCharacterExternal())) {
                 fct = Variable.getFunctionalCharacter();
             }
             // make the new Term
             return new Term(fct, (SetlList) arg1);
-        } else {
-            throw new IncompatibleTypeException(
-                "FunctionalCharacter '" + fct + "' must start with an upper case letter or three hats ('" + TermUtilities.getPrefixOfInternalFunctionalCharacters() + "')."
-            );
         }
+
+        if (! fct.startsWith(TermUtilities.getFunctionalCharacterPrefix())) {
+            fct = TermUtilities.getFunctionalCharacterPrefix() + fct;
+        }
+
+        if (TermUtilities.isFunctionalCharacter(fct)) {
+            return new Term(fct, (SetlList) arg1);
+        }
+
+        throw new IncompatibleTypeException(
+                "FunctionalCharacter '" + fct + "' must start with one or three hats ('" + TermUtilities.getFunctionalCharacterPrefix() + "' or '" + TermUtilities.getPrefixOfInternalFunctionalCharacters() + "')."
+        );
     }
 }
 

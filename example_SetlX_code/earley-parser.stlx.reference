@@ -1,13 +1,13 @@
 Grammar:
 
-expr: [Var("expr"), Token("'+'"), Var("prod")];
-expr: [Var("prod")];
-prod: [Var("prod"), Token("'*'"), Var("fact")];
-prod: [Var("fact")];
-fact: [Token("'('"), Var("expr"), Token("')'")];
-fact: [Token("'1'")];
-fact: [Token("'2'")];
-fact: [Token("'3'")];
+expr: [^Var("expr"), ^Token("'+'"), ^Var("prod")];
+expr: [^Var("prod")];
+prod: [^Var("prod"), ^Token("'*'"), ^Var("fact")];
+prod: [^Var("fact")];
+fact: [^Token("'('"), ^Var("expr"), ^Token("')'")];
+fact: [^Token("'1'")];
+fact: [^Token("'2'")];
+fact: [^Token("'3'")];
 
 Input: 1*2+3
 

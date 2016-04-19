@@ -34,7 +34,7 @@ public class PD_isVariable extends PreDefinedProcedure {
         if (parameterValue.isTerm() == SetlBoolean.TRUE) {
             Term term = (Term) parameterValue;
             if (
-                    Variable.getFunctionalCharacterExternal().equals(term.getFunctionalCharacter())
+                    Variable.getFunctionalCharacter().equals(term.getFunctionalCharacter())
                     && term.firstMember().isString() == SetlBoolean.TRUE
             ) {
                 return SetlBoolean.TRUE;

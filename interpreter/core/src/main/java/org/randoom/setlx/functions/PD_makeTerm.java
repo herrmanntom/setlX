@@ -1,12 +1,11 @@
 package org.randoom.setlx.functions;
 
 import org.randoom.setlx.exceptions.IncompatibleTypeException;
-import org.randoom.setlx.operators.Variable;
+import org.randoom.setlx.parameters.ParameterDefinition;
 import org.randoom.setlx.types.SetlList;
 import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
-import org.randoom.setlx.parameters.ParameterDefinition;
 import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.TermUtilities;
 
@@ -45,20 +44,11 @@ public class PD_makeTerm extends PreDefinedProcedure {
         }
         String fct = arg0.getUnquotedString(state);
 
-        if (TermUtilities.isInternalFunctionalCharacter(fct)) {
-            // use correct internal representation when user wants to create a variable
-            if (fct.equals(Variable.getFunctionalCharacterExternal())) {
-                fct = Variable.getFunctionalCharacter();
-            }
-            // make the new Term
-            return new Term(fct, (SetlList) arg1);
-        }
-
         if (! fct.startsWith(TermUtilities.getFunctionalCharacterPrefix())) {
             fct = TermUtilities.getFunctionalCharacterPrefix() + fct;
         }
 
-        if (TermUtilities.isFunctionalCharacter(fct)) {
+        if (TermUtilities.isInternalFunctionalCharacter(fct) || TermUtilities.isFunctionalCharacter(fct)) {
             return new Term(fct, (SetlList) arg1);
         }
 

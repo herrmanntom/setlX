@@ -461,11 +461,7 @@ public class Term extends IndexedCollectionValue {
      * @return functional character of this Term.
      */
     public String getFunctionalCharacter() {
-        if (functionalCharacter.equals(Variable.getFunctionalCharacter())) {
-            return Variable.getFunctionalCharacterExternal();
-        } else {
-            return functionalCharacter;
-        }
+        return functionalCharacter;
     }
 
     @Override
@@ -592,12 +588,7 @@ public class Term extends IndexedCollectionValue {
 
     @Override
     public void canonical(final State state, final StringBuilder sb) {
-        if (functionalCharacter.equals(Variable.getFunctionalCharacter())) {
-            sb.append(Variable.getFunctionalCharacterExternal());
-        } else {
-            sb.append(functionalCharacter);
-        }
-
+        sb.append(functionalCharacter);
         sb.append("(");
         body.canonical(state, sb, /* brackets = */ false);
         sb.append(")");
@@ -637,13 +628,7 @@ public class Term extends IndexedCollectionValue {
 
         if ( ! functionalCharacter.equals(otherTerm.functionalCharacter)) {
             // functional characters do not match
-            if ( ! (functionalCharacter.equals(Variable.getFunctionalCharacterExternal()) &&
-                    otherTerm.functionalCharacter.equals(Variable.getFunctionalCharacter())   )
-               ) {
-                // however this only unacceptable when ! (this == 'Variable AND other == 'variable)
-                // e.g 'Variable must match 'variable
-                return new MatchResult(false);
-            }
+            return new MatchResult(false);
         } else if (body.size() != otherTerm.body.size()) {
             return new MatchResult(false);
         }
@@ -672,20 +657,7 @@ public class Term extends IndexedCollectionValue {
             return 0;
         } else if (other.getClass() == Term.class) {
             final Term otherTerm = (Term) other;
-                  int  cmp   = functionalCharacter.compareTo(otherTerm.functionalCharacter);
-            if (cmp != 0 && (
-                    (
-                        functionalCharacter.equals(Variable.getFunctionalCharacterExternal()) &&
-                        otherTerm.functionalCharacter.equals(Variable.getFunctionalCharacter())
-                    ) || (
-                        functionalCharacter.equals(Variable.getFunctionalCharacter()) &&
-                        otherTerm.functionalCharacter.equals(Variable.getFunctionalCharacterExternal())
-                    )
-                )
-            ) {
-                // these are regarded as one and the same
-                cmp = 0;
-            }
+            int cmp = functionalCharacter.compareTo(otherTerm.functionalCharacter);
             if (cmp != 0) {
                 return cmp;
             }
@@ -709,15 +681,7 @@ public class Term extends IndexedCollectionValue {
             return true;
         } else if (other.getClass() == Term.class) {
             final Term otherTerm = (Term) other;
-            if (functionalCharacter.equals(otherTerm.functionalCharacter)
-                  || (
-                    functionalCharacter.equals(Variable.getFunctionalCharacterExternal()) &&
-                    otherTerm.functionalCharacter.equals(Variable.getFunctionalCharacter())
-                ) || (
-                    functionalCharacter.equals(Variable.getFunctionalCharacter()) &&
-                    otherTerm.functionalCharacter.equals(Variable.getFunctionalCharacterExternal())
-                )
-            ) {
+            if (functionalCharacter.equals(otherTerm.functionalCharacter)) {
                 return body.equalTo(otherTerm.body);
             } else {
                 return false;

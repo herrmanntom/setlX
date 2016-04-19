@@ -20,20 +20,7 @@ import java.util.List;
  * Operator that gets a variable from the current scope and puts it on the stack.
  */
 public class Variable extends AZeroOperator {
-    // This functional character is used internally
-    private final static String FUNCTIONAL_CHARACTER          = TermUtilities.getPrefixOfInternalFunctionalCharacters() + "Variable";
-    // this one is used externally (e.g. during toString)
-    private final static String FUNCTIONAL_CHARACTER_EXTERNAL = TermUtilities.generateFunctionalCharacter(Variable.class);
-    /* both are equal during matching and compare. However while terms with the
-     * internal one always bind anything, terms with the external one only match
-     * and do not bind.
-     *
-     * This is done to create a difference between the cases used in
-     *      match(term) {
-     *          case 'variable(x): foo2(); // matches only variables
-     *          case x           : foo1(); // `x'.toTerm() results in 'Variable("x"); matches everything and binds it to x
-     *      }
-     */
+    private final static String FUNCTIONAL_CHARACTER          = TermUtilities.generateFunctionalCharacter(Variable.class);
 
     private final String id;
 
@@ -91,7 +78,7 @@ public class Variable extends AZeroOperator {
 
     @Override
     public Value buildQuotedTerm(State state, Stack<Value> termFragments) throws SetlException {
-        final Term result = new Term(FUNCTIONAL_CHARACTER_EXTERNAL, 1);
+        final Term result = new Term(FUNCTIONAL_CHARACTER, 1);
         result.addMember(state, new SetlString(id));
         return result;
     }
@@ -108,10 +95,8 @@ public class Variable extends AZeroOperator {
         if (term.size() == 1 && term.firstMember().getClass() == SetlString.class) {
             final String id = term.firstMember().getUnquotedString(state);
             operatorStack.add(new Variable(id));
-        } else if (term.size() == 1 && term.firstMember().getClass() == Term.class && ((Term) term.firstMember()).getFunctionalCharacter().equals(FUNCTIONAL_CHARACTER_EXTERNAL)) {
-            TermConstructor.appendToOperatorStack(state, term, operatorStack);
         } else {
-            throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER_EXTERNAL);
+            throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         }
     }
 
@@ -145,20 +130,9 @@ public class Variable extends AZeroOperator {
     }
 
     /**
-     * Get the functional character internally used in terms.
-     *
      * @return functional character internally used in terms.
      */
     public static String getFunctionalCharacter() {
         return FUNCTIONAL_CHARACTER;
-    }
-
-    /**
-     * Get the functional character used externally (e.g. during toString).
-     *
-     * @return functional character used externally (e.g. during toString).
-     */
-    public static String getFunctionalCharacterExternal() {
-        return FUNCTIONAL_CHARACTER_EXTERNAL;
     }
 }

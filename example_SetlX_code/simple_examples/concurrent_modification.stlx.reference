@@ -1,0 +1,4 @@
+Error in "parts := unionfind(nodes, edges)":
+Error in "unionfind(nodes, edges)":
+Error in "procedure(m, r) { ret := {{x} : x in m}; for (x in r) { p := {}; for (y in ret) { if (x[1] in y || x[2] in y) { ret -= {y}; p += y; } } ret += {p}; } return ret; }(nodes, edges)":
+Unable to modify the collection "ret" while iterating over it.

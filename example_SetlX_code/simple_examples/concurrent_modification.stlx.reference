@@ -2,3 +2,26 @@ Error in "parts := unionfind(nodes, edges)":
 Error in "unionfind(nodes, edges)":
 Error in "procedure(m, r) { ret := {{x} : x in m}; for (x in r) { p := {}; for (y in ret) { if (x[1] in y || x[2] in y) { ret -= {y}; p += y; } } ret += {p}; } return ret; }(nodes, edges)":
 Unable to modify the collection "ret" while iterating over it.
+Caused by: java.util.ConcurrentModificationException: null
+  at java.util.TreeMap$PrivateEntryIterator.nextEntry(TreeMap.java:1207)
+  at java.util.TreeMap$KeyIterator.next(TreeMap.java:1261)
+  at org.randoom.setlx.expressionUtilities.SetlIterator.evaluate(SetlIterator.java:318)
+  at org.randoom.setlx.expressionUtilities.SetlIterator.eval(SetlIterator.java:91)
+  at org.randoom.setlx.statements.For.execute(For.java:90)
+  at org.randoom.setlx.statements.Block.execute(Block.java:68)
+  at org.randoom.setlx.statements.For$Exec.execute(For.java:54)
+  at org.randoom.setlx.expressionUtilities.SetlIterator.evaluate(SetlIterator.java:353)
+  at org.randoom.setlx.expressionUtilities.SetlIterator.eval(SetlIterator.java:91)
+  at org.randoom.setlx.statements.For.execute(For.java:90)
+  at org.randoom.setlx.statements.Block.execute(Block.java:68)
+  at org.randoom.setlx.types.Procedure.callAfterEval(Procedure.java:180)
+  at org.randoom.setlx.types.Procedure.call(Procedure.java:141)
+  at org.randoom.setlx.expressions.Call.evaluate(Call.java:70)
+  at org.randoom.setlx.expressions.Expr.eval(Expr.java:32)
+  at org.randoom.setlx.expressions.Assignment.evaluate(Assignment.java:46)
+  at org.randoom.setlx.expressions.Expr.eval(Expr.java:32)
+  at org.randoom.setlx.statements.ExpressionStatement.execute(ExpressionStatement.java:46)
+  at org.randoom.setlx.statements.Block.execute(Block.java:68)
+  at org.randoom.setlx.statements.Statement$StatementRunner.exec(Statement.java:121)
+  at org.randoom.setlx.utilities.ErrorHandlingRunnable.run(ErrorHandlingRunnable.java:56)
+  at java.lang.Thread.run(Thread.java:745)

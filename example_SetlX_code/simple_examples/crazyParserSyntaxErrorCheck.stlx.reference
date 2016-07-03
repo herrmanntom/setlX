@@ -1,7 +1,7 @@
 rule stack: [initBlock]
-line 4:1 extraneous input '%' expecting {<EOF>, 'om', '[', 'continue', 'false', 'closure', '<<', 'scan', 'do', '_', '@', '+/', 'cachedProcedure', 'class', 'assert', '!', 'exit', 'while', '-', '(', 'if', 'match', 'try', 'check', '{', '*/', 'break', 'true', 'procedure', 'backtrack', 'for', 'return', 'forall', 'exists', 'switch', '#', ID, TERM, NUMBER, DOUBLE, STRING, LITERAL}
+line 4:1 extraneous input '%' expecting {<EOF>, 'while', '{', 'for', 'check', '*/', 'do', '(', 'closure', 'false', 'backtrack', 'exit', 'assert', '@', '#', 'match', 'continue', 'true', 'return', 'procedure', 'class', '<<', 'if', 'try', '+/', 'break', 'switch', 'exists', 'cachedProcedure', '[', 'scan', 'om', 'forall', '_', '!', '-', ID, TERM, NUMBER, DOUBLE, STRING, LITERAL}
 rule stack: [initBlock, statement, expr, implication, disjunction, conjunction, comparison, sum, product, reduce, prefixOperation, prefixOperation]
 line 5:9 no viable alternative at input '*'
 rule stack: [initBlock]
-line 6:1 extraneous input '~' expecting {<EOF>, 'om', '[', 'continue', 'false', 'closure', '<<', 'scan', 'do', '_', '@', '+/', 'cachedProcedure', 'class', 'assert', '!', 'exit', 'while', '-', '(', 'if', 'match', 'try', 'check', '{', '*/', 'break', 'true', 'procedure', 'backtrack', 'for', 'return', 'forall', 'exists', 'switch', '#', ID, TERM, NUMBER, DOUBLE, STRING, LITERAL}
+line 6:1 extraneous input '~' expecting {<EOF>, 'while', '{', 'for', 'check', '*/', 'do', '(', 'closure', 'false', 'backtrack', 'exit', 'assert', '@', '#', 'match', 'continue', 'true', 'return', 'procedure', 'class', '<<', 'if', 'try', '+/', 'break', 'switch', 'exists', 'cachedProcedure', '[', 'scan', 'om', 'forall', '_', '!', '-', ID, TERM, NUMBER, DOUBLE, STRING, LITERAL}
 3 syntax error(s) encountered.

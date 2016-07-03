@@ -10,6 +10,9 @@ Changes (* notice | + feature added, replaced or improved | - feature removed | 
    * please (re)read related sections in tutorial for more details and clarifications
  # fixed minor bug in plotting functions
 
+---v2.4.1--- 2016-07-03
+ # Fix error handling when trying to modify collection during iteration
+
 ---v2.4.0--- 2015-07-05
  + added plotting functionality
 

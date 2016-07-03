@@ -1,6 +1,7 @@
 package org.randoom.setlx.operatorUtilities;
 
 import org.randoom.setlx.assignments.AAssignableExpression;
+import org.randoom.setlx.exceptions.IllegalRedefinitionException;
 import org.randoom.setlx.exceptions.IncompatibleTypeException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.StopExecutionException;
@@ -12,6 +13,7 @@ import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.*;
 
 import java.util.ArrayList;
+import java.util.ConcurrentModificationException;
 import java.util.List;
 
 /**
@@ -115,7 +117,7 @@ public class SetlIterator extends ImmutableCodeFragment {
         final List<String>                   unboundVariables,
         final List<String>                   usedVariables
     ) {
-        final List<String> tempVariables = new ArrayList<String>();
+        final List<String> tempVariables = new ArrayList<>();
         return collectVariablesAndOptimize(state, container, tempVariables, boundVariables, unboundVariables, usedVariables);
     }
 
@@ -144,7 +146,7 @@ public class SetlIterator extends ImmutableCodeFragment {
         /* Variables in this expression get assigned temporarily.
            Collect them into a temporary list, add them to boundVariables and
            remove them again before returning. */
-        final List<String> tempVars = new ArrayList<String>();
+        final List<String> tempVars = new ArrayList<>();
         allowOptimization = assignable.collectVariablesWhenAssigned(state, tempVars, unboundVariables, usedVariables)
                 && allowOptimization;
 
@@ -313,53 +315,59 @@ public class SetlIterator extends ImmutableCodeFragment {
             // scope for inner execution/next iterator
             final VariableScope   innerScope = state.getScope().createIteratorBlock();
             // iterate over items
-            for (final Value v: coll) {
-                if (state.executionStopped) {
-                    throw new StopExecutionException();
-                }
+            try {
+                for (final Value v: coll) {
+                    if (state.executionStopped) {
+                        throw new StopExecutionException();
+                    }
 
-                // restore inner scope
-                state.setScope(innerScope);
-                // force iteration variables to be local to this block
-                final int writeThroughToken = innerScope.unsetWriteThrough();
+                    // restore inner scope
+                    state.setScope(innerScope);
+                    // force iteration variables to be local to this block
+                    final int writeThroughToken = innerScope.unsetWriteThrough();
 
-                // assign value from collection
-                final boolean successful = assignable.assignUnclonedCheckUpTo(state, v.clone(), outerScope, false, FUNCTIONAL_CHARACTER);
+                    // assign value from collection
+                    final boolean successful = assignable.assignUnclonedCheckUpTo(state, v.clone(), outerScope, false, FUNCTIONAL_CHARACTER);
 
-                // reset WriteThrough, because changes during execution are not strictly local
-                innerScope.setWriteThrough(writeThroughToken);
+                    // reset WriteThrough, because changes during execution are not strictly local
+                    innerScope.setWriteThrough(writeThroughToken);
 
-                /*
-                 * This check is done to allow the following statement to work as expected:
-                 *
-                 * for (x in s, [x,y] in t) {...}
-                 *
-                 * where the the loop is only executed, when the first
-                 * `x' is equal to the second `x'
-                 */
-                if ( ! successful) {
-                    continue;
-                }
-
-                /* Starts iteration of next iterator or execution if this is the
-                   last iterator.
-                   Stops iteration if requested by execution.                 */
-                ReturnMessage result;
-                if (next != null) {
-                    result = next.evaluate(state, exec, outerScope);
-                } else {
-                    result = exec.execute(state, v);
-                }
-                if (result != null) {
-                    if (result == ReturnMessage.CONTINUE) {
+                    /*
+                     * This check is done to allow the following statement to work as expected:
+                     *
+                     * for (x in s, [x,y] in t) {...}
+                     *
+                     * where the the loop is only executed, when the first
+                     * `x' is equal to the second `x'
+                     */
+                    if ( ! successful) {
                         continue;
-                    } /* else if (result == ReturnMessage.BREAK) {
-                        return result; // also break next iterator
-                    } */
-                    return result;
+                    }
+
+                    /* Starts iteration of next iterator or execution if this is the
+                       last iterator.
+                       Stops iteration if requested by execution.                 */
+                    ReturnMessage result;
+                    if (next != null) {
+                        result = next.evaluate(state, exec, outerScope);
+                    } else {
+                        result = exec.execute(state, v);
+                    }
+                    if (result != null) {
+                        if (result == ReturnMessage.CONTINUE) {
+                            continue;
+                        } /* else if (result == ReturnMessage.BREAK) {
+                            return result; // also break next iterator
+                        } */
+                        return result;
+                    }
                 }
+                return null;
+            } catch (ConcurrentModificationException cme) {
+                throw new IllegalRedefinitionException(
+                    "Unable to modify the collection \"" + collection.toString(state) + "\" while iterating over it.", cme
+                );
             }
-            return null;
         } else {
             throw new IncompatibleTypeException(
                 "Evaluation of iterator '" + iterationValue + "' is not a collection value."

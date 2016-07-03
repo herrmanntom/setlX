@@ -1,0 +1,18 @@
+unionfind:=procedure(m,r){
+    ret:={ {x}: x in m};
+    for(x in r){
+        p:={};
+        for(y in ret){
+            if(x[1] in y || x[2] in y){
+                ret-={y};
+                p+=y;
+            }
+        }
+        ret+={p};
+    }
+    return ret;
+};
+nodes:={1 .. 10};
+edges:={[1,2],[2,4],[3,7],[3,6],[5,6]};
+parts:=unionfind(nodes,edges);
+print(parts);

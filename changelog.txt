@@ -1,5 +1,8 @@
 Changes (* notice | + feature added, replaced or improved | - feature removed | # bugfix):
 
+---v2.4.2--- 2016-07-21
+ # prevent concurrent modification during iterations
+
 ---v2.4.1--- 2016-07-03
  # Fix error handling when trying to modify collection during iteration
 

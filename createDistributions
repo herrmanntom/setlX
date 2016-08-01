@@ -9,7 +9,26 @@ setlXlaunchScript="$OVERRIDE_setlXJarDirectory/setlX"
 cd "$OVERRIDE_setlXJarDirectory"
 
 # clean the interpreter source
-echo "=> Cleaning the setlX interpreter's source ..."
+echo "=> Cleaning the setlX interpreter's source (1/2) ..."
+ant -autoproxy dist-clean
+
+cd ..
+
+# run tests
+if [ "$1" != "noTests" ]; then
+    echo "=> Testing the setlX interpreter ..."
+    ./test_all_examples; rc=$?
+    if [ $rc -ne 0 ]; then
+        echo "=> Errors occured while testing the interpreter."
+        echo "=> Distribution stopped!"
+        exit 1
+    fi
+fi
+
+cd "$OVERRIDE_setlXJarDirectory"
+
+# clean the interpreter source
+echo "=> Cleaning the setlX interpreter's source (2/2) ..."
 ant -autoproxy dist-clean
 
 # build the binary version
@@ -52,17 +71,6 @@ else
 fi
 
 cd ..
-
-# run tests
-if [ "$1" != "noTests" ]; then
-    echo "=> Testing the setlX interpreter ..."
-    ./test_all_examples; rc=$?
-    if [ $rc -ne 0 ]; then
-        echo "=> Errors occured while testing the interpreter."
-        echo "=> Distribution stopped!"
-        exit 1
-    fi
-fi
 
 # create version string for file names
 versionForFileNames=$(echo $version | tr "." "-")

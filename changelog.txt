@@ -1,5 +1,9 @@
 Changes (* notice | + feature added, replaced or improved | - feature removed | # bugfix):
 
+---v2.4.3--- 2016-08-01
+ # fix version number
+ # fix building 1.6 compatible version when tests are enabled
+
 ---v2.4.2--- 2016-07-21
  # prevent concurrent modification during iterations
 

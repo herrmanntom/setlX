@@ -1,52 +1,83 @@
+load("toTerm.stlx");
+ln := log;  // use the European name for the natural logarithm
+
 // differentiate the term t with respect to the variable x
 diff := procedure(t, x) {
     match (t) {
-        case a + b :
-            return diff(a, x) + diff(b, x);
-        case a - b :
-            return diff(a, x) - diff(b, x);
-        case a * b :
-            return diff(a, x) * b + a * diff(b, x);
-        case a / b :
-            return ( diff(a, x) * b - a * diff(b, x) ) / b * b;
-        case a ** b :
-            return diff( @exp(b * @ln(a)), x);
-        case fn(a) :
-            switch {
-                case fn == parse("ln"):
-                    return diff(a, x) / a;
-                case fn == parse("exp"):
-                    return diff(a, x) * @exp(a);
-                default:
-                    abort("unknown function");
-            }
-        case a | isNumber(a) :
-            return 0;
-        case a | a == x:
-            return 1;
-        case a | isVariable(a):
-            return 0;
+        case t1 + t2:
+             return diff(t1, x) + diff(t2, x);
+        case t1 - t2:
+             return diff(t1, x) - diff(t2, x);
+        case t1 * t2:
+             return diff(t1, x) * t2 + t1 * diff(t2, x);
+        case t1 / t2:
+             return ( diff(t1, x) * t2 - t1 * diff(t2, x) ) / (t2 * t2);
+        case f ** 0:
+             return 0;
+        case f ** n | isNumber(n) && n != 0 : 
+             return n * diff(f, x) * f ** (n-1);
+        case f ** g:
+             return diff( ^exp(g * ^ln(f)), x);
+        case ^sqrt(a):
+             return 1/2 * diff(a, x) / t;
+        case ^sin(a):
+             return diff(a, x) * ^cos(a);
+        case ^cos(a):
+             return -diff(a, x) * ^sin(a);
+        case ^tan(a):
+             return diff(a, x) / ^cos(x) ** 2;
+        case ^asin(a):
+             return diff(a, x) / ^sqrt(1 - a ** 2);
+        case ^acos(a):
+             return - diff(a, x) / ^sqrt(1 - a ** 2);
+        case ^atan(a):
+             return diff(a,x) / (1 + a ** 2);
+        case ^ln(a):
+             return diff(a, x) / a;
+        case ^exp(a):
+             return diff(a, x) * ^exp(a);
+        case var | var == x :
+             return 1;
+        case var | isVariable(var) :
+             return 0;
+        case t | isNumber(t):
+             return 0;
         default:
             abort("error: $t$");
     }
 };
 
 test := procedure(s) {
-    t := parse(s);
-    print("testing $t$:");
-    d := diff(t, parse("x"));
-    print(d, "\n");
+    d := diff(parseTerm(s), parseTerm("x"));
+    print("d/dx($s$) = $d$\n");
 };
 
+test("1"); 
 test("x");
+test("1 / x"); 
 test("y");
-test("1");
-test("x+x");
-test("x+x+y");
-test("x*x");
-test("x/x");
-test("1/x");
-test("ln(x)");
-test("exp(x)");
+test("x + y");
+test("x ** 2");
+test("x"); 
+test("1 - x"); 
+test("x * x"); 
+test("c * x + d"); 
+test("x - x - x"); 
+test("x - (x - x)"); 
+test("x / x");
+test("sin(x)");
+test("sin(x) / cos(x)"); 
+test("tan(x)"); 
+test("sqrt(x)"); 
+test("asin(x)"); 
+test("acos(x)"); 
+test("atan(x)"); 
+test("exp(x)"); 
+test("ln(x)"); 
+test("exp(ln(x))"); 
+test("ln(exp(x))"); 
+test("(x + x) * (x + x)");
+test("x / x");
+test("x ** 2");
 test("x ** x");
 

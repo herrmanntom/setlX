@@ -1,33 +1,56 @@
-testing x:
-1
+d/dx(1) = 0
 
-testing y:
-0
+d/dx(x) = 1
 
-testing 1:
-0
+d/dx(1 / x) = (0 * x - 1) / (x * x)
 
-testing x + x:
-2
+d/dx(y) = 0
 
-testing x + x + y:
-2
+d/dx(x + y) = 1
 
-testing x * x:
-1 * x + x * 1
+d/dx(x ** 2) = 2 * x ** 1
 
-testing x / x:
-(1 * x - x * 1) / x * x
+d/dx(x) = 1
 
-testing 1 / x:
-(0 * x - 1) / x * x
+d/dx(1 - x) = -1
 
-testing ln(x):
-1 / x
+d/dx(x * x) = 1 * x + x * 1
 
-testing exp(x):
-1 * exp(x)
+d/dx(c * x + d) = 0 * x + c * 1 + 0
 
-testing x ** x:
-(1 * ln(x) + x * (1 / x)) * exp(x * ln(x))
+d/dx(x - x - x) = -1
+
+d/dx(x - (x - x)) = 1
+
+d/dx(x / x) = (1 * x - x * 1) / (x * x)
+
+d/dx(sin(x)) = 1 * ^cos(x)
+
+d/dx(sin(x) / cos(x)) = (1 * ^cos(x) * ^cos(x) - ^sin(x) * (-1 * ^sin(x))) / (^cos(x) * ^cos(x))
+
+d/dx(tan(x)) = 1 / ^cos(x) ** 2
+
+d/dx(sqrt(x)) = 1/2 / ^sqrt(x)
+
+d/dx(asin(x)) = 1 / ^sqrt(1 - x ** 2)
+
+d/dx(acos(x)) = -1 / ^sqrt(1 - x ** 2)
+
+d/dx(atan(x)) = 1 / (1 + x ** 2)
+
+d/dx(exp(x)) = 1 * ^exp(x)
+
+d/dx(ln(x)) = 1 / x
+
+d/dx(exp(ln(x))) = 1 / x * ^exp(^ln(x))
+
+d/dx(ln(exp(x))) = 1 * ^exp(x) / ^exp(x)
+
+d/dx((x + x) * (x + x)) = 2 * (x + x) + (x + x) * 2
+
+d/dx(x / x) = (1 * x - x * 1) / (x * x)
+
+d/dx(x ** 2) = 2 * x ** 1
+
+d/dx(x ** x) = (1 * ^ln(x) + x * (1 / x)) * ^exp(x * ^ln(x))
 

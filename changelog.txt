@@ -1,6 +1,6 @@
 Changes (* notice | + feature added, replaced or improved | - feature removed | # bugfix):
 
----v2.5.0--- 2016-04-16
+---v2.5.0--- 2016-XX-YY
  * Note: the setlX start scripts changed - please update yours!
  + Changed confusing matching of variables and functions
    + terms must start with a hat symbol ('^') instead of an upper case letter
@@ -9,6 +9,13 @@ Changes (* notice | + feature added, replaced or improved | - feature removed | 
    * 'internal' terms start with three hats ('^^^') instead of one
    * please (re)read related sections in tutorial for more details and clarifications
  # fixed minor bug in plotting functions
+
+---v2.4.3--- 2016-08-01
+ # fix version number
+ # fix building 1.6 compatible version when tests are enabled
+
+---v2.4.2--- 2016-07-21
+ # prevent concurrent modification during iterations
 
 ---v2.4.1--- 2016-07-03
  # Fix error handling when trying to modify collection during iteration

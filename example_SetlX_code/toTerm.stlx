@@ -6,7 +6,7 @@ toTerm := procedure(t) {
     }
     fctSymbol := fct(t);
     arguments := args(t);
-    if (fctSymbol == "^^^call") {
+    if (fctSymbol == "@@@call") {
         fctName         := args(arguments[1])[1];
         transformedArgs := toTermList(arguments[2]);
         extraArgs       := arguments[3];
@@ -17,7 +17,7 @@ toTerm := procedure(t) {
             return makeTerm(fctName, transformedArgs);
         }
     }
-    if (fctSymbol == "^^^variable") {
+    if (fctSymbol == "@@@variable") {
         return t;
     }
     argList := toTermList(arguments);

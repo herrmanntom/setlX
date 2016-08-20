@@ -1,12 +1,12 @@
 The circumference of a circle with radius 10 is: 62.83185307179586.
 100 is approximately 100.0.
 
-variables in outer scope: ^^^scope({["circumference", r |-> 2 * mathConst("pi") * r], ["getScope", ^^^preDefinedProcedure("getScope")], ["log", ^^^preDefinedProcedure("log")], ["mathConst", ^^^preDefinedProcedure("mathConst")], ["params", []], ["print", ^^^preDefinedProcedure("print")], ["resetRandom", ^^^preDefinedProcedure("resetRandom")]})
-variables in outer scope: ^^^scope({["circumference", r |-> 2 * mathConst("pi") * r], ["getScope", ^^^preDefinedProcedure("getScope")], ["log", ^^^preDefinedProcedure("log")], ["mathConst", ^^^preDefinedProcedure("mathConst")], ["params", []], ["print", ^^^preDefinedProcedure("print")], ["printInnerScope", procedure() { secretVariable := 42; print("variables in inner scope: ", getScope()); }], ["resetRandom", ^^^preDefinedProcedure("resetRandom")]})
-variables in inner scope: ^^^scope({["circumference", r |-> 2 * mathConst("pi") * r], ["getScope", ^^^preDefinedProcedure("getScope")], ["log", ^^^preDefinedProcedure("log")], ["mathConst", ^^^preDefinedProcedure("mathConst")], ["print", ^^^preDefinedProcedure("print")], ["printInnerScope", procedure() { secretVariable := 42; print("variables in inner scope: ", getScope()); }], ["resetRandom", ^^^preDefinedProcedure("resetRandom")], ["secretVariable", 42]})
-variables in outer scope: ^^^scope({["circumference", r |-> 2 * mathConst("pi") * r], ["getScope", ^^^preDefinedProcedure("getScope")], ["log", ^^^preDefinedProcedure("log")], ["mathConst", ^^^preDefinedProcedure("mathConst")], ["params", []], ["print", ^^^preDefinedProcedure("print")], ["printInnerScope", procedure() { secretVariable := 42; print("variables in inner scope: ", getScope()); }], ["resetRandom", ^^^preDefinedProcedure("resetRandom")]})
+variables in outer scope: @@@scope({["circumference", r |-> 2 * mathConst("pi") * r], ["getScope", @@@preDefinedProcedure("getScope")], ["log", @@@preDefinedProcedure("log")], ["mathConst", @@@preDefinedProcedure("mathConst")], ["params", []], ["print", @@@preDefinedProcedure("print")], ["resetRandom", @@@preDefinedProcedure("resetRandom")]})
+variables in outer scope: @@@scope({["circumference", r |-> 2 * mathConst("pi") * r], ["getScope", @@@preDefinedProcedure("getScope")], ["log", @@@preDefinedProcedure("log")], ["mathConst", @@@preDefinedProcedure("mathConst")], ["params", []], ["print", @@@preDefinedProcedure("print")], ["printInnerScope", procedure() { secretVariable := 42; print("variables in inner scope: ", getScope()); }], ["resetRandom", @@@preDefinedProcedure("resetRandom")]})
+variables in inner scope: @@@scope({["circumference", r |-> 2 * mathConst("pi") * r], ["getScope", @@@preDefinedProcedure("getScope")], ["log", @@@preDefinedProcedure("log")], ["mathConst", @@@preDefinedProcedure("mathConst")], ["print", @@@preDefinedProcedure("print")], ["printInnerScope", procedure() { secretVariable := 42; print("variables in inner scope: ", getScope()); }], ["resetRandom", @@@preDefinedProcedure("resetRandom")], ["secretVariable", 42]})
+variables in outer scope: @@@scope({["circumference", r |-> 2 * mathConst("pi") * r], ["getScope", @@@preDefinedProcedure("getScope")], ["log", @@@preDefinedProcedure("log")], ["mathConst", @@@preDefinedProcedure("mathConst")], ["params", []], ["print", @@@preDefinedProcedure("print")], ["printInnerScope", procedure() { secretVariable := 42; print("variables in inner scope: ", getScope()); }], ["resetRandom", @@@preDefinedProcedure("resetRandom")]})
 
-^Arrr("said", "the", "pirate")
+@Arrr("said", "the", "pirate")
 Arrr("said", "the", "pirate")
 
 46656 == 46656
@@ -55,9 +55,9 @@ This is a 21_test_12
 This is a $test$
 This is a 21_test_12This is a 21_test_12
 
-{throwACoin, print} = {^^^lambdaProcedure([], ^^^call(^^^variable("rnd"), [{^^^stringConstructor("heads", ["heads"], []), ^^^stringConstructor("tails", ["tails"], [])}], "nil")), ^^^preDefinedProcedure("print")}
-a + 10 * b % 4 = ^^^sum(^^^variable("a"), ^^^modulo(^^^product(10, ^^^variable("b")), 4))
-"print(parseStatements(\"print(\\"that is crazy!\\");\"));" = ^^^block([^^^call(^^^variable("print"), [^^^call(^^^variable("parseStatements"), [^^^stringConstructor("print(\"that is crazy!\");", ["print(\"that is crazy!\");"], [])], "nil")], "nil")])
+{throwACoin, print} = {@@@lambdaProcedure([], @@@call(@@@variable("rnd"), [{@@@stringConstructor("heads", ["heads"], []), @@@stringConstructor("tails", ["tails"], [])}], "nil")), @@@preDefinedProcedure("print")}
+a + 10 * b % 4 = @@@sum(@@@variable("a"), @@@modulo(@@@product(10, @@@variable("b")), 4))
+"print(parseStatements(\"print(\\"that is crazy!\\");\"));" = @@@block([@@@call(@@@variable("print"), [@@@call(@@@variable("parseStatements"), [@@@stringConstructor("print(\"that is crazy!\");", ["print(\"that is crazy!\");"], [])], "nil")], "nil")])
 
 6
 foo

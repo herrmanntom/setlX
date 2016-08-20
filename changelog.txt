@@ -4,10 +4,10 @@ Changes (* notice | + feature added, replaced or improved | - feature removed | 
  * Note: the setlX start scripts changed - please update yours!
  + Changed confusing matching of variables and functions
    * removed quote expression ('@')
-   + terms must start with a hat symbol ('^') instead of an upper case letter
+   + terms must start with an at symbol ('@') instead of an upper case letter
    + variables can start with upper case letters
    + added isVariable(term) function, that tests if given term represents a variable
-   * 'internal' terms start with three hats ('^^^') instead of one
+   * 'internal' terms start with three at symbols ('@@@') instead of one
    * please (re)read related sections in tutorial for more details and clarifications
  # fixed minor bug in plotting functions
 

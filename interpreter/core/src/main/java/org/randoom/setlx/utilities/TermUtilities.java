@@ -17,9 +17,9 @@ import java.util.Set;
  * Utilities for converting terms.
  */
 public class TermUtilities {
-    private static final String FUNCTIONAL_CHARACTER_PREFIX = "^";
+    private static final String FUNCTIONAL_CHARACTER_PREFIX = "@";
     private static final int FUNCTIONAL_CHARACTER_PREFIX_LENGTH  = FUNCTIONAL_CHARACTER_PREFIX.length();
-    private static final String INTERNAL_FUNCTIONAL_CHARACTER_PREFIX = "^^^";
+    private static final String INTERNAL_FUNCTIONAL_CHARACTER_PREFIX = "@@@";
     private static final int INTERNAL_FUNCTIONAL_CHARACTER_PREFIX_LENGTH = INTERNAL_FUNCTIONAL_CHARACTER_PREFIX.length();
 
     private final static Set<String> TERMS_NOT_FOUND = new HashSet<>();

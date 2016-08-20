@@ -54,15 +54,15 @@ parseBase := procedure(tl) {
     match (tl) {
         case [ "exp", "(" | rl ]: [expr, ql] := parseArithExpr(rl);
                                   assert(ql[1] == ")", "Parse Error");
-                                  return [ ^Exp(expr), ql[2..]];
+                                  return [ @Exp(expr), ql[2..]];
         case [ "ln", "(" | rl ]:  [expr, ql] := parseArithExpr(rl);
                                   assert(ql[1] == ")", "Parse Error");
-                                  return [ ^Ln(expr), ql[2..]];
+                                  return [ @Ln(expr), ql[2..]];
         case ["(" | rl ]:         [expr, ql] := parseArithExpr(rl);
                                   assert(ql[1] == ")", "Parse Error");
                                   return [expr, ql[2..]];
-        case [ ^Number(n) | rl ]: return [^Number(n), rl];
-        case [ ^Var(v) | rl ]:    return [^Var(v), rl];
+        case [ @Number(n) | rl ]: return [@Number(n), rl];
+        case [ @Var(v) | rl ]:    return [@Var(v), rl];
         default:                  abort("parse error in parseBase($tl$)");
     }
 };
@@ -81,9 +81,9 @@ tokenizeString := procedure(s) {
         regex '[-+*/()]' as [ operator ]: 
               tokenList += [ operator ];
         regex '[a-z][a-z0-9_]*' as [ variable ]: 
-              tokenList += [ ^Var(variable)    ];
+              tokenList += [ @Var(variable)    ];
         regex '0|[1-9][0-9]*' as [ number ]: 
-              tokenList += [ ^Number(int(number)) ];
+              tokenList += [ @Number(int(number)) ];
         regex '[ \t\n\r]+': // skip
     }
     return tokenList;
@@ -106,19 +106,19 @@ diff := procedure(t, x) {
              return diff(t1, x) * t2 + t1 * diff(t2, x);
         case t1 / t2 :
              return ( diff(t1, x) * t2 - t1 * diff(t2, x) ) / (t2 * t2);
-        case f ** ^Number(n): 
-            return ^Number(n) * diff(f, x) * f ** ^Number(n-1);
+        case f ** @Number(n): 
+            return @Number(n) * diff(f, x) * f ** @Number(n-1);
         case f ** g :
-             return diff( ^Exp(g * ^Ln(f)), x);
-        case ^Ln(a) :
+             return diff( @Exp(g * @Ln(f)), x);
+        case @Ln(a) :
              return diff(a, x) / a;
-        case ^Exp(a) : 
-             return diff(a, x) * ^Exp(a);
-        case ^Var(x) : // x is defined above as second argument to diff
+        case @Exp(a) : 
+             return diff(a, x) * @Exp(a);
+        case @Var(x) : // x is defined above as second argument to diff
              return 1;
-        case ^Var(y) : // y is undefined, therefore matches any other variable
+        case @Var(y) : // y is undefined, therefore matches any other variable
              return 0;
-        case ^Number(n):
+        case @Number(n):
              return 0;    
         default:
             abort("error in diff($t$, $x$)");

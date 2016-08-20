@@ -74,7 +74,7 @@ listAssignments := procedure() {
     [a, b, c] := [1, 2, 3];
     [[d, e], f] := [[4, 5], 6];
     [g, h, i] := "123";
-    [j, k, l] := ^term("foobar", 99, sin);
+    [j, k, l] := @term("foobar", 99, sin);
 
     tester(a == 1   && b == 2   && c == 3   && d == 4        && e == 5  && f == 6            &&
            g == "1" && h == "2" && i == "3" && j == "foobar" && k == 99 && l == getTerm(sin),
@@ -244,11 +244,11 @@ formatedString := procedure() {
 formatedString();
 
 precedences := procedure() {
-    a := str(   ^^^conjunction(^^^disjunction(^^^disjunction(     ^^^variable("a"),       ^^^variable("b")   ),
-                                          ^^^conjunction(^^^not(^^^variable("a")), ^^^not(^^^variable("b"))  )
+    a := str(   @@@conjunction(@@@disjunction(@@@disjunction(     @@@variable("a"),       @@@variable("b")   ),
+                                          @@@conjunction(@@@not(@@@variable("a")), @@@not(@@@variable("b"))  )
                                          ),
-                             ^^^disjunction(^^^disjunction(     ^^^variable("a"),       ^^^variable("b")   ),
-                                          ^^^conjunction(^^^not(^^^variable("a")), ^^^not(^^^variable("b"))  )
+                             @@@disjunction(@@@disjunction(     @@@variable("a"),       @@@variable("b")   ),
+                                          @@@conjunction(@@@not(@@@variable("a")), @@@not(@@@variable("b"))  )
                                          )
                             )
             );
@@ -370,12 +370,14 @@ infinityTests := procedure() {
         correct := false;
     }
 
-    // the test below would rightfully raise an exception
-    // if (sin(inf) == cos(inf)) {  // both values are NaN
-    //    correct := correct && true;
-    // } else {
-    //    correct := false;
-    // }
+    try {
+        // this test will rightfully raise an exception
+        sin(inf) == cos(inf); // both values are NaN
+        correct := false;
+    } catch (error) {
+        // any parser error fails the test
+        correct := correct && true;
+    }
 
     tester(correct, "infinity computation");
 };
@@ -398,17 +400,17 @@ grammarTests := procedure() {
         }
 
         // negative numbers vs unary minus vs binary minus
-        if (parseStatements("x := -2;") == ^^^block([^^^assignment(^^^variable("x"), ^^^minus(2))])) {
+        if (parseStatements("x := -2;") == @@@block([@@@assignment(@@@variable("x"), @@@minus(2))])) {
             correct := correct && true;
         } else {
             correct := false;
         }
-        if (parseStatements("x:= x-2;") == ^^^block([^^^assignment(^^^variable("x"), ^^^difference(^^^variable("x"), 2))])) {
+        if (parseStatements("x:= x-2;") == @@@block([@@@assignment(@@@variable("x"), @@@difference(@@@variable("x"), 2))])) {
             correct := correct && true;
         } else {
             correct := false;
         }
-        if (parseStatements("x := x-2*x;") == ^^^block([^^^assignment(^^^variable("x"), ^^^difference(^^^variable("x"), ^^^product(2, ^^^variable("x"))))])) {
+        if (parseStatements("x := x-2*x;") == @@@block([@@@assignment(@@@variable("x"), @@@difference(@@@variable("x"), @@@product(2, @@@variable("x"))))])) {
             correct := correct && true;
         } else {
             correct := false;

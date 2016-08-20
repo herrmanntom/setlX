@@ -208,7 +208,7 @@
                 <context id="negative"         style-ref="operator">
                     <match>-</match>
                 </context>
-                <context id="quote"            style-ref="operator">
+                <context id="term"             style-ref="operator">
                     <match>@</match>
                 </context>
                 <context id="notFactorial"     style-ref="operator">

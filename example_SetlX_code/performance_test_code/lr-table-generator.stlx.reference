@@ -15,13 +15,13 @@
 Total number of LR-states: 1572
 
 conflict:
-action("s742", 'else') = ^Shift("s107")
-action("s742", 'else') = ^Reduce(selection_statement -> 'if' '(' expression ')' statement)
+action("s742", 'else') = @Shift("s107")
+action("s742", 'else') = @Reduce(selection_statement -> 'if' '(' expression ')' statement)
 
 
 conflict:
-action("s744", 'else') = ^Shift("s149")
-action("s744", 'else') = ^Reduce(selection_statement -> 'if' '(' expression ')' statement)
+action("s744", 'else') = @Shift("s149")
+action("s744", 'else') = @Reduce(selection_statement -> 'if' '(' expression ')' statement)
 
 Total size of action table: 23508
 Total size of goto table: 6153

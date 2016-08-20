@@ -17,25 +17,25 @@ diff := procedure(t, x) {
         case f ** n | isNumber(n) && n != 0 : 
              return n * diff(f, x) * f ** (n-1);
         case f ** g:
-             return diff( ^exp(g * ^ln(f)), x);
-        case ^sqrt(a):
+             return diff( @exp(g * @ln(f)), x);
+        case @sqrt(a):
              return 1/2 * diff(a, x) / t;
-        case ^sin(a):
-             return diff(a, x) * ^cos(a);
-        case ^cos(a):
-             return -diff(a, x) * ^sin(a);
-        case ^tan(a):
-             return diff(a, x) / ^cos(x) ** 2;
-        case ^asin(a):
-             return diff(a, x) / ^sqrt(1 - a ** 2);
-        case ^acos(a):
-             return - diff(a, x) / ^sqrt(1 - a ** 2);
-        case ^atan(a):
+        case @sin(a):
+             return diff(a, x) * @cos(a);
+        case @cos(a):
+             return -diff(a, x) * @sin(a);
+        case @tan(a):
+             return diff(a, x) / @cos(x) ** 2;
+        case @asin(a):
+             return diff(a, x) / @sqrt(1 - a ** 2);
+        case @acos(a):
+             return - diff(a, x) / @sqrt(1 - a ** 2);
+        case @atan(a):
              return diff(a,x) / (1 + a ** 2);
-        case ^ln(a):
+        case @ln(a):
              return diff(a, x) / a;
-        case ^exp(a):
-             return diff(a, x) * ^exp(a);
+        case @exp(a):
+             return diff(a, x) * @exp(a);
         case var | var == x :
              return 1;
         case var | isVariable(var) :

@@ -589,7 +589,7 @@ atomicValue returns [Value av]
     ;
 
 ID              : ('a' .. 'z' | 'A' .. 'Z')('a' .. 'z' | 'A' .. 'Z'| '_' | '0' .. '9')* ;
-TERM            : ('^'|'^^^') ID;
+TERM            : ('@'|'@@@') ID;
 NUMBER          : '0'|('1' .. '9')('0' .. '9')*;
 DOUBLE          : NUMBER? '.' ('0' .. '9')+ (('e' | 'E') ('+' | '-')? ('0' .. '9')+)? ;
 RANGE_SIGN      : '..';

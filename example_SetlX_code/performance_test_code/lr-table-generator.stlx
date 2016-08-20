@@ -72,8 +72,8 @@ parseBody := procedure(tl) {
 
 parseItem := procedure(tl) {
     match (tl) {
-        case [ ^Var(v  ) | rl] : return [ ^Var(v),     rl];
-        case [ ^Token(t) | rl] : return [ ^Token(t),   rl];
+        case [ @Var(v  ) | rl] : return [ @Var(v),     rl];
+        case [ @Token(t) | rl] : return [ @Token(t),   rl];
         default : abort("parse error in parseItem($tl$)");
     }
 };
@@ -85,9 +85,9 @@ tokenizeString := procedure(s) {
     tokenList := [];
     scan (s) {
         regex '[:|;]'              as [ o ]: tokenList += [ o         ];
-        regex '[a-z][a-zA-Z_0-9]*' as [ v ]: tokenList += [ ^Var(v)   ];
-        regex '[A-Z][A-Z_0-9]*'    as [ t ]: tokenList += [ ^Token(t) ];
-        regex '''[^'']*'''         as [ l ]: tokenList += [ ^Token(l) ];
+        regex '[a-z][a-zA-Z_0-9]*' as [ v ]: tokenList += [ @Var(v)   ];
+        regex '[A-Z][A-Z_0-9]*'    as [ t ]: tokenList += [ @Token(t) ];
+        regex '''[^'']*'''         as [ l ]: tokenList += [ @Token(l) ];
         regex '[ \t\v\n\r]+'               : // skip
         regex '.|\n'               as [ c ]: abort("tokenizeString: $c$");
     }
@@ -101,8 +101,8 @@ list2str := procedure(l) {
     result := "";
     for (x in l) {
         match (x) {
-            case ^Var(v)   : result += " " + v;
-            case ^Token(t) : result += " " + t;
+            case @Var(v)   : result += " " + v;
+            case @Token(t) : result += " " + t;
         }
     }
     return result;
@@ -122,7 +122,7 @@ class markedRule(variable, alpha, beta, followSet) {
     nextVar    := procedure() {
         if (#mBeta > 0) {
             match (mBeta[1]) {
-                case ^Var(v): return v;
+                case @Var(v): return v;
             }
         }
     };
@@ -187,7 +187,7 @@ class grammar(rules, variables, start) {
     this.mRules       := rules;
     this.mVariables   := variables;
     this.mStart       := start;
-    this.mRules       += { ["S", [^Var(mStart)]] }; // augment grammar
+    this.mRules       += { ["S", [@Var(mStart)]] }; // augment grammar
     this.mVariables   += { "S" };
     this.mFirst       := initializeMap(mVariables);
     this.mFollow      := initializeMap(mVariables);
@@ -214,18 +214,18 @@ class grammar(rules, variables, start) {
     computeTokens := procedure() {
         for ([_, body] in mRules, x in body) {
             match (x) {
-                case ^Token(t): this.mTokens += { x };
+                case @Token(t): this.mTokens += { x };
             }
         }
     };
     startRule := procedure() {
-        return markedRule("S", [], [ ^Var(mStart) ], { '$' });
+        return markedRule("S", [], [ @Var(mStart) ], { '$' });
     };
     firstList := procedure(alpha) {
         match (alpha) {
              case []:                return { "" };
-             case [ ^Var(v)   | r ]: return epsAppend(mFirst[v], firstList(r));
-             case [ ^Token(t) | r ]: return { t };
+             case [ @Var(v)   | r ]: return epsAppend(mFirst[v], firstList(r));
+             case [ @Token(t) | r ]: return { t };
         }
     };
     computeFirst := procedure() {
@@ -311,7 +311,7 @@ class grammar(rules, variables, start) {
                 if (newState != {}) {
                     newName := mStateNames[newState];
                     t       := extractArg(token);
-                    this.mActionTable[[stateName,t]] := ^Shift(newName);
+                    this.mActionTable[[stateName,t]] := @Shift(newName);
                     // print("action(\"$stateName$\", $t$) = $Shift(newName)$");
                 }
             }
@@ -319,7 +319,7 @@ class grammar(rules, variables, start) {
             for (mr in state | mr.isComplete()) {
                 for (t in mr.mFollowSet) {
                 action1 := this.mActionTable[[stateName,t]];
-                    action2 := ^Reduce(mr.toRule());
+                    action2 := @Reduce(mr.toRule());
                     if (action1 == om) {
                         this.mActionTable[[stateName,t]] := action2;
                         // print("action(\"$stateName$\", $t$) = $action2$");
@@ -340,7 +340,7 @@ class grammar(rules, variables, start) {
         gotoTable := {};
         // print("\nGoto Table:");
         for (state in mStates, var in mVariables) {
-            newState := goto(state, ^Var(var));
+            newState := goto(state, @Var(var));
             if (newState != {}) {
                 stateName := mStateNames[state];
                 newName   := mStateNames[newState];
@@ -373,8 +373,8 @@ class grammar(rules, variables, start) {
     };
     extractArg := procedure(x) {
         match (x) {
-            case ^Var(v)   : return v;
-            case ^Token(t) : return t;
+            case @Var(v)   : return v;
+            case @Token(t) : return t;
         }
     };
   }  

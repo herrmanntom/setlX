@@ -6,6 +6,7 @@ tmpFile=$(mktemp -t setlx-XXXXXXXXXX)
 
 # set overrides for setlX launcher script
 export OVERRIDE_setlXJarDirectory="$PWD/interpreter/"
+export SETLX_LIBRARY_PATH="$PWD/interpreter/setlXlibrary"
 export OVERRIDE_setlXjavaParameters="-d64 -Xmx6144m"
 #export OVERRIDE_setlXjavaParameters="-d32 -Xmx3000m"
 
@@ -19,7 +20,6 @@ exampleDirs=("example_SetlX_code" "Tutorial/Examples")
 renice -n 10 $$
 
 # prepare the interpreter
-simpleTest="interpreter/IntegrationTest/core.stlx"
 cd interpreter; ./runIntegrationTests >"$tmpFile" 2>&1; cd ..
 
 # check for failed tests
@@ -29,11 +29,11 @@ everythingOkCount=$(grep -c "Everything is fine. Move along sir!" "$tmpFile")
 # alert the user and stop
 if [ $failedCount -gt 0 -o $everythingOkCount -ne 1 ]
   then
-    echo "The initial testfile '$simpleTest' failed!"
+    echo "The initial integration tests failed!"
     rm -f "$tmpFile"
     exit 1
 else
-    echo -e "Test of file '$simpleTest' successful!\n"
+    echo -e "Integration Test successful!\n"
 fi
 
 # number of concurrent processes to start

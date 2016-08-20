@@ -9,6 +9,7 @@ Changes (* notice | + feature added, replaced or improved | - feature removed | 
    + added isVariable(term) function, that tests if given term represents a variable
    * 'internal' terms start with three at symbols ('@@@') instead of one
    * please (re)read related sections in tutorial for more details and clarifications
+ + added standard library files that are distributed with the interpreter
  # fixed minor bug in plotting functions
 
 ---v2.4.3--- 2016-08-01

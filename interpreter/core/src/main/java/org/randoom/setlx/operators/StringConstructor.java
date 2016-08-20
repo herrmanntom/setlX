@@ -38,107 +38,102 @@ public class StringConstructor extends AZeroOperator {
      * Constructor, which parses $-Expressions in the string to create.
      *
      * @param state       Current state of the running SetlX program.
-     * @param quoted      Is the created string quoted (via @-char)?
      * @param originalStr String read by the parser.
      */
-    public StringConstructor(final State state, final boolean quoted, final String originalStr) {
+    public StringConstructor(final State state, final String originalStr) {
         this(originalStr, new ArrayList<String>(), new ArrayList<OperatorExpression>());
 
         // Strip out double quotes which the parser left in
         final String orgStr = originalStr.substring(1, originalStr.length() - 1);
         final int    length = orgStr.length();
 
-        if ( ! quoted) {
-            final StringBuilder fragment  = new StringBuilder(); // buffer for string fragment
-            final StringBuilder expr      = new StringBuilder(); // buffer for inner expr string
-                  boolean       innerExpr = false;               // currently reading inner expr ?
-            for (int i = 0; i < length; ++i) {
-                final char c = orgStr.charAt(i);  // current char
-                final char n = (i+1 < length)? orgStr.charAt(i+1) : '\0';  // next char
-                if (innerExpr) {
-                    if (c == '$') {
-                        // end of inner expr
-                        innerExpr = false;
-                        // parse inner expr
-                        final int errCount = state.getParserErrorCount();
-                        try {
-                            // SetlString parses escape characters properly
-                            final String eStr = SetlString.parseString(expr.toString());
-                            final OperatorExpression exp = ParseSetlX.parseStringToExpr(state, eStr);
-                            // add inner expr to mExprs
-                            this.expressions.add(exp);
-                        } catch (final ParserException pe) {
-                            /* Doing error handling here is futile, as outer parsing run,
-                             * which called this constructor, will notice via the global
-                             * error count and (later) halt.
-                             * However we can at least provide the user with some feedback.
-                             */
-                            if (state.getParserErrorCount() > errCount) {
-                                state.writeParserErrLn(
-                                    "Error(s) while parsing string " + originalStr + " {"
-                                );
-                                if (pe instanceof SyntaxErrorException) {
-                                    for (final String err : ((SyntaxErrorException) pe).getErrors()) {
-                                        state.writeParserErrLn(
-                                            "\t" + err
-                                        );
-                                    }
-                                } else {
+        final StringBuilder fragment  = new StringBuilder(); // buffer for string fragment
+        final StringBuilder expr      = new StringBuilder(); // buffer for inner expr string
+              boolean       innerExpr = false;               // currently reading inner expr ?
+        for (int i = 0; i < length; ++i) {
+            final char c = orgStr.charAt(i);  // current char
+            final char n = (i+1 < length)? orgStr.charAt(i+1) : '\0';  // next char
+            if (innerExpr) {
+                if (c == '$') {
+                    // end of inner expr
+                    innerExpr = false;
+                    // parse inner expr
+                    final int errCount = state.getParserErrorCount();
+                    try {
+                        // SetlString parses escape characters properly
+                        final String eStr = SetlString.parseString(expr.toString());
+                        final OperatorExpression exp = ParseSetlX.parseStringToExpr(state, eStr);
+                        // add inner expr to mExprs
+                        this.expressions.add(exp);
+                    } catch (final ParserException pe) {
+                        /* Doing error handling here is futile, as outer parsing run,
+                         * which called this constructor, will notice via the global
+                         * error count and (later) halt.
+                         * However we can at least provide the user with some feedback.
+                         */
+                        if (state.getParserErrorCount() > errCount) {
+                            state.writeParserErrLn(
+                                "Error(s) while parsing string " + originalStr + " {"
+                            );
+                            if (pe instanceof SyntaxErrorException) {
+                                for (final String err : ((SyntaxErrorException) pe).getErrors()) {
                                     state.writeParserErrLn(
-                                        pe.getMessage()
+                                        "\t" + err
                                     );
                                 }
+                            } else {
                                 state.writeParserErrLn(
-                                    "}"
+                                    pe.getMessage()
                                 );
                             }
-                        } catch (final StopExecutionException see) {
-                            state.errWriteInternalError(see);
+                            state.writeParserErrLn(
+                                "}"
+                            );
                         }
-                        // clear expression
-                        expr.setLength(0);
-                    } else {
-                        // continue expr string
-                        expr.append(c);
+                    } catch (final StopExecutionException see) {
+                        state.errWriteInternalError(see);
                     }
+                    // clear expression
+                    expr.setLength(0);
                 } else {
-                    if (c == '\\' && n == '$') {
-                        // escaped dollar
-                        fragment.append('$');
-                        i++; // jump over next char
-                    } else if (c == '$') {
-                        // end outer string
-                        this.fragments.add(fragment.toString());
-                        fragment.setLength(0);
-                        // start inner expression
-                        innerExpr = true;
-                    } else {
-                        // continue outer string
-                        fragment.append(c);
-                    }
+                    // continue expr string
+                    expr.append(c);
+                }
+            } else {
+                if (c == '\\' && n == '$') {
+                    // escaped dollar
+                    fragment.append('$');
+                    i++; // jump over next char
+                } else if (c == '$') {
+                    // end outer string
+                    this.fragments.add(fragment.toString());
+                    fragment.setLength(0);
+                    // start inner expression
+                    innerExpr = true;
+                } else {
+                    // continue outer string
+                    fragment.append(c);
                 }
             }
-            if (innerExpr) { // inner expr not complete
-                /* Doing error handling here is futile
-                 * Instead make outer parsing run, which called this constructor,
-                 * notice this error and (later) halt.
-                 */
-                state.addToParserErrorCount(1);
-                // However we can at least provide the user with some feedback.
-                state.writeParserErrLn(
-                    "Error(s) while parsing string " + this.toString(state) + " {\n"
-                  + "\tclosing '$' missing\n"
-                  + "}"
-                );
-            }
-            // outer string must always be appended, even if empty
-            this.fragments.add(fragment.toString());
-
-            this.fragments.trimToSize();
-            this.expressions.trimToSize();
-        } else {
-            this.fragments.add(orgStr);
         }
+        if (innerExpr) { // inner expr not complete
+            /* Doing error handling here is futile
+             * Instead make outer parsing run, which called this constructor,
+             * notice this error and (later) halt.
+             */
+            state.addToParserErrorCount(1);
+            // However we can at least provide the user with some feedback.
+            state.writeParserErrLn(
+                "Error(s) while parsing string " + this.toString(state) + " {\n"
+              + "\tclosing '$' missing\n"
+              + "}"
+            );
+        }
+        // outer string must always be appended, even if empty
+        this.fragments.add(fragment.toString());
+
+        this.fragments.trimToSize();
+        this.expressions.trimToSize();
     }
 
     private StringConstructor(final String originalStr, final ArrayList<String> fragments, final ArrayList<OperatorExpression> expressions) {

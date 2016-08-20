@@ -3,6 +3,7 @@ Changes (* notice | + feature added, replaced or improved | - feature removed | 
 ---v2.5.0--- 2016-XX-YY
  * Note: the setlX start scripts changed - please update yours!
  + Changed confusing matching of variables and functions
+   * removed quote expression ('@')
    + terms must start with a hat symbol ('^') instead of an upper case letter
    + variables can start with upper case letters
    + added isVariable(term) function, that tests if given term represents a variable

@@ -338,30 +338,26 @@ product [boolean enableIgnore, FragmentList<AOperator> operators]
     ;
 
 reduce [boolean enableIgnore, FragmentList<AOperator> operators]
-    : p1 = prefixOperation[$enableIgnore, false, $operators]
+    : p1 = prefixOperation[$enableIgnore, $operators]
       (
-         '+/' prefixOperation[$enableIgnore, false, $operators] { operators.add(SumOfMembersBinary.SOMB    ); }
-       | '*/' prefixOperation[$enableIgnore, false, $operators] { operators.add(ProductOfMembersBinary.POMB); }
+         '+/' prefixOperation[$enableIgnore, $operators] { operators.add(SumOfMembersBinary.SOMB    ); }
+       | '*/' prefixOperation[$enableIgnore, $operators] { operators.add(ProductOfMembersBinary.POMB); }
       )*
     ;
 
-prefixOperation [boolean enableIgnore, boolean quoted, FragmentList<AOperator> operators]
-    : factor[$enableIgnore, $quoted, $operators]
+prefixOperation [boolean enableIgnore, FragmentList<AOperator> operators]
+    : factor[$enableIgnore, $operators]
       (
-        '**' prefixOperation[$enableIgnore, $quoted, $operators] { operators.add(Power.P);              }
+        '**' prefixOperation[$enableIgnore, $operators] { operators.add(Power.P);              }
       )?
-    | '+/' prefixOperation[$enableIgnore, $quoted, $operators]   { operators.add(SumOfMembers.SOM);     }
-    | '*/' prefixOperation[$enableIgnore, $quoted, $operators]   { operators.add(ProductOfMembers.POM); }
-    | '#'  prefixOperation[$enableIgnore, $quoted, $operators]   { operators.add(Cardinality.C);        }
-    | '-'  prefixOperation[$enableIgnore, $quoted, $operators]   { operators.add(Minus.M);              }
-    | (
-        { FragmentList<AOperator> innerOperators = new FragmentList<AOperator>(); }
-        '@' prefixOperation[$enableIgnore, true, innerOperators] { operators.add(new Quote(new OperatorExpression(innerOperators))); }
-      )
+    | '+/' prefixOperation[$enableIgnore, $operators]   { operators.add(SumOfMembers.SOM);     }
+    | '*/' prefixOperation[$enableIgnore, $operators]   { operators.add(ProductOfMembers.POM); }
+    | '#'  prefixOperation[$enableIgnore, $operators]   { operators.add(Cardinality.C);        }
+    | '-'  prefixOperation[$enableIgnore, $operators]   { operators.add(Minus.M);              }
     ;
 
-factor [boolean enableIgnore, boolean quoted, FragmentList<AOperator> operators]
-    : '!' factor[$enableIgnore, $quoted, $operators] { operators.add(Not.N); }
+factor [boolean enableIgnore, FragmentList<AOperator> operators]
+    : '!' factor[$enableIgnore, $operators] { operators.add(Not.N); }
     | TERM '(' termArguments ')'
       { operators.add(new TermConstructor($TERM.text, $termArguments.args)); }
     | 'forall' '(' iteratorChain[$enableIgnore] '|' condition ')'
@@ -370,19 +366,19 @@ factor [boolean enableIgnore, boolean quoted, FragmentList<AOperator> operators]
       { operators.add(new Exists($iteratorChain.ic, $condition.cnd)); }
     | (
          '(' exprContent[$enableIgnore, $operators] ')'
-       | procedure                   { operators.add(new ProcedureConstructor($procedure.pd)); }
-       | variable                    { operators.add($variable.v);                             }
+       | procedure             { operators.add(new ProcedureConstructor($procedure.pd)); }
+       | variable              { operators.add($variable.v);                             }
       )
       (
-         '.' variable                { operators.add(new MemberAccess($variable.v));           }
-       | call[$enableIgnore]         { operators.add($call.c);                                 }
+         '.' variable          { operators.add(new MemberAccess($variable.v));           }
+       | call[$enableIgnore]   { operators.add($call.c);                                 }
       )*
       (
-        '!'                          { operators.add(Factorial.F);                             }
+        '!'                    { operators.add(Factorial.F);                             }
       )?
-    | value[$enableIgnore, $quoted]  { operators.add($value.v);                                }
+    | value[$enableIgnore]     { operators.add($value.v);                                }
       (
-        '!'                          { operators.add(Factorial.F);                             }
+        '!'                    { operators.add(Factorial.F);                             }
       )?
     ;
 
@@ -475,20 +471,20 @@ collectionAccessParams [boolean enableIgnore] returns [FragmentList<OperatorExpr
       expr[$enableIgnore]           { $params.add($expr.ex);                           }
     ;
 
-value [boolean enableIgnore, boolean quoted] returns [AZeroOperator v]
+value [boolean enableIgnore] returns [AZeroOperator v]
     @init {
         CollectionBuilder cb = null;
     }
     : '[' (collectionBuilder[$enableIgnore] { cb = $collectionBuilder.cb; } )? ']'
-                           { $v = new SetListConstructor(CollectionType.LIST, cb);          }
+                           { $v = new SetListConstructor(CollectionType.LIST, cb);  }
     | '{' (collectionBuilder[$enableIgnore] { cb = $collectionBuilder.cb; } )? '}'
-                           { $v = new SetListConstructor(CollectionType.SET, cb);           }
-    | STRING               { $v = new StringConstructor(setlXstate, $quoted, $STRING.text); }
-    | LITERAL              { $v = new LiteralConstructor($LITERAL.text);                    }
-    | matrix               { $v = new ValueOperator($matrix.m);                             }
-    | vector               { $v = new ValueOperator($vector.v);                             }
-    | atomicValue          { $v = new ValueOperator($atomicValue.av);                       }
-    | {$enableIgnore}? '_' { $v = VariableIgnore.VI;                                        }
+                           { $v = new SetListConstructor(CollectionType.SET, cb);   }
+    | STRING               { $v = new StringConstructor(setlXstate, $STRING.text);  }
+    | LITERAL              { $v = new LiteralConstructor($LITERAL.text);            }
+    | matrix               { $v = new ValueOperator($matrix.m);                     }
+    | vector               { $v = new ValueOperator($vector.v);                     }
+    | atomicValue          { $v = new ValueOperator($atomicValue.av);               }
+    | {$enableIgnore}? '_' { $v = VariableIgnore.VI;                                }
     ;
 
 collectionBuilder [boolean enableIgnore] returns [CollectionBuilder cb]

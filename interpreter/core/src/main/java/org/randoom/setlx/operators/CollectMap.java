@@ -67,15 +67,6 @@ public class CollectMap extends AUnaryPostfixOperator {
         return term;
     }
 
-    @Override
-    public Value buildQuotedTerm(State state, Stack<Value> termFragments) throws SetlException {
-        Term term = new Term(FUNCTIONAL_CHARACTER, 2);
-        term.addMember(state, termFragments.poll());
-        term.addMember(state, argument.evaluate(state).toTerm(state));
-
-        return term;
-    }
-
     /**
      * Append the operator represented by a term to the supplied operator stack.
      *

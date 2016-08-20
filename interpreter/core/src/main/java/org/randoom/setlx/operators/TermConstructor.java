@@ -73,11 +73,6 @@ public class TermConstructor extends AZeroOperator {
         return result;
     }
 
-    @Override
-    public Value buildQuotedTerm(State state, Stack<Value> termFragments) throws SetlException {
-        return this.evaluate(state, termFragments);
-    }
-
     /**
      * Append the operator represented by a term to the supplied operator stack.
      *
@@ -88,7 +83,7 @@ public class TermConstructor extends AZeroOperator {
      */
     public static void appendToOperatorStack(final State state, final Term term, FragmentList<AOperator> operatorStack) throws TermConversionException {
         final String functionalCharacter = term.getFunctionalCharacter();
-        final FragmentList<OperatorExpression> arguments = new FragmentList<OperatorExpression>(term.size());
+        final FragmentList<OperatorExpression> arguments = new FragmentList<>(term.size());
         for (final Value v : term) {
             arguments.add(OperatorExpression.createFromTerm(state, v));
         }

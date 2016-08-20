@@ -102,27 +102,6 @@ public class Call extends AUnaryPostfixOperator {
         return term;
     }
 
-    @Override
-    public Value buildQuotedTerm(State state, Stack<Value> termFragments) throws SetlException {
-        Term term = new Term(FUNCTIONAL_CHARACTER, 3);
-
-        term.addMember(state, termFragments.poll());
-
-        final SetlList argumentTerms = new SetlList(arguments.size());
-        for (final OperatorExpression arg: arguments) {
-            argumentTerms.addMember(state, arg.evaluate(state).toTerm(state));
-        }
-        term.addMember(state, argumentTerms);
-
-        if (listArgument != null) {
-            term.addMember(state, listArgument.evaluate(state).toTerm(state));
-        } else {
-            term.addMember(state, SetlString.NIL);
-        }
-
-        return term;
-    }
-
     /**
      * Append the operator represented by a term to the supplied operator stack.
      *

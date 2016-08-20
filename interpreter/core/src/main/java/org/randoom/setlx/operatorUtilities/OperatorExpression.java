@@ -35,7 +35,7 @@ import java.util.Map;
  * Stack of operators that can be evaluated.
  */
 public class OperatorExpression extends Expression {
-    private final static Map<String, Method> OPERATOR_CONVERTERS = new HashMap<String, Method>();
+    private final static Map<String, Method> OPERATOR_CONVERTERS = new HashMap<>();
 
     private FragmentList<AOperator> operators;
     private final int numberOfOperators;
@@ -47,7 +47,7 @@ public class OperatorExpression extends Expression {
      * @param operator Operator evaluate.
      */
     public OperatorExpression(AOperator operator) {
-        this(new FragmentList<AOperator>(operator));
+        this(new FragmentList<>(operator));
     }
 
     /**
@@ -104,7 +104,7 @@ public class OperatorExpression extends Expression {
         final int preUsedSize    = usedVariables.size();
 
         // collect variables in this expression
-        Stack<OptimizerData> optimizerFragments = new Stack<OptimizerData>();
+        Stack<OptimizerData> optimizerFragments = new Stack<>();
 
         for (AOperator operator : operators) {
             optimizerFragments.push(operator.collectVariables(state, boundVariables, unboundVariables, usedVariables, optimizerFragments));
@@ -123,7 +123,7 @@ public class OperatorExpression extends Expression {
                 // or if all used variables are not prebound
                 else {
                     final List<String> prebound     = boundVariables.subList(0, preBoundSize);
-                    final List<String> usedHere     = new ArrayList<String>(usedVariables.subList(preUsedSize, usedVariables.size()));
+                    final List<String> usedHere     = new ArrayList<>(usedVariables.subList(preUsedSize, usedVariables.size()));
                     final int          usedHereSize = usedHere.size();
 
                     // check if any prebound variables could have been used
@@ -180,7 +180,7 @@ public class OperatorExpression extends Expression {
      */
     @Override
     public Value evaluate(final State state) throws SetlException {
-        Stack<Value> values = new Stack<Value>();
+        Stack<Value> values = new Stack<>();
 
         for (int i = 0; i < numberOfOperators; i++) {
             AOperator operator = operators.get(i);
@@ -226,7 +226,7 @@ public class OperatorExpression extends Expression {
     }
 
     private void appendExpression(State state, StringBuilder sb, int maxOperatorDepth) {
-        Stack<ExpressionFragment> expressionFragments = new Stack<ExpressionFragment>();
+        Stack<ExpressionFragment> expressionFragments = new Stack<>();
 
         for (int i = 0; i < maxOperatorDepth; i++) {
             AOperator operator = operators.get(i);
@@ -304,30 +304,10 @@ public class OperatorExpression extends Expression {
 
     @Override
     public Value toTerm(State state) throws SetlException {
-        Stack<Value> termFragments = new Stack<Value>();
+        Stack<Value> termFragments = new Stack<>();
 
         for (AOperator operator : operators) {
             termFragments.push(operator.buildTerm(state, termFragments));
-        }
-
-        return termFragments.poll();
-    }
-
-    /**
-     * Generate term representing the code this expression represents, when
-     * this expression is quoted ('@').
-     *
-     * @see org.randoom.setlx.utilities.CodeFragment#toTerm(State)
-     *
-     * @param state          Current state of the running setlX program.
-     * @return               Generated term.
-     * @throws SetlException When some error happens.
-     */
-    public          Value toTermQuoted(final State state) throws SetlException  {
-        Stack<Value> termFragments = new Stack<Value>();
-
-        for (AOperator operator : operators) {
-            termFragments.push(operator.buildQuotedTerm(state, termFragments));
         }
 
         return termFragments.poll();
@@ -342,7 +322,7 @@ public class OperatorExpression extends Expression {
      * @throws TermConversionException in case the term is malformed.
      */
     public static OperatorExpression createFromTerm(State state, Value value) throws TermConversionException {
-        FragmentList<AOperator> operators = new FragmentList<AOperator>();
+        FragmentList<AOperator> operators = new FragmentList<>();
         appendFromTerm(state, value, operators);
         return unify(new OperatorExpression(operators));
     }

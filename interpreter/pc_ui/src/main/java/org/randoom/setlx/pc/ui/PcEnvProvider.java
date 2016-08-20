@@ -4,6 +4,7 @@ import org.randoom.setlx.exceptions.JVMIOException;
 import org.randoom.setlx.utilities.EnvironmentProvider;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.InputStreamReader;
 import java.io.IOException;
 import java.util.List;
@@ -160,11 +161,10 @@ public class PcEnvProvider implements EnvironmentProvider {
     @Override
     public String   filterLibraryName(String name) {
         name = name.trim();
-        if (name.length() < 1 || name.charAt(0) == '/') {
-            return name;
-        } else {
-            return libraryPath + name;
+        if (name.length() >= 1 && name.charAt(0) != '/' && (name.length() < 2 || name.charAt(1) != ':')) {
+            return new File(libraryPath).toPath().resolve(name).toString();
         }
+        return name;
     }
 
     @Override

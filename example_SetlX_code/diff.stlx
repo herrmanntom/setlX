@@ -1,4 +1,4 @@
-loadLibrary("toTerm");
+loadLibrary("termUtilities");
 ln := log;  // use the European name for the natural logarithm
 
 // differentiate the term t with respect to the variable x

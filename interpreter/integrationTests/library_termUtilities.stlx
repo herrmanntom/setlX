@@ -1,0 +1,106 @@
+load("baseIntegrationTest.stlx");
+registerTestSuite("termUtilities library");
+
+// ************************************************************************** \\
+
+loadLibrary("termUtilities");
+
+// ************************************************************************** \\
+
+toTermTest := procedure(termToConvert, expectedExpression) {
+    convertedTerm := toTerm(parse(termToConvert));
+    expectedExpressionTerm := parse(expectedExpression);
+    registerTestResult(convertedTerm == expectedExpressionTerm, "toTerm($termToConvert$)");
+};
+fromTermTest := procedure(termToConvert, expectedExpression) {
+    convertedTerm := fromTerm(parse(termToConvert));
+    expectedExpressionTerm := parse(expectedExpression);
+    registerTestResult(convertedTerm == expectedExpressionTerm, "fromTerm($termToConvert$)");
+};
+expressionLoopTest := procedure(expression) {
+    expressionTerm := parse(expression);
+    afterToTerm := toTerm(expressionTerm);
+    afterFromTerm := fromTerm(afterToTerm);
+    registerTestResult(expressionTerm == afterFromTerm, "expression loop '$expression$'");
+};
+
+toTermTest("sin(x)", "@sin(x)");
+toTermTest("sin(x) / cos(x)", "@sin(x) / @cos(x)");
+toTermTest("tan(x)", "@tan(x)");
+toTermTest("sqrt(x)", "@sqrt(x)");
+toTermTest("asin(x)", "@asin(x)");
+toTermTest("acos(x)", "@acos(x)");
+toTermTest("atan(x)", "@atan(x)");
+toTermTest("exp(x)", "@exp(x)");
+toTermTest("ln(x)", "@ln(x)");
+toTermTest("exp(ln(x))", "@exp(@ln(x))");
+toTermTest("ln(exp(x))", "@ln(@exp(x))");
+
+fromTermTest("1 * @cos(x)", "1 * cos(x)");
+fromTermTest("(1 * @cos(x) * @cos(x) - @sin(x) * (-1 * @sin(x))) / (@cos(x) * @cos(x))", "(1 * cos(x) * cos(x) - sin(x) * (-1 * sin(x))) / (cos(x) * cos(x))");
+fromTermTest("1 / @cos(x) ** 2", "1 / cos(x) ** 2");
+fromTermTest("1/2 / @sqrt(x)", "1/2 / sqrt(x)");
+fromTermTest("1 / @sqrt(1 - x ** 2)", "1 / sqrt(1 - x ** 2)");
+fromTermTest("-1 / @sqrt(1 - x ** 2)", "-1 / sqrt(1 - x ** 2)");
+fromTermTest("1 * @exp(x)", "1 * exp(x)");
+fromTermTest("1 / x * @exp(@ln(x))", "1 / x * exp(ln(x))");
+fromTermTest("1 * @exp(x) / @exp(x)", "1 * exp(x) / exp(x)");
+fromTermTest("(1 * @ln(x) + x * (1 / x)) * @exp(x * @ln(x))", "(1 * ln(x) + x * (1 / x)) * exp(x * ln(x))");
+fromTermTest("(1 * x - x * 1) / (x * x)", "(1 * x - x * 1) / (x * x)");
+
+expressionLoopTest("1 + 2 * sin(1)");
+expressionLoopTest("1");
+expressionLoopTest("x");
+expressionLoopTest("1 / x");
+expressionLoopTest("y");
+expressionLoopTest("x + y");
+expressionLoopTest("x ** 2");
+expressionLoopTest("x");
+expressionLoopTest("1 - x");
+expressionLoopTest("x * x");
+expressionLoopTest("c * x + d");
+expressionLoopTest("x - x - x");
+expressionLoopTest("x - (x - x)");
+expressionLoopTest("x / x");
+expressionLoopTest("sin(x)");
+expressionLoopTest("sin(x) / cos(x)");
+expressionLoopTest("tan(x)");
+expressionLoopTest("sqrt(x)");
+expressionLoopTest("asin(x)");
+expressionLoopTest("acos(x)");
+expressionLoopTest("atan(x)");
+expressionLoopTest("exp(x)");
+expressionLoopTest("ln(x)");
+expressionLoopTest("exp(ln(x))");
+expressionLoopTest("ln(exp(x))");
+expressionLoopTest("(x + x) * (x + x)");
+expressionLoopTest("x / x");
+expressionLoopTest("x ** 2");
+expressionLoopTest("x ** x");
+expressionLoopTest("0");
+expressionLoopTest("(0 * x - 1) / (x * x)");
+expressionLoopTest("2 * x ** 1");
+expressionLoopTest("-1");
+expressionLoopTest("1 * x + x * 1");
+expressionLoopTest(" 0 * x + c * 1 + 0");
+expressionLoopTest("(1 * x - x * 1) / (x * x)");
+expressionLoopTest("1 * cos(x)");
+expressionLoopTest("(1 * cos(x) * cos(x) - sin(x) * (-1 * sin(x))) / (cos(x) * cos(x))");
+expressionLoopTest("1 / cos(x) ** 2");
+expressionLoopTest("1/2 / sqrt(x)");
+expressionLoopTest("1 / sqrt(1 - x ** 2)");
+expressionLoopTest("-1 / sqrt(1 - x ** 2)");
+expressionLoopTest("1 / (1 + x ** 2)");
+expressionLoopTest("1 * exp(x)");
+expressionLoopTest("1 / x");
+expressionLoopTest("1 / x * exp(ln(x))");
+expressionLoopTest("1 * exp(x) / exp(x)");
+expressionLoopTest("2 * (x + x) + (x + x) * 2");
+expressionLoopTest("(1 * x - x * 1) / (x * x)");
+expressionLoopTest("2 * x ** 1");
+expressionLoopTest("(1 * ln(x) + x * (1 / x)) * exp(x * ln(x))");
+
+// ************************************************************************** \\
+
+printTestResult();
+

@@ -1,22 +1,5 @@
-class stateOfTests() {
-    static {
-        testNumber := 0;
-        testsOK    := 0;
-    }
-}
-
-tester := procedure(boolean, name) {
-    stateOfTests.testNumber += 1;
-
-    if (boolean) {
-        stateOfTests.testsOK += 1;
-        print("test $stateOfTests.testNumber$ successful ($name$)");
-    } else {
-        print("test $stateOfTests.testNumber$ failed ($name$)");
-    }
-
-    return boolean;
-};
+load("baseIntegrationTest.stlx");
+registerTestSuite("core");
 
 // ************************************************************************** \\
 
@@ -26,7 +9,7 @@ fromWithoutSideEffect := procedure() {
     c := a + b;
     d := from(c);
 
-    tester(a == {{1}, {2}} && b == {{3}, {4}} && #c == 3, "side-effects in from");
+    registerTestResult(a == {{1}, {2}} && b == {{3}, {4}} && #c == 3, "side-effects in from");
 };
 fromWithoutSideEffect();
 
@@ -36,7 +19,7 @@ fromListWithoutSideEffect := procedure() {
     c := a + b;
     d := from(c);
 
-    tester(a == [{1}, {2}] && b == [{3}, {4}] && #c == 3, "side-effects in from lists");
+    registerTestResult(a == [{1}, {2}] && b == [{3}, {4}] && #c == 3, "side-effects in from lists");
 };
 fromListWithoutSideEffect();
 
@@ -45,7 +28,7 @@ fromVariable := procedure() {
     b := a;
     d := from(a);
 
-    tester(#a == 1 && b == {{1}, {2}}, "from variable");
+    registerTestResult(#a == 1 && b == {{1}, {2}}, "from variable");
 };
 fromVariable();
 
@@ -56,7 +39,7 @@ listIndex := procedure() {
     d := c[10];
     e := c[2..3][1];
 
-    tester(b == [] && d == om && e == 2, "list index");
+    registerTestResult(b == [] && d == om && e == 2, "list index");
 };
 listIndex();
 
@@ -66,7 +49,7 @@ collectionsWithOm := procedure() {
     c := [1, om, 3];
     d := {1, om, 3};
 
-    tester(a == [1] && b == {1} && c == [1, om, 3] && d == {1, 3}, "collections with om");
+    registerTestResult(a == [1] && b == {1} && c == [1, om, 3] && d == {1, 3}, "collections with om");
 };
 collectionsWithOm();
 
@@ -76,7 +59,7 @@ listAssignments := procedure() {
     [g, h, i] := "123";
     [j, k, l] := @term("foobar", 99, sin);
 
-    tester(a == 1   && b == 2   && c == 3   && d == 4        && e == 5  && f == 6            &&
+    registerTestResult(a == 1   && b == 2   && c == 3   && d == 4        && e == 5  && f == 6            &&
            g == "1" && h == "2" && i == "3" && j == "foobar" && k == 99 && l == getTerm(sin),
            "list assignments");
 };
@@ -92,7 +75,7 @@ innerListAssignments := procedure() {
     d := c;
     d[6] := om;
 
-    tester(a == [1, 6, 3] && b == [[[1, 2, 3]], [[4, 5, 6]], [[7, "t", 9]]] &&
+    registerTestResult(a == [1, 6, 3] && b == [[[1, 2, 3]], [[4, 5, 6]], [[7, "t", 9]]] &&
            c == [1, 2, 3, om, om, 10] && d == [1, 2, 3], "assignments to list content");
 };
 innerListAssignments();
@@ -106,7 +89,7 @@ firstClassFunctions := procedure() {
     mystery := arb(boxOfMystery);
     anotherMystery := +/ (boxOfMystery - {mystery});
 
-    tester(test(mystery, anotherMystery), "first class functions");
+    registerTestResult(test(mystery, anotherMystery), "first class functions");
 };
 firstClassFunctions();
 
@@ -130,14 +113,14 @@ nestedFunctions := procedure() {
     y := screwedSin(1);
     z := callCopysOnlyFunctions();
 
-    tester(y > 0.8414 + 1 && y < 0.8415 + 1 && z == 42, "nested functions");
+    registerTestResult(y > 0.8414 + 1 && y < 0.8415 + 1 && z == 42, "nested functions");
 };
 nestedFunctions();
 
 iterator := procedure() {
     u := [[x, y, z, w]: x in {1, 2}, y in {1, 2}, [z, w] in [[x, y]]];
 
-    tester(u == [[1, 1, 1, 1], [1, 2, 1, 2], [2, 1, 2, 1], [2, 2, 2, 2]], "iterators");
+    registerTestResult(u == [[1, 1, 1, 1], [1, 2, 1, 2], [2, 1, 2, 1], [2, 2, 2, 2]], "iterators");
 };
 iterator();
 
@@ -155,7 +138,7 @@ scopeTests := procedure() {
     v := "test";
     w := {v: w in q, v in w};
 
-    tester(result == " 1 2 3 4 5 6" && q == [[[1, 2, 3], [4, 5, 6]]] && p == "est" && v == "test", "scope");
+    registerTestResult(result == " 1 2 3 4 5 6" && q == [[[1, 2, 3], [4, 5, 6]]] && p == "est" && v == "test", "scope");
 };
 scopeTests();
 
@@ -166,7 +149,7 @@ forallTests := procedure() {
     // first fail: c == 4, d == 4
     f := forall(c in [1 .. 5], d in [1 .. 5] | (c * d) < 16);
 
-    tester(a == "test" && b == "test" && e && c == 4 && d == 4 && !f, "forall");
+    registerTestResult(a == "test" && b == "test" && e && c == 4 && d == 4 && !f, "forall");
 };
 forallTests();
 
@@ -177,7 +160,7 @@ existsTests := procedure() {
     // nothing exists
     f := exists(c in [1 .. 5], d in [1 .. 5] | c * d > 25);
 
-    tester(a == 4 && b == 4 && e && c == "test" && d == "test" && !f, "exists");
+    registerTestResult(a == 4 && b == 4 && e && c == "test" && d == "test" && !f, "exists");
 };
 existsTests();
 
@@ -203,7 +186,7 @@ lazyChecking := procedure() {
     // now a should be 3, but b still 2, c should be false
     correct := correct && a == 3 && b == 2 && !c;
 
-    tester(correct, "lazy checking");
+    registerTestResult(correct, "lazy checking");
 };
 lazyChecking();
 
@@ -224,7 +207,7 @@ relationExtension := procedure() {
 
     correct := correct && r == {[1, 1], [2, 3], [3, 9], [4, 5]};
 
-    tester(correct, "relation extension");
+    registerTestResult(correct, "relation extension");
 };
 relationExtension();
 
@@ -239,7 +222,7 @@ formatedString := procedure() {
 
     correct := s == "p1 || p2 || p3 || p4 || p5 || p6 || p7 || p8 || p9 || false";
 
-    tester(correct, "formated string");
+    registerTestResult(correct, "formated string");
 };
 formatedString();
 
@@ -253,7 +236,7 @@ precedences := procedure() {
                             )
             );
 
-    tester(a == "(a || b || !a && !b) && (a || b || !a && !b)", "precedences");
+    registerTestResult(a == "(a || b || !a && !b) && (a || b || !a && !b)", "precedences");
 };
 precedences();
 
@@ -264,7 +247,7 @@ complexLhsAssignment := procedure() {
     [a[1], a[2]] := [a[2], a[1]];
     [a[1][1], a[2][2]] := [a[2][2], a[1][1]];
 
-    tester(a == [[12, 22, 23, 24], [11, 21, 13], [31, 320, 33]], "complex lhs assignment");
+    registerTestResult(a == [[12, 22, 23, 24], [11, 21, 13], [31, 320, 33]], "complex lhs assignment");
 };
 complexLhsAssignment();
 
@@ -287,7 +270,7 @@ valueVsReference := procedure() {
 
     correct := correct && l2 in s;
 
-    tester(correct, "value vs reference");
+    registerTestResult(correct, "value vs reference");
 };
 valueVsReference();
 
@@ -301,7 +284,7 @@ matchSets := procedure() {
             correct := false;
     }
 
-    tester(correct, "match sets");
+    registerTestResult(correct, "match sets");
 };
 matchSets();
 
@@ -312,7 +295,7 @@ complexIndirectAssignment := procedure() {
 
     correct := s == { ["a", 3], ["b", [1, 2]] };
 
-    tester(correct, "complex indirect assignment");
+    registerTestResult(correct, "complex indirect assignment");
 };
 complexIndirectAssignment();
 
@@ -345,7 +328,7 @@ equality := procedure() {
         correct := correct && false;
     }
 
-    tester(correct, "equality");
+    registerTestResult(correct, "equality");
 };
 equality();
 
@@ -379,7 +362,7 @@ infinityTests := procedure() {
         correct := correct && true;
     }
 
-    tester(correct, "infinity computation");
+    registerTestResult(correct, "infinity computation");
 };
 infinityTests();
 
@@ -421,7 +404,7 @@ grammarTests := procedure() {
         correct := false;
     }
 
-    tester(correct, "grammar");
+    registerTestResult(correct, "grammar");
 };
 grammarTests();
 
@@ -442,7 +425,7 @@ regexEscapeTests := procedure() {
     s := "1\\2\\3";
     correct := correct && (split(s, "\\\\") == ["1","2","3"]);
 
-    tester(correct, "regexEscape");
+    registerTestResult(correct, "regexEscape");
 };
 regexEscapeTests();
 
@@ -491,16 +474,11 @@ cacheTest := procedure() {
     }
     correct := correct && cacheStats(f) == {["cache hits", 4], ["cached items", 8]};
 
-    tester(correct, "cacheTest");
+    registerTestResult(correct, "cacheTest");
 };
 cacheTest();
 
 // ************************************************************************** \\
 
-print("\n$stateOfTests.testsOK$ / $stateOfTests.testNumber$ successful");
-if (stateOfTests.testsOK == stateOfTests.testNumber) {
-    print("Everything is fine. Move along sir!");
-} else {
-    print("Errors detected. Please fix them all.");
-}
+printTestResult();
 

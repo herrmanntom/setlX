@@ -1,0 +1,34 @@
+class stateOfTests() {
+    static {
+        testNumber := 0;
+        testsOK    := 0;
+        testName   := "unknown";
+    }
+}
+
+registerTestSuite := procedure(name) {
+    stateOfTests.testName := name;
+};
+
+registerTestResult := procedure(boolean, name) {
+    stateOfTests.testNumber += 1;
+
+    if (boolean) {
+        stateOfTests.testsOK += 1;
+        print("$stateOfTests.testName$: test $stateOfTests.testNumber$ successful ($name$)");
+    } else {
+        print("$stateOfTests.testName$: test $stateOfTests.testNumber$ failed ($name$)");
+    }
+
+    return boolean;
+};
+
+printTestResult := procedure() {
+    print("\n$stateOfTests.testName$: $stateOfTests.testsOK$ / $stateOfTests.testNumber$ successful");
+    if (stateOfTests.testsOK == stateOfTests.testNumber) {
+        print("Everything is fine.");
+    } else {
+        print("Errors detected.");
+    }
+};
+

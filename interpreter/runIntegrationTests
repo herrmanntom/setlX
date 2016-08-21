@@ -5,21 +5,45 @@
 #
 #
 
+# set overrides for setlX launcher script
+export OVERRIDE_setlXJarDirectory="$PWD"
+export SETLX_LIBRARY_PATH="$PWD/setlXlibrary"
+
 # rebuild the interpreter from scratch
 mvn clean install
 rc=$?
 
 if [[ $rc == 0 ]]; then
+    outputFile=$(mktemp -t setlx-XXXXXXXXXX)
+    cd "integrationTests"
 
     # discover all test files
     tests=()
     while read -r -d $'\0' path; do
         tests=("${tests[@]}" "$path")
-    done < <( find -L "integrationTests" -name "*.stlx" -print0 )
+    done < <( find -L "." -name "*.stlx" \! -name "*baseIntegrationTest.stlx" -print0 )
 
+    failedTests=()
     for path in "${tests[@]}"; do
-        ./setlX --runtimeDebugging "$path"
+        ./../setlX --runtimeDebugging "$path" 2>&1 | tee "$outputFile"
+        echo
+        
+        # check for failed tests
+        failedCount=$(grep -c "failed" "$outputFile")
+        everythingOkCount=$(grep -c "Everything is fine." "$outputFile")
+        if [ $failedCount -gt 0 -o $everythingOkCount -ne 1 ]; then
+            failedTests=("${failedTests[@]}" "$path")
+        fi
     done
+    
+    if [ "${#failedTests[@]}" -ne "0" ]; then     
+        echo "${#failedTests[@]} Errors detected. Please fix them all."
+        rc=1
+    else
+        echo "Every test is fine. Move along sir!"
+    fi
+    
+    cd ..
 fi
 
 exit $rc

@@ -22,12 +22,11 @@ renice -n 10 $$
 # prepare the interpreter
 cd interpreter; ./runIntegrationTests >"$tmpFile" 2>&1; cd ..
 
-# check for failed tests
-failedCount=$(grep -c "failed" "$tmpFile")
-everythingOkCount=$(grep -c "Everything is fine. Move along sir!" "$tmpFile")
+# check if tests went fine
+everythingOkCount=$(grep -c "Every test is fine. Move along sir!" "$tmpFile")
 
 # alert the user and stop
-if [ $failedCount -gt 0 -o $everythingOkCount -ne 1 ]
+if [ $everythingOkCount -ne 1 ]
   then
     echo "The initial integration tests failed!"
     rm -f "$tmpFile"

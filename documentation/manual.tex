@@ -53,12 +53,13 @@ To comfortably use \setlX{} it may be installed into the search-path. After this
 \begin{enumerate}
 	\item Copy all `\command{setlX*.jar}'-files into some folder, which is accessible by all users, who should be able to execute \setlX{} (e.g. `\command{/usr/local/setlX/}').\\
 	You may also copy them into the home directory of some user, when she is the only \setlX-user on the system (e.g. `\command{/home/<user>/programs/setlX/}').
+	\item Copy the contents of the default `\command{setlXlibrary}' into some folder for each user (e.g. `\command{/home/<user>/setlXlibrary/}').
 	\item Open the `\command{setlX}'-script in your favorite editor (either `\command{vi}' or `\command{emacs}' of course).
 	\item Change the contents of the `\command{setlXJarDirectory}'-variable to the path where you copied the jar-files, e.g.
 \begin{lstlisting}[frame=none,numbers=none]
 setlXJarDirectory="/usr/local/setlX/"
 \end{lstlisting}
-	\item \textbf{(Optional)} Change the `\command{setlXlibraryPath}'-variable to the path where \setlX{} should look for library files, e.g.
+	\item Change the `\command{setlXlibraryPath}'-variable to the path where \setlX{} should look for library files, e.g.
 \begin{lstlisting}[frame=none,numbers=none]
 setlXlibraryPath="$HOME/setlXlibrary/"
 \end{lstlisting}
@@ -69,7 +70,7 @@ setlXlibraryPath="$HOME/setlXlibrary/"
 \begin{lstlisting}[frame=none,numbers=none]
 chmod +x /usr/local/bin/setlX
 \end{lstlisting}
-	
+
 \end{enumerate}
 
 \subsection{Microsoft Windows}
@@ -81,12 +82,13 @@ chmod +x /usr/local/bin/setlX
 
 \begin{enumerate}
 	\item Copy all `\command{setlX*.jar}' files and the `\command{setlX.cmd}' file into some folder, which is accessible by all users, who should be able to execute \setlX{} (e.g. `\command{C:\textbackslash{}Program Files\textbackslash{}setlX\textbackslash{}}').
+	\item Copy the contents of the default `\command{setlXlibrary}' into some folder for each user (e.g. `\command{C:\textbackslash{}Program Files\textbackslash{}setlX\textbackslash{}library}').
 	\item Open the copied `\command{setlX.cmd}'-script in your favorite text editor.
 	\item Change the contents of the `\command{setlXJarDirectory}'-variable to the path where you copied the jar-files, e.g.
 \begin{lstlisting}[frame=none,numbers=none]
 set setlXJarDirectory=C:\Program Files\setlX\
 \end{lstlisting}
-	\item \textbf{(Optional)} Change the `\command{SETLX\_LIBRARY\_PATH}'-variable and set it to the path where \setlX{} should look for library files, e.g.
+	\item Change the `\command{SETLX\_LIBRARY\_PATH}'-variable and set it to the path where \setlX{} should look for library files, e.g.
 \begin{lstlisting}[frame=none,numbers=none]
 set SETLX_LIBRARY_PATH=C:\Program Files\setlX\library
 \end{lstlisting}
@@ -171,11 +173,11 @@ In addition to file-paths a number of options can be used when running \setlX{}:
 
 \section{System Requirements}
 
-To run \setlX{} a Java runtime (JRE) is required, which is compatible to Java version 1.6 (aka version 6) or higher.
+To run \setlX{} a Java runtime (JRE) is required, which is compatible to Java version 1.7 (aka version 7) or higher.
 
-When building from source, the corresponding Java Development Kit (JDK) and a ant-installation have to be present as well.
+When building from source, the Java Development Kit (JDK) version 1.7 (but not higher) and an Apache Maven installation have to be present as well.
 
-The hardware requirements are highly dependent on the executed \SetlX{} program. For optimal performance in most situations at least 512 MB of free main-memory should be available.
+The hardware requirements are highly dependent on the executed \SetlX{} program. At least 512 MB of free main-memory should be available for optimal performance in most situations.
 
 \section{Limitations}
 
@@ -203,7 +205,7 @@ On UNIX (-like) systems, the prompt in interactive mode does not handle control 
 Optionally, when the interpreter source is available, the interpreter can be (re)build by executing
 
 \begin{lstlisting}[frame=none,numbers=none]
-ant
+mvn clean install
 \end{lstlisting}
 
 in the `\command{interpreter}' folder.

@@ -36,11 +36,22 @@ Gerwin Klein.
 \newblock Technical report, Technische Universit\"at M\"unchen, 2009.
 \newblock Available at: \texttt{http://jflex.de/jflex.pdf}.
 
+\bibitem[Lan64]{landin:1964}
+Peter~J. Landin.
+\newblock The mechanical evaluation of expressions.
+\newblock {\em The Computer Journal. British Computer Society.}, 6(4):308--320,
+  1964.
+
 \bibitem[Les75]{lesk:1975}
 Michael~E. Lesk.
 \newblock Lex -- {A} lexical analyzer generator.
 \newblock Comp. Sci. Tech. Rep. No.~39, Bell Laboratories, Murray Hill, New
   Jersey, 1975.
+
+\bibitem[Mic68]{michie:1968}
+Donald Michie.
+\newblock Memo functions and machine learning.
+\newblock {\em Nature}, 1968.
 
 \bibitem[MTH90]{milner:90}
 Robin Milner, Mads Tofte, and Robert Harper.

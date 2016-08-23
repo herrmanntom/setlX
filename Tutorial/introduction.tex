@@ -1,4 +1,6 @@
 \chapter{Introduction}
+
+\section{Motivation}
 Every year, dozens of new programming languages are proposed and each time this
 happens,  the inventors of the new language have to answer the same question: 
 There are hundreds of programming languages already, why do we need yet another one?  
@@ -7,7 +9,7 @@ theological argument and a practical argument. For the
 convenience of the reader, let us brievely review these arguments as they read for \setlx.  
 \begin{enumerate}
 \item Nothing less than the prosperity and welfare of the entire universe is at
-      stake and only \setlx\ provides the means to save it.
+      stake and \setlx\ provides the means to save it.
 \item Programming in \setlx\ is the only way to guarantee redemption from 
       the eternal hell fire that awaits those not programming in \setlx.
 \item Programming in \setlx\ is fun!
@@ -15,7 +17,7 @@ convenience of the reader, let us brievely review these arguments as they read f
 The economical argument has already been discussed at length by Adams \cite{adams:1980},
 therefore we don't have to repeat it here.   We deeply
 regret the fact that the philosophical background of the average computer scientist does not permit
-them to follow advanced theological discussions.  Therefore, we refrain from giving a
+them to follow advanced theological discussions.  Therefore, we have to refrain from giving a
 detailed proof of the second claim.  Nevertheless, we hope the examples given in this
 tutorial will convince the reader of the truth of the third claim.
   One of the reasons for this is that \setlx\ programs are both very concise and
@@ -25,7 +27,7 @@ present algorithms in lectures.  The benefit of this is that instead of pseudoco
 running program that they can modify and test. This and the
 conciseness of \textsc{SetlX} programs was one of the reasons for
 the first author to adopt \setlx\ as a programming language in his various lectures on computer
-science: It is often feasible to write a complete \setlx\ program in a few lines 
+science and mathematics: It is often feasible to write a complete \setlx\ program in a few lines 
 onto the blackboard, since \setlx\ programs are nearly as compact as mathematical formul\ae.
 
 
@@ -46,31 +48,32 @@ and clearer than the corresponding programs in other programming languages.  Thi
 prime motivation of the first author to develop \setlx:  It turns out that \setlx\ is very
 convenient as a tool to present algorithms at a high abstraction level in a class room. 
 Furthermore, \setlx\ makes the abstract concepts of set theory tangible for students of
-computer science. 
-\pagebreak
+computer science.  
 
-\noindent 
+\section{Overview}
 The remainder
 of this tutorial is structured as follows:
 \begin{enumerate}
 \item In the second chapter, we discuss the data types available in \setlx.
 \item The third chapter provides the control structures.
-\item The fourth chapter deals with regular expressions.
-\item The fifth chapter discusses functional programming and closures.
+\item The fourth chapter deals with \emph{regular expressions}.
+\item The fifth chapter discusses \emph{functional programming} and \emph{closures}.
 \item The sixth chapter discusses the \texttt{try-}\texttt{catch} and \texttt{throw}
       mechanism and demonstrates the use of \emph{backtracking}.
-\item The seventh chapter discusses vectors and matrices.
+\item The seventh chapter discusses how vectors and matrices can be used and demonstrates the linear
+      algebra package that is provided by \textsc{SetlX}.
 \item The eighth chapter presents the functions that can be used for plotting.
 \item Chapter number nine introduces classes and demonstrates that \textsc{SetlX}
-         supports an object-oriented programming style.
-\item The final chapter lists and explains the predefined functions.
+      supports an object-oriented programming style.
+\item The final chapter lists and explains all predefined functions.
 \item The appendix discusses the graphical primitives provided by \textsc{SetlX}.
+      These primitives can be used, for example, to animate algorithms.
 \end{enumerate}
 This tutorial is not meant as an introduction to programming.  It assumes that the reader
 has had some preliminary exposure to programming and has already written a few programs in
 either \texttt{C}, \textsl{Java}, or a similar language.
 
-\section*{Downloading}
+\section{Downloading}
 The current distribution of  \setlx\ can be downloaded from 
 \\[0.2cm]
 \hspace*{1.3cm}
@@ -79,7 +82,8 @@ The current distribution of  \setlx\ can be downloaded from
 \setlx\ is
 written in \textsl{Java} and is therefore supported on a number of different operating
 systems.  Currently, \setlx\ is supported on \textsl{Linux}, \textsl{OS X},
-\textsl{Microsoft Windows}, and \textsl{Android}.  
+\textsl{Microsoft Windows}, and
+\href{https://play.google.com/store/apps/details?id=org.randoom.setlxUI.android}{\textsl{Android}}.   
 The websites given above explain how to install the language on various platforms.  
 The distribution contains the \textsl{Java} code and a development guide that gives an
 overview of the implementation. For those

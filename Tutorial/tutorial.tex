@@ -113,7 +113,7 @@ Mathematical Sciences in New York, developed a very high level programming langu
 \textsc{Setl} 
 \cite{schwartz:1970, setl86}.  The most distinguishing feature of this language is the
 support it offers for sets and lists.   As set theory is the language of mathematics, many mathematical
-algorithms that are formulated in terms of set theory have a very straightforward implementation in
+algorithms that are formulated in terms of set theory have a straightforward implementation in
 \textsc{Setl}. 
 
 Unfortunately, at the time of its invention, \textsc{Setl} did not get the attention that it deserved.
@@ -146,14 +146,17 @@ Therefore, the original language \textsc{Setl} has been extended into the new la
       for symbolic computations.
 \item \textsc{SetlX} supports several ideas from functional programming.  In particular,
       functions can be used as a primitive data type.  Furthermore, \textsc{SetlX}
-      supports \emph{closures} \cite{landin:1964} and the \emph{memoization} \cite{michie:1968} of functions.
+      supports \href{https://en.wikipedia.org/wiki/Closure_(computer_programming)}{\emph{closures}}
+      \cite{landin:1964} and \href{https://en.wikipedia.org/wiki/Memoization}{\emph{memoization}}
+      \cite{michie:1968} of functions.  
 \item \textsc{SetlX} has support for regular expressions.
-\item \textsc{SetlX} provides a limited way of backtracking.  This feature was also inspired from
-      \textsl{Prolog}.
+\item \textsc{SetlX} provides a limited way of
+      \href{https://en.wikipedia.org/wiki/Backtracking}{\emph{backtracking}}.  Like terms, this feature 
+      was also inspired from the language \textsl{Prolog}.
 \item \textsc{SetlX} supports object oriented programming concepts.
 \item Vectors and matrices are supported as basic data type.  Various linear algebra functions have
       been added on top of these data types.  For example, there are functions to invert a matrix or to
-      compute the eigenvalues and eigenvectors of a matrix
+      compute the eigenvalues and eigenvectors of a matrix.
 \item \textsc{SetlX} provides a small set of graphical primitives that support
       the animation of algorithms.
 \item \textsc{SetlX} provides a modest plotting library that can be used to graph functions or to draw

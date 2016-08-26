@@ -16,8 +16,8 @@ preconditions are satisfied, the command
  launches the interpreter.  The interpreter first prints the banner shown in Figure
 \ref{fig:banner}, followed by a prompt``\texttt{=>}''.  Commands are typed after the prompt.    
 If the command is an assignment or an expression, then it has to be terminated by a semicolon.
-However, complex commands like, for example, loops or class definitions are not terminated by 
-a semicolon. 
+However, complex commands like, for example, branch statements, loops or class definitions are not
+terminated by a semicolon. 
 
 \begin{figure}[!ht]
 \centering
@@ -29,12 +29,12 @@ a semicolon.
                   xleftmargin   = 0.0cm,
                   xrightmargin  = 0.0cm,
                 ]
--====================================setlX=============================v2.4.0=-
+-====================================setlX=============================v2.5.0=-
 
 Welcome to the setlX interpreter!
 
 Open Source Software from http://setlX.randoom.org/
-(c) 2011-2015 by Herrmann, Tom
+(c) 2011-2016 by Herrmann, Tom
 
 You can display some helpful information by using '--help' as parameter when
 launching this program.
@@ -65,7 +65,7 @@ The welcome banner of \textsc{SetlX} points out that we can call \texttt{setlX} 
                   xleftmargin   = 0.0cm,
                   xrightmargin  = 0.0cm,
                 ]
--====================================setlX=============================v2.4.0=-
+-====================================setlX=============================v2.5.0=-
 
 File paths supplied as parameters for this program will be parsed and executed.
 The interactive mode will be started if called without any file parameters.
@@ -165,8 +165,11 @@ computes the factorial of $50$ and yields the result
 Therefore, as long as only rational numbers are used, there will be no rounding errors.
 Unfortunately, if a rational number $q$ is the result of a computation involving $n$ arithmetic
 operations, in the worst case the length of the nominator and denominator of the rational numbers
-$q$ tends to grow exponentially with $n$.  For this reason, most calculations in engineering are
-done using floating point numbers.  \setlx\ supports 64 bit floating point numbers.
+$q$ grows exponentially with $n$.  For this reason, most calculations in engineering are
+done using floating point numbers.  Since \textsc{SetlX} is based on \textsl{Java}, \setlx\ supports
+64 bit floating point numbers according to the standard
+\href{https://en.wikipedia.org/wiki/IEEE_floating_point}{IEEE 754}. 
+
 
 \setlx\ provides the following arithmetic operators.  If not stated otherwise, these operators work
 for both rational numbers as well as floating point numbers:
@@ -183,11 +186,11 @@ for both rational numbers as well as floating point numbers:
       satisfy the equation
       \\[0.2cm]
       \hspace*{1.3cm}
-      $x = (x \,\mathtt{\symbol{92}}\, y) \,\mathtt{*}\, y + x\,\mathtt{\%}\, y$.
+      $x = (x \,\texttt{\symbol{92}}\, y) \,\texttt{*}\, y + x\,\texttt{\%}\, y$.
 \end{enumerate}
 In order to use floating point numbers instead of rational numbers, the easiest way is to add
 \texttt{0.0} at the end of an expression because if an arithmetic expression 
-contains a floating point value, the result is converted to a floating point number.
+contains a floating point value, the result is automatically converted to a floating point number.
 Therefore, the command
 \\[0.2cm]
 \hspace*{1.3cm}
@@ -198,7 +201,7 @@ yields the answer:
 \hspace*{1.3cm}
 \texttt{\symbol{126}< Result: 0.7333333333333333 >\symbol{126}}
 \\[0.2cm]
-Of course, the same can also be achieved via the command
+Of course, the same result can also be achieved via the expression
 \\[0.2cm]
 \hspace*{1.3cm}
 \texttt{1.0/3 + 2/5;}
@@ -323,20 +326,13 @@ of the programming language \texttt{C}. For example, the statement
 binds the variable \texttt{x} to the fraction \texttt{1/3}.  
 \vspace*{0.3cm}
 
-\noindent
-\textbf{Important}:  In \setlx, the names of variables
-have to start with a lower case letter.  After the first letter, the name can contain
-upper or lower case letters, digits, or underscores.  If the first letter is an upper case
-letter, then the identifier is not interpreted as a variable but rather is taken as a
-\emph{functor}.  The notion of a functor will be explained in detail when we discuss \emph{terms}.
-
 
 \section{Boolean Values}
 The Boolean values \texttt{true} and \texttt{false} represent truth and falsity, respectively.  Boolean
-expressions can be constructed using the comparison operators ``\texttt{==}'', 
+expressions can be constructed using the binary comparison operators ``\texttt{==}'', 
 ``\texttt{!=}'', ``\texttt{<}'',  ``\texttt{>}'', ``\texttt{<=}'', and ``\texttt{>=}''.
-Note that these operators are identical to the comparison operators used in the programming language
-\texttt{C}.
+Note that these operators are identical to the comparison operators used in the programming languages
+\texttt{C} and \textsl{Java}.
 
  \setlx\
 provides the following operators from propositional logic to combine Boolean expressions.
@@ -353,9 +349,7 @@ provides the following operators from propositional logic to combine Boolean exp
       \hspace*{1.3cm}
       \texttt{a || b}
       \\[0.2cm]
-      is true if either \texttt{a} or \texttt{b} is true.  Note that 
-      \texttt{a || b} is true if both \texttt{a} and \texttt{b} are
-      true.
+      is true if either \texttt{a} or \texttt{b} or both are true.  
 \item ``\texttt{!}'' denotes the logical \emph{not}, (also known as \emph{negation}).
       Therefore, the expression
       \\[0.2cm]
@@ -363,13 +357,15 @@ provides the following operators from propositional logic to combine Boolean exp
       \texttt{!a}
       \\[0.2cm]
       is true if and only if \texttt{a} is false.  
+
+      The first three Boolean operators work exactly as they work in \texttt{C} or \textsl{Java}.
 \item ``\texttt{=>}'' denotes the logical \emph{implication}.
       Therefore, the expression
       \\[0.2cm]
       \hspace*{1.3cm}
       \texttt{a => b}
       \\[0.2cm]
-      is true if either \texttt{a} is false or \texttt{b} is true. Hence the expression 
+      is true if \texttt{a} is false or \texttt{b} is true. Hence the expression 
       \\[0.2cm]
       \hspace*{1.3cm}
       \texttt{a => b}
@@ -425,13 +421,13 @@ is true, we can evaluate the following expression:
 \hspace*{1.3cm}
 \texttt{forall (x in \{1..10\} | x ** 2 <= 2 ** x);}
 \\[0.2cm]
-This expression checks whether $x^2$ less than or equal to $2^x$ for all $x$ between 1 and
+This expression checks whether $x^2$ is less than or equal to $2^x$ for all $x$ between 1 and
 10.  Syntactically, a \texttt{forall} expression is described by the following grammar
 rule: 
 \\[0.2cm]
 \hspace*{1.3cm}
 $\textsl{expr} \;\rightarrow\; \quoted{forall} \quoted{(} \textsl{var} \quoted{in}
- \textsl{setExpr} \quoted{|} \textsl{cond} \quoted{)}
+ \textsl{expr} \quoted{|} \textsl{cond} \quoted{)}
 $
 \\[0.2cm]
 Here, \textsl{var} denotes a variable and \textsl{expr} is an expression that evaluates
@@ -468,9 +464,15 @@ create their own local scope.  For example, the sequence of statements
 will print
 \\[0.2cm]
 \hspace*{1.3cm}
-\texttt{x = 3, y = 1}.
+\texttt{x = 3, y = 1}
 \\[0.2cm]
-This example shows that the values of the variables \texttt{x} and \texttt{y} is available
+since for \texttt{x = 3} and \texttt{y = 1} the equation
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{3*x - 4*y == 5}
+\\[0.2cm]
+is true.
+This Example Shows that the values of the variables \texttt{x} and \texttt{y} is available
 outside of the existentially quantified expression.  The execution of
 a \texttt{forall} or an \texttt{exists} expression stops as soon as the
 truth value of the statement is known.
@@ -486,15 +488,44 @@ since $3$ is the first integer in the list \texttt{[1..10]}
 such that the expression $n^2 \leq 2^n$ is false.
 
 \section{Sets}
-The most interesting data type provided by \setlx\ is the \emph{set} type.  A \emph{set} is
-a collection that contains all of its elements exactly once.
-To create a
-simple set containing the numbers $1$, $2$, and $3$, we can write
+The most interesting data type provided by \setlx\ is the \emph{set} type.  
+According to \href{https://en.wikipedia.org/wiki/Georg_Cantor}{Georg Cantor}, who invented set
+theory, The definition of the notion of a set runs as follows:
+\vspace*{0.4cm}
+
+\begin{minipage}{0.8\linewidth}
+\textsl{A \href{https://en.wikipedia.org/wiki/Set_(mathematics)}{\emph{set}} is 
+a gathering together into a whole of definite, distinct objects of our perception or of our thought
+--- which are called elements of the set \cite{cantor:1895}.}
+\end{minipage}
+\vspace*{0.4cm}
+
+\noindent
+This definition has two important implications:
+\begin{enumerate}
+\item Since the elements of a set are distinct, a set contains an object as most once.
+      Hence, an object cannot occur multiple times in  a set.
+\item A set is define by its elements.  Tow sets are identical if and only if they have the same elements.
+\end{enumerate}
+To create a simple set containing the numbers $1$, $2$, and $3$, we can write:
 \\[0.2cm]
 \hspace*{1.3cm}
-\texttt{\{1, 2, 3\};}
+\texttt{s := \{1, 2, 3\};}
 \\[0.2cm]
-Note that the comparison
+This creates a set containing the numbers $1$, $2$, and $3$ as elements.  In general, if we want to
+combine the objects
+\\[0.2cm]
+\hspace*{1.3cm}
+$o_1$, $o_2$, $o_3$, $\cdots$, $o_n$
+\\[0.2cm]
+into a set, we just have to surround these objects by the curly braces ``\texttt{\{}'' and
+``\texttt{\}}'' as follows:
+\\[0.2cm]
+\hspace*{1.3cm}
+$\{ o_1,\; o_2,\; o_3,\; \cdots,\; o_n \}$
+\\[0.2cm]
+As two sets are equal if they contain the same elements, the order in which the elements are listed
+does not matter.  For example, the comparison
 \\[0.2cm]
 \hspace*{1.3cm}
 \texttt{\{1,2,3\} == \{2,3,1\}}
@@ -502,10 +533,9 @@ Note that the comparison
 yields the result
 \\[0.2cm]
 \hspace*{1.3cm}
-\texttt{Result: true}
+\texttt{true}.
 \\[0.2cm]
-since the order of elements in a set does not matter.  This behaviour can lead to
-results that are sometimes surprising for the novice.  For example, the command
+This behaviour can lead to results that are sometimes surprising for the novice.  For example, the command
 \\[0.2cm]
 \hspace*{1.3cm}
 \texttt{print(\{3,2,1\});}
@@ -534,19 +564,19 @@ yields the result \texttt{true}, as $2$ is indeed an element of the set $\{1,2,3
 
 The data type of a set would be quite inconvenient to use if we could only create sets by
 explicitly listing all their elements.  Fortunately, there are some more powerful expressions to
-create sets.  The most straightforward of them is the \emph{range operator} that can create a set
+create sets.  The operator that is most straightforward to use is the \emph{range operator} that can create a set
 containing all the integers in a given range.  For example, to create the set containing
 the integers from 1 up to 16, we can write 
 \\[0.2cm]
 \hspace*{1.3cm}
 \texttt{\{1..16\};}
 \\[0.2cm]
-This will give the result
+This expression returns the result
 \\[0.2cm]
 \hspace*{1.3cm}
 \texttt{\{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16\}}.
 \\[0.2cm]
-Here, we have used the range operator ``\texttt{..}''.  For given integers $a$ and $b$
+In general, for integers $a$ and $b$
 such that $a \leq b$,
 the expression
 \\[0.2cm]
@@ -557,9 +587,10 @@ will generate the set of all integers starting from $a$ up to and including the 
 $b$.  Mathematically, the semantics of this operator is  given by the formula
 \\[0.2cm]
 \hspace*{1.3cm}
-\texttt{\{$a$..$b$\} = $\{ a + n \mid a \in \mathbb{N} \wedge a + n \leq b\}$.}
+\texttt{\{$a$..$b$\} = $\{ a + n \mid a \in \mathbb{N}_0 \wedge a + n \leq b\}$.}
 \\[0.2cm]
-If $b$ is less than $a$, the expression 
+Here $\mathbb{N}_0$ denotes the set of all non-negative integers.
+If $b$ is less than $a$, then the expression 
 \\[0.2cm]
 \hspace*{1.3cm}
 \texttt{\{$a$..$b$\}}
@@ -573,7 +604,7 @@ specify the size of the difference between successive elements.   For example, t
 \hspace*{1.3cm}
 \texttt{\{1,3..10\};}
 \\[0.2cm]
-yields
+yields the set
 \\[0.2cm]
 \hspace*{1.3cm}
 \texttt{\{1, 3, 5, 7, 9\}}.
@@ -594,7 +625,7 @@ is evaluated, there are two cases.
       \\[0.2cm]
       \hspace*{1.3cm}
       $\texttt{\{$a$,$b$..$c$\}} := 
-       \{ a + n \cdot s \mid n \in \mathbb{N} \wedge a + n \cdot s \leq c  \}
+       \{ a + n \cdot s \mid n \in \mathbb{N}_0 \wedge a + n \cdot s \leq c  \}
       $.
 \item $a > b$.  In this case, the \textsl{step size} $s$ is defined as
       \\[0.2cm]
@@ -615,7 +646,7 @@ is evaluated, there are two cases.
 \end{enumerate}
 
 \subsection{Operators on Sets}
-The most basic operators on sets are as follows:
+The following operators act on sets:
 \begin{enumerate}
 \item ``\texttt{+}'' is used to compute the \emph{union} of two sets.
 
@@ -641,10 +672,11 @@ The most basic operators on sets are as follows:
 \item ``\texttt{><}'' computes the \emph{Cartesian product} of two sets.
 
       In mathematics, the Cartesian product of two sets $s_1$ and $s_2$ is written
-      as $s_1 \times s_2$.  It is defined as
+      as $s_1 \times s_2$.  It is defined as the set of all pairs $[x_1,x_2]$ such that $x_1$ is an
+      element of $s_1$ and $x_2$ is an element of $s_2$:
       \\[0.2cm]
       \hspace*{1.3cm}
-      $s_1 \times s_2 := \{ \pair(x_1,x_2) \mid x_1 \in s_1 \wedge x_2 \in s_2 \}$.
+      $s_1 \times s_2 := \{ [x_1,x_2] \mid x_1 \in s_1 \wedge x_2 \in s_2 \}$.
 \item ``\texttt{** 2}'' computes the \emph{Cartesian product} of a set with itself,
       i.e.~we have 
       \\[0.2cm]
@@ -723,24 +755,30 @@ Also note the use of \emph{string interpolation} in the \texttt{print} statement
 above:  Inside a string, any expression enclosed in
 \symbol{36}-symbols is evaluated and the result of this evaluation is
 inserted into the string.
-Strings interpolation will be discussed in more detail later when we discuss strings.
+Strings interpolation will be discussed in more detail later when we explain how strings are
+supported in \setlx.
 
 For all of the binary operators discussed above there is a variant of
-the assignment operator that incorporates the binary operator.  For example, we can write
+the assignment operator that incorporates the binary operator.  For example, the command
 \\[0.2cm]
 \hspace*{1.3cm}
 \texttt{s += \{x\};}
 \\[0.2cm]
-to add the element \texttt{x} to the set \texttt{s}, while the command
+adds the element \texttt{x} to the set \texttt{s}, while the command
 \\[0.2cm]
 \hspace*{1.3cm}
 \texttt{s -= \{x\};}
 \\[0.2cm]
 removes the element \texttt{x} from the set \texttt{s}.  Of course,
-these modified assignment operators also work for numbers.
+these modified assignment operators also when these operators act on numbers, i.e.~the statement
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{x += 1;}
+\\[0.2cm]
+increments the value of the variable \texttt{x} by $1$.
 \vspace*{0.2cm}
 
-In addition to the basic operators,
+In addition to the basic operators discussed above,
 \setlx\ provides a number of more elaborate operators for sets.  One of these operators is
 the cardinality operator ``\texttt{\#}'', which computes the number of elements of a 
 given set.  The cardinality operator is used as a unary prefix operator, for example we can write:
@@ -781,8 +819,21 @@ be empty, we can use the expression
 \texttt{0 +/ s}
 \\[0.2cm]
 since inserting $0$ into the empty set guarantees that the result is 0 in case  the set
-\texttt{s} is empty.
-
+\texttt{s} is empty.  If $s$ is a set whose elements are sets themselves, the expression
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{+/} $s$
+\\[0.2cm]
+computes the union of the sets that are elements of the set $s$.  For example, the expression
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{+/ \{ \{1,2,3\}, \{3,4,5\}, \{5,6,7\} \}}
+\\[0.2cm]
+yields the result
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{\{1, 2, 3, 4, 5, 6, 7\}.}
+\\[0.2cm]
 There is a similar operator for multiplying the elements of a set: It is the operator
 ``\texttt{*/}''.
 For example, in order to compute the factorial\footnote{
@@ -803,7 +854,22 @@ we one.   Therefore, the expression
 \texttt{1 */ s}
 \\[0.2cm]
  multiplies all the numbers from a the set $s$ and this expression will return $1$ if the
- set $s$ happens to be empty.
+ set $s$ happens to be empty.  
+
+If $s$ is a set whose elements are sets themselves, the expression
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{*/} $s$
+\\[0.2cm]
+computes the intersection of the sets that are elements of the set $s$.  For example, the expression
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{*/ \{ \{1,2,3\}, \{2,3,4\} \}}
+\\[0.2cm]
+yields the result
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{\{2, 3\}.}
 
 \subsection{Set Comprehensions}
 We can use \emph{set comprehension} to build sets.  For example, the command
@@ -851,14 +917,14 @@ mathematical definition as it is.
 Let us look at another example of set comprehension:  The expression
 \\[0.2cm]
 \hspace*{1.3cm}
-\texttt{\{ p:p in \{2..100\} | \{ t:t in \{2..p-1\} | p \% t == 0 \} == \{\} \}}
+\texttt{\{ p:$\;$p in \{2..100\} | \{ t:$\;$t in \{2..p-1\} | p \% t == 0 \} == \{\} \}}
 \\[0.2cm]
 yields the set of all prime numbers less than 100.  The subexpression
 \\[0.2cm]
 \hspace*{1.3cm}
-\texttt{\{ t:t in \{2..p-1\} | p \% t == 0 \}}
+\texttt{\{ t:$\;$t in \{2..p-1\} | p \% t == 0 \}}
 \\[0.2cm]
-computes the set of all those natural numbers bigger than 1 and less than \texttt{p} that divide
+computes the set of all those natural numbers less than \texttt{p} that divide
 \texttt{p} evenly.  If this set is empty, then, by the definition of a prime number, \texttt{p} is prime.
 
 The syntax for building set comprehensions is a little bit more
@@ -934,8 +1000,8 @@ The function $\mathtt{rnd}()$ is also supported for integer numbers, for example
 \hspace*{1.3cm}
 \texttt{rnd(5)}
 \\[0.2cm]
-computes a random natural number less or equal than $5$. Essentially it is equal to the expression
-\texttt{rnd(\{1..5\})}.  While we are at it: The function \texttt{random} computes pseudo-random
+computes a random non-negative number less or equal than $5$. Essentially it is equal to the expression
+\texttt{rnd(\{0..5\})}.  While we are at it: The function \texttt{random} computes pseudo-random
 values in the interval $[0,1]$.  This function does not take an argument. Therefore, the expression
 \\[0.2cm]
 \hspace*{1.3cm}
@@ -945,9 +1011,10 @@ might output a value like \texttt{0.5171688974345957}.
 
 
 \section{Lists}
-Besides sets, \setlx\ also supports lists.  Syntactically, the main difference is that the
+Besides sets, \setlx\ also supports lists.  Syntactically, the main difference between sets and
+lists is that the
 curly braces ``\texttt{\{}'' and ``\texttt{\}}'' are substituted with the square brackets
-``\texttt{[}'' and ``\texttt{]}''.  Semantically, while e set is an unordered collection of elements
+``\texttt{[}'' and ``\texttt{]}''.  Semantically, while a set is an unordered collection of elements
 that can contain any element at most once, a list is an ordered collection of elements that 
 can contain an element multiple times.  For example
 \\[0.2cm]
@@ -987,10 +1054,10 @@ yields the result $5050$.
 \hspace*{1.3cm}
 \texttt{[ $\textsl{expr}$ :$\;x_1$ in $s_1$, $\cdots$, $x_n$ in $s_n$ | $\textsl{cond}$ ]}
 \\[0.2cm]
- picks up all tuples 
+ picks up all lists 
 \\[0.2cm]
 \hspace*{1.3cm}
-$\langle x_1, \cdots, x_n \rangle \in s_1 \times \cdots \times s_n$
+$[x_1, \cdots, x_n ] \in s_1 \times \cdots \times s_n$
 \\[0.2cm]
 such that $\textsl{cond}$ is true and evaluates $\textsl{expr}$ for the corresponding values of the
 variables $x_1$, $\cdots$, $x_n$.  The value of $\textsl{expr}$ is
@@ -1020,7 +1087,7 @@ relations.  Then, mathematically the
 \texttt{r2} is defined as
 \\[0.2cm]
 \hspace*{1.3cm}
-$\mathtt{r1} \circ \mathtt{r2} := \{ \pair(x,z) \mid \exists y: \pair(x,y) \in \mathtt{r1} \wedge \pair(y,z) \in\mathtt{r2} \}$. 
+$\mathtt{r1} \circ \mathtt{r2} := \{ [x,z] \mid \exists y: [x,y] \in \mathtt{r1} \wedge [y,z] \in\mathtt{r2} \}$. 
 \\[0.2cm]
 In \setlx, this composition can be computed as 
 \\[0.2cm]
@@ -1040,7 +1107,7 @@ Currently, there are four operators for lists.  These are discussed below.
       \hspace*{1.3cm}
       \texttt{[1, 2, 3, 5, 6, 7, 8, 9, 10]}.
 \item The operator ``\texttt{*}'' takes a list as its first argument,  while the second argument
-      needs to be an integer.  An expression of the form 
+      needs to be a natural number or $0$.  An expression of the form 
       \\[0.2cm]
       \hspace*{1.3cm}
       \texttt{l * n}
@@ -1080,7 +1147,8 @@ Currently, there are four operators for lists.  These are discussed below.
       \hspace*{1.3cm}
       \texttt{$l_1$ >< $l_2$ == [ [$l_1$[$i$], $l_2$[$i$]]:$\;i$ in [1$\;$..$\;$\#$l_1$] ]}.
       \\[0.2cm]
-      Here, \texttt{$l$[$i$]} denotes the $i$-th element of the list $l$.
+      Here, \texttt{$l$[$i$]} denotes the $i$-th element of the list $l$ and the lists $l_1$ and
+      $l_2$ must have the same length.
 \end{enumerate}
 
 \subsection{Extracting Elements from a List}
@@ -1226,7 +1294,7 @@ $[x,y_1] \in r \wedge [x,y_2] \in r \rightarrow y_1 = y_2$
 holds for all $x$, $y_1$, and $y_2$, then $r$ is called a \emph{map} and represents a function.
 Therefore, a map is a set of \texttt{[\textsl{key}, \textsl{value}]} pairs such that the
 keys are \emph{unique}, i.e.~every key is associated with exactly one value.
-If a binary relation $r$ is a map, \setlx\ permits us to use the relation as a function:  If $r$ is a map
+If a binary relation $r$ is a map, \setlx\ permits us to use the relation $r$ as a function:  If $r$ is a map
 and $x \in \textsl{domain}(r)$, then $r[x]$ denotes the unique element $y$ such that 
 $\pair(x,y) \in r$:
 \\[0.2cm]
@@ -1283,7 +1351,7 @@ what happens if $r$ is a binary relation and we try to evaluate the expression
 $r(x)$ but the set \texttt{\{ y : $\hspace*{-0.2cm}$[x, y] in r \}}
 is either empty or contains
 more than one element.
-The program shown in figure \ref{fig:buggy-map.stlx} on page
+The program shown in Figure \ref{fig:buggy-map.stlx} on page
 \pageref{fig:buggy-map.stlx} answers this question.
 
 \begin{figure}[!ht]
@@ -1315,7 +1383,8 @@ element, then the expression \texttt{r[x]} is undefined.  In mathematics, an und
 sometimes denoted as $\Omega$.  In \textsc{SetlX},
 the undefined value is printed as ``\texttt{om}''.
 If we try to add the undefined value to a set $m$, then $m$ is not changed.
-Therefore, line 5 of the program just prints the empty set, as both \texttt{r[1]} and \texttt{r[2]}
+Therefore, line 4 of the program shown in Figure \ref{fig:buggy-map.stlx}
+prints the empty set, as both \texttt{r[1]} and \texttt{r[2]}
 are undefined.
 
 We can use the notation  \texttt{r\{x\}} instead of \texttt{r[x]} to avoid undefined values.
@@ -1325,7 +1394,9 @@ follows:
 \hspace*{1.3cm} 
 \texttt{r\{x\} := \{ y :$\;$[x, y] in r \}}.
 \\[0.2cm]
-Therefore, the  program from Figure \ref{fig:buggy-map.stlx} yields the following results:
+Therefore, \texttt{r\{x\}} is the set of all \texttt{y} such that there is an \texttt{x} such that
+the pair \texttt{[x, y]} is an element of \texttt{r}.
+Hence, the  program shown in Figure \ref{fig:buggy-map.stlx} yields the following results:
 \begin{verbatim}
     r[1] = om
     r[2] = om
@@ -1333,8 +1404,7 @@ Therefore, the  program from Figure \ref{fig:buggy-map.stlx} yields the followin
     r{1} = {1, 4}
     r{2} = {}
 \end{verbatim}
-
-We can use binary relations also for functions accepting more than one argument.  For example, the
+Binary relations can also be used to represent functions accepting more than one argument.  For example, the
 statements
 \begin{verbatim}
     r := {};
@@ -1342,7 +1412,12 @@ statements
     r[2,1] := 4;
 \end{verbatim}
 define a function that maps the pair $[1,2]$ to the value $3$, while the pair $[2,1]$ is mapped to
-the value $4$.
+the value $4$.  If we print \texttt{r} after these statements have been executed, then the set
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{\{[[1, 2], 3], [[2, 1], 4]\}}
+\\[0.2cm]
+is stored in the variable \texttt{r}.
 \vspace*{0.2cm}
 
 \noindent
@@ -1472,14 +1547,17 @@ yields \texttt{\symbol{34}bcdef\symbol{34}} and
 \hspace*{1.3cm}
 \texttt{s[..5];}
 \\[0.2cm]
-gives \texttt{\symbol{34}abcde\symbol{34}}.  Again, in the expressions
+gives \texttt{\symbol{34}abcde\symbol{34}}.  In the expressions
 \\[0.2cm]
 \hspace*{1.3cm}
 \texttt{$s$[$a$..$b$]}, \quad \texttt{$s$[$a$..]}, \quad and \quad \texttt{$s$[..$b$]}
 \\[0.2cm]
-the indices $a$ and $b$ can be negative numbers.
+the indices $a$ and $b$ can be negative numbers.  This works in the same way as it works for lists.
+For example, if \texttt{s} is a string, then \texttt{s[2..-2]} is the string that results from \texttt{s} by removing the
+first and the last character.
 
-\setlx\ provides \emph{string interpolation}:
+
+\setlx\ provides \href{https://en.wikipedia.org/wiki/String_interpolation}{\emph{string interpolation}}:
 If a string contains a substring enclosed in ``\texttt{\symbol{36}}''-symbols, then \setlx\ 
 parses this substring as an expression, evaluates this expression, and then substitutes the result
 back into the string.  For example, if the variable \texttt{n} has the value $6$, the command
@@ -1555,12 +1633,12 @@ Instead, in \textsc{SetlX} single characters are represented as strings of lengt
 similar to the terms available in the programming language 
 \href{http://en.wikipedia.org/wiki/Prolog}{\emph{Prolog}} \cite{sterling:94}.
 Terms are built from \emph{functors} and \emph{arguments}.  To distinguish functors from function
-symbols, a functor will start with a capital letter.  For example, the expression
+symbols, a functor is prefixed with the operator ``\texttt{@}''.  For example, the expression
 \\[0.2cm]
 \hspace*{1.3cm}
-\texttt{F(1,\symbol{34}x\symbol{34})}
+\texttt{@f(1,\symbol{34}x\symbol{34})}
 \\[0.2cm]
-is a term with functor \texttt{F} and two arguments.  Here, the functor is just a name, it is 
+is a term with functor \texttt{f} and two arguments.  The functor is just a name, it is 
 \underline{not} a function that can be evaluated.  To demonstrate the usefulness of terms, consider
 implementing \href{http://en.wikipedia.org/wiki/Binary_search_tree}{\emph{ordered binary trees}} in \setlx. 
 There are two types of ordered binary tress:
@@ -1569,7 +1647,7 @@ There are two types of ordered binary tress:
       empty binary tree, so the term
       \\[0.2cm]
       \hspace*{1.3cm}
-      $\mathtt{Nil()}$
+      $\mathtt{@Nil()}$
       \\[0.2cm]
       codes the empty tree.
 \item A non-empty binary tree has three components:
@@ -1583,14 +1661,14 @@ There are two types of ordered binary tress:
       binary tree can be represented as the term
       \\[0.2cm]
       \hspace*{1.3cm}
-      $\texttt{Node}(k, l, r)$,
+      $\texttt{@Node}(k, l, r)$,
       \\[0.2cm]
       where $k$ is the element stored at the root, $l$ is the left subtree and $r$ is the right subtree.
 \end{enumerate}
 For example, the term
 \\[0.2cm]
 \hspace*{1.3cm}
-\texttt{Node(2,Node(1,Nil(),Nil), Node(3,Nil(), Nil()))}
+\texttt{@Node(2,@Node(1,@Nil(),@Nil), @Node(3,@Nil(), @Nil()))}
 \\[0.2cm]
 is a typical binary tree.  At the root, this tree stores the element 2, the left subtree
 stores the element 1 and the right subtree stores the element 3.
@@ -1605,7 +1683,7 @@ There are two functions to decompose a term and there is one function that const
       returns the functor of the term t as a string.  For example, the expression
       \\[0.2cm]
       \hspace*{1.3cm}
-      \texttt{fct(Node(3,Nil(),Nil()))}
+      \texttt{fct(@Node(3,@Nil(),@Nil()))}
       \\[0.2cm]
       yields the result \texttt{\symbol{34}Node\symbol{34}}.
 \item If $t$ is a term, then the expression
@@ -1616,12 +1694,12 @@ There are two functions to decompose a term and there is one function that const
       returns the list of arguments of the term $t$.  For example, the expression
       \\[0.2cm]
       \hspace*{1.3cm}
-      \texttt{args(Node(3,Nil(),Nil()))}
+      \texttt{args(@Node(3,@Nil(),@Nil()))}
       \\[0.2cm]
       yields the result 
       \\[0.2cm]
       \hspace*{1.3cm}
-      \texttt{[3, Nil(), Nil()]}.
+      \texttt{[3, @Nil(), @Nil()]}.
 \item The function $\texttt{makeTerm}(f,l)$ constructs a term $t$ such that
       \\[0.2cm]
       \hspace*{1.3cm}
@@ -1636,15 +1714,16 @@ There are two functions to decompose a term and there is one function that const
       constructs the term
       \\[0.2cm]
       \hspace*{1.3cm}
-      \texttt{Node(3,Nil(),Nil())}.
+      \texttt{@Node(3, @Nil(), @Nil())}.
       \\[0.2cm]
-      Of course,  this term can also be given directly as an expression.  For example, the
-      statement 
+      Note that we must not use the operator ``\texttt{@}'' when using the function \texttt{makeTerm}.
+      Of course,  the term \texttt{@Node(3, @Nil(), @Nil())} can also be given directly as an
+      expression: The statement 
       \\[0.2cm]
       \hspace*{1.3cm}
-      \texttt{a := Node(3,Nil(),Nil());}
+      \texttt{a := @Node(3,@Nil(),@Nil());}
       \\[0.2cm]
-      assigns the term \texttt{Node(3,Nil(),Nil())} to the variable \texttt{a}.
+      assigns the term \texttt{@Node(3,@Nil(),@Nil())} to the variable \texttt{a}.
 \end{enumerate}
 
 \begin{figure}[!ht]
@@ -1661,15 +1740,15 @@ There are two functions to decompose a term and there is one function that const
     insert := procedure(m, k1) {
         switch {
             case fct(m) == "Nil" : 
-                 return Node(k1, Nil(), Nil());
+                 return @Node(k1, @Nil(), @Nil());
             case fct(m) == "Node": 
                  [ k2, l, r ] := args(m);
                  if (k1 == k2) {
-                     return Node(k1, l, r);
+                     return @Node(k1, l, r);
                  } else if (compare(k1, k2) < 0) { 
-                     return Node(k2, insert(l, k1), r);
+                     return @Node(k2, insert(l, k1), r);
                  } else {
-                     return Node(k2, l, insert(r, k1));
+                     return @Node(k2, l, insert(r, k1));
                  }
         }
     };
@@ -1688,11 +1767,11 @@ tree \texttt{m}.   The implementation needs to distinguish two cases:
 \item If the binary tree \texttt{m} is empty, then the function returns the tree
       \\[0.2cm]
       \hspace*{1.3cm}
-      \texttt{Node(k1, Nil(), Nil())}.
+      \texttt{@Node(k1, @Nil(), @Nil())}.
       \\[0.2cm]
       This is a binary tree containing the number \texttt{k1} at its root, while both subtrees are
-      empty.  In order to check whether \texttt{m} is indeed empty we use the functor of the term \texttt{m}.  We test in line
-      3 whether this functor is \texttt{\symbol{34}Nil\symbol{34}}.
+      empty.  In order to check whether \texttt{m} is indeed empty we use the functor of the term
+      \texttt{m}.  We test in line  3 whether this functor is \texttt{\symbol{34}Nil\symbol{34}}.
 \item If the binary tree \texttt{m} is nonempty, the functor of \texttt{m} is
       \texttt{\symbol{34}Node\symbol{34}}.  In this case, we need to extract the arguments of this
       functor, which is done in line 6: The first argument \texttt{k2} is the element stored at the
@@ -1709,21 +1788,6 @@ tree \texttt{m}.   The implementation needs to distinguish two cases:
 This example uses a number of features of \setlx\ that have not been introduced. The discussion of
 the control structure \texttt{switch} will be given in the next chapter.
 
-Sometimes, the fact that a functor has to be written in uppercase is inconvenient.  For these cases,
-there is an escape mechanism:  If the functor of a term is preceded be the symbol
-``\texttt{\symbol{64}}'', then it may start with a lowercase letter.  For example, if we want to
-have terms representing algebraic expressions involving transcendental functions, we could use the
-same function names that are also used in \setlx\ to denote the corresponding transcendental
-functions.  For example, we can write
-\\[0.2cm]
-\hspace*{1.3cm}
-\texttt{t := \symbol{64}exp(\symbol{64}log(\symbol{64}x));}
-\\[0.2cm]
-to represent the term
-\\[0.2cm]
-\hspace*{1.3cm}
-\texttt{exp(log(x))}.
-\\[0.2cm]
 The present discussion of terms is not complete and will be continued in the next chapter when we
 discuss matching.
 

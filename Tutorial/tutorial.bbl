@@ -10,6 +10,11 @@ Ivan Bratko.
 \newblock {\em {PROLOG} Programming for Artificial Intelligence}.
 \newblock Addison-Wesley, 2nd edition, 1990.
 
+\bibitem[Can95]{cantor:1895}
+Georg Cantor.
+\newblock Beitr\"{a}ge zur {B}egr\"{u}ndung der transfiniten {M}engenlehre.
+\newblock {\em Mathematische Annalen}, 46:481--512, 1895.
+
 \bibitem[Dij59]{dijkstra:59}
 Edsger~W. Dijkstra.
 \newblock A note on two problems in connexion with graphs.

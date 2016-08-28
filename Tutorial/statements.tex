@@ -663,8 +663,8 @@ statement.  This branching statement is the \emph{matching statement} and is dis
 
 \section{Matching}
 The most powerful branching construct is \emph{matching}.  Although the syntax for the
-matching statement is always the same, there are really four different variants of matching for each of the
-data types that support matching.  Matching has been implemented for the data types
+matching statement is always the same, there are really four different variants of matching.  The
+reason is that there four different data types that support matching.  Matching has been implemented for 
  \emph{strings}, \emph{lists}, \emph{sets}, and \emph{terms}.  We discuss \emph{string matching} first.
 
 \subsection{String Matching}
@@ -689,20 +689,6 @@ This function reverses its input argument, so the expression
 \\[0.2cm]
 yields the result \texttt{"cba"}.  In order to reverse a string $s$, the function has to deal with two
 cases:
-\begin{enumerate}
-\item The string $s$ is empty.  In this case, we can just return the string $s$ as it is.
-      This case is dealt with in line 3.  There, we have used the pattern ``\texttt{[]}'' to match
-      the empty string.  Instead, we could have used the empty string itself.  Using the pattern
-      ``\texttt{[]}'' will prove beneficial when dealing with lists because it turns out that the
-      function
-      \texttt{reverse} as given in Figure \ref{fig:reverse.stlx} can also be used to reverse a list.
-\item If the string $s$ is not empty, then it can be split up into a first character $c$ and the remaining
-      characters $r$.  In this case, we reverse the string $r$ and append the character $c$ to the end of
-      this string.  This case is dealt with in line 4.
-\end{enumerate}
-The \texttt{match} statement in function \texttt{reverse}  has a default case in line 5 to deal with
-those cases where $s$ is neither a string nor a list. 
-
 \begin{figure}[!ht]
 \centering
 \begin{Verbatim}[ frame         = lines, 
@@ -726,8 +712,22 @@ those cases where $s$ is neither a string nor a list.
 \caption{A function that reverses a string.}
 \label{fig:reverse.stlx}
 \end{figure}
+\begin{enumerate}
+\item The string $s$ is empty.  In this case, we can just return the string $s$ as it is.
+      This case is dealt with in line 3.  There, we have used the pattern ``\texttt{[]}'' to match
+      the empty string.  Instead, we could have used the empty string itself.  Using the pattern
+      ``\texttt{[]}'' will prove beneficial when dealing with lists because it turns out that the
+      function
+      \texttt{reverse} as given in Figure \ref{fig:reverse.stlx} can also be used to reverse a list.
+\item If the string $s$ is not empty, then it can be split up into a first character $c$ and the remaining
+      characters $r$.  In this case, we reverse the string $r$ and append the character $c$ to the end of
+      this string.  This case is dealt with in line 4.
+\end{enumerate}
+The \texttt{match} statement in the function \texttt{reverse}  has a default case in line 5 to deal with
+those cases where $s$ is neither a string nor a list.  In those cases, the function is aborted with
+an error message.
 
-The last example shows that the syntax for the match statement  is similar to the syntax for the switch
+The previous example shows that the syntax for the match statement  is similar to the syntax for the switch
 statement.  The main difference is that the keyword is now ``\texttt{match}'' instead of
 ``\texttt{switch}'' and that the cases no longer contain Boolean values but instead contain
 \emph{patterns} that can be used 
@@ -893,12 +893,11 @@ For this reason, we could also transform a set $s$ into a sorted list by using t
 \hspace*{1.3cm}
 \texttt{[] + s}.
 \\[0.2cm]
-The reason is that in this case \texttt{s} is transformed into a list and this list is then appended
+The reason is that in this case the set \texttt{s} is first transformed into a list and this list is then appended
 to the empty list.  In general, for a list $l$ and a set $s$ the expression \texttt{$l$ + $s$} creates a new
 list containing all elements of $l$.  Then, the elements of $s$ are appended to this
-list.  The expression \texttt{$s$ + $l$} creates a new set containing the elements of
-$s$.  Then, the elements of $l$ are inserted into this set.
-
+list.  Similarly, for a set $s$ and a list $l$ the expression \texttt{$s$ + $l$} creates a new set
+containing the elements of the set $s$ and the list $l$.  
 
 \subsection{Term Matching}
 The most elaborate form of matching is the matching of terms.  This kind of matching is similar to
@@ -911,12 +910,12 @@ term matching instead of the functions ``\texttt{fct}'' and ``\texttt{args}'' th
 the previous implementation shown in Figure \ref{fig:binary-tree-no-matching.stlx} on page
 \pageref{fig:binary-tree-no-matching.stlx}.  In line 3 of Figure \ref{fig:binary-tree.stlx}, the
 \texttt{case} statement checks whether the term $m$ is identical to the empty binary tree, which is
-represented by the Term \texttt{Nil}.  This is more straightforward than
-testing that the functor of $m$ is ``\texttt{Nil}'', as it is done in line 3 of Figure
+represented by the Term \texttt{@Nil()}.  This is more straightforward than
+testing that the functor of $m$ is ``\texttt{Nil}'', as it was done in line 3 of Figure
 \ref{fig:binary-tree-no-matching.stlx}.  However, the real benefit of matching shows in line 5 of
 Figure \ref{fig:binary-tree.stlx} since the case statement in this line does not only check whether
-the functor of the term $m$ is ``\texttt{Node}'' but also assigns the variables \texttt{k2}, \texttt{l}, and
-\texttt{r} to the respective subterms of $m$.  Compare this with line 5 and line 6 of Figure
+the functor of the term $m$ is ``\texttt{Node}'' but also assigns the subterms of $m$ to the
+variables \texttt{k2}, \texttt{l}, and \texttt{r}, respectively.  Compare this with line 5 and line 6 of Figure
 \ref{fig:binary-tree-no-matching.stlx} where we had to use a separate statement in line 6 to extract
 the arguments of the term $m$.
 
@@ -964,6 +963,8 @@ the arguments of the term $m$.
                   xleftmargin   = 0.8cm,
                   xrightmargin  = 0.8cm,
                 ]
+    loadLibrary("termUtilities");
+
     diff := procedure(t, x) {
         match (t) {
             case t1 + t2:
@@ -1003,7 +1004,7 @@ Let us discuss a more complex example of matching.  The function \texttt{diff} s
 \ref{fig:diff.stlx} on page \pageref{fig:diff.stlx} is supposed to be called with two arguments:
 \begin{enumerate}
 \item The first argument $t$ is a term that is interpreted as an arithmetic expression.
-\item The second argument $x$ is a string that is interpreted as  the name of a variable.
+\item The second argument $x$ is a term that is interpreted as  the name of a variable.
 \end{enumerate}
 The function \texttt{diff} interprets the term $t$ as a mathematical function and takes the
 derivative of this function with respect to the variable $x$.  For example, in order to compute the
@@ -1015,11 +1016,11 @@ $x \mapsto x^x$
 we can invoke \texttt{diff} as follows:
 \\[0.2cm]
 \hspace*{1.3cm}
-\texttt{diff(parseTerm("x ** x"), "parseTerm(x)");}
+\texttt{diff(parseTerm("x ** x"), parseTerm("x"));}
 \\[0.2cm]
 Here the function \texttt{parseTerm} transforms the string ``\texttt{x ** x}'' into a term.  
 The form of this term will be discussed in more detail later.  This function is a part of the
-package \texttt{termutilities}.  Therefore, to use this function we have to load the corresponding
+package \texttt{termUtilities}.  Therefore, to use this function we have to load the corresponding
 library first using the statement
 \\[0.2cm]
 \hspace*{1.3cm}
@@ -1027,9 +1028,9 @@ library first using the statement
 \\[0.2cm]
 For the moment, let us focus on the
 \texttt{match} statement in Figure
-\ref{fig:diff.stlx}.  Consider line 3: If the term that is to be differentiated has the form
+\ref{fig:diff.stlx}.  Consider line 5: If the term that is to be differentiated has the form
 \texttt{t1 + t2}, then both \texttt{t1} and \texttt{t2} have to be differentiated separately and the
-resulting terms have to be added.  For a more interesting example, consider line 8.  This line
+resulting terms have to be added.  For a more interesting example, consider line 9.  This line
 implements the product rule:
 \\[0.2cm]
 \hspace*{1.3cm}
@@ -1042,87 +1043,55 @@ Note how the pattern
 \hspace*{1.3cm}
 \texttt{t1 * t2}
 \\[0.2cm]
-in line 7 extracts the two factors $t_1$ and $t_2$ from a term that happens to be a product.
-Further, note that in line 16, 17, 19 and 20 we had to prefix the function symbols ``\texttt{exp}'' and
+in line 9 extracts the two factors $t_1$ and $t_2$ from a term that happens to be a product.
+Further, note that in line 18, 19, 21, and 22 we had to prefix the function symbols ``\texttt{exp}'' and
 ``\texttt{ln}'' with the character ``\texttt{\symbol{64}}'' in order to convert these function
 symbols into functors. 
-
-In order to understand the example in Figure \ref{fig:diff.stlx} in more
-detail, we have to discuss how the function \texttt{parse} converts a string into a term.  The
-function \texttt{parse} needs to represent all operator symbols and it also needs to represent
-variables.  A variable of the form \texttt{\symbol{34}x\symbol{34}} is parsed as a
-term of the form
-\\[0.2cm]
-\hspace*{1.3cm}
-\texttt{\symbol{94}variable(\symbol{34}x\symbol{34})}.
-\\[0.2cm]
-This should explain the patterns used in line 19 and line 21 of Figure \ref{fig:diff.stlx}.
-In order to inspect the internal representation of a term, we can use the function
-``\texttt{canonical}''.  For example, the expression
-\\[0.2cm]
-\hspace*{1.3cm}
-\texttt{canonical(parse(\symbol{34}x ** x\symbol{34}))}
-\\[0.2cm]
-yields the result
-\\[0.2cm]
-\hspace*{1.3cm}
-\texttt{\symbol{94}power(\symbol{94}variable(\symbol{34}x\symbol{34}), \symbol{94}variable(\symbol{34}x\symbol{34}))}.
-\\[0.2cm]
-This shows that the functor ``\texttt{\symbol{94}power}'' is the internal representation of the
-power operator ``\texttt{**}''.  The internal representation of 
-``\texttt{+}'' is ``\texttt{\symbol{94}sum}'',
-``\texttt{-}'' is represented as ``\texttt{\symbol{94}difference}'',
-``\texttt{*}'' is represented as ``\texttt{\symbol{94}product}'', and
-``\texttt{/}'' is represented as ``\texttt{\symbol{94}quotient}''.
 
 Note that the example makes extensive use of the fact that terms are \emph{viral} when used with
 the arithmetic operators 
 ``\texttt{+}'', ``\texttt{-}'', ``\texttt{*}'', ``\texttt{/}'', ``\texttt{\symbol{92}}'', and
 ``\texttt{\%}'':  
 If one operand of these operators is a term, the operator automatically yields a term.
-For example, the expression 
+For example, if \texttt{x} is a term, then
 \\[0.2cm]
 \hspace*{1.3cm}
-\texttt{parse("x") + 2}
+\texttt{x + 2}
 \\[0.2cm]
-yields the term
-\\[0.2cm]
-\hspace*{1.3cm}
-\texttt{\symbol{94}sum(\symbol{94}variable(\symbol{34}x\symbol{34}), 2)}.
-\\[0.2cm]
+is also a term.
 Note also that terms are not viral inside function symbols like ``\texttt{exp}''.  Therefore, this
 function symbol has to be prefixed by the operator ``\texttt{\symbol{64}}'' to turn it
 into a functor.
 
-Line 21 shows how a condition can be attached to a pattern:  The pattern 
+Line 27 shows how a condition can be attached to a pattern:  The pattern 
 \\[0.2cm]
 \hspace*{1.3cm}
-\texttt{case n:}
+\texttt{case t:}
 \\[0.2cm]
 would match anything.  However, we want to match only numbers here.  Therefore, we have attached
-the condition \texttt{isNumber(n)} via the condition operator ``\texttt{|}'' to this pattern and
+the condition \texttt{isNumber(t)} via the condition operator ``\texttt{|}'' to this pattern and
 hence have written 
 \\[0.2cm]
 \hspace*{1.3cm}
-\texttt{case n | isNumber(n):}
+\texttt{case t | isNumber(t):}
 \\[0.2cm]
-in order to ensure that \texttt{n} is indeed a number.
+in order to ensure that \texttt{t} is indeed a number.
 
 \subsection{Term Decomposition via List Assignment}
 As a syntactical convenience, terms can be decomposed via list assignment.  For example, after the assignment
 \\[0.2cm]
 \hspace*{1.3cm}
-\texttt{[x,y,z] := F(1, G(2), \{2,3\});}
+\texttt{[x,y,z] := @f(1, @g(2), \{2,3\});}
 \\[0.2cm]
 the variables $x$, $y$, and $z$ have the values
 \\[0.2cm]
 \hspace*{1.3cm}
-$x = 1$, \quad $y = \mathtt{G(2)}$, \quad and \quad $z = \{2,3\}$.
+$x = 1$, \quad $y = \mathtt{@g(2)}$, \quad and \quad $z = \{2,3\}$.
 \\[0.2cm]
 Of course, the function \texttt{args} achieves a similar effect.  We have that
 \\[0.2cm]
 \hspace*{1.3cm}
-\texttt{args(F(1, G(2), \{2,3\})) = [1, G(2), \{2, 3\}]}.
+\texttt{args(@f(1, @g(2), \{2,3\})) = [1, @g(2), \{2, 3\}]}.
 
 \section{Loops}
 \setlx\ offers three different kinds of loops: \texttt{for} loops, \texttt{while} loops, and
@@ -1141,7 +1110,7 @@ $f: \mathbb{N} \rightarrow \mathbb{N}$
 \\[0.2cm]
 recursively as follows:
 \begin{enumerate}
-\item $f(n) := 1$ \hspace*{2.13cm} if $n \leq 1$,
+\item $f(n) := 1$ \hspace*{2.13cm} if $n = 1$,
 \item $f(n) := \left\{
        \begin{array}[c]{ll}
          f(n/2)           & \mbox{if $n \,\texttt{\symbol{37}}\, 2 = 0$;} \\[0.2cm]  
@@ -1167,7 +1136,7 @@ Figure \ref{fig:ulam.stlx} shows an implementation of the function $f$ in \setlx
                   xrightmargin  = 0.8cm,
                 ]
     f := procedure(n) {
-        if (n <= 1) {
+        if (n == 1) {
             return 1;   
         }
         while (n != 1) {
@@ -1229,12 +1198,8 @@ incremented to 4 and the \texttt{break} statement in line 9 terminates the loop.
         n := 0;
         while (n < 10) {
             n := n + 1;
-            if (n == 2) {
-                continue;
-            }
-            if (n == 4) {
-                break;
-            }
+            if (n == 2) { continue; }
+            if (n == 4) { break;    }
             print(n);
         }
     };
@@ -1504,7 +1469,7 @@ the pair \texttt{[y,z]} by using the same variable name for both components.
 
 Of course, in \setlx\ the relational product can be computed more easily via set comprehension.
 Figure \ref{fig:relational-product.stlx} on page \pageref{fig:relational-product.stlx} shows
-an implementation that is based on set comprehension.  
+an implementation of the function \texttt{product} that is based on set comprehension.  
 In general, most occurrences of \texttt{for} loops can be replaced by equivalent set
 comprehensions. Our experience shows that the resulting code is often both shorter as well as easier to
 understand. 

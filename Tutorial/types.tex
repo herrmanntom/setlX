@@ -755,7 +755,7 @@ Also note the use of \emph{string interpolation} in the \texttt{print} statement
 above:  Inside a string, any expression enclosed in
 \symbol{36}-symbols is evaluated and the result of this evaluation is
 inserted into the string.
-Strings interpolation will be discussed in more detail later when we explain how strings are
+String interpolation will be discussed in more detail later when we explain how strings are
 supported in \setlx.
 
 For all of the binary operators discussed above there is a variant of
@@ -1574,23 +1574,12 @@ In order to insert a literal ``\texttt{\symbol{36}}''-symbol into a string,  the
 ``\texttt{\symbol{36}}''-symbol has to be escaped with a backslash.  For example, the command
 \\[0.2cm]
 \hspace*{1.3cm}
-\texttt{print(\symbol{34}a single \symbol{92}\symbol{36}-symbol\symbol{34});}
+\texttt{print(\symbol{34}A single \symbol{92}\symbol{36}-symbol.\symbol{34});}
 \\[0.2cm]
-prints the text
-\\[0.2cm]
-\hspace*{1.3cm}
-\texttt{a single \symbol{36}-symbol}.
-\\[0.2cm]
-String interpolation is turned off for a string by the prefix operator ``\texttt{@}'':
-The command
+prints the text:
 \\[0.2cm]
 \hspace*{1.3cm}
-\texttt{print(@\symbol{34}\symbol{36}n\symbol{36}! = \symbol{36}n!\symbol{36}\symbol{34});}
-\\[0.2cm]
-prints
-\\[0.2cm]
-\hspace*{1.3cm}
-\texttt{\symbol{36}n\symbol{36}! = \symbol{36}n!\symbol{36}}.
+\texttt{A single \symbol{36}-symbol.}
 
 \subsection{Literal Strings}
 Sometimes it is necessary to turn off any kind of preprocessing when using a string.  This

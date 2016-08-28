@@ -1,12 +1,12 @@
 \chapter{Statements}
 This section discusses the various possibilities to write statements and the 
 features offered by \setlx\ to steer the control flow in a program.
-\setlx\ supports the following means to control the order of statement execution:
+Besides the assignment statement, \setlx\ supports the following means to control the order of statement execution:
 \begin{enumerate}
 \item branching statements like \texttt{if-then-else}, \texttt{switch}, and \texttt{match},
 \item the looping statements \texttt{for} and \texttt{while} together with \texttt{break} and
       \texttt{continue}, 
-\item \texttt{try-catch} statements to deal with exceptions,
+\item the \texttt{try-catch} statement to deal with exceptions,
 \item the \texttt{backtrack} statement to support a limited form of backtracking.
 \end{enumerate}
 
@@ -114,7 +114,6 @@ $\textsl{fctDef} \;\rightarrow\; \mathtt{VAR}\; \quoted{:=} \quoted{procedure} \
 The meaning of the symbols used in this grammar rule are as follows:
 \begin{enumerate}
 \item \texttt{VAR} identifies a variable.  This variable is bound to the definition of the function.
-      Note that in \setlx\ the name of a variable has to start with a lower case letter.
 \item \textsl{paramList} is a list of the formal parameters of the function.  In
       \textsc{Ebnf}-notation the grammar rule for \textsl{paramList} is given as
       \\[0.2cm]
@@ -160,7 +159,7 @@ The meaning of the symbols used in this grammar rule are as follows:
 \end{enumerate}
 Note that the definition of a function has to be terminated by the symbol ``\texttt{;}''.  The
 reason is that the function is part of an assignment and every assignment is terminated with a semicolon.
-Lets have a few examples of function definitions.  The examples in Figure \ref{fig:functions.stlx} show
+Let us inspect a few examples of function definitions.  Figure \ref{fig:functions.stlx} shows
 several functions definition.
 
 \begin{figure}[!ht]
@@ -201,7 +200,7 @@ several functions definition.
     print(h(1, 2, 3, 4, 5, 6));
 \end{Verbatim}
 \vspace*{-0.3cm}
-\caption{Function with and without default arguments.}
+\caption{Functions with and without default arguments.}
 \label{fig:functions.stlx}
 \end{figure}
 
@@ -234,10 +233,17 @@ $x*x$ can be defined as
 \hspace*{1.3cm}
 \texttt{f := x |-> x * x;}
 \\[0.2cm]
-A definition of this form is called a \emph{lambda definition}.
-If the function takes more than one arguments, the argument list has to be enclosed in square
-brackets.  For example, the function \texttt{hyp} that computes the length of the hypotenuse of a
-rectangular triangle can be defined as follows:
+A definition of this form is called a \emph{lambda definition}.  The example given above is
+equivalent to defining \texttt{f} as follows:
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{f := procedure(x) \{ return x * x; \};}
+\\[0.2cm]
+We see that using a lambda definition is shorter as we do not have to use the keywords ``\texttt{procedure}''
+and ``\texttt{return}''.
+If the function takes more than one arguments and we want to use a lambda definition, the argument
+list has to be enclosed in square brackets.  For example, the function \texttt{hyp} that computes
+the length of the hypotenuse of a rectangular triangle can be defined as follows:
 \\[0.2cm]
 \hspace*{1.3cm}
 \texttt{hyp := [x, y] |-> sqrt(x*x + y*y);}
@@ -495,10 +501,7 @@ now stores the values
 \\[0.2cm]
 Furthermore, we see that 98 of these 101 argument/value pairs have
 been used more than once in order to
-compute the values of \texttt{fibonacci} for different arguments.  The reason is that the
-values for the last three arguments 99, 100, and 101 have not yet been used for the
-computation of different values, but all other arguments have been used at least once for
-computing another value.
+compute the values of \texttt{fibonacci} for different arguments.  
 
 In order to prevent memory leaks, \setlx\ provides the function \texttt{clearCache}.  This
 function is invoked with one argument which must be a cached function.  Writing
@@ -521,9 +524,9 @@ In order to support branching, \setlx\ supports \texttt{if-then-else} statements
 similar to the corresponding syntax in the programming language \texttt{C}.  However, braces are
 required.  For example, figure \ref{fig:toBin.stlx} on page \pageref{fig:toBin.stlx} shows a
 recursive function that computes the binary representation of a
-natural number.  Here, the function \texttt{str} converts its argument
-into a string while the function $\texttt{floor}(x)$ computes the largest
-natural number that is less or equal to its argument $x$.
+natural number.  Here, the function \texttt{str} is a predefined function that converts its argument
+into a string.
+
 
 \begin{figure}[!ht]
 \centering
@@ -666,13 +669,13 @@ data types that support matching.  Matching has been implemented for the data ty
 
 \subsection{String Matching}
 Many algorithms that deal with a given string $s$ have to deal with two cases:  Either the string $s$ is
-empty or it is nonempty and has to be split into its first character $c$ and the remaining characters $r$,
-that is we have 
+empty or it is nonempty and in that case has to be split into its first character $c$ and the
+remaining characters $r$, that is we have 
 \\[0.2cm]
 \hspace*{1.3cm}
 $s = c + r$ \quad where $c = s[1]$ and $r = s[2..]$.
 \\[0.2cm]
-In order to facilitate algorithms that have to make this kind of case distinction, \setlx\ provides the
+In order to facilitate algorithms that perform this kind of case distinction, \setlx\ provides the
 \texttt{match} statement.  Consider the function\footnote{
 There is also a predefined version of the function \texttt{reverse} which does exactly the
 same thing as the function in Figure \ref{fig:reverse.stlx}.  However, once we define the
@@ -824,11 +827,13 @@ the variables $u$, $v$, and $w$ have the values
 \texttt{$w$ =} \verb|"c"|. 
 \\[0.2cm]
 Therefore, for strings, list assignment can be seen as a lightweight alternative to matching.
+However, string decomposition via assignment only works if the list on the left hand side has the
+same length as the string.
 
 \subsection{List Matching}
 As strings can be regarded as lists of characters, the matching of lists is very similar to the matching of
-strings.  The function \texttt{reverse} shown in Figure \ref{fig:reverse.stlx} can also be used to
-reverse a list.
+strings.  The function \texttt{reverse} shown in Figure \ref{fig:reverse.stlx} on page
+\pageref{fig:reverse.stlx} can also be used to reverse a list.
  If the argument $s$ of \texttt{reverse} is a list instead of a string, we match the empty list with
  the pattern ``\texttt{[]}'', while the pattern ``\texttt{[c|r]}'' matches a non-empty list:  
 The variable $c$  matches the first element  of the list, while the variable $r$ matches the remaining elements.
@@ -844,7 +849,9 @@ then after the assignment
 \hspace*{1.3cm}
 \texttt{[x, y, z] := l;}
 \\[0.2cm]
-the variables $x$, $y$, and $y$ have the values $x = 1$, $y = 2$, and $z = 3$.
+the variables $x$, $y$, and $y$ have the values $x = 1$, $y = 2$, and $z = 3$.  Of course, this only
+works if the number of variables on the left hand side of the assignment is equal to the length of
+the list on the right hand side.
 
 \subsection{Set Matching}
 As sets are quite similar to lists, the matching of sets is closely related to the matching of
@@ -879,14 +886,15 @@ set of all the remaining elements.
 \label{fig:set-sort.stlx}
 \end{figure}
 
-Of course, sorting a set into a list is trivial, as a
-set in \setlx\ is represented by an ordered binary tree and therefore is already sorted.
+Of course, in \setlx\ sorting a set into a list is trivial, as a
+set is represented as an ordered binary tree and therefore is already sorted.
 For this reason, we could also transform a set $s$ into a sorted list by using the expression
 \\[0.2cm]
 \hspace*{1.3cm}
 \texttt{[] + s}.
 \\[0.2cm]
-In general, for a list $l$ and a set $s$ the expression \texttt{$l$ + $s$} creates a new
+The reason is that in this case \texttt{s} is transformed into a list and this list is then appended
+to the empty list.  In general, for a list $l$ and a set $s$ the expression \texttt{$l$ + $s$} creates a new
 list containing all elements of $l$.  Then, the elements of $s$ are appended to this
 list.  The expression \texttt{$s$ + $l$} creates a new set containing the elements of
 $s$.  Then, the elements of $l$ are inserted into this set.
@@ -926,15 +934,15 @@ the arguments of the term $m$.
                 ]
     insert := procedure(m, k1) {
         match (m) {
-            case Nil() : 
-                 return Node(k1, Nil(), Nil());
-            case Node(k2, l, r): 
+            case @Nil() : 
+                 return @Node(k1, @Nil(), @Nil());
+            case @Node(k2, l, r): 
                  if (k1 == k2) {
-                     return Node(k1, l, r);
+                     return @Node(k1, l, r);
                  } else if (compare(k1, k2) < 0) { 
-                     return Node(k2, insert(l, k1), r);
+                     return @Node(k2, insert(l, k1), r);
                  } else {
-                     return Node(k2, l, insert(r, k1));
+                     return @Node(k2, l, insert(r, k1));
                  }
             default: abort("Error in insert($m$, $k1$, $v1$)");
         }
@@ -958,26 +966,30 @@ the arguments of the term $m$.
                 ]
     diff := procedure(t, x) {
         match (t) {
-            case t1 + t2 :
-                return diff(t1, x) + diff(t2, x);
-            case t1 - t2 :
-                return diff(t1, x) - diff(t2, x);
-            case t1 * t2 :
-                return diff(t1, x) * t2 + t1 * diff(t2, x);
-            case t1 / t2 :
-                return (diff(t1, x) * t2 - t1 * diff(t2, x)) / t2 * t2;
-            case f ** g :
-                return diff(@exp(g * @ln(f)), x);
-            case ln(a) :
-                return diff(a, x) / a;
-            case exp(a) :
-                return diff(a, x) * @exp(a);
-            case ^variable(x) : // x is defined above as the second argument
-                return 1;
-            case ^variable(y) : // y is undefined, matches any variable
-                return 0;
-            case n | isNumber(n):   
-                return 0;  
+            case t1 + t2:
+                 return diff(t1, x) + diff(t2, x);
+            case t1 - t2:
+                 return diff(t1, x) - diff(t2, x);
+            case t1 * t2:
+                 return diff(t1, x) * t2 + t1 * diff(t2, x);
+            case t1 / t2:
+                 return ( diff(t1, x) * t2 - t1 * diff(t2, x) ) / (t2 * t2);
+            case f ** 0:
+                 return 0;
+            case f ** n | isNumber(n) && n != 0 : 
+                 return n * diff(f, x) * f ** (n-1);
+            case f ** g:
+                 return diff( @exp(g * @ln(f)), x);
+            case @ln(a):
+                 return diff(a, x) / a;
+            case @exp(a):
+                 return diff(a, x) * @exp(a);
+            case var | var == x :
+                 return 1;
+            case var | isVariable(var) :
+                 return 0;
+            case t | isNumber(t):
+                 return 0;
         }
     };
 \end{Verbatim}
@@ -1003,10 +1015,17 @@ $x \mapsto x^x$
 we can invoke \texttt{diff} as follows:
 \\[0.2cm]
 \hspace*{1.3cm}
-\texttt{diff(parse("x ** x"), "x");}
+\texttt{diff(parseTerm("x ** x"), "parseTerm(x)");}
 \\[0.2cm]
-Here the function \texttt{parse} transforms the string ``\texttt{x ** x}'' into a term.  The form of
-this term will be discussed in more detail later.  For the moment, let us focus on the
+Here the function \texttt{parseTerm} transforms the string ``\texttt{x ** x}'' into a term.  
+The form of this term will be discussed in more detail later.  This function is a part of the
+package \texttt{termutilities}.  Therefore, to use this function we have to load the corresponding
+library first using the statement
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{loadLibrary("termUtilities");}
+\\[0.2cm]
+For the moment, let us focus on the
 \texttt{match} statement in Figure
 \ref{fig:diff.stlx}.  Consider line 3: If the term that is to be differentiated has the form
 \texttt{t1 + t2}, then both \texttt{t1} and \texttt{t2} have to be differentiated separately and the
@@ -1024,7 +1043,7 @@ Note how the pattern
 \texttt{t1 * t2}
 \\[0.2cm]
 in line 7 extracts the two factors $t_1$ and $t_2$ from a term that happens to be a product.
-Further, note that in line 12 and line 16 we had to prefix the function symbols ``\texttt{exp}'' and
+Further, note that in line 16, 17, 19 and 20 we had to prefix the function symbols ``\texttt{exp}'' and
 ``\texttt{ln}'' with the character ``\texttt{\symbol{64}}'' in order to convert these function
 symbols into functors. 
 

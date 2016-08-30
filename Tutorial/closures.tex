@@ -199,17 +199,17 @@ first ten powers of two.
 The concept of a closure is non-trivial, therefore we introduce the idea using some simple
 examples.  Figure \ref{fig:counter-closure.stlx} shows the function
 \texttt{createCounter}.  This function initializes the variable \texttt{count} to a given
-value and then returns a procedure that increments this value.  Note that is procedure is not
+value and then returns a procedure that increments this value.  Note that this procedure is not
 defined via the keyword \texttt{procedure} but rather via the keyword \texttt{closure}.  The reason
 is that this function needs access to the variable \texttt{count} that is defined outside of the
 closure \texttt{counter}.  By defining the function \texttt{counter} as a \texttt{closure} rather
-than a \texttt{procedure},  the function \texttt{counter} has access to th variable \texttt{count}:
+than as a \texttt{procedure},  the function \texttt{counter} has access to the variable \texttt{count}:
 It can both read its value and can even change the value.  When the function \texttt{counter} is
 defined, the variable \texttt{count} is safely tucked away together with the function
 \texttt{counter}.  Therefore, although the variable \texttt{count} goes out of scope once the
 function \texttt{createCounter} terminates, the function \texttt{counter} still has access
 to a 
-copy of this variable.  Therefore, when we call the function \texttt{createCounter} in line 9, 
+copy of this variable.  Hence, when we call the function \texttt{createCounter} in line 9, 
 the variable \texttt{ctr0} is assigned a version of the function counter where the variable
 \texttt{count} initially has the value 0.  Later, when we call the function \texttt{ctr0},
 in line 12, this counter is incremented 3 times.  Therefore, after line 12 is executed,
@@ -298,10 +298,11 @@ takes a regular expression $r$ as input and  converts this regular expression in
 \href{http://en.wikipedia.org/wiki/Nondeterministic_finite_automaton}{\emph{non-deterministic finite state machine}} 
 using the 
 \href{http://en.wikipedia.org/wiki/Thompson's_construction_algorithm}{\emph{Thompson construction}}
-\cite{hopcroft:06}.  For the purpose of this section, \emph{regular expressions} are defined inductively as
-follows.
+\cite{hopcroft:06}.  To this end, we first define a \emph{alphabet} as a finite set of characters.
+Then, for the purpose of this section, \emph{regular expressions over an alphabet $\Sigma$} are
+defined inductively as follows. 
 \begin{enumerate}
-\item Every character $c$ is a regular expression matching exactly this character and
+\item Every character $c\in \Sigma$ is a regular expression matching exactly this character and
       nothing else.
 \item If $r_1$ and $r_2$ are regular expressions,  then $r_1 \cdot r_2$ is a regular
       expression.  If $r_1$ matches the string $s_1$ and $r_2$ matches the string $s_2$,
@@ -323,26 +324,26 @@ For the purpose of the program we are going to develop, composite regular expres
 represented by terms.  In detail, we have the following representation of regular
 expressions.
 \begin{enumerate}
-\item A regular expression $r$ of the form $r = c$ where $c$ is a single character is
+\item A regular expression $r$ of the form $r = c$ where $c$ is a single character from the alphabet $\Sigma$ is
       represented by the string consisting of the character $c$.
 \item A regular expression $r$ of the form $r = r_1 \cdot r_2$ is represented by the term
       \\[0.2cm]
       \hspace*{1.3cm}
-      \texttt{Cat(r1, r2)}
+      \texttt{@Cat(r1, r2)}
       \\[0.2cm]
       where \texttt{r1} is the representation of $r_1$ and \texttt{r2} is the
       representation of $r_2$.  The name \texttt{Cat} reminds us of con\underline{cat}enation. 
 \item A regular expression $r$ of the form $r = r_1 \mid r_2$ is represented by the term
       \\[0.2cm]
       \hspace*{1.3cm}
-      \texttt{Or(r1, r2)}
+      \texttt{@Or(r1, r2)}
       \\[0.2cm]
       where \texttt{r1} is the representation of $r_1$ and \texttt{r2} is the
       representation of $r_2$.
 \item A regular expression $r$ of the form $r = r_0^*$ is represented by the term
       \\[0.2cm]
       \hspace*{1.3cm}
-      \texttt{Star(r0)}
+      \texttt{@Star(r0)}
       \\[0.2cm]
       where \texttt{r0} is the representation of $r_0$. 
 \end{enumerate}
@@ -424,8 +425,8 @@ abbreviate the notion of a
       \begin{enumerate}
       \item We generate two new states $q_0$ and $q_1$ using the function
             \texttt{getNewState}.  The implementation of this function is shown in Figure
-            \ref{fig:getNewState.stlx} on page \pageref{fig:getNewState.stlx}.  It creates a new 
-            unique string that is interpreted as a state.
+            \ref{fig:getNewState.stlx} on page \pageref{fig:getNewState.stlx}.  Every time this
+            function is called, it creates a new unique string that is interpreted as a state.
       \item The transition function checks whether the state $q$ given as input is equal
             to the start state $q_0$ and whether, furthermore, the character $d$ that is
             read is identical to the character $c$.  If this is the case, the fsm switches
@@ -735,11 +736,11 @@ The reader should note that we have made heavy use of closures to implement the 
         match (r) {
             case c | isString(c): 
                  return genCharNFA(c, ctr);
-            case Cat(r1, r2):
+            case @Cat(r1, r2):
                  return catenate(regexp2NFA(r1, ctr), regexp2NFA(r2, ctr)); 
-            case Or(r1, r2):
+            case @Or(r1, r2):
                  return disjunction(regexp2NFA(r1, ctr), regexp2NFA(r2, ctr), ctr);
-            case Star(r0):
+            case @Star(r0):
                  return kleene(regexp2NFA(r0, ctr), ctr);
         }
     };
@@ -752,7 +753,7 @@ The reader should note that we have made heavy use of closures to implement the 
 \section{Decorators}
 The programming language \href{https://www.python.org}{\textsl{Python}} has a nice feature called 
 \href{http://en.wikipedia.org/wiki/Python_syntax_and_semantics#Decorators}{\emph{decorators}} that
-makes it easy to modify existing functions.  For example, a trace decorator is a function that can
+makes it easy to modify existing functions.  For example, a \emph{trace decorator} is a function that can
 modify a given function $f$ so that every invocation of the function $f$ and every value returned by
 the function $f$ are automatically traced.  \setlx\ supports similar techniques as \textsl{Python} and,
 therefore, it is easy to implement decorators in \setlx, too.  In this section, we show how a simple
@@ -782,16 +783,18 @@ albeit powerful trace decorator can be implemented in just a few lines of \setlx
 \end{Verbatim}
 \vspace*{-0.3cm}
 \caption{Using the trace decorator.}
-\label{fig:tarce-decorator-use.stlx}
+\label{fig:trace-decorator-use.stlx}
 \end{figure}
 
-Figure \ref{fig:tarce-decorator.stlx} on page \pageref{fig:tarce-decorator.stlx} shows the class
-\texttt{trace}.  This class implements a trace decorator.  Before we discuss the details of its
-implementation, lets us show how this decorator is used.  Figure \ref{fig:tarce-decorator-use.stlx}
+Figure \ref{fig:trace-decorator.stlx} on page \pageref{fig:trace-decorator.stlx} shows the class
+\texttt{tracer}.  While classes will be discussed in full detail in a later chapter, it is convenient 
+to use them for this example.
+This class \texttt{tracer} implements a trace decorator.  Before we discuss the details of its
+implementation, lets us show how this decorator is used.  Figure \ref{fig:trace-decorator-use.stlx}
 shows the implementation of the function \texttt{gcd} computing the greatest common divisor of two
 natural numbers using the \href{http://en.wikipedia.org/wiki/Euclidean_algorithm}{Euclidean algorithm}.
 Suppose we want to trace every invocation of the function \texttt{gcd}.  We do so by first creating
-an object of class \texttt{tracer} in line 7 of Figure \ref{fig:tarce-decorator-use.stlx}.  Then the line
+an object of class \texttt{tracer} in line 7 of Figure \ref{fig:trace-decorator-use.stlx}.  Then the line
 \\[0.2cm]
 \hspace*{1.3cm}
 \texttt{gcd := myTracer.trace(gcd, "gcd");}
@@ -859,11 +862,11 @@ anything when called.
 \end{Verbatim}
 \vspace*{-0.3cm}
 \caption{A class providing a trace decorator.}
-\label{fig:tarce-decorator.stlx}
+\label{fig:trace-decorator.stlx}
 \end{figure}
 
 Let us proceed to discuss how the class \texttt{tracer} is implemented in \setlx.  Figure
-\ref{fig:tarce-decorator.stlx} shows the implementation of this class.  We discuss this
+\ref{fig:trace-decorator.stlx} shows the implementation of this class.  We discuss this
 implementation line by line.
 \begin{enumerate}
 \item Line 2 defines the member variable \texttt{mStoredProcedures}.  This variable will store a map
@@ -882,6 +885,9 @@ implementation line by line.
             \\[0.2cm]
             \hspace*{1.3cm}
             \texttt{mStoredProcedures}.
+            \\[0.2cm]
+            This value is needed to restore the procedure to its original value when we do not want
+            to trace the procedure any more.
       \item Next, line 6 defines a closure called \texttt{tracedFunction}.  This is a function    
             called with a variable number of arguments.  The reason is that we do
             not know how many 
@@ -894,15 +900,15 @@ implementation line by line.
             arguments and the name of the function and then prints this string.  This
             \texttt{tracedFunction} refers to \texttt{function} and \texttt{functionName}.  As these
             variables  are only defined in the method \texttt{trace}, the function \texttt{tracedFunction} needs to
-            be defined as a closure so that it can access these variables.
+            be defined as a \texttt{closure} so that it can access these variables.
       \item Line 10 is the most important line of the whole implementation:  It is here that the
             original procedure is called with the given arguments.  Note how prefixing the list of
             arguments \texttt{args} with the operator ``\texttt{*}'' makes it possible to call this
-            function without knowing how many arguments the procedure takes.
-      \item Line 11 print the result that has been computed by the \texttt{function}.
-      \item This result is returned in line 12.
+            function without knowing how many arguments the procedure actually takes.
+      \item Line 11 print the result that has been computed.
+      \item This result is then returned in line 12.
       \item Finally, the method \texttt{trace} returns the newly created closure.  By assigning this
-            closure to the name of the original procedure we can thus trace the procedure.
+            closure to the name of the original procedure we can thus trace this procedure.
       \end{enumerate}
 \item As a convenience, the class \texttt{tracer} also provides the method \texttt{untrace} in
       line 16.  This procedure looks up the original procedure stored under the given name in the

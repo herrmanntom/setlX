@@ -4,7 +4,7 @@ are a very powerful tool when processing strings.
 Therefore, most modern programming languages support them.  \setlx\ is no exception.  
 As the \setlx\ interpreter is implemented in \textsl{Java}, the syntax of the regular expressions
 supported by \setlx\ is the same as the syntax of regular expressions in \textsl{Java}.  For this
-reason, instead of discussing the syntax of regular expressions in detail, we refer the reader to
+reason, instead of discussing every detail of the syntax of regular expressions, we refer the reader to
 the documentation of the \textsl{Java} class \texttt{java.util.regex.Pattern}, which can
 be found at
 \\[0.2cm]
@@ -200,7 +200,7 @@ subexpression \texttt{'(a+)'}.
     testRegexp := procedure(re, s) {
         match (s) {
             regex re as l: return l;
-            default : print("no match!");
+            default : print("No match!");
         }
     };
 \end{Verbatim}
@@ -249,7 +249,7 @@ regular expression is quite difficult to read for three reasons:
       we need not only be able to recognize the string ``\texttt{*/}'' but also have to deal with
       the case that this string is preceded by an arbitrary number of ``\texttt{*}''-characters,
       since the regular expression \verb"([^*]|\*+[^*/])*" does not accept any trailing
-      ``\texttt{*}''-characters that are followed by the string ``\texttt{*/}''.
+      ``\texttt{*}''-characters. 
 \end{enumerate}
 
 \begin{figure}[!ht]
@@ -308,16 +308,30 @@ separated from the regular expression by the condition operator ``\texttt{|}''. 
 \ref{fig:find-palindrome.stlx} shows a program to search for 
 \href{http://en.wikipedia.org/wiki/Palindrome}{\emph{palindromes}} 
 in a given file.
-Line 6 shows how a condition can be attached to a \texttt{regex} clause. The regular
-expression 
-\\[0.2cm]
-\hspace*{1.3cm}
-\verb|'[a-zA-Z]+'|
-\\[0.2cm]
-matches any number of letters, but the string \texttt{c[1]} corresponding to the match
-is only added to the set of palindromes if the predicate \texttt{isPalindrome[c[1])} yields
-\texttt{true}.  The function $\texttt{isPalindrome}(s)$ checks whether $s$ is a palindrome that has
-a length of at least 3.
+\begin{enumerate}
+\item Line 2 reads the file using the function \texttt{readFile}.  This function returns a list of
+      strings where each string corresponds to a line of the file.  
+
+      These lines are then concatenated by the function \texttt{join} into a single string.  In this
+      string, the different lines are separated by the newline character ``\texttt{\symbol{92}n}''.
+
+      Finally the resulting string is split into a list of words using the function \texttt{split}.
+      The second argument of this function is a regular expression that specifies that the string
+      should be split at every non-empty sequence of characters that are not letters.
+\item The \texttt{for}-loop in line 4 iterates over all these words and the \texttt{match}-statement
+      in line 5 tests every word.
+\item Line 6 shows how a condition can be attached to a \texttt{regex} clause. The regular
+      expression 
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \verb|'[a-zA-Z]+'|
+      \\[0.2cm]
+      matches any number of letters, hence it recognizes words.  However, the string \texttt{c[1]}
+      corresponding to the match 
+      is only added to the set of palindromes if the predicate \texttt{isPalindrome[c[1])} yields
+      \texttt{true}.  The function $\texttt{isPalindrome}(s)$ checks whether $s$ is a palindrome that has
+      a length of at least 3.
+\end{enumerate}
 
 \begin{figure}[!ht]
 \centering
@@ -338,7 +352,7 @@ a length of at least 3.
                 regex '[a-zA-Z]+' as c | isPalindrome(c[1]): 
                       palindromes += { c[1] };
                 regex '.|\n': 
-                      // skip rest
+                      // skip everything else
             }
         }
         return palindromes;        
@@ -415,7 +429,7 @@ statement works as follows:
       \item If none of these regular expression matches, the scan statement is aborted
             with an error message.
       \item If exactly one regular expression $r_i$ matches, then the corresponding
-            statements $b_i$ are executed and the prefix matched by $r_i$ is removed from
+            statements $b_i$ is executed and the prefix matched by $r_i$ is removed from
             the beginning of $s$.
       \item If more than one regular expression matches, then there is a conflict which
             is resolved in two steps:
@@ -430,8 +444,8 @@ statement works as follows:
             \end{enumerate}
       \end{enumerate}
       Finally, the prefix of $s$ that has been matched is removed from $s$.
-\item This is repeated as long as the string $s$ is not empty.  Therefore, a \texttt{scan}
-      statement is like a \texttt{while} loop combined with a \texttt{match} statement.
+\item Step 1 is repeated as long as the string $s$ is not empty.  Therefore, a \texttt{scan}
+      statement can be viewed as a \texttt{while} loop combined with a \texttt{match} statement.
 \end{enumerate}
 The clauses in a \texttt{scan} statement can also have Boolean conditions attached.  This
 works the same way as it works for a \texttt{match} statement.
@@ -445,9 +459,9 @@ an exam.  Assume the results of an exam are collected in a text file like the on
 Figure \ref{fig:result.txt} on page \pageref{fig:result.txt}.  The first line of this file shows that this is an exam about
 algorithms.  The third line tells us
 that there are 6 exercises in the given exam and the remaining lines list the points that
-have been achieved by individual students.  A hyphen signals that the student did not do
-the corresponding exercise.  In order to calculate marks, we just have to add up all the points.  From
-this, the mark can easily be calculated.
+have been achieved by individual students.  A hyphen signals that the student did not work
+on the corresponding exercise.  In order to calculate marks, we first have to sum up all the points.
+From this sum, the mark can then be calculated.
 
 \begin{figure}[!ht]
 \centering
@@ -486,29 +500,27 @@ this, the mark can easily be calculated.
                   xrightmargin  = 0.8cm,
                 ]
     evalExam := procedure(file, maxPoints) {
-        all := join(readFile(file), "\n");
+        all   := join(readFile(file), "\n");
         state := "normal";
-        scan(all) using map {
+        scan (all) using map {
             regex '[a-zA-Z]+:.*\n': // skip header lines
             regex '[A-Za-z]+\s[A-Za-z\-]+:' as [ name ]:
                   nPrint(name);
-                  state := "printBlanks";
+                  state     := "printBlanks";
                   sumPoints := 0;
             regex '[ \t]+' as [ whiteSpace ] | state == "printBlanks":
                   nPrint(whiteSpace);  
                   state := "normal";
             regex '[ \t]+' | state == "normal": 
-                  // skip white space between points
+                  // skip white space between results
             regex '0|[1-9][0-9]*' as [ number ]:
-                  sumPoints += int(number);
-            regex '-': 
-                  // skip exercises that have not been done  
-            regex '\n' | sumPoints != om:
+                  sumPoints += int(number);     // add results
+            regex '-': // skip exercises that have not been done  
+            regex '\n' | sumPoints != om:       // calculate mark
                   print(mark(sumPoints, maxPoints));
                   sumPoints := om;
-            regex '[ \t]*\n' | sumPoints == om:
-                  // skip empty lines
-            regex '.|\n' as [ c ]:
+            regex '[ \t]*\n' | sumPoints == om: // skip empty lines
+            regex '.|\n' as [ c ]:              // error handling
                   print("unrecognized character: $c$");
                   print("line:   ", map["line"]);
                   print("column: ", map["column"]);
@@ -523,7 +535,8 @@ this, the mark can easily be calculated.
 \label{fig:exam.stlx}
 \end{figure}
 
-Figure \ref{fig:exam.stlx} shows a program that does this calculation.  We discuss this
+\noindent
+Figure \ref{fig:exam.stlx} shows a program that performs this calculation.  We discuss this
 program line by line.
 \begin{enumerate}
 \item The function \texttt{evalExam} takes two arguments:  The first is the name of a file
@@ -534,7 +547,7 @@ program line by line.
 \item We will use two states in our scanner:
       \begin{enumerate}
       \item The first state is identified by the string \texttt{"normal"}.
-            Initially, the variable \texttt{state} has this value.
+            In line 3, the variable \texttt{state} is initialized to this value.
       \item The second state is identified by the string \texttt{"printBlanks"}. 
             We enter this state when we have read the name of a student.
             This state is needed to read the white space between the name of a student 
@@ -547,16 +560,16 @@ program line by line.
       Line 3 therefore initializes the variable \texttt{state} to \texttt{"normal"}.
 \item Line 4 shows the \texttt{scan} statement.  Here, we have added the string ``\texttt{using map}'' 
       after ``\texttt{scan(all)}''.  This enables us to retrieve line and column information via the
-      variable \texttt{map}.  How this is done is shown in line 26 and 27.
+      variable \texttt{map}.  How this is done is shown in line 24 and 25.
 \item The regular expression in line 5 is needed to skip the header of the file.  The
-      header line can be recognized by the fact that there is a single word followed by a colon
+      two header lines can be recognized by the fact that there is a single word followed by a colon
       ``\texttt{:}''.   In contrast, the names of students always consist of two words separated by
-      white space.
+      a single white space character.
 \item The regular expression in line 5 matches the name of a student.  Notice that we have used 
-      ``\texttt{\symbol{92}s}'' to specify the blank between the given name and the family name.
-      Furthermore, the family name is allowed to contain a hyphen ``\texttt{-}''.
+      ``\texttt{\symbol{92}s}'' to specify the blank between the first name and the family name.
+      Furthermore, the family name is allowed to contain the hyphen character ``\texttt{-}''.
       The student's name is printed and the number of points for this student is set to $0$.
-      Furthermore, when the name of a student is seen, the state is changed to the state
+      Furthermore, after the name of a student has been seen, the state is changed to the state
       \texttt{"printBlanks"}.
 \item The regular expression in line 10 matches the white space following the name of a
       student.  Notice that this regular expression has a condition attached to it: 
@@ -569,28 +582,39 @@ program line by line.
       \texttt{"normal"}.
 
       In effect, this rule will guarantee that the output is formatted in the same way as
-      the input, as the white space following a student's name is just copied to the output.
+      the input, as the white space following a student's name is just copied verbatim to the output.
 \item Line 13 skips over white space that is encountered in state \texttt{"normal"}.
+      This is the white space separating different numbers in the list of numbers following a
+      students name.
 \item The clause in line 15 recognizes strings that can be interpreted as numbers.  These
-      strings are converted into numbers with the help of the function \texttt{int} and
+      strings are converted into numbers with the help of the conversion function \texttt{int} and
       then this number is added to the number of points achieved by this student.
-\item Line 17 skips over hyphens as these correspond to an exercise that has not been attempted
-      by the student.
-\item Line 19 checks whether we are at the end of a line listing the points of a particular student.
+\item Line 17 skips over hyphens as these correspond to those exercises that have not been attempted
+      by the particular student.
+\item Line 18 checks whether the end of a line listing the points of a particular student has been reached.
       This is the case if we encounter a newline and the variable \texttt{sumPoints}
       is not undefined.  In this case, the mark for this student is computed and printed.
       Furthermore, the variable \texttt{sumPoints} is set back to the undefined status.
-\item Any empty lines are skipped in line 22.
+\item Any empty lines are skipped in line 21.
 \item Finally, if we encounter any remaining character, then there is a syntax error
-      in our input file.  In this case, line 24 recognizes this character and
+      in our input file.  In this case, line 22 recognizes this character and
       produces an error message.  This error message
       specifies the line and column of the character.  This is done with the help of the
       variable \texttt{map} that has been declared in line 4 via the \texttt{using}
-      directive.  
+      directive.  \texttt{map} is effectively a dictionary that supports the keys \texttt{char},
+      \texttt{line}, and \texttt{column}.  
+      \begin{enumerate}
+      \item \texttt{char} counts the characters encountered, hence this variable is incremented for 
+            every character that is read.  This variable has the value $1$ for the first character.
+      \item \texttt{line} counts the line numbers.  The line number is incremented once a newline
+            character is read. This variable has the value $1$ for the first line.
+      \item \texttt{column} counts the characters after the last line break, i.e.~this variable is incremented
+            for every character that is read and it resets to 1 after a newline character has been read.
+      \end{enumerate}
 \end{enumerate}
 
 \section{Additional Functions Using Regular Expressions}
-There are three predefined functions that use regular expressions.
+There are four predefined functions that use regular expressions.
 \begin{enumerate}
 \item The function 
       \\[0.2cm]
@@ -661,6 +685,48 @@ There are three predefined functions that use regular expressions.
       \\[0.2cm]
       \hspace*{1.3cm}
       \verb|"+49-711-XXXX-4504"|.
+\item The function
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \texttt{split($s$, $r$)}
+      \\[0.2cm]
+      takes a string $s$ and a regular expression $r$ as its inputs.  It returns a list of
+      substrings of $s$.  To be more precise, $s$ is split into substrings at those positions that
+      match the regular expression $r$.  The parts of $s$ that are matched by $r$ are not returned.
+      A common way to invoke the function is given by the following example:
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \texttt{l := split("1; 2; 3", ',\symbol{92}s*');}
+      \\[0.2cm]
+      Here, the string \texttt{"1, 2, 3"} is split at every position where there the character
+      ``\texttt{;}'' is followed by white space.  As a result, we have
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \texttt{l = ["1", "2", "3"]}.
+      \\[0.2cm]
+      If the previous example is changed into
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \texttt{l := split("1; 2; 3;", ',\symbol{92}s*');}
+      \\[0.2cm]
+      i.e.~the string is terminated with a ``\texttt{;}'', then the result changes to
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \texttt{l = ["1", "2", "3", ""]}.
+      \\[0.2cm]
+      Note that the function 
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \texttt{join($l$, $s$)}
+      \\[0.2cm]
+      is an inverse of the function \texttt{split}.  It takes a list of strings $l$ and a string $s$
+      and joins the items of $l$ into a single result string by separating them with the string $s$.
+      For example,
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \texttt{join(["a", "b", "c"], ";")}
+      \\[0.2cm]
+      yields the string ``\texttt{a;b;c}''.
 \end{enumerate}
 
 

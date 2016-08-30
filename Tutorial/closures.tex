@@ -21,8 +21,10 @@ conventional programming languages.  Figure \ref{fig:reduce.stlx} on page \pager
 shows the implementation of the function \texttt{reduce} that takes two arguments:
 \begin{enumerate}
 \item The first argument is a list $l$.
-\item The second argument is a binary function $f$ combining two elements of $l$ into a single value.
+\item The second argument is a binary function $f$.  This function is expected to take two
+      arguments.
 \end{enumerate}
+
 
 \begin{figure}[!ht]
 \centering
@@ -42,8 +44,8 @@ shows the implementation of the function \texttt{reduce} that takes two argument
             case [x,y|r]: return reduce([f(x,y) | r], f);
         }    
     };
-    add      := procedure(a, b) { return a + b; };
-    multiply := procedure(a, b) { return a * b; };
+    add      := [x, y] |-> x + y;
+    multiply := [x, y] |-> x * y;
     
     l := [1 .. 36];
     x := reduce(l, add     );
@@ -58,10 +60,11 @@ and thereby reduces the list $l$ into a single value.  For example, if the funct
 function \texttt{add} that just adds its arguments, then $\texttt{reduce}(l,
 \texttt{add})$ computes the sum of
 the elements of $l$.  Therefore, in line 12 the invocation of
-\texttt{reduce(l, add)} computes the sum
+\texttt{reduce(l, add)} computes the sum of all elements of the list $l$.  Since this list 
+contains the natural number from 1 up to 36, reduce effectively computes the sum
 \\[0.2cm]
 \hspace*{1.3cm}
- $\sum\limits_{i=1}^n i$. 
+ $\sum\limits_{i=1}^{36} i$. 
 \\[0.2cm] 
 Note that the expression ``\texttt{+/ $l$}'' is another way to compute this sum.
 If instead the second arguments of the function \texttt{reduce} is the function
@@ -113,7 +116,8 @@ Finally, it should be noted that in the case that the list $l$ is empty,
 \label{fig:merge-sort.stlx}
 \end{figure}
 
-Notice that the function \texttt{reduce} is a so called \emph{second order function} because
+Notice that the function \texttt{reduce} is a so called
+\href{https://en.wikipedia.org/wiki/Higher-order_function}{higher order function} because  
 one of its arguments is itself a function.  While the example given above might seem
 artificial, there are common applications of this scheme.  One example is sorting.
 Figure \ref{fig:merge-sort.stlx} on page \pageref{fig:merge-sort.stlx} shows a generic

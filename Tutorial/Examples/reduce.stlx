@@ -6,8 +6,8 @@ reduce := procedure(l, f, e) {
     }    
 };
 
-add      := procedure(x, y) { return x + y; };
-multiply := procedure(x, y) { return x * y; };
+add      := [x, y] |-> x + y;
+multiply := [x, y] |-> x * y;
 
 l := [1 .. 36];
 

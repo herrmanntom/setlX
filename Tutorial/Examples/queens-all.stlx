@@ -53,30 +53,30 @@ allSolutions := procedure(n) {
 };
 
 // The interpretation of the parameters is as follows:
-//      l: list of those queens that have already been placed
-//      n: size of the board
-solve := procedure(l, n, rw all) { 
-    if (#l == n) {
-        all += { l };
+//      queens: list of those queens that have already been placed
+//      n:      size of the board
+solve := procedure(queens, n, rw all) { 
+    if (#queens == n) {
+        all += { queens };
         backtrack;
     }
-    for (x in {1 .. n} - {i : i in l}) {
+    for (x in {1 .. n} - {i : i in queens}) {
         check {
-            testNext(l, x);
+            testNext(queens, x);
             // if this has worked so far, try to add more queens
-            solve(l + [x], n, all);
+            solve(queens + [x], n, all);
         } 
     }
     backtrack;
 };
 
 // Check whether it is safe to add a queen in row x in the column that
-// follows those columns that are already specified in the list l of
+// follows those columns that are already specified in the list queens of
 // queens already placed.  It is assumed that the queens already 
 // placed cannot attack each other.
-testNext := procedure(l, x) {
-    m := #l;
-    if (exists (i in {1 .. m} | i-l[i] == m+1-x || i+l[i] == m+1+x)) {
+testNext := procedure(queens, x) {
+    m := #queens;
+    if (exists (i in {1 .. m} | i-queens[i] == m+1-x || i+queens[i] == m+1+x)) {
         backtrack;
     }
 };

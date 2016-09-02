@@ -12,6 +12,7 @@ import java.util.Locale;
  * inherit.
  */
 public abstract class CodeFragment implements Comparable<CodeFragment> {
+    private static State toStringState = null;
 
     /**
      * Gather all bound and unbound variables in this fragment and its siblings.
@@ -77,7 +78,10 @@ public abstract class CodeFragment implements Comparable<CodeFragment> {
 
     @Override
     public final String toString() {
-        return toString(new State());
+        if (toStringState == null) {
+            toStringState = new State();
+        }
+        return toString(toStringState);
     }
 
     /* term operations */

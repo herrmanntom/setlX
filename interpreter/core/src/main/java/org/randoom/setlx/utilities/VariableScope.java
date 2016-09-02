@@ -177,7 +177,6 @@ public class VariableScope {
      * Clear all undefined bindings in this scope (value = Om.OM) and all bindings in inner scopes.
      */
     /*package*/ void clearUndefinedAndInnerBindings() {
-        scopeBindings.cleanAllBindings = false;
         final HashMap<String, LinkedList<ScopeBinding>> cleanBindings = new HashMap<>();
         for (final Map.Entry<String, LinkedList<ScopeBinding>> entry : scopeBindings.allBindings.entrySet()) {
             final LinkedList<ScopeBinding> bindings = entry.getValue();
@@ -199,6 +198,7 @@ public class VariableScope {
             clearDeprecatedBindings(scopeBindings.thisBindings);
         }
         System.gc();
+        scopeBindings.cleanAllBindings = false;
     }
 
     /**
@@ -287,7 +287,7 @@ public class VariableScope {
     }
 
     private ScopeBinding getBinding(final State state, final LinkedList<ScopeBinding> locatedBindings, final String variable, final boolean checkObjects) throws SetlException {
-        final boolean            isThisBinding = variable.equals("this");
+        final boolean            isThisBinding = "this".equals(variable);
         ScopeBinding             binding       = null;
         LinkedList<ScopeBinding> bindings;
 
@@ -317,15 +317,33 @@ public class VariableScope {
             }
         }
         // check if some attached object might hold the answer
-        if (checkObjects && ! isThisBinding) {
-            final LinkedList<ScopeBinding> objects = scopeBindings.thisBindings;
-            if (objects != null) {
-                ScopeBinding           object   = clearDeprecatedBindings(objects);
-                Iterator<ScopeBinding> iterator = null;
-                while (object != null && (binding == null || binding.scopeDepth < object.scopeDepth)) {
-                    if (object.scopeDepth > scopeDepth) {
+        if (checkObjects && ! isThisBinding && scopeBindings.thisBindings != null) {
+            ScopeBinding           object   = clearDeprecatedBindings(scopeBindings.thisBindings);
+            Iterator<ScopeBinding> iterator = null;
+            while (object != null && (binding == null || binding.scopeDepth < object.scopeDepth)) {
+                if (object.scopeDepth > scopeDepth) {
+                    if (iterator == null) {
+                        iterator = scopeBindings.thisBindings.descendingIterator();
+                        if (iterator.hasNext()) {
+                            iterator.next(); // "throw away" last one, as that already is current 'object'
+                        }
+                    }
+                    if (iterator.hasNext()) {
+                        object = iterator.next();
+                    } else {
+                        break;
+                    }
+                } else {
+                    final Value member = object.value.getObjectMemberUnCloned(state, variable);
+                    if (member != Om.OM) {
+                        if (object.scopeDepth >= restrictedToFunctionsBeneath || object.value.isProcedure() == SetlBoolean.TRUE) {
+                            return new ScopeBinding(object.scopeDepth, object.scopeGeneration, member);
+                        } else {
+                            return ACCESS_DENIED_BINDING;
+                        }
+                    } else {
                         if (iterator == null) {
-                            iterator = objects.descendingIterator();
+                            iterator = scopeBindings.thisBindings.descendingIterator();
                             if (iterator.hasNext()) {
                                 iterator.next(); // "throw away" last one, as that already is current 'object'
                             }
@@ -334,27 +352,6 @@ public class VariableScope {
                             object = iterator.next();
                         } else {
                             break;
-                        }
-                    } else {
-                        final Value member = object.value.getObjectMemberUnCloned(state, variable);
-                        if (member != Om.OM) {
-                            if (object.scopeDepth >= restrictedToFunctionsBeneath || object.value.isProcedure() == SetlBoolean.TRUE) {
-                                return new ScopeBinding(object.scopeDepth, object.scopeGeneration, member);
-                            } else {
-                                return ACCESS_DENIED_BINDING;
-                            }
-                        } else {
-                            if (iterator == null) {
-                                iterator = objects.descendingIterator();
-                                if (iterator.hasNext()) {
-                                    iterator.next(); // "throw away" last one, as that already is current 'object'
-                                }
-                            }
-                            if (iterator.hasNext()) {
-                                object = iterator.next();
-                            } else {
-                                break;
-                            }
                         }
                     }
                 }

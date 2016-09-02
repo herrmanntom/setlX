@@ -4,7 +4,9 @@ vectors and matrices.
 Although vectors and matrices could easily be implemented in \setlx, this would not be very
 efficient because of the overhead of the interpreter loop.  Therefore, \setlx\ supports both vectors and
 matrices natively.  This support is based on the \textsl{Java} library 
-\href{http://math.nist.gov/javanumerics/jama/}{\textsl{Jama}}, which has been integrated into
+\href{http://math.nist.gov/javanumerics/jama/}{\textsl{Jama}}.  This library is the result of a joint effort of
+\href{http://www.mathworks.com/}{Mathworks} and the \href{https://www.nist.gov}{National Institute
+  of Standards and Technology}.  \textsl{Jama} has been integrated into  
 \setlx\ by Patrick Robinson.  This library provides the basic means for computations involving
 matrices and vectors.  In the following exposition we assume that the reader has some familiarity with  
 \href{http://en.wikipedia.org/wiki/Linear_algebra}{linear algebra}.
@@ -41,8 +43,8 @@ Instead of using the function \texttt{la\_vector,} we could also have used the c
 \texttt{v := <<1/2 1/4 1/5>>;}
 \\[0.2cm]
 to define the vector \texttt{v}.  This shows that the operators ``\texttt{<<}'' and ``\texttt{>>}''
-can be used to define a vector.  Note that the components of a vector are not separated by the
-character ``\texttt{,}'' but rather are separated by white space.
+can be used to define a vector.  \textbf{Note} that the components of a vector are \textbf{not} separated by the
+character ``\texttt{,}'' but \textbf{rather} are separated by white space.
 
 \setlx\ support the basic arithmetic operations that are defined for vectors.  If \texttt{a} and
 \texttt{b} are two vectors, then 
@@ -79,21 +81,21 @@ then the expressions ``\texttt{a + b}'' and ``\texttt{a - b}'' yield the results
 \\[0.2cm]
 respectively.  Additionally, the shortcut assignment operators ``\texttt{+=}'' and ``\texttt{-=}''
 are available for vectors.  They work as expected.  Note that for the expressions ``\texttt{a + b}''
-and ``\texttt{a - b}'' to be defined, \texttt{a} and \texttt{b} have to have the same number of
-elements. 
+and ``\texttt{a - b}'' to be defined, \texttt{a} and \texttt{b} have to have 
+\textbf{the same number of elements}. 
 
 Vectors support 
 \href{http://en.wikipedia.org/wiki/Scalar_multiplication}{\emph{scalar multiplication}}.  If
 $\alpha$ is a real number and 
 \\[0.2cm]
 \hspace*{1.3cm}
-\texttt{v = <<v$_1$ $\cdots$ a$_N$>>}
+\texttt{v = <<v$_1$ $\cdots$ a$_n$>>}
 \\[0.2cm]
 is an $n$-dimensional number, then the scalar products \texttt{$\alpha$ * v} and \texttt{v * $\alpha$}
 are both defined as the vector
 \\[0.2cm]
 \hspace*{1.3cm}
-\texttt{<<($\alpha$ * v$_1$) $\cdots$ ($\alpha$ * v$_N$)>>}.
+\texttt{<<($\alpha$ * v$_1$) $\cdots$ ($\alpha$ * v$_n$)>>}.
 \\[0.2cm]
 For example, if \texttt{a} is defined as above, then the expression
 \\[0.2cm]
@@ -593,7 +595,7 @@ well-conditioned by computing the condition number of the matrix associated with
 condition number tells us by how much an error in the right hand side of the system of equations is
 magnified when we compute the solution.  In particular, if the condition number is so big that it
 will magnify known uncertainties in  the right hand side of the equations to an extend that the
-result is meaningless, then it is not possible to solve the given system of equations in a sensible
+result is meaningless, then it is not possible to solve the given system of equations in a meaningful
 way. 
 
 
@@ -684,7 +686,7 @@ The eigenvectors are computed as
 \texttt{x2 = <<0.5257311121191336 0.8506508083520399>>}.
 \\[0.2cm]
 The eigenvectors computed are \emph{normalized}, that is the length of these vectors is $1$.
-Furthermore, as the matrix \texttt{a} happens to be symmetric, i.e.~we have\texttt{a = a!},
+Furthermore, as the matrix \texttt{a} happens to be symmetric, i.e.~we have \texttt{a = a!},
 the eigenvectors are orthogonal to each other.
 
 Observe that not every square $n \times n$ matrix is 

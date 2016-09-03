@@ -45,33 +45,5 @@ problem39 := procedure() {
 
 };
 
-problem39b := procedure() {
-
-    m := 1000;
-    best_p := 0;
-    best_cc := 0;
-
-    for (p in [1..m]) {
-        cc := 0;
-        for (a in [1..p \ 2]) {
-            for (b in [a..(p-a) \ 2]) {
-                c := p-a-b;
-                if (a*a + b*b == c*c) {
-                    cc += 1;
-                }
-             }
-             if (cc > best_cc) {
-                 best_cc := cc;
-                 best_p := p;
-                 print("p: ",p, " cc: ",cc);
-             }
-        }
-    }
-
-    print(best_p);
-
-};
-
 problem39();
-problem39b();
 

@@ -1,0 +1,45 @@
+//
+// SEND + MORE = MONEY problem in SetlX
+//
+// This SetlX program was written by Hakan Kjellerstrand (hakank@bonetmail.com).
+// See also my SETL page: http://www.hakank.org/setl/ .
+//
+
+// Solution should be:
+// [[9 5 6 7 1 0 8 2]]
+
+test := procedure(s, name) {
+  print(name);
+  print(s());
+};
+
+send_more_money3 := procedure() {
+  ss := {0..9};
+  smm := [[s,e,n,d,m,o,r,y] :
+          s in ss ,
+          e in ss,
+          n in ss,
+          d in ss,
+          m in ss,
+          o in ss,
+          r in ss,
+          y in ss |
+          all_different([s,e,n,d,m,o,r,y]) &&
+          s > 0 && m > 0 &&
+          (s * 1000 + e * 100 + n * 10 + d) +
+          (m * 1000 + o * 100 + r * 10 + e) ==
+          (m * 10000 + o * 1000 + n * 100 + e * 10 + y )
+          ];
+  return smm;
+};
+
+//
+// all elements in x are different
+//
+all_different := procedure(x) {
+  // print("all_different check:", x);
+  return #x == #{i : i in x};
+};
+
+test(send_more_money3, "send_more_money3");
+

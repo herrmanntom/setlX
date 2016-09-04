@@ -40,8 +40,11 @@ something might go wrong with these statements, then we can put the list of stat
 \\[0.2cm]
 If the execution of \textsl{stmntList} executes without errors, then the
 \texttt{try/catch}-block does nothing besides the execution of \textsl{stmntList}.  However, if
-one of the statements in \textsl{stmntList} raises an exception, then the execution of 
-\textsl{stmntList} is aborted and instead the statements in \textsl{errorCode} are executed.
+one of the statements in \textsl{stmntList} raises an exception \texttt{e}, then the execution of
+the statements in \textsl{stmntList} is aborted and instead the statements in \textsl{errorCode} are
+executed.  These statements can use the variable \texttt{e} that contains the exception that has
+been raised.
+
 
 Typically, exception handling is necessary when  processing user input.  Consider the program
 shown in Figure \ref{fig:bisection-exception.stlx} on page \pageref{fig:bisection-exception.stlx}.
@@ -112,7 +115,7 @@ function
 \hspace*{1.3cm}
 $x \mapsto x*x - 2$
 \\[0.2cm]
-the user has to provide the string ``\texttt{x*x-2}'' as input to the \texttt{read} command in
+the user has to provide the string ``\texttt{x*x-2}'' as input when prompted by the function \texttt{read} in
 line 3.  The string \texttt{s} that is input by the user is then converted into the string
 \\[0.2cm]
 \hspace*{1.3cm}
@@ -148,13 +151,13 @@ Furthermore, either of the two conditions
 $a < b$ \quad or \quad $f(a) * f(b) \leq 0$
 \\[0.2cm]
 might be violated.  In this case, we raise an exception in line 17 or
-line 21 of the function \texttt{findZero}.  
+line 21 of the function \texttt{findZero}.  This is done using the function \texttt{throw}.
 Since we don't want to abort the program on the occurrence of an exception, the whole block of
 code from line 3 up to line 8 is enclosed in a \texttt{try}/\texttt{catch}-block.  In case there is
 an exception, the value of this exception, which is a string containing an error message, is
 caught in the variable \texttt{e} in line 9.  To continue our program, we print the error message
 in line 10 and then invoke the function \texttt{askUser} recursively so that the user of
-the program gets another chance to enter a correct function.
+the program gets another chance to enter valid input.
 
 \subsection{Different Kinds of Exceptions}
 \setlx\ supports two different kinds of exceptions:
@@ -165,7 +168,8 @@ the program gets another chance to enter a correct function.
       \hspace*{1.3cm}
       \texttt{throw($e$)}
       \\[0.2cm]
-      raises a \emph{user generated} exception with the value $e$.
+      raises a \emph{user generated} exception with the value $e$.  Here, $e$ can be any value.
+      However, typically $e$ will be a string.
 \item \emph{Language generated} exceptions are the result of error conditions arising in
       the program. 
 \end{enumerate}
@@ -212,32 +216,35 @@ in fact, catch
 other exceptions and thus mask real errors.  In general, the \setlx\ interpreter
 implements a \emph{fail fast} strategy:  Once an error is discovered, the execution of the
 program is aborted.  The interpreter does a lot of effort to detect errors as early as
-possible.  However, using unrestricted \texttt{catch} clauses thwarts this strategy and
-might lead to errors that are very difficult to locate.
+possible.  However, this strategy  is thwarted if unrestricted \texttt{catch} clauses are used,
+because then language generated exceptions are effectively silenced.  As a result, programming
+mistakes might go undetected and result in bugs that are very difficult to locate.
 
 \section{Backtracking}
 One of the distinguishing features of the programming language 
 \href{http://en.wikipedia.org/wiki/Prolog}{\textsl{Prolog}}
 is the fact that \textsl{Prolog} supports 
 \href{http://en.wikipedia.org/wiki/Backtracking}{\emph{backtracking}}.  
-However, on closer inspection of the
-\textsl{Prolog} programs that are shown in the text books describing \textsl{Prolog}
-\cite{sterling86, bratko:90} it becomes obvious that very few programs actually make use of
-backtracking in its most general form.  Also, the personal experience of the first author, who
-has programmed in \textsl{Prolog} for more than 10 years, suggests that \textsl{Prolog}
-programs that use backtracking in an unrestricted fashion tend to be very hard to maintain.  
-In general, it is our believe that the use of backtracking should always follow the
+However, on closer inspection of the programs found in popular text books, e.g.~``\emph{The Art of Prolog}''
+\cite{sterling86} and ``\emph{Prolog Programming for Artificial Intelligence}'' \cite{bratko:90}, it
+becomes obvious that very few programs actually make use of 
+backtracking in its most general form.   The first author of this tutorial has developed
+\textsl{Prolog} based software in an industrial environment for more than 10 years.  His personal
+experience suggests that \textsl{Prolog} programs that use backtracking in an unrestricted fashion
+tend to be very hard to maintain.   
+Therefore, it is our believe that the use of backtracking should follow the
 \emph{generate and test} paradigm:
 \begin{enumerate}
-\item Assume our goal is to find some $x$ such that $x$ is the solution of some problem.
+\item Assume our goal is to find some $x$ such that $x$ is the solution of a given problem.
 \item In order to find possible values for $x$, we invoke a \emph{generating function} that provides
-      us with solution candidates.  In general, the set of values provided by the generating
-      function is a only superset of the set of solutions, i.e.~some of those values do not solve the
-      problem.  Although it is perfectly acceptable that most of the values generated do not solve
+      us with \emph{solution candidates}, i.e. the generating function produces values of $x$ that
+      might possibly be solutions to the given problem.  However, the set of values produced by the generating
+      function is only a superset of the set of solutions, i.e.~some of those values do not actually
+      solve the given problem.  Although it is perfectly acceptable that most of the values generated do not solve
       the problem, it is required that the generating function will never miss a solution.
-\item In order to check which of the generated values are indeed solutions, the generated values
-      have to be tested.  If a test fails, the program backtracks to step 2 where the next value to
-      be tested is generated. 
+\item In order to check which of the generated values are indeed solutions, these values
+      have to be \emph{tested}.  If a test fails for a given value $x$, the program backtracks to
+      step 2 where the next value to be tested is generated. 
 \end{enumerate}
 In order to support the generate and test paradigm,  \setlx\ 
 implements backtracking only in a very restricted form.  Thus, we avoid the
@@ -271,13 +278,7 @@ converted into a block of the following form:
 \texttt{\} catch ($e$) \{}
 \\
 \hspace*{1.8cm}
-\texttt{if ($e$ != \symbol{34}fail\symbol{34}) \{}
-\\
-\hspace*{2.3cm}
-\texttt{throw($e$);}
-\\
-\hspace*{1.8cm}
-\texttt{\}}
+\texttt{if ($e$ != \symbol{34}fail\symbol{34}) \{ throw($e$); \}}
 \\
 \hspace*{1.3cm}
 \texttt{\}}
@@ -286,7 +287,7 @@ Here, \textsl{stmntList}  might contain the keyword ``\texttt{backtrack}''.  Thi
 translated into the command \texttt{throw(\symbol{34}fail\symbol{34})}.   
 
 In the rest of this section we show how to solve two classical logical puzzles using backtracking.
-As a first example,  we solve is the 8 queens puzzle.  We will see that this puzzle can be solved using
+As a first example,  we solve the 8 queens puzzle.  We will see that this puzzle can be solved using
 a straightforward recursive approach.  The second example is the zebra puzzle.  In order to solve
 this puzzle succinctly, we need to make use of \emph{higher-order programming}, i.e.~we solve the
 problem by writing a function that, instead of solving the problem directly, will first generate
@@ -294,6 +295,14 @@ some \setlx\ code.  This code is then executed and thereby the problem is solved
 puzzle provides the opportunity to show of the power of the \texttt{eval} function provided by \setlx.
 
 \subsection{The 8 Queens Puzzle}
+The program in Figure \ref{fig:queens-nice.stlx} on page
+\pageref{fig:queens-nice.stlx} solves the 
+\href{http://en.wikipedia.org/wiki/Eight_queens_puzzle}{\emph{8 queens puzzle}}.  This problem asks to
+position 8 queens on a chessboard such that no queen can attack another queen.  In chess, a queen
+can attack all those positions that are either on the same row, on the same column, or on the
+same diagonal as the queen.  The details of the program in Figure \ref{fig:queens-nice.stlx}
+are as follows.
+
 \begin{figure}[!ht]
 \centering
 \begin{Verbatim}[ frame         = lines, 
@@ -302,24 +311,24 @@ puzzle provides the opportunity to show of the power of the \texttt{eval} functi
                   labelposition = bottomline,
                   numbers       = left,
                   numbersep     = -0.2cm,
-                  xleftmargin   = 0.8cm,
-                  xrightmargin  = 0.8cm,
+                  xleftmargin   = 0.0cm,
+                  xrightmargin  = 0.0cm,
                 ]
-    solve := procedure(l, n) { 
-        if (#l == n) {
-            return l;
+    solve := procedure(queens, n) { 
+        if (#queens == n) {
+            return queens;
         }
-        for (x in {1 .. n} - {i : i in l}) {
+        for (x in {1..n} - {i : i in queens}) {
             check {
-                testNext(l, x);
-                return solve(l + [x], n);
+                testNext(queens, x);
+                return solve(queens + [x], n);
             } 
         }
         backtrack;
     };
-    testNext := procedure(l, x) {
-        m := #l;
-        if (exists (i in {1 .. m} | i-l[i] == m+1-x || i+l[i] == m+1+x)) {
+    testNext := procedure(queens, x) {
+        m := #queens;
+        if (exists (i in {1..m} | i-queens[i] == m+1-x || i+queens[i] == m+1+x)) {
             backtrack;
         }
     };
@@ -328,27 +337,19 @@ puzzle provides the opportunity to show of the power of the \texttt{eval} functi
 \caption{Solving the 8 queens puzzle using \texttt{check} and \texttt{backtrack}.}
 \label{fig:queens-nice.stlx}
 \end{figure}
-
-The program in Figure \ref{fig:queens-nice.stlx} on page
-\pageref{fig:queens-nice.stlx} solves the 
-\href{http://en.wikipedia.org/wiki/Eight_queens_puzzle}{\emph{8 queens puzzle}}.  This problem asks to
-position 8 queens on a chessboard such that no queen can attack another queen.  In chess, a queen
-can attack all those positions that are either on the same row, on the same column, or on the
-same diagonal as the queen.  The details of the program in Figure \ref{fig:queens-nice.stlx}
-are as follows.
 \begin{enumerate}
 \item The procedure \texttt{solve} has two parameters.
       \begin{enumerate}
-      \item The first parameter \texttt{l} is a list of positions of queens that
+      \item The first parameter \texttt{queens} is a list of positions of queens that
             have already been placed on the board.  It can be
-            assumed that the queens already positioned in \texttt{l} 
+            assumed that the queens already positioned in \texttt{queens} 
             do not attack each other.
             
-            Technically, \texttt{l} is a list of integers.
-            If \texttt{l[$i$]$=k$}, then the queen in row $i$ is placed in column $k$.  For example,
+            Technically, \texttt{queens} is a list of integers.
+            If \texttt{queens[$i$]$=k$}, then the queen in row $i$ is placed in column $k$.  For example,
             \\[0.2cm]
             \hspace*{1.3cm}
-            $l = \texttt{[4, 8, 1, 3, 6, 2, 7, 5]}$
+            $\texttt{queens} = \texttt{[4, 8, 1, 3, 6, 2, 7, 5]}$
             \\[0.2cm]
             is a solution of the 8 queens puzzle.  This solution is depicted in Figure
             \ref{fig:queens-solution} on page \pageref{fig:queens-solution}.
@@ -382,30 +383,31 @@ are as follows.
       \hspace*{1.3cm}
       \texttt{solve([], 8)}.
       \\[0.2cm]
-      Taking the parameter \texttt{l} to be the empty list assumes that initially no queen has
+      Taking the parameter \texttt{queens} to be the empty list assumes that initially no queen has
       been placed on the chess board.  Therefore, the assumption that the queens already
-      positioned in the list \texttt{l} do not attack each other is trivially satisfied.
-\item In line 2 it is checked, whether the list \texttt{l} already specifies the positions of
-      \texttt{n} queens.  If this is the case, then because of the assumption that the queens
-      specified in \texttt{l} do not attack each other, the problem is solved and therefore
-      \texttt{l} is the solution and is returned.
+      positioned in the list \texttt{queens} do not attack each other is trivially satisfied.
+\item In line 2 it is checked, whether the list \texttt{queens} already specifies the positions of
+      \texttt{n} queens, that is we check whether \texttt{queens} is  a list of length \texttt{n}.
+      If this is the case, then because of the assumption that the queens 
+      specified in \texttt{queens} do not attack each other, the problem is solved and therefore the list
+      \texttt{queens} is a solution that is returned.
 \item Otherwise, we  find a position \texttt{x} for the next queen in line 5.  Of course,
       there is no point in trying to position the next queen into a column that has already been
-      taken by one of the queens in the list \texttt{l}.  Therefore, the number of column positions
+      taken by one of the queens in the list \texttt{queens}.  Therefore, the number of column positions
       available for the next queen is given by the set
       \\[0.2cm]
       \hspace*{1.3cm}
-      \texttt{\{1 ..  $\hspace*{-0.2cm}$n\} - \{i $\hspace*{-0.1cm}$: $\hspace*{-0.2cm}$i in l\}}.
+      \texttt{\{1 ..  $\hspace*{-0.2cm}$n\} - \{i $\hspace*{-0.1cm}$: $\hspace*{-0.2cm}$i in queens\}}.
       \\[0.2cm]
-      Note that we had to convert the list \texttt{l} into the set 
-      \texttt{\{i $\hspace*{-0.1cm}$: $\hspace*{-0.2cm}$i in l\}}
-      in order to be able to subtract the set of columns specified in \texttt{l} from the set of all
+      Note that we had to convert the list \texttt{queens} into the set 
+      \texttt{\{i $\hspace*{-0.1cm}$: $\hspace*{-0.2cm}$i in queens\}}
+      in order to be able to subtract the set of columns specified in \texttt{queens} from the set of all
       possible columns.
 \item Once we have decided to position the next queen in column \texttt{x}, we have to 
       test whether a queen that is put into that position can be attacked by another queen
       which happens to be on the same diagonal.  This test is performed in line 7 with the help
       of the function \texttt{testNext}.
-\item If this test succeeds, we add a queen in position \texttt{x} to the list \texttt{l} and
+\item If this test succeeds, we add a queen in position \texttt{x} to the list \texttt{queens} and
       recursively try to solve the resulting instance of the problem.
 \item On the other hand, if the call to \texttt{testNext} in line 7 fails, we have to try
       the remaining values for \texttt{x}.   The function \texttt{testNext} does not return a 
@@ -417,7 +419,7 @@ are as follows.
       After that,  the \texttt{for} loop in line 5 proceeds and picks the next
       candidate for \texttt{x}.
 \item During the recursive invocation of the procedure \texttt{solve} in line 8, we might
-      discover that the list \texttt{l + [x]} can not be completed into a solution of the 8
+      discover that the list \texttt{queens + [x]} can not be completed into a solution of the 8
       queens puzzle.   In this case, it is the function \texttt{solve} that backtracks
       in line 11.  This happens when the \texttt{for} loop in line 5 is exhausted and we
       have not found a solution.  Then
@@ -426,30 +428,30 @@ are as follows.
 \item The function \texttt{testNext} in line 13 has two parameters:  The first parameter is the list
       of already positioned queens while the second parameter specifies the column of the next
       queen.  The function checks whether the queen specified by \texttt{x} is on the same
-      diagonal as any of the queens in \texttt{l}.
+      diagonal as any of the queens in \texttt{queens}.
       
       In order to understand the calculation in line 15 we have to realize that the
       Cartesian coordinates of the queens in column \texttt{x} are 
       \\[0.2cm]
       \hspace*{1.3cm}
-      $\pair(\texttt{\#l}+1, \mathtt{x})$.
+      $\pair(\texttt{\#queens}+1, \mathtt{x})$.
       \\[0.2cm]
       A diagonal is specified as the equation of a line with slope either $+1$ or $-1$.
-      The $i$-th  queen in \texttt{l} has the coordinates
+      The $i$-th  queen in \texttt{queens} has the coordinates
       \\[0.2cm]
       \hspace*{1.3cm}
-      $\pair(\texttt{i}, \mathtt{l[i]})$.      
+      $\pair(\texttt{i}, \mathtt{queens[i]})$.      
       \\[0.2cm]
       Therefore, it is on the same ascending diagonal as the queen specified by \texttt{x} if
       we have
       \\[0.2cm]
       \hspace*{1.3cm}
-      $\texttt{i-l[i]} = \texttt{\#l+1-x}$,
+      $\texttt{i-queens[i]} = \texttt{\#queens+1-x}$,
       \\[0.2cm]
       while it is one the same descending diagonal if we have.
       \\[0.2cm]
       \hspace*{1.3cm}
-      $\texttt{i+l[i]} = \texttt{\#l+1+x}$.
+      $\texttt{i+queens[i]} = \texttt{\#queens+1+x}$.
 \end{enumerate}
 
 It is easy to change the program in Figure \ref{fig:queens-nice.stlx} such that all
@@ -463,23 +465,20 @@ solutions are completed.   Figure \ref{fig:queens-all.stlx} on page
       The solutions are then collected in this set.
 \item The new version of the function \texttt{solve} gets \texttt{all} as an additional parameter.
       Note that this parameter is specified in line 2 as an \texttt{rw} parameter, so 
-      the value of \texttt{all} is actually changed by the procedure \texttt{solve}.
+      the value of \texttt{all} can actually be changed by the procedure \texttt{solve}.
 \item The important change in the implementation of \texttt{solve} is that instead of
       returning a solution,  a newly found solution is added to the set \texttt{all} in
       line 10. After that, the function \texttt{solve} backtracks to look for more
-      solutions.   Note that this backtracking here in effect asks the \texttt{for}-loop in line 13 
-      to look for another solution.
+      solutions.   Since the function \texttt{solve} is recursive, this backtracking asks the
+      \texttt{for}-loop in line 13 to look for another solution.
 \item Note that we have to enclose the call to \texttt{solve} in line 4 in a \texttt{check}
       statement.  The reason is that the function \texttt{solve} will never return anything.
       Instead, it will continue to add solutions to the set \texttt{all}.   If this is no longer
       possible, the call to \texttt{solve} will backtrack in line 19.  The \texttt{check} statement 
       in the procedure \texttt{allSolutions} is meant to catch the corresponding fail-exception.
-
-      
-
-\item The implementation of the function \texttt{testNext} has not changed.
+\item The implementation of the function \texttt{testNext} has not changed from the previous program.
 \end{enumerate}
-This program finds all 92 solutions to the $8$ queens puzzle.
+This program finds all 92 solutions of the $8$ queens puzzle.
 
 \begin{figure}[!ht]
 \centering
@@ -489,8 +488,8 @@ This program finds all 92 solutions to the $8$ queens puzzle.
                   labelposition = bottomline,
                   numbers       = left,
                   numbersep     = -0.2cm,
-                  xleftmargin   = 0.8cm,
-                  xrightmargin  = 0.8cm,
+                  xleftmargin   = 0.0cm,
+                  xrightmargin  = 0.0cm,
                 ]
     allSolutions := procedure(n) {
         all := {};
@@ -499,26 +498,20 @@ This program finds all 92 solutions to the $8$ queens puzzle.
         }
         return all;
     };
-    solve := procedure(l, n, rw all) { 
-        if (#l == n) {
-            all += { l };
+    solve := procedure(queens, n, rw all) { 
+        if (#queens == n) {
+            all += { queens };
             backtrack;
         }
-        for (x in {1 .. n} - {i : i in l}) {
+        for (x in {1 .. n} - {i : i in queens}) {
             check {
-                testNext(l, x);
-                solve(l + [x], n, all);
+                testNext(queens, x);
+                solve(queens + [x], n, all);
             } 
         }
         backtrack;
     };
-    testNext := procedure(l, x) {
-        m := #l;
-        if (exists (i in {1 .. m} | i-l[i] == m+1-x || i+l[i] == m+1+x)) {
-            backtrack;
-        }
-    };
-\end{Verbatim}
+ \end{Verbatim}
 \vspace*{-0.3cm}
 \caption{Computing all solutions of the $n$ queens puzzle.}
 \label{fig:queens-all.stlx}
@@ -583,7 +576,9 @@ In order to solve the puzzle, we also have to know the following facts:
 \end{enumerate}
 
 In order to solve this problem we use a generic approach and first implement a general function that
-can be used to solve \emph{constraint satisfaction problems}.  Figure \ref{fig:generateAndTest.stlx}
+can be used to solve
+\href{https://en.wikipedia.org/wiki/Constraint_satisfaction_problem}{\emph{constraint satisfaction problems}}.  
+Figure \ref{fig:generateAndTest.stlx} 
 on page \pageref{fig:generateAndTest.stlx} shows the implementation of the function
 \texttt{generateAndTest} that can be used to solve a constraint satisfaction problem via
 backtracking.  This function is called with three arguments.
@@ -736,8 +731,8 @@ The kind of programming that is exhibited here is often called
 \caption{The statement generated by \texttt{generateAndTest}.}
 \label{fig:generateAndTest.stlx-code}
 \end{figure}
-
-We proceed to discuss the details of the generation of the procedure string that is later
+\noindent
+We proceed to discuss the details of the generation of the string \texttt{stmnt} that is later
 evaluated.  
 \begin{enumerate}
 \item The string \texttt{stmnt} that is to contain the definition of the generated code is
@@ -886,7 +881,8 @@ interpreted as the fact that the third house is red.  Let us discuss the details
       in line 44.
 \item Finally, line 45 calls the function \texttt{generateAndTest} to solve the puzzle.
 \end{enumerate}
-
+When the program runs we find out that the zebra is in house number 5 while the inhabitant of the
+first house drinks water.
 
 
 %%% Local Variables: 

@@ -11,15 +11,16 @@ is an agglomeration of variables and functions.  These variables are referred to
 \emph{member variables}, while the functions are called \emph{methods}.  
 In this chapter we demonstrate how classes can be defined and used in \textsc{SetlX}.  
 However, this chapter is \underline{not} intended to be an introduction into object-oriented
-programming.  Therefore,  we assume that the reader 
-has had some previous exposition to object-oriented programming in a language like \textsl{Java} or
-\texttt{C++}.   In the first section of this chapter, we give some simple examples of class definitions.
+programming.  Instead,  we assume that the reader 
+has had some previous exposure to object-oriented programming via a programming language like \textsl{Java},
+\texttt{C++}, or \textsl{Python}.  In the first section of this chapter, we give some simple
+examples of class definitions.  
 The programs presented in that section are not intended to compute anything useful.  Their
-purpose is just to demonstrate the basic features of object-oriented programming that are available
-in \textsc{SetlX}.  The second  and third subsection will then discuss more interesting examples:
-The second subsection shows how to implement weighted directed graphs via classes and the final
-subsection discusses the implementation of complex numbers.  That subsection will also discuss
-some of the more advanced features of object-oriented programming that are available in
+sole purpose is to demonstrate the basic features of object-oriented programming available
+in \textsc{SetlX}.  The second  and third section will then discuss more interesting examples:
+The second section shows how to implement weighted directed graphs via classes and the final
+section discusses the implementation of complex numbers.  That section will also discuss
+some of the more advanced features of object-oriented programming available in
 \textsc{SetlX}.  In particular, we will discuss operator overloading.
 
 \section{Basic Examples}
@@ -84,8 +85,12 @@ definition next.
       parameters of the constructor of this class, and \textsl{member-and-method-definitions} is a
       list of the definitions of all member variables and methods.
 
-      Contrary to the definition of a procedure, the definition of a class is \underline{not}
-      terminated with the character ``\texttt{;}''.
+      The definition of a class is \underline{not} terminated with the character ``\texttt{;}''.
+      The reason is that, unlike most procedure definitions, a class definition is not part of an
+      assignment.  Actually, a procedure definition does not contain an assignment either.  The
+      reason that most procedure definitions are followed by a semicolon is the fact that most
+      procedure definitions are part of an assignment.  In that case the semicolon following the procedure
+      definition is syntactically not part of the procedure definition but rather terminates the assignment.
 \item In line 2 and line 3 we define the member variables \texttt{mX} and \texttt{mY}.  These two
       member variables store the $x$ and $y$-coordinates of the point that is constructed.
 
@@ -95,13 +100,13 @@ definition next.
       recommendation for naming member variables and you are free to choose any valid variable name
       to designate a member variable.
 \item Line 5 to 8 define getter and setter methods to access and write the member variables
-      \texttt{mX} and \texttt{mY}.  Note that, in order to change the value of a member variable, it
-      is necessary to prefix this member variable with ``\texttt{this.}''.  However, this prefixing is not
+      \texttt{mX} and \texttt{mY}.  Note that, in order to \textbf{change} the value of a member variable, it
+      is necessary to prefix this member variable with the keyword ``\texttt{this.}''.  However, this prefixing is not
       necessary in order to read a member variable, as can be seen in the implementation of the
       methods \texttt{getX} and \texttt{getY}.
 \item Line 9 defines the method \texttt{toStr} that transforms a given object of class
       \texttt{point} into a string.
-\item Finally, we define a method called \texttt{distance} that takes a point \texttt{p} as
+\item Finally, we define a method called \texttt{distance} that takes a point \texttt{p} as its
       argument.  This method computes the distance of the given point to the point \texttt{p}
       using the \href{http://en.wikipedia.org/wiki/Pythagorean_theorem}{Pythagorean theorem}.
 \end{enumerate}
@@ -128,8 +133,8 @@ It is instructive to print the object \texttt{origin} itself.  The statement
 \texttt{print(origin);}
 \\[0.2cm]
 yields the output that is shown in Figure \ref{fig:print_origin} on page \pageref{fig:print_origin}.
-Note that we have formatted this output in order to render it readable.  Closer inspection of the
-output reveals that an object is just a set of all its members.  As \textsc{SetlX} is a functional
+Note that we have formatted this output in order to render it more readable.  Closer inspection of the
+output reveals that an object is just a collection of all its members.  As \textsc{SetlX} is a functional
 language, there is really no distinction between a member variable and a method.  For example, in
 line 5 the variable \texttt{toStr} is just a member variable which happens to be bound to a
 procedure.  Note that the object \texttt{origin} also has a method \texttt{getClass}.
@@ -170,25 +175,25 @@ the class object shown in Figure \ref{fig:point-class} on page \pageref{fig:poin
         { distance := procedure(p) { 
                           return sqrt((mX - p.getX()) ** 2 + (mY - p.getY()) ** 2); 
                       }; 
-                      getX := procedure() { return mX; }; 
-                      getY := procedure() { return mY; }; 
-                      mX := 0; 
-                      mY := 0; 
-                      setX := procedure(x) { this.mX := x; }; 
-                      setY := procedure(y) { this.mY := y; }; 
-                      toStr := procedure() { return "<$mX$, $mY$>"; }; 
-                      getClass := [] |-> class (x, y) { 
-                          mX := x; 
-                          mY := y; 
-                          distance := procedure(p) { 
-                              return sqrt((mX - p.getX()) ** 2 + (mY - p.getY()) ** 2); 
-                          }; 
-                          getX := procedure() { return mX; }; 
-                          getY := procedure() { return mY; }; 
-                          setX := procedure(x) { this.mX := x; }; 
-                          setY := procedure(y) { this.mY := y; }; 
-                          toStr := procedure() { return "<$mX$, $mY$>"; }; 
-                      }
+          getX := procedure() { return mX; }; 
+          getY := procedure() { return mY; }; 
+          mX := 0; 
+          mY := 0; 
+          setX := procedure(x) { this.mX := x; }; 
+          setY := procedure(y) { this.mY := y; }; 
+          toStr := procedure() { return "<$mX$, $mY$>"; }; 
+          getClass := [] |-> class (x, y) { 
+              mX := x; 
+              mY := y; 
+              distance := procedure(p) { 
+                  return sqrt((mX - p.getX()) ** 2 + (mY - p.getY()) ** 2); 
+              }; 
+              getX := procedure() { return mX; }; 
+              getY := procedure() { return mY; }; 
+              setX := procedure(x) { this.mX := x; }; 
+              setY := procedure(y) { this.mY := y; }; 
+              toStr := procedure() { return "<$mX$, $mY$>"; }; 
+          }
         }
     >
 \end{Verbatim}
@@ -304,7 +309,7 @@ If we now define \texttt{origin} as
 \\[0.2cm]
 and print \texttt{origin}, then the resulting output would be as shown in Figure
 \ref{fig:point-static.stlx-origin} on page \pageref{fig:point-static.stlx-origin}.
-Note that now only the member variables are stored in the object
+Note that in this case only the member variables are stored in the object
 \texttt{origin}.  This saves some space.  
 Fortunately, we can still overwrite the static methods on a per-object
 basis, i.e.~the assignments
@@ -322,7 +327,8 @@ unchanged but an expression of the form
 \texttt{origin.getX()}
 \\[0.2cm]
 invokes the function bound to the member variable \texttt{getX} and does no longer invoke
-the function bound to the static variable \texttt{getX}.
+the function bound to the static variable \texttt{getX}.  Hence, the static member functions are
+effectively hidden.
 
 Going back to the code in Figure \ref{fig:point-static.stlx}, note that in order to invoke one of these
 static methods we still need an object of class \texttt{point}.  The reason is that otherwise the
@@ -577,19 +583,19 @@ To this end, we define a binary relation \texttt{edges} so that for every node $
 expression \texttt{edges[$x$]} is a set of the form
 \\[0.2cm]
 \hspace*{1.3cm}
-$\texttt{edges[}x\mathtt{]} = \{ \pair(y_1,w_1), \cdots \pair(y_n,w_n) \}$, 
+$\texttt{edges[}x\mathtt{]} = \{ [y_1,w_1], \cdots [y_n,w_n] \}$, 
 \\[0.2cm]
 so that there is an edge form $x$ to $y_i$ for all $i=1,\cdots,n$ and, furthermore, the length of
 this edge is $w_i$, i.e.~we have 
 \\[0.2cm]
 \hspace*{1.3cm}
-$\mathtt{length}(\pair(x,y_i)) = w_i$ \quad for all $i=1,\cdots,n$.
+$\mathtt{length}([x,y_i]) = w_i$ \quad for all $i=1,\cdots,n$.
 \\[0.2cm]
 Stated differently, if $x$ and $y$ are nodes in $V$ such that $\pair(x,y)$ is an edge in $E$ of length
 $w$, then we have
 \\[0.2cm]
 \hspace*{1.3cm}
-$\pair(y,w) \in \mathtt{edges[}x\mathtt{]}$.
+$[y,w] \in \mathtt{edges[}x\mathtt{]}$.
 \\[0.2cm]
 For example, the relation \texttt{edges} for the graph shown in Figure \ref{fig:graph.eps} can be
 defined in \textsc{SetlX} as follows:
@@ -620,7 +626,7 @@ defined in \textsc{SetlX} as follows:
       static {
         shortestPath := procedure(source) {
             oo   := mathConst("Infinity");
-            dist := { [ x, oo ]: x in [1 .. mNumberNodes] };
+            dist := { [x, oo]: x in [1 .. mNumberNodes] };
             dist[source] := 0;
             fringe  := { [0, source] };
             visited := {};
@@ -748,7 +754,7 @@ Initially, the only node that is definitely reachable from the node \texttt{sour
 The algorithm to compute all distances maintains two data structures.
 \begin{enumerate}
 \item \texttt{fringe} is the set of those nodes $x$ that have already been encountered when traversing
-      the graph, but which have not been fully explored in the sense that there are nodes $y$ such
+      the graph, but which have not been fully explored in the sense that there might exist nodes $y$ such
       that there is an edge $\pair(x,y)$ and the node $y$ has not been visited.
       
       However, instead of just storing these nodes, for every node $y$ the set \texttt{fringe} stores a pair
@@ -765,7 +771,8 @@ The algorithm to compute all distances maintains two data structures.
       \texttt{\{ [0, source] \}}
       \\[0.2cm]
       in line 13.  Since a node $u$ with distance $d$ is stored as the pair $[d, u]$, the set
-      \texttt{fringe} can be used as a priority queue.  The reason is that in \textsc{SetlX} every
+      \texttt{fringe} can be used as a \href{https://en.wikipedia.org/wiki/Priority_queue}{priority queue}.  
+      The reason is that in \textsc{SetlX} every 
       set is stored as an ordered binary tree.  Therefore, the elements of a set are ordered and it
       is easy to pick the smallest element of a set using the function \texttt{first}.  
       Since, furthermore, lists (and pairs in
@@ -793,8 +800,8 @@ then we can improve our estimate of $\texttt{dist}[v]$ by assigning
 \\[0.2cm]
 After updating the distance of node $v$, we have to add this node to the \texttt{fringe} so that we
 can in turn deal with those nodes that are reachable from node $v$.  The thing that makes Dijkstra's
-algorithm fast is the fact that once a node is visited we know that its distance can not be improved
-in the future.  A proof of this fact can be found in a 
+algorithm fast is the fact that once a node is visited it can be shown that its distance can not be
+improved further.  A proof of this fact can be found in a 
 \href{http://www-m3.ma.tum.de/foswiki/pub/MN0506/WebHome/dijkstra.pdf}{paper} of Dijkstra \cite{dijkstra:59}.
 \vspace*{0.3cm}
 
@@ -802,7 +809,8 @@ in the future.  A proof of this fact can be found in a
 \textbf{Remark}:  At this point you might feel a little bit disappointed because the previous example
 has not made much use of the object-oriented features of \textsc{SetlX}.  However, that is exactly
 the point of this example: Of course we could have implemented graph nodes as object of some class
-and do the same for edges.  However, the resulting program would then suffer from code bloat.  We do
+and do the same for edges.  However, the resulting program would then suffer from 
+\href{https://en.wikipedia.org/wiki/Code_bloat}{code bloat}.  We do
 not think that object-oriented programming should be used for the sake of object-oriented
 programming but rather see it as a convenient method to encapsulate data, nothing more.  In
 particular, an object-oriented program is not, in general, better than a program that does not use
@@ -888,8 +896,8 @@ example, methods to add and multiply two complex numbers would have the form sho
             return complex(r * cos(mImag), r * sin(mImag));
         };
         f_log := procedure() {
-            r := log(mReal * mReal + mImag * mImag) / 2; 
-            return complex(r, atan2(mImag, mReal));
+            logR := log(mReal * mReal + mImag * mImag) / 2; 
+            return complex(logR, atan2(mImag, mReal));
         };
         f_str := [] |-> mReal + " + " + mImag + " * i";
         equals := procedure(that) {
@@ -1056,6 +1064,9 @@ them next.
       \begin{enumerate}
       \item The operator ``\texttt{-}'' has the name ``\texttt{minus}'' when used as a unary prefix
             operator. 
+
+            It should be noted that \setlx\ does \textbf{not} support the operator ``\texttt{+}'' as a
+            unary prefix operator.
       \item The operator ``\texttt{!}'' has the name ``\texttt{not}'' when used as a unary prefix
             operator.  This same operator has the name ``\texttt{factorial}'' when used as a unary
             postfix operator.
@@ -1133,8 +1144,9 @@ them next.
 \item Finally, we define the method \texttt{equals} in line 31.  This method is automatically
       invoked when two objects of class \texttt{complex} are compared using either the
       operator ``\texttt{==}'' or the operator ``\texttt{!=}''.
-\item Unfortunately, it does not make sense to define the operator ``\texttt{<}'' for complex
-      numbers.  Therefore, this operator has not been overloaded.
+\item Since it is not possible to define a linear order on the set of complex numbers that is
+      compatible with the arithmetic operations, it does not make sense to define the operator
+      ``\texttt{<}'' for complex numbers.  Therefore, this operator has not been overloaded.
 \end{enumerate}
 
 

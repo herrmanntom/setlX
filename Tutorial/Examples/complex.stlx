@@ -28,8 +28,8 @@ class complex(real, imag) {
         return complex(r * cos(mImag), r * sin(mImag));
     };
     f_log := procedure() {
-        r := log(mReal * mReal + mImag * mImag) / 2; 
-        return complex(r, atan2(mImag, mReal));
+        logR := log(mReal * mReal + mImag * mImag) / 2; 
+        return complex(logR, atan2(mImag, mReal));
     };
   }
 }

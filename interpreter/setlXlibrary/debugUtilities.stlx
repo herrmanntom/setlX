@@ -1,0 +1,43 @@
+class tracer() {
+    mStoredProcedures := {};
+    
+    trace := procedure(function, functionName) {
+        mStoredProcedures[functionName] := function;
+        tracedFunction := closure(*args) {
+            argsString := args + "";
+            argsString := argsString[2..-2];
+            print("calling $functionName$($argsString$)");
+            result := function(*args);
+            print("$functionName$($argsString$) = $result$");
+            return result;
+        };
+        return tracedFunction;
+    };
+    untrace := procedure(functionName) {
+        return mStoredProcedures[functionName];
+    };
+}
+
+class profiler() {
+    mTimes            := {};
+    mStoredProcedures := {};
+    
+    // Modify the given function so that the execution times are recorded.
+    profile := closure(function, functionName) {
+        mTimes[functionName] := 0;
+        profiledFunction := closure(*args) {
+            start  := now();
+            result := function(*args);
+            stop   := now();
+            time   := stop - start;
+            mTimes[functionName] += time;
+            return result;
+        };
+        return profiledFunction;
+    };
+    unprofile := procedure(functionName) {
+        return mStoredProcedures[functionName];
+    };
+}
+
+

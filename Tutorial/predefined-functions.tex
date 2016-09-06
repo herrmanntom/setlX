@@ -5,7 +5,8 @@ sections.
 \item The first section lists all functions that are related to sets and lists.
 \item The second section lists all functions that are related to strings.
 \item The third sections lists all functions that are used to work with terms.
-\item The following sections lists all mathematical functions.
+\item The following sections lists all mathematical functions, e.g.~functions 
+      like \texttt{sqrt} or \texttt{exp}.
 \item The next section list all functions that are used to test whether an object has a
       given type.
 \item Section six lists the functions that support interactive debugging.
@@ -17,12 +18,28 @@ sections.
 
 \section{Functions and Operators on Sets and Lists}
 Most of the operators and functions that are supported on sets and lists have already been
-discussed.  However, for the convenience of the reader, this section describes all
-operators and functions.  However, the discussion of those functions that have already
-been described previously will be quite short.
+discussed.  For the convenience of the reader, this section describes all
+operators and functions, even those that have already been discussed.  
 \begin{enumerate}
 \item \texttt{+}:  For sets, the binary operator ``\texttt{+}'' computes the union
       of its arguments.  For lists, this operator appends its arguments.
+
+      If the first argument of the binary operator ``\texttt{+}'' is a set and the second argument
+      is a list, then the elements of the list are added to the set.  If, instead, the first
+      argument is a list and the second argument is a set, then the set is converted into a list and
+      this list is appended to the first list.
+
+      This makes it trivial to implement a sorting procedure as shown below:
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \texttt{mySort := l |-> [] + (\{\} + l);}
+      \\[0.2cm]
+      When the function \texttt{mySort} is called with a list \texttt{l}, the following happens:
+      \begin{enumerate}
+      \item The elements of the list \texttt{l} are inserted into a set.  
+      \item The elements of this set, which is ordered since all sets are ordered in \setlx, are
+            inserted into a list.
+      \end{enumerate}
 \item \texttt{*}:  If both arguments are sets, the operator ``\texttt{*}'' computes the
       intersection of its arguments. 
       
@@ -37,16 +54,32 @@ been described previously will be quite short.
       \hspace*{1.3cm}
       \texttt{[1, 2, 3, 1, 2, 3, 1, 2, 3]}
       \\[0.2cm]
-      as a result.  Instead of a list, the argument $l$ can also be a string.
+      as a result.  Instead of being a list, the argument $l$ can also be a string.
       In this case, the string $l$ is replicated $n$ times.
 \item \texttt{-}:  The operator ``\texttt{-}'' computes the set difference of its arguments.
       This operator is only defined for sets.
-\item \texttt{\symbol{37}}:  The operator ``\texttt{\symbol{37}}'' computes the symmetric 
-      difference of its arguments.
-      This operator is only defined for sets.
+\item \texttt{\symbol{37}}:  The operator ``\texttt{\symbol{37}}'' computes the 
+      \href{https://en.wikipedia.org/wiki/Symmetric_difference}{\emph{symmetric difference}} of its arguments.
+      This operator is not defined for lists.
 
       Of course, all of the operators discussed so far are also defined on numbers and
       have the obvious meaning when applied to numbers.
+\item \texttt{**}: The operator ``\texttt{**}'' computes the 
+      \href{https://en.wikipedia.org/wiki/Power_set}{power set} of the set $s$ if it is used
+      in an expression of the form
+      \\
+      \hspace*{1.3cm}
+      \texttt{2 ** $s$}.
+      \\[0.2cm]
+      If, instead, the operator is used in an expression of the form
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \texttt{s ** 2}
+      \\[0.2cm]
+      where $s$ is a set, then it returns the 
+      \href{https://en.wikipedia.org/wiki/Cartesian_product}{Cartesian product} of $s$ with itself.
+
+      The operator ``\texttt{**}'' is not defined for lists.
 \item \texttt{+/}:  The operator ``\texttt{+/}'' computes the sum of all the elements
       in its argument.  These elements need not be numbers.  They can also be sets, lists,
       or strings.  For example, if $s$ is a set of sets, then the expression 
@@ -59,8 +92,57 @@ been described previously will be quite short.
 \item \texttt{*/}:  The operator ``\texttt{*/}'' computes the product of all the elements
       in its argument.  These elements might be  numbers or sets.  In the latter case,
       the operator computes the intersection of all elements.
+\item \texttt{><}: If the arguments of the operator ``\texttt{><}'' are sets, then this operator computes the 
+      \href{https://en.wikipedia.org/wiki/Cartesian_product}{\emph{Cartesian product}}
+      of its arguments.  For example, the expression
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \texttt{\{1,2,3\} >< \{8,9\}}
+      \\[0.2cm]
+      yields the set
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \texttt{\{[1,8], [2,8], [3,8], [1,9], [2,9], [3,9]\}}
+      \\[0.2cm]
+      If, instead, both arguments of this operator are lists, then the expression 
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \texttt{l1 >< l2}
+      \\[0.2cm]
+      \emph{zips} the lists \texttt{l1} and \texttt{l2} into a single list, i.e.~the first element
+      of \texttt{l1} is paired with the first element of \texttt{l2}, the second element of
+      \texttt{l1} is paired with the second element of \texttt{l2}, and, in general, the
+      $i$-th element of \texttt{l1} is paired with the $i$-th element of \texttt{l2}. 
+      The resulting pairs are collected in a list, which is the result.
+      For example, the expression
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \texttt{[1,2] >< [3,4]}
+      \\[0.2cm]
+      yields the result
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \texttt{[[1, 3], [2, 4]]}.
+      \\[0.2cm]
+      Formally, we can define the function \texttt{zip} as follows:
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \texttt{zip := [l1, l2] |-> [ [l1[i], l2[i]] : i in [1 .. \#l1] ];}
+      \\[0.2cm]
+      Then, if the lists \texttt{l1} and \texttt{l2} have the same length, we have that
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \texttt{zip(l1, l2) == l1 >< l2}.
+      \\[0.2cm]
+      If, instead, the lists \texttt{l1} and \texttt{l2} do not have the same length, then the expression 
+      \texttt{l1 >< l2} raises an error.
 \item \texttt{arb}: The function $\texttt{arb}(s)$ picks an arbitrary element from the
       sequence $s$.  The argument $s$ can either be a set, a list, or a string.
+
+      \textbf{Note} that an arbitrary element is not the same as a random element.  Instead, the
+      element returned by $\texttt{arb}(s)$ will be either the first or the last element of the set
+      $s$.  However, this fact is considered an implementation secret and your programs should not
+      rely on this behaviour.
 \item \texttt{collect}: The function $\texttt{collect}(l)$ takes a list $l$ of arbitrary elements.
       The purpose of this function is to count the number of occurrences of these elements and to
       compute a binary relation $l$ such that for every element $x$ in the list $l$, the binary
@@ -112,17 +194,19 @@ been described previously will be quite short.
       \hspace*{1.3cm}
       \texttt{max(\{1,2,3\})}
       \\[0.2cm]
-      returns the number $3$.  
+      returns the number $3$.  If $s$ contains elements that are not numbers, then evaluating the
+      expression \texttt{max($s$)} raises an error.
 \item \texttt{min}:  If $s$ is a set or a list containing only numbers, the expression $\mathtt{min}(s)$ computes the smallest
       element of $s$.  For example, the expression
       \\[0.2cm]
       \hspace*{1.3cm}
       \texttt{min(\{1,2,3\})}
       \\[0.2cm]
-      returns the number $1$.  
-\item \texttt{pow}:  If $s$ is a set, the expression $\mathtt{pow}(s)$ computes the power
-      set of $s$.  The power set of $s$ is defined as the set of all subsets of $s$.  
-      For example, the expression
+      returns the number $1$.  If $s$ contains elements that are not numbers, then evaluating the
+      expression \texttt{min($s$)} raises an error.
+\item \texttt{pow}:  If $s$ is a set, the expression $\mathtt{pow}(s)$ computes the 
+      \href{https://en.wikipedia.org/wiki/Power_set}{power set} of $s$.  The power set of $s$ is
+      defined as the set of all subsets of $s$.  For example, the expression
       \\[0.2cm]
       \hspace*{1.3cm}
       \texttt{pow(\{1,2,3\})}
@@ -165,19 +249,33 @@ been described previously will be quite short.
 \section{Functions for String Manipulation}
 \setlx\ provides the following functions that are related to strings.
 \begin{enumerate}
-\item \texttt{char}:  For a natural number $n \in \{ 1, \cdots, 127 \}$,  the expression
+\item \texttt{+}:  The operator ``\texttt{+}'' concatenates strings.
+\item \texttt{*}:  the operator ``\texttt{*}'' repeats a string a given number of times.
+      For example, both of the expressions
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \texttt{3 * "abc"} \quad and \quad \texttt{"abc" * 3}
+      \\[0.2cm]
+      yield the result 
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \texttt{"abcabcabc"}.
+\item \texttt{char}:  For a natural number $n \in \{ 0, 1, 2, \cdots, 127 \}$,  the expression
       \\[0.2cm]
       \hspace*{1.3cm}
       $\mathtt{char}(n)$
       \\[0.2cm]
-      computes the character with the \textsc{Ascii} code $n$.  For example,
+      computes the character with the 
+      \href{https://en.wikipedia.org/wiki/ASCII}{\textsc{Ascii}} code $n$.  For example,
       $\mathtt{char}(65)$ yields the string \texttt{\symbol{34}A\symbol{34}}.
+
+      \textbf{Note} that $\texttt{char}(n)$ is undefined if either $n < 0$ or $n > 127$.
 \item \texttt{endsWith}: The function \texttt{endsWith} is called as
       \\[0.2cm]
       \hspace*{1.3cm}
       $\texttt{endsWith}(s,t)$.
       \\[0.2cm]
-      Here, $s$ and $t$ have to be strings.  The function succeeds if the string $t$ is a
+      Here, both $s$ and $t$ have to be strings.  The function succeeds if the string $t$ is a
       suffix of the string $s$, i.e.~if there is a string $r$ such that the equation
       \\[0.2cm]
       \hspace*{1.3cm}
@@ -266,7 +364,7 @@ been described previously will be quite short.
 \item \texttt{replaceFirst}: The function \texttt{replaceFirst} is called as
       \\[0.2cm]
       \hspace*{1.3cm}
-      $\mathtt{replace}(s, r, t)$.
+      $\mathtt{replaceFirst}(s, r, t)$.
       \\[0.2cm]
       Here, $s$ is a string, $r$ is a regular expression, and $t$ is another string.
       The first substring $u$ of the string $s$ that is matched by the regular expression $r$ is
@@ -310,7 +408,7 @@ been described previously will be quite short.
       \texttt{split("abc|xyz", "\symbol{92}\symbol{92}|");}
       \\[0.2cm]
       The function \texttt{split} is very handy when processing comma separated values from
-      \textsc{CVS} files.
+      \textsc{CSV} files.
 \item \texttt{str}:  The function \texttt{str} is called as
       \\[0.2cm]
       \hspace*{1.3cm}
@@ -331,8 +429,8 @@ been described previously will be quite short.
 \item \texttt{toUpperCase}:  Given a string $s$, the expression $\texttt{toUpperCase}(s)$
       converts all characters of $s$ to upper case.
 \item \texttt{trim}:  Given a string $s$, the expression $\mathtt{trim}(s)$ returns a
-      string that is $s$ without all leading or trailing white space characters.  For
-      example, the expression
+      string that is the result of removing all leading or trailing white space characters from the
+      string $s$.  For example, the expression
       \\[0.2cm]
       \hspace*{1.3cm}
       \texttt{trim("  abc xyz\symbol{92}n")}
@@ -394,11 +492,16 @@ The following functions support terms.
       \\[0.2cm]
       produces the following output:
 \begin{verbatim}
-    ^procedure([^parameter(^variable("n"))], 
-                ^block([^return(^product(^variable("n"), ^variable("n")))])
-              )
+@@@procedure([@@@parameter("n", "nil")], 
+             @@@block(
+                 [@@@return(@@@product(@@@variable("n"), @@@variable("n")))]
+             )
+            )
 \end{verbatim}
-      However, there is one twist: If $v$ is either a set or a list,
+      The funny looking function symbols that are preceded by three occurrences of the character
+      ``\texttt{\symbol{64}}'' are the functors that are used by \setlx\ internally.
+
+      However, there is one twist when evaluating $\texttt{getTerm}(v)$: If $v$ is either a set or a list,
       then $\texttt{getTerm}(v)$ transforms the elements of $v$ into terms and returns the
       resulting set or list.  
 \item \texttt{makeTerm}: Given a functor $F$ and a list $l = [s_1, \cdots, s_n]$,
@@ -420,14 +523,13 @@ The following functions support terms.
       \texttt{canonical(parse("x+2*y"));}
       \\[0.2cm]
       yields the string
-      \\[0.2cm]
-      \hspace*{1.3cm}
-      \texttt{\symbol{94}sum(\symbol{94}variable(\symbol{34}x\symbol{34}), \symbol{94}product(2, \symbol{94}variable(\symbol{34}y\symbol{34})))}.
-      \\[0.2cm]
+\begin{verbatim}
+      @@@sum(@@@variable("x"), @@@product(2, @@@variable("y")))
+\end{verbatim}
       This shows that, internally, variables are represented using the functor
-      \texttt{\symbol{94}variable} and that the operator ``\texttt{+}'' is represented by
-      the functor \texttt{\symbol{94}sum}.
-\item \texttt{parse}:  Given a string $s$, the expression
+      ``\texttt{\symbol{64}\symbol{64}\symbol{64}variable}'' and that the operator ``\texttt{+}'' is represented by
+      the functor ``\texttt{\symbol{64}\symbol{64}\symbol{64}sum}''.
+\item \texttt{parse}:  Given a string $s$ that is a valid expression in \setlx, the expression
       \\[0.2cm]
       \hspace*{1.3cm}
       $\mathtt{parse}(s)$ 
@@ -446,14 +548,73 @@ The following functions support terms.
       \hspace*{1.3cm}
       \texttt{canonical(parseStatements("x := 1; y := 2; z := x + y;"));}
       \\[0.2cm]
-      yields the following term (which has been formatted for easier readability):
+      yields the following term (which has been formatted for enhanced readability):
 \begin{verbatim}
-      ^block([^assignment(^variable("x"), 1), 
-              ^assignment(^variable("y"), 2), 
-              ^assignment(^variable("z"), ^sum(^variable("x"), ^variable("y")))
-             ])
+@@@block([@@@assignment(@@@variable("x"), 1), 
+          @@@assignment(@@@variable("y"), 2), 
+          @@@assignment(@@@variable("z"), @@@sum(@@@variable("x"), @@@variable("y")))
+       ])
 \end{verbatim}
 \end{enumerate}
+
+\subsection{Library Functions for Term Manipulation}
+Beside the predefined functions discussed above, the library ``\texttt{termUtilities}'' implements
+three functions that process terms.  This library is loaded via the command
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{loadLibrary("termUtilities");}
+\\[0.2cm]
+After loading this library, the following functions will be available.
+\begin{enumerate}
+\item $\texttt{toTerm}(t)$:  This function takes a term $t$ that has been produced by a call to the function
+      \texttt{parse}.  This term is then simplified into a more natural structure.  For example, if we issue
+      the command
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \texttt{t := parse(exp(x));}
+      \\[0.2cm] 
+      and then inspect the term \texttt{t} using the command
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \texttt{canonical(t);}
+      \\[0.2cm]
+      the result is
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \texttt{@@@call(@@@variable("exp"), [@@@variable("x")], "nil")}.
+      \\[0.2cm]
+      For many applications, the structure of this term is too complicated.  We can simplify the
+      term \texttt{t} using the function \texttt{toTerm}.  After the statement
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \texttt{s := toTerm(t);}
+      \\[0.2cm]
+      we can check that the term \texttt{s} is indeed simpler using the command
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \texttt{canonical(s);}
+      \\[0.2cm]
+      In this case, the result is
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \texttt{@exp(@@@variable("x"))}.
+\item $\texttt{parseTerm}(t)$:  Usually, the function \texttt{toTerm} is used to simplify the result
+      of the predefined function \texttt{parse}.  The function \texttt{parseTerm} combines these two functions. 
+      It is defined as follows:
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \texttt{parseTerm := s |-> toTerm(parse(s)); }
+\item $\texttt{fromTerm}(t)$:  The function \texttt{fromTerm} takes a term $t$ and translates it
+      back into the internal structure required by the function \texttt{evalTerm}.  This function
+      can be seen as an inverse of the function \texttt{toTerm}, i.e.~we have
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \texttt{fromTerm(toTerm(t)) = t}
+      \\[0.2cm]
+      provided \texttt{t} is a term produced by the function \texttt{parse}.
+\end{enumerate}
+
+
 
 \section{Mathematical Functions}
 The function \setlx\ provides the following mathematical functions.
@@ -464,7 +625,7 @@ The function \setlx\ provides the following mathematical functions.
       ``\texttt{*}'',
       ``\texttt{/}'', and
       ``\texttt{\symbol{37}}'' compute the sum, the difference, the product, the quotient,
-      and the remainder of its operands.  The remainder $a \texttt{\symbol{37}} b$ is
+      and the remainder of its operands.  The remainder $a\, \texttt{\symbol{37}}\, b$ is
       defined so that it satisfies
       \\[0.2cm]
       \hspace*{1.3cm}
@@ -477,7 +638,9 @@ The function \setlx\ provides the following mathematical functions.
       \\[0.2cm]
       holds.
 \item $\texttt{abs}(x)$ calculates the absolute value of the number $x$.
-\item $\texttt{ceil}(x)$ calculates the \emph{ceiling} function of $x$.  Mathematically,
+\item $\texttt{ceil}(x)$ calculates the
+      \href{https://en.wikipedia.org/wiki/Floor_and_ceiling_functions}{\emph{ceiling function}} of $x$.
+      Mathematically, 
       $\mathtt{ceil}(x)$ is defined as the smallest integer that is bigger than or equal
       to $x$:
       \\[0.2cm]
@@ -488,8 +651,9 @@ The function \setlx\ provides the following mathematical functions.
       \\[0.2cm]
       \hspace*{1.3cm}
       \texttt{ceil(2.1) = 3}.
-\item $\texttt{floor}(x)$ calculates the \emph{flooring} function of $x$.  Mathematically,
-      $\mathtt{floor}(x)$ is defined as the largest integer that is less than or equal
+\item $\texttt{floor}(x)$ calculates the
+      \href{https://en.wikipedia.org/wiki/Floor_and_ceiling_functions}{\emph{floor function}}  of $x$.
+      Mathematically, $\mathtt{floor}(x)$ is defined as the largest integer that is less than or equal
       to $x$:
       \\[0.2cm]
       \hspace*{1.3cm}
@@ -515,9 +679,7 @@ The function \setlx\ provides the following mathematical functions.
       \hspace*{1.3cm}
       \texttt{mathConst(\symbol{34}infinity\symbol{34}}).
       \\[0.2cm]
-      \setlx\ uses the notation ``\texttt{oo}'' to represent the mathematical symbol
-      $\infty$.  \setlx\ supports a little bit of arithmetic using $\infty$.  For example,
-      the expression
+      \setlx\ supports a little bit of arithmetic using $\infty$.  For example,  the expression
       \\[0.2cm]
       \hspace*{1.3cm}
       \texttt{mathConst("infinity") - 42}
@@ -533,7 +695,8 @@ The function \setlx\ provides the following mathematical functions.
       \texttt{mathConst("infinity") - mathConst("infinity");}
       \\[0.2cm]
       do not have a meaningful interpretation and result in an error message.
-\item $\mathtt{nextProbablePrime}(n)$ returns the next probable prime number that is greater than
+\item $\mathtt{nextProbablePrime}(n)$ returns the next 
+      \href{https://en.wikipedia.org/wiki/Probable_prime}{probable prime number} that is greater than
       $n$.  Here, $n$ needs to be a natural number.   The probability that the result of 
       $\mathtt{nextProbablePrime}(n)$ is not a prime number is less than $2^{-100}$.
       For example, to find the smallest prime number greater than 1000 we can use the expression
@@ -582,19 +745,21 @@ The function \setlx\ provides the following mathematical functions.
       The implementation of floating point numbers is based on the \textsl{Java} class
       \texttt{Double}.  Therefore, floating point numbers satisfy the specification given in the
       IEEE standard 754 for the arithmetic of floating point numbers.
-\item Furthermore, the trigonometrical functions \texttt{sin}, \texttt{cos}, \texttt{tan}
-      and the associated inverse trigonometrical functions 
-      \texttt{asin}, 
-      \texttt{acos}, and 
-      \texttt{atan}
-      are all supported.  For example, the expression
+\item Furthermore, the 
+      \href{https://en.wikipedia.org/wiki/Trigonometric_functions}{trigonometric functions} 
+      \texttt{sin}, \texttt{cos}, \texttt{tan} and the associated 
+      \href{https://en.wikipedia.org/wiki/Inverse_trigonometric_functions}{inverse trigonometrical functions}
+      \texttt{asin}, \texttt{acos}, and \texttt{atan}
+      are supported.  For example, the expression
       \\[0.2cm]
       \hspace*{1.3cm}
       \texttt{sin(mathConst(\symbol{34}pi\symbol{34})/2);}
       \\[0.2cm]
       yields $1.0$.
 \item The functions $\texttt{atan2}(y,x)$ and $\texttt{hypot}(x,y)$ are useful when converting 
-      a point $\langle x, y \rangle$ from Cartesian coordinates into polar coordinates.  If a
+      a point $\langle x, y \rangle$ from
+      \href{https://en.wikipedia.org/wiki/Cartesian_coordinate_system}{Cartesian coordinates} 
+      into \href{https://en.wikipedia.org/wiki/Polar_coordinate_system}{polar coordinates}.  If a
       point $p$ has Cartesian coordinates $\langle x, y \rangle$ and polar coordinates 
       $\langle r, \varphi \rangle$, then 
       \\[0.2cm]
@@ -606,7 +771,10 @@ The function \setlx\ provides the following mathematical functions.
       \\[0.2cm]
       \hspace*{1.3cm}
       $\mathtt{atan2}(y,x) = \mathtt{atan}\bigl(\frac{y}{x}\bigr)$.
-\item \texttt{exp($x$)} computes $e^x$ where $e$ is Euler's number.  Therefore, the
+\item \texttt{exp($x$)} computes the
+      \href{https://en.wikipedia.org/wiki/Exponential_function}{exponential function} of $x$, 
+      i.e.~$\mathtt{exp}(x)$ computes $e^x$ where $e$ is 
+      \href{https://en.wikipedia.org/wiki/E_(mathematical_constant)}{Euler's number}.  Therefore, the
       expression 
       \\[0.2cm]
       \hspace*{1.3cm}
@@ -615,7 +783,8 @@ The function \setlx\ provides the following mathematical functions.
       yields $2.718281828459046$.
 \item $\texttt{expm1}(x)$ computes $e^x - 1$.  This function is useful when computing values of
       $e^x$ where the absolute value of $x$ is very small.
-\item \texttt{log($x$)} computes the natural logarithm of $x$.  This function is the
+\item \texttt{log($x$)} computes the 
+      \href{https://en.wikipedia.org/wiki/Natural_logarithm}{natural logarithm} of $x$.  This function is the
       inverse function of the exponential function \texttt{exp}.  Therefore, we have
       the equation
       \\[0.2cm]
@@ -624,26 +793,26 @@ The function \setlx\ provides the following mathematical functions.
       \\[0.2cm]
       This equation is valid as long as there is no overflow in the computation of
       $\mathtt{exp}(x)$.
-\item $\mathtt{log1p}(x)$ computes $\mathtt{ln}(x + 1)$, where $\mathtt{ln}$ denotes the natural
-      logarithm.  This function should be used to compute logarithms for values that are very near
-      to $1$.
+\item $\mathtt{log1p}(x)$ computes $\mathtt{log}(x + 1)$, where $\mathtt{log}$ denotes the natural
+      logarithm.  This function should be used to compute $\log(y)$ for values of $y$ such that $y - 1$ is small.
 \item \texttt{log10($x$)} computes the base 10 logarithm of $x$.
-\item \texttt{sqrt($x$)} computes the square root $\sqrt{x}$.  Therefore, as long as $x$
-      is not too large, the equation
+\item \texttt{sqrt($x$)} computes the \href{https://en.wikipedia.org/wiki/Square_root}{square root}
+      of $x$, i.e.~it computes $\sqrt{x}$.  Therefore, as long as $x$ is small enough so that there
+      is no overflow when computing $x\mathtt{*}x$ large, the equation 
       \\[0.2cm]
       \hspace*{1.3cm}
       \texttt{sqrt($x$*$x$)$=x$}
       \\[0.2cm]
       is valid.
-\item \texttt{cbrt($x$)} computes the cubic root $\sqrt[3]{x}$.  Therefore, as long as $x$
-      is not too large, the equation
+\item \texttt{cbrt($x$)} computes the \href{https://en.wikipedia.org/wiki/Cube_root}{cube root} of
+      $x$, i.e.~we have $\mathtt{cbrt}(x) = \sqrt[3]{x}$.  Therefore, as long as $x$ is not too large, the equation
       \\[0.2cm]
       \hspace*{1.3cm}
       \texttt{cbrt($x$*$x$*$x$) $= x$}
       \\[0.2cm]
       is valid.
 \item $\texttt{round}(x)$ rounds the number $x$ to the nearest integer.
-\item $\texttt{nDecimalPlaces}(q, n)$ takes a rational number $q$ and a positive natural
+\item $\texttt{nDecimalPlaces}(q, n)$ takes a positive rational number $q$ and a positive natural
       number $n$ as arguments.  It converts the rational number $q$ into a string that denotes the
       value of $q$ in decimal floating point notation.  This string contains $n$ digits after the
       decimal point.  Note that these digits are truncated, there is no rounding
@@ -656,6 +825,8 @@ The function \setlx\ provides the following mathematical functions.
       \\[0.2cm]
       \hspace*{1.3cm}
       \texttt{nDecimalPlaces(1234567/3,5)} returns ``\texttt{411522.33333}''.
+
+      Note that $\texttt{nDecimalPlaces}(x)$ returns garbage when the argument $x$ is less than $0$.
 \item $\mathtt{ulp}(x)$  returns the difference between the floating point number $x$ and
       the smallest floating point number bigger than $x$.  For example, when working with
       64 bits floating point numbers (which is the default), we have
@@ -664,31 +835,39 @@ The function \setlx\ provides the following mathematical functions.
       $\mathtt{ulp}(1.0) = \texttt{2.220446049250313E-16}$.
       \\[0.2cm]
       \texttt{ulp} is the abbreviation for 
-      \emph{\underline{u}nit in the \underline{l}ast \underline{p}lace}. 
-\item $\mathtt{signum}(x)$ computes the sign of $x$.  If $x$ is positive, the result is
-      $1.0$, if $x$ is negative, the result is $-1.0$.  If $x$ is zero,
+      \href{https://en.wikipedia.org/wiki/Unit_in_the_last_place}{\emph{\underline{u}nit in the \underline{l}ast \underline{p}lace}}. 
+\item $\mathtt{signum}(x)$ computes the 
+      \href{https://en.wikipedia.org/wiki/Sign_function}{sign function} of $x$.  If $x$ is positive,
+      the result is $1.0$, if $x$ is negative, the result is $-1.0$.  If $x$ is zero,
       $\mathtt{signum}(x)$ is also zero.
-\item $\texttt{sinh}(x)$ computes the hyperbolic sine of $x$.  Mathematically, the
-      hyperbolic sine is defined as 
+\item $\texttt{sinh}(x)$ computes the
+      \href{https://en.wikipedia.org/wiki/Hyperbolic_function}{hyperbolic} sine of $x$.  
+      Mathematically, the hyperbolic sine of $x$ is defined as 
       \\[0.2cm]
       \hspace*{1.3cm}
       $\mathtt{sinh}(x) := \frac{1}{2} \cdot \bigl(e^x - e^{-x}\bigr)$.
-\item $\texttt{cosh}(x)$ computes the hyperbolic cosine of $x$.  Mathematically, the
-      hyperbolic cosine is defined as 
+\item $\texttt{cosh}(x)$ computes the
+      \href{https://en.wikipedia.org/wiki/Hyperbolic_function}{hyperbolic} cosine of $x$.
+      Mathematically, the hyperbolic cosine of $x$ is defined as 
       \\[0.2cm]
       \hspace*{1.3cm}
       $\mathtt{cosh}(x) := \frac{1}{2} \cdot \bigl(e^x + e^{-x}\bigr)$.
-\item $\texttt{tanh}(x)$ computes the hyperbolic tangent of $x$.  Mathematically, the
-      hyperbolic tangent is defined as 
+\item $\texttt{tanh}(x)$ computes the
+      \href{https://en.wikipedia.org/wiki/Hyperbolic_function}{hyperbolic} tangent of $x$.  
+      Mathematically, the hyperbolic tangent of $x$ is defined as 
       \\[0.2cm]
       \hspace*{1.3cm}
       $\mathtt{tanh}(x) := \displaystyle \frac{\;\mathtt{sinh}(x)\;}{\mathtt{cosh}(x)}$.
-\item \texttt{isPrime} tests whether its argument is a prime number.  Currently, 
+\item $\texttt{isPrime}(x)$ tests whether its argument is a 
+      \href{https://en.wikipedia.org/wiki/Prime_number}{prime number}.  Currently, 
       this function has a naive implementation and is therefore not efficient.
-\item \texttt{isProbablePrime} tests whether its argument is a prime number.  The test
-      used is probabilistic.  If the function tested is indeed  prime, the test 
-      will succeed.  If the function is not prime, the predicate \texttt{isProbablePrime}
-      nevertheless might return \texttt{true}.  However, the probability that this happens
+\item $\texttt{isProbablePrime}(x)$ tests whether its argument is a
+      \href{https://en.wikipedia.org/wiki/Prime_number}{prime number}.  The test 
+      used is 
+      \href{https://en.wikipedia.org/wiki/Miller-Rabin-primality_test}{probabilistic}.  If
+      $x$ is indeed  prime, the test $\texttt{isProbablePrime}(x)$ 
+      will always succeed.  If $x$ is not prime, the predicate $\texttt{isProbablePrime}(x)$
+      might nevertheless return \texttt{true}.  However, the probability that this happens
       is less than $2^{-30}$.
 
       It should be noticed that the implementation of \texttt{isProbablePrime} is
@@ -815,7 +994,8 @@ might yield the result \texttt{\symbol{34}dfbaec\symbol{34}}, while
 might yield the list \texttt{[1, 7, 4, 6, 3, 5, 2]}.
 
 \subsection{\texttt{nextPermutation}}
-The function \texttt{nextPermutation} can be used to enumerate all possible permutations
+The function \texttt{nextPermutation} can be used to enumerate all possible 
+\href{https://en.wikipedia.org/wiki/Permutation}{permutations}
 of a given list or string.  For example, the function \texttt{printAllPermutations} shown
 in Figure \ref{fig:allPermutations.stlx} prints all permutations of a given list or string.
 Evaluation of the expression
@@ -862,7 +1042,8 @@ Given a set, list or string $l$, the expression
 \hspace*{1.3cm}
 \texttt{permutations}($l$)
 \\[0.2cm]
-returns a set of all permutations of $l$.  For example, the expression
+returns a set of all \href{https://en.wikipedia.org/wiki/Permutation}{permutations} of $l$.  For
+example, the expression 
 \\[0.2cm]
 \hspace*{1.3cm}
 \texttt{permutations("abc")}
@@ -896,7 +1077,7 @@ yields the result
       \vspace*{-0.5cm}
 
       Here, the exception $e$ that gets caught has been thrown by the user and therefore
-      is not an error.  Hence, this program fragment prints \texttt{false}.
+      is not considered an error object.  Hence, this program fragment prints \texttt{false}.
       However, the program fragment
       \begin{verbatim}
       try { om+1; } catch (e) { print(isError(e)); }
@@ -963,6 +1144,149 @@ yields the result
       to speed up the program, this option can be used to switch off all assertions.      
 \end{enumerate}
 
+\subsection{Library Functions for Debugging}
+The library \texttt{debugUtilities} offers more sophisticated procedures for tracing than the
+predefined procedure \texttt{trace} which either traces everything or nothing.  The library
+\texttt{debugUtilities} has to be loaded using the command
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{loadLibrary(debugUtilities);}
+\\[0.2cm]
+In order to trace a specific procedure, we first need to create a tracer using the command
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{myTracer := tracer();}
+\\[0.2cm]
+Then, a procedure with the name $f$ can be traced via the command
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{$f$ := myTracer.trace($f$, "$f$");}
+\\[0.2cm]
+To deactivate tracing of the function $f$, the command
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{$f$ := myTracer.untrace("$f$");}
+\\[0.2cm]
+can be used.  This is explained in more detail in Section \ref{sec:decorators}. 
+
+Besides tracing, the library \texttt{debugUtilities} also supports a very simple form of
+\href{https://en.wikipedia.org/wiki/Profiling_(computer_programming)}{\emph{profiling}}, i.e.~the
+measurement of execution times of a procedure.  To this end, the library "\texttt{debugUtilities}"
+contains the class \texttt{profiler}.  This class offers the function \texttt{profile}.  This
+function is called as follows:
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{$p$.profile($f$, "$f$");}
+\\[0.2cm]
+Here, $p$ is an object of the class \texttt{profiler} and $f$ is the name of a function.  An example
+will clarify the idea.  Figure \ref{fig:fibonacci-timed.stlx} on page
+\pageref{fig:fibonacci-timed.stlx} shows a naive computation of the 
+\href{https://en.wikipedia.org/wiki/Fibonacci_number}{Fibonacci numbers} that makes use of the
+method \texttt{profile}.
+
+\begin{figure}[!ht]
+\centering
+\begin{Verbatim}[ frame         = lines, 
+                  framesep      = 0.3cm, 
+                  firstnumber   = 1,
+                  labelposition = bottomline,
+                  numbers       = left,
+                  numbersep     = -0.2cm,
+                  xleftmargin   = 0.8cm,
+                  xrightmargin  = 0.8cm,
+                ]
+    loadLibrary("debugUtilities");
+    
+    fibonacci := procedure(n) {
+        if (n in [0,1]) {
+            return n;
+        }
+        return fibonacci(n-1) + fibonacci(n-2);
+    };
+    
+    p := profiler();
+    fibonacci := p.profile(fibonacci, "fibonacci");
+    
+    for (n in [10 .. 32]) {
+        start := p.mTimes["fibonacci"];
+        fibonacci(n);
+        stop  := p.mTimes["fibonacci"];
+        print("$n$: $stop - start$");
+    }
+\end{Verbatim}
+\vspace*{-0.3cm}
+\caption{Profiling the Fibonacci function.}
+\label{fig:fibonacci-timed.stlx}
+\end{figure}
+
+\begin{enumerate}
+\item First, we need to load the library \texttt{debugUtilities} in line 1.
+\item Line 3 -- 8 provide the implementation of the function \texttt{fibonacci}.  This function is
+      called with an integer argument $n$ and \texttt{fibonacci($n$)} computes the $n$-th Fibonacci
+      number.  Since we want to demonstrate profiling, the implementation given here is, on purpose,
+      inefficient.  
+\item Line 10 creates a profiler \texttt{p}.
+\item Line 11 initiates profiling of the function \texttt{fibonacci}.
+\item In line 13 -- 18 we compute the $n$-th Fibonacci number for $n \in \{20, \cdots, 32\}$.
+\item Every time the function \texttt{fibonacci} is called, the accumulated running time of all
+      invocations of the function \texttt{fibonacci} is stored in the dictionary \texttt{p.mTimes}
+      under the key \texttt{"fibonacci"}.  Hence the expression 
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \texttt{p.mTimes["fibonacci"]}
+      \\[0.2cm]
+      in line 14 yields the time spent so far to compute the Fibonacci numbers up to the
+      $n\!-\!1$-th Fibonacci number in milliseconds, while the same expression in line 16 yields the
+      time spent to compute all Fibonacci numbers up to the $n$-th Fibonacci number.  Therefore,
+      the difference 
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      $\texttt{stop}-\texttt{start}$ 
+      \\[0.2cm]
+      is the time to compute the $n$-th Fibonacci number.
+\item The output of this program is shown in Figure \ref{fig:fibonacci-timed-out}.  This output
+      clearly shows that the time needed to compute the $n$-th Fibonacci number increases
+      exponentially with $n$.
+\end{enumerate}
+
+\begin{figure}[!ht]
+\centering
+\begin{Verbatim}[ frame         = lines, 
+                  framesep      = 0.3cm, 
+                  firstnumber   = 1,
+                  labelposition = bottomline,
+                  numbers       = left,
+                  numbersep     = -0.2cm,
+                  xleftmargin   = 0.8cm,
+                  xrightmargin  = 0.8cm,
+                ]
+    20: 1005
+    21: 1952
+    22: 2802
+    23: 5604
+    24: 9547
+    25: 12699
+    26: 21346
+    27: 36260
+    28: 60400
+    29: 102612
+    30: 172454
+    31: 288334
+    32: 482399
+\end{Verbatim}
+\vspace*{-0.3cm}
+\caption{Output of the program shown in Figure \ref{fig:fibonacci-timed.stlx}}
+\label{fig:fibonacci-timed-out}
+\end{figure}
+
+Besides the procedure \texttt{profile}, the class \texttt{profiler} also implements the procedure
+\texttt{unprofile} that stops profiling of its argument.  It is called as
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{$p$.unprofile("$f$");}
+\\[0.2cm]
+Here, $p$ needs to be the same instance of the class \texttt{profiler} that has been used to
+initiate profiling of the function $f$. 
 
 \section{I/O Functions}
 This  section lists all functions related to input and output.

@@ -170,7 +170,7 @@ maps every natural number to the number $1$, since $(n+1) - n = 1$.
                   xrightmargin  = 0.8cm,
                 ]
     delta := procedure(f) {
-        return n |-> f(n+1) - f(n);
+        return n |=> f(n+1) - f(n);
     };    
     g := n |-> n;
     h := n |-> 2 ** n;

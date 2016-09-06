@@ -1,0 +1,10 @@
+delta := procedure(f) {
+    return n |=> f(n+1) - f(n);
+};    
+g := n |-> n;
+h := n |-> 2 ** n;
+deltaG := delta(g);
+deltaH := delta(h);
+
+print([ deltaG(n) : n in [1 .. 10]]);
+print([ deltaH(n) : n in [1 .. 10]]);

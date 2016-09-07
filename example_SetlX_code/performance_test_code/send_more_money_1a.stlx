@@ -1,0 +1,39 @@
+//
+// SEND + MORE = MONEY problem in SetlX
+//
+// This SetlX program was written by Hakan Kjellerstrand (hakank@bonetmail.com).
+// See also my SETL page: http://www.hakank.org/setl/ .
+//
+
+// Solution should be:
+// [[9 5 6 7 1 0 8 2]]
+
+test := procedure(s, name) {
+  print(name);
+  print(s());
+};
+
+send_more_money1 := procedure() {
+  ss := {0..9};
+
+  smm := [[s,e,n,d,m,o,r,y] :
+          // ensure that all numbers are different
+          s in ss ,
+          e in ss - {s} ,
+          n in ss - {s,e} ,
+          d in ss - {s,e,n} ,
+          m in ss - {s,e,n,d} ,
+          o in ss - {s,e,n,d,m} ,
+          r in ss - {s,e,n,d,m,o} ,
+          y in ss - {s,e,n,d,m,o,r} |
+          s > 0 && m > 0 &&
+          (s * 1000 + e * 100 + n * 10 + d) +
+          (m * 1000 + o * 100 + r * 10 + e) ==
+          (m * 10000 + o * 1000 + n * 100 + e * 10 + y )];
+
+  return smm;
+
+};
+
+test(send_more_money1, "send_more_money1");
+

@@ -86,36 +86,5 @@ problem43 := procedure() {
 
 };
 
-problem43b := procedure() {
-    
-  pp := [2, 3, 5, 7, 11, 13, 17];
-  sum := 0;  
-  for (s in permutations({0..9})) {
-    // skip all permutations that starts with a 0
-    if (s[1] == 0) {
-      continue;
-    }
-    s2 := +/[str(i) : i in s];
-    c := true;
-    for (i in [1..7]) {
-      if (int(s2[1+i..3+i]) % pp[i] != 0) {
-        c := false;
-        break; 
-      }
-    }
-    
-    if (c) {
-      print("\t", s2);
-      sum := sum+int(s2);
-    }
-    
-  }
-  
-  print(sum);
-  
-};
-
-
 problem43();
-problem43b();
 

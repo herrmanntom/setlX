@@ -24,6 +24,7 @@ javaParameters=""
 #javaParameters="$javaParameters -Xfuture"
 #javaParameters="$javaParameters -Xprof"
 javaParameters="$javaParameters -Xrunhprof:cpu=samples,interval=2,depth=8,doe=y"
+#javaParameters="$javaParameters -Xrunhprof:cpu=times,depth=4,doe=y"
 
 ################################################################################
 

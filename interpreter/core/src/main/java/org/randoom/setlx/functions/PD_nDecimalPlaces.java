@@ -30,25 +30,32 @@ public class PD_nDecimalPlaces extends PreDefinedProcedure {
 
     @Override
     public Value execute(final State state, final HashMap<ParameterDefinition, Value> args) throws SetlException {
-        final Value number  = args.get(RATIONAL);
+              Value number  = args.get(RATIONAL);
         final Value nValue  = args.get(N_DIGITS);
-        if ( ! (number instanceof Rational)) {
+        if ( !(number instanceof Rational)) {
             throw new IncompatibleTypeException(
                 "Rational-argument '" + number + "' is not a rational number."
             );
         }
-        if (nValue.isInteger() == SetlBoolean.FALSE || nValue.compareTo(Rational.ZERO) < 1 ) {
+        if (nValue.isInteger() == SetlBoolean.FALSE || nValue.compareTo(Rational.ZERO) < 1) {
             throw new IncompatibleTypeException(
                 "N-argument '" + nValue + "' is not an integer >= 1."
             );
         }
         final int           n       = nValue.jIntValue();
-
+	
+	boolean sign = false;
+	if (number.compareTo(Rational.ZERO) < 0) {
+	    number = number.minus(state);
+	    sign = true;
+	}    
               Value         rest    = number.modulo(state, Rational.ONE);
         final Value         intPart = number.difference(state, rest);
 
         final StringBuilder result  = new StringBuilder();
-
+	if (sign) {
+	    result.append("-");
+	}
         intPart.appendString(state, result, 0);
         result.append(".");
         for (int i = 1; i <= n; ++i) {
@@ -59,7 +66,7 @@ public class PD_nDecimalPlaces extends PreDefinedProcedure {
 
             digit.appendString(state, result, 0);
         }
-
+	
         return SetlString.newSetlStringFromSB(result);
     }
 }

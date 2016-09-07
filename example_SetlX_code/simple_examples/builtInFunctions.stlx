@@ -55,11 +55,15 @@ load("../erlang.stlx"); // will fail if relative path is wrong...
 print();
 
 /*******************************************************************************
+  nDecimalPlaces(rationalNumber, Number) // print n Digits of given rational
   int(stringOrNumber)           // convert string or number into an integer, returns om on failure
   rational(stringOrNumber)      // convert string or number into a rational, returns om on failure
   double(stringOrNumber)        // convert string or number into a double, returns om on failure
   str(value)                    // converts any value into a string, can not fail
 */
+
+print(" 1/7 = $nDecimalPlaces( 1/7, 27)$");
+print("-4/7 = $nDecimalPlaces(-4/7, 26)$");      
 
 getIntRealOrStringFromInput := procedure(input) {
     testFunctions := [int, rational, double, str];

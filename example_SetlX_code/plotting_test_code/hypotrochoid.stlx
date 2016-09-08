@@ -8,14 +8,14 @@ period := procedure(bigR, smallR) {
 };
 
 hypotrochoid := procedure(bigR, smallR, d) {
-    c := plot_createCanvas("The Hypothochoid R=$bigR$, r=$smallR$, d=$d$.");
+    c := plot_createCanvas("The Hypotrochoid R=$bigR$, r=$smallR$, d=$d$.");
     sleep(100);
     interval := [0, 2.01*mathConst("Pi")*period(bigR, smallR)];
     red      := [255, 0, 0];
     sum      := (bigR - smallR + d) + 0.5;
     xParam   := "(bigR - smallR) * cos(x) + d * cos(x*(bigR - smallR)/smallR)";
     yParam   := "(bigR - smallR) * sin(x) - d * sin(x*(bigR - smallR)/smallR)";
-    plot_addParamGraph(c, xParam, yParam, "hypothochoid", interval, red);
+    plot_addParamGraph(c, xParam, yParam, "hypotrochoid", interval, red);
     plot_addListGraph(c, [[-sum,   0], [sum,   0]], "x-axis", [0,0,0]);
     plot_addListGraph(c, [[   0,-sum], [  0, sum]], "y-axis");
     plot_modScale(c, [-sum, sum], [-sum, sum]);

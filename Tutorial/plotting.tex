@@ -21,7 +21,7 @@ The plotting library in \setlx\ supports three different kinds of plots:
       \end{enumerate}
       Both of these types of curves can be plotted by \setlx.
 \item The library can be used for \href{https://en.wikipedia.org/wiki/Scatter_plot}{\emph{scatter plots}}.
-\item The library can be used to plot \href{https://en.wikipedia.org/wiki/Chart}{\emph{statistical charts}} as either 
+\item The library can be used to plot \href{https://en.wikipedia.org/wiki/Chart}{\emph{statistical charts}} such as 
       \href{https://en.wikipedia.org/wiki/Bar_chart}{\emph{bar charts}} or 
       \href{https://en.wikipedia.org/wiki/Pie_chart}{\emph{pie charts}}.
 \end{enumerate}
@@ -328,14 +328,14 @@ We proceed to discuss the program shown in Figure \ref{fig:circle.stlx} line by 
         return 1000;
     };
     hypotrochoid := procedure(bigR, smallR, d) {
-        c := plot_createCanvas("The Hypothochroid R=$bigR$, r=$smallR$, d=$d$.");
+        c := plot_createCanvas("The Hypotrochroid R=$bigR$, r=$smallR$, d=$d$.");
         sleep(100);
         interval := [0, 2.01*mathConst("Pi")*period(bigR, smallR)];
         red      := [255, 0, 0];
         sum      := (bigR - smallR + d) + 0.5;
         xParam   := "(bigR-smallR) * cos(x) + d * cos(x*(bigR-smallR)/smallR)";
         yParam   := "(bigR-smallR) * sin(x) - d * sin(x*(bigR-smallR)/smallR)";
-        plot_addParamGraph(c, xParam, yParam, "hypothochoid", interval, red);
+        plot_addParamGraph(c, xParam, yParam, "hypotrochoid", interval, red);
         plot_addListGraph(c, [[-sum,   0], [sum,   0]], "x-axis", [0,0,0]);
         plot_addListGraph(c, [[   0,-sum], [  0, sum]], "y-axis");   
         plot_modScale(c, [-sum, sum], [-sum, sum]);
@@ -421,8 +421,9 @@ function \texttt{fatherAndSons}.
       Note that the size has to be specified as a floating point number:  Specifying the height as
       an integer will result in an error message.
 
-      The function \texttt{plot\_addBullet} plots a pair of the form $[x,y]$ at the $x$-coordinate
-      specified by $x$ and the $y$-coordinate specified by $y$.
+      The function \texttt{plot\_addBullets} takes a list of pairs of the form $[x,y]$ where $x$
+      specifies the $x$-coordinate and $y$ specifies the $y$-coordinate of a data point.  These data
+      points are then plotted one by one.
 \item As the heights vary between 58 inches and 80 inches, line 7 modifies the scale accordingly.
 \item Line 8 modifies the size of the canvas so that the width and the height are the same.
 \item Line 9 changes the labeling of the $x$-axis and of the $y$-axis using the function
@@ -432,7 +433,7 @@ function \texttt{fatherAndSons}.
       \item The second argument is the label of the $x$-axis.
       \item The third  argument is the label of the $y$-axis.
       \end{enumerate}
-\item Line 10 saves the scatter plot into a file.
+\item Line 10 saves the scatter plot into a file. The file is saved as a \texttt{.png} file.
 \end{enumerate}
 
 
@@ -588,7 +589,7 @@ In order to understand what is plotted where, it is easiest to compare the varia
 \begin{figure}[!ht]
   \centering
   \epsfig{file=world-population.eps, scale=0.5}
-  \caption{A Bar chart showing the world population in different years and regions.}
+  \caption{A Bar chart showing the world population in millions in different regions.}
   \label{fig:world-population.eps}
 \end{figure}
 
@@ -617,7 +618,7 @@ achieved using the \setlx-program shown in Figure \ref{fig:race-and-incarceratio
     other  &   844275 &   582 \\
     \hline
   \end{tabular}
-  \caption{The race distribution in the population vs. prison population.}
+  \caption{The race distribution in the Texan population vs.~the Texan prison population.}
   \label{tab:race-prison}
 \end{table}
 

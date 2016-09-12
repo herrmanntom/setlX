@@ -408,7 +408,12 @@ provides the following operators from propositional logic to combine Boolean exp
       \texttt{!(a <==> b)}.
 \end{enumerate}
 The operators ``\texttt{==}'' and ``\texttt{!=}'' can be used instead of the operators
-``\texttt{<==>}'' and ``\texttt{<!=>}''. 
+``\texttt{<==>}'' and ``\texttt{<!=>}''.   However, note that the precedence of these operators 
+differ.  While the precedence of ``\texttt{<==>}'' and ``\texttt{<!=>}'' is lower than the
+precedence of any other operator,  the precedence of ``\texttt{==}'' and ``\texttt{!=}'' is lower
+than the precedence of the arithmetical operators like ``\texttt{+}'' and ``\texttt{*}'', but higher
+than the precedence of the logical operators ``\texttt{\&\&}'' and ``\texttt{||}''.  Therefore, we
+recommend the use of ``\texttt{<==>}'' and ``\texttt{<!=>}'' when comparing Boolean expressions.
 
 Furthermore, \setlx\ supports both the universal quantifier ``\texttt{forall}'' and the
 existential quantifier ``\texttt{exists}''.  For example, to test whether the formula
@@ -505,7 +510,7 @@ This definition has two important implications:
 \begin{enumerate}
 \item Since the elements of a set are distinct, a set contains an object as most once.
       Hence, an object cannot occur multiple times in  a set.
-\item A set is define by its elements.  Tow sets are identical if and only if they have the same elements.
+\item A set is defined by its elements.  Two sets are identical if and only if they have the same elements.
 \end{enumerate}
 To create a simple set containing the numbers $1$, $2$, and $3$, we can write:
 \\[0.2cm]
@@ -587,9 +592,9 @@ will generate the set of all integers starting from $a$ up to and including the 
 $b$.  Mathematically, the semantics of this operator is  given by the formula
 \\[0.2cm]
 \hspace*{1.3cm}
-\texttt{\{$a$..$b$\} = $\{ a + n \mid a \in \mathbb{N}_0 \wedge a + n \leq b\}$.}
+\texttt{\{$a$..$b$\} = $\{ a + n \mid a \in \mathbb{Z} \wedge a + n \leq b\}$.}
 \\[0.2cm]
-Here $\mathbb{N}_0$ denotes the set of all non-negative integers.
+Here $\mathbb{Z}$ denotes the set of all integers.
 If $b$ is less than $a$, then the expression 
 \\[0.2cm]
 \hspace*{1.3cm}
@@ -848,7 +853,7 @@ $n! = 1 \cdot 2 \cdot 3 \cdot {\dots} \cdot (n-1) \cdot n$ we can use the expres
 \\[0.2cm]
 Again, there is also a binary version of this operator.  Since the number $1$ is the
 neutral element for  multiplication, the first argument to this operator will most often
-we one.   Therefore, the expression
+be one.   Therefore, the expression
 \\[0.2cm]
 \hspace*{1.3cm}
 \texttt{1 */ s}
@@ -966,8 +971,20 @@ and we execute the statement
 \hspace*{1.3cm}
 \texttt{x := from(s);}
 \\[0.2cm]
-then some element of \texttt{s} is assigned to \texttt{x} and this element is removed form the set
-the set \texttt{s}.  For a set $s$,  the expression 
+then some element of \texttt{s} is assigned to \texttt{x} and this element is removed from 
+the set \texttt{s}.  For example, after this assignment, we possibly have
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{x = 3} \quad and \quad \texttt{s := \{1,2\}}.
+\\[0.2cm]
+Of course, we could just as well have
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{x = 1} \quad and \quad \texttt{s := \{2,3\}}
+\\[0.2cm]
+as a result of the assignment ``\texttt{x := from(s);}''.
+
+For a set $s$,  the expression 
 \\[0.2cm]
 \hspace*{1.3cm}
 \texttt{first($s$)}

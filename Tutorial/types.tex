@@ -1196,21 +1196,21 @@ extracts the sublist of $l$ that starts at index $a$ and ends at index $b$.  For
 after defining $l$ via the assignment
 \\[0.2cm]
 \hspace*{1.3cm}
-\texttt{l := [1..100];}
+\texttt{l := ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j" ];}
 \\[0.2cm]
 the expression
 \\[0.2cm]
 \hspace*{1.3cm}
-\texttt{l[5..10]}
+\texttt{l[5..8]}
 \\[0.2cm]
-yields the sublist \texttt{[5, 6, 7, 8, 9, 10]}.  The  expression 
+yields the sublist \texttt{["f", "g", "h"]}.  The  expression 
 \\[0.2cm]
 \hspace*{1.3cm}
 \texttt{$l$[$a$..$b$]}
 \\[0.2cm]
-returns the empty list if $a > b$.  
+returns the empty list if $a > b$ and both $a$ and $b$ are positive.  
 
-There are two variants of the slicing operator.   The expression
+There are two more variants of the slicing operator.   The expression
 \\[0.2cm]
 \hspace*{1.3cm}
 \texttt{$l$[$a$..]}
@@ -1262,6 +1262,26 @@ also work with negative values of $a$ and $b$.  For example, the expression
 \texttt{$l$[..-2]}
 \\[0.2cm]
 returns a list containing all elements of $l$ but the last.
+
+After a list is created, we can add new elements to the list by assigning to the list as the
+following example demonstrates.  After defining \texttt{l} as
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{l := ["a", "b", "c"];}
+\\[0.2cm]
+we can use the assignment
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{l[5] := "e";}
+\\[0.2cm]
+to assign a fifth element to \texttt{l}.  Here, you might wonder how it is possible to add a
+fifth element, as the list \texttt{l} does not have a fourth element.  However, after the assignment
+shown above, we have
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{l == ["a", "b", "c", om, "e"]}.
+\\[0.2cm]
+Hence, in this case the fourth element is simply the undefined value \texttt{om}.
 
 When indexing a list, the number $0$ is not allowed as an index.  Therefore, the expression
 \\[0.2cm]
@@ -1338,10 +1358,12 @@ as functions in  \setlx.
                   xleftmargin   = 0.8cm,
                   xrightmargin  = 0.8cm,
                 ]
-    r := { [n, n*n] : n in {1..10} };
+    r := { [n, n*n] : n in {1..5} };
     print( "r[3]      = $r[3]$"      );
     print( "domain(r) = $domain(r)$" );
     print( "range(r)  = $range(r)$"  );
+    r[2] := 17;
+    print( "r         = $r$" );
 \end{Verbatim} 
 \vspace*{-0.3cm}
 \caption{Binary relations as functions.}  \label{fig:map.stlx}
@@ -1352,16 +1374,17 @@ The program computes the map \texttt{r} that represents the function
  $x \mapsto x*x$ on the set
 \\[0.2cm]
 \hspace*{1.3cm}
- $\{n\in \mathbb{N} \mid 1 \leq n \wedge n \leq 10 \}$.  
+ $\{n\in \mathbb{N} \mid 1 \leq n \wedge n \leq 5 \}$.  
 \\[0.2cm] 
-In line 3, the relation \texttt{r} is evaluated at $x=3$.  This is done using square brackets.
-Finally, 
-$\textsl{domain}(\mathtt{r})$ and $\textsl{range}(\texttt{r})$ are computed.
-We get the following result:
+In line 2, the relation \texttt{r} is evaluated at $x=3$.  This is done using square brackets.
+Next, $\textsl{domain}(\mathtt{r})$ and $\textsl{range}(\texttt{r})$ are computed.  Finally, the
+assignment in line 5 changes the relation for the argument 2 to yield the value 17 instead of 4.
+Hence, we get the following result:
 \begin{verbatim}
         r[3]      = 9
-        domain(r) = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10}
-        range(r)  = {1, 4, 9, 16, 25, 36, 49, 64, 81, 100}
+        domain(r) = {1, 2, 3, 4, 5}
+        range(r)  = {1, 4, 9, 16, 25}
+        r         = {[1, 1], [2, 17], [3, 9], [4, 16], [5, 25]}
 \end{verbatim}
 It is a natural question to ask 
 what happens if $r$ is a binary relation and we try to evaluate the expression 
@@ -1674,7 +1697,7 @@ There are two types of ordered binary tress:
 For example, the term
 \\[0.2cm]
 \hspace*{1.3cm}
-\texttt{@Node(2,@Node(1,@Nil(),@Nil), @Node(3,@Nil(), @Nil()))}
+\texttt{@Node(2, @Node(1,@Nil(),@Nil()), @Node(3,@Nil(), @Nil()))}
 \\[0.2cm]
 is a typical binary tree.  At the root, this tree stores the element 2, the left subtree
 stores the element 1 and the right subtree stores the element 3.
@@ -1789,7 +1812,8 @@ tree \texttt{m}.   The implementation needs to distinguish two cases:
       The expression $\texttt{compare}(k1, k2)$ returns $-1$ if \texttt{k1} is less than
       \texttt{k2}, it returns $+1$ is \texttt{k1} is greater than \texttt{k2}, and it returns $0$
       if \texttt{k1} and \texttt{k2} are the same.  The function \texttt{compare} is implemented for
-      all data types. 
+      all data types.  However, it should be noted that the comparison operators ``\texttt{<}'', ``\texttt{>}'',
+      ``\texttt{<=}'', and ``\texttt{>=}'' are only implemented for numbers and sets.
 \end{enumerate}
 This example uses a number of features of \setlx\ that have not been introduced. The discussion of
 the control structure \texttt{switch} will be given in the next chapter.

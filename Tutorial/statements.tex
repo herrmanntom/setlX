@@ -441,7 +441,7 @@ $f(x)$, the interpreter first checks whether the value of $f(x)$ has already bee
 computed.  In this case, instead of computing $f(x)$ again,  the function returns the
 value stored in the table.  This technique is known as
 \href{http://en.wikipedia.org/wiki/Memoization}{\emph{memoization}}.
-Fortunately, memoization is directly supported in \setlx\ via cached functions.
+Memoization is directly supported in \setlx\ via cached functions.
 Figure
 \ref{fig:fibonacci-cached.stlx} shows an implementation of the Fibonacci function as a
 cached function.  If we compare the program in Figure

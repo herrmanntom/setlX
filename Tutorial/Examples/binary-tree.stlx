@@ -6,14 +6,12 @@ insert := procedure(m, k1) {
     match (m) {
         case @Nil() : 
              return @Node(k1, @Nil(), @Nil());
-        case @Node(k2, l, r): 
-             if (k1 == k2) {
-                 return @Node(k1, l, r);
-             } else if (compare(k1, k2) < 0) { 
-                 return @Node(k2, insert(l, k1), r);
-             } else {
-                 return @Node(k2, l, insert(r, k1));
-             }
+        case @Node(k2, l, r) | k1 == k2: 
+             return @Node(k1, l, r);
+        case @Node(k2, l, r) | compare(k1, k2) < 0:
+             return @Node(k2, insert(l, k1), r);
+        case @Node(k2, l, r):
+             return @Node(k2, l, insert(r, k1));
         default: abort("Error in insert($m$, $k1$)");
     }
 };

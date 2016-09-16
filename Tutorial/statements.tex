@@ -910,7 +910,7 @@ term matching instead of the functions ``\texttt{fct}'' and ``\texttt{args}'' th
 the previous implementation shown in Figure \ref{fig:binary-tree-no-matching.stlx} on page
 \pageref{fig:binary-tree-no-matching.stlx}.  In line 3 of Figure \ref{fig:binary-tree.stlx}, the
 \texttt{case} statement checks whether the term $m$ is identical to the empty binary tree, which is
-represented by the Term \texttt{@Nil()}.  This is more straightforward than
+represented by the term \texttt{@Nil()}.  This is more straightforward than
 testing that the functor of $m$ is ``\texttt{Nil}'', as it was done in line 3 of Figure
 \ref{fig:binary-tree-no-matching.stlx}.  However, the real benefit of matching shows in line 5 of
 Figure \ref{fig:binary-tree.stlx} since the case statement in this line does not only check whether
@@ -935,15 +935,13 @@ the arguments of the term $m$.
         match (m) {
             case @Nil() : 
                  return @Node(k1, @Nil(), @Nil());
-            case @Node(k2, l, r): 
-                 if (k1 == k2) {
-                     return @Node(k1, l, r);
-                 } else if (compare(k1, k2) < 0) { 
-                     return @Node(k2, insert(l, k1), r);
-                 } else {
-                     return @Node(k2, l, insert(r, k1));
-                 }
-            default: abort("Error in insert($m$, $k1$, $v1$)");
+            case @Node(k2, l, r) | k1 == k2:
+                 return @Node(k1, l, r);
+            case @Node(k2, l, r) | compare(k1, k2) < 0:  
+                 return @Node(k2, insert(l, k1), r);
+            case @Node(k2, l, r):
+                 return @Node(k2, l, insert(r, k1));
+            default: abort("Error in insert($m$, $k1$)");
         }
     };
 \end{Verbatim}
@@ -951,6 +949,46 @@ the arguments of the term $m$.
 \caption{Inserting an element into a binary tree using matching.}
 \label{fig:binary-tree.stlx}
 \end{figure}
+\noindent
+In general, a \texttt{case} statement that is part of a \texttt{match} statement has the form
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{case }\textsl{pattern}\texttt{ | }\textsl{condition}\texttt{: }\textsl{stmnt}
+\\[0.2cm]
+Here, \textsl{pattern} is a term, \textsl{condition} is a Boolean condition, and \textsl{stmnt} is a
+statement.  When this \texttt{case} statement is processed, the term $t$ in the statement 
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{match ($t$) \{ $\cdots$ \}}
+\\[0.2cm]
+is \emph{matched} against  \textsl{pattern}.  This will be explained in more detail in the next
+paragraph.  If this \emph{matching} succeeds, the variables in \textsl{pattern} are
+bound to the corresponding subterms in $t$.  Next, it is checked whether \textsl{condition} is true.
+If it is, the \emph{match} succeeds and the statement \textsl{stmnt} is executed.  Otherwise, the statement
+is skipped and control proceeds to the next case.
+
+Let us now explain the details how a term $t$ is matched against a pattern $p$.  The pattern $p$ is either
+a variable or it is a term.  If $p$ is a variable, the match succeeds and the term $t$ is assigned
+to the variable $p$, i.e.~the statement
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{$p$ := $t$;}
+\\[0.2cm]
+is executed.  If $p$ is a term, then $t$ and $p$ can be written as
+\\[0.2cm]
+\hspace*{1.3cm}
+$t = f(t_1, \cdots, t_n)$ \quad and \quad $p = g(p_1, \cdots, p_m)$.
+\\[0.2cm]
+Then, matching $t$ against $p$ proceeds as follows:
+\begin{enumerate}
+\item If the function symbols $f$ and $g$ are different, the match fails.
+\item If the numbers $n$ and $m$ are different, the match fails.
+\item If the match hasn't failed yet, the subterms $t_1$, $\cdots$, $t_n$ are matched recursively against
+      the patterns $p_1$, $\cdots$, $p_n$.  The match only succeeds if all of the
+      recursive matches succeed.  If it does not succeed, then the assignments that have been
+      made during the recursive matching are undone.
+\end{enumerate}
+
 
 \begin{figure}[!ht]
 \centering
@@ -977,7 +1015,7 @@ the arguments of the term $m$.
                  return ( diff(t1, x) * t2 - t1 * diff(t2, x) ) / (t2 * t2);
             case f ** 0:
                  return 0;
-            case f ** n | isNumber(n) && n != 0 : 
+            case f ** n | isNumber(n): 
                  return n * diff(f, x) * f ** (n-1);
             case f ** g:
                  return diff( @exp(g * @ln(f)), x);
@@ -999,16 +1037,17 @@ the arguments of the term $m$.
 \label{fig:diff.stlx}
 \end{figure}
 
-
-Let us discuss a more complex example of matching.  The function \texttt{diff} shown in Figure
-\ref{fig:diff.stlx} on page \pageref{fig:diff.stlx} is supposed to be called with two arguments:
+\noindent
+The following more complex example will serve to elucidate matching further.  The function
+\texttt{diff} shown in Figure \ref{fig:diff.stlx} on page \pageref{fig:diff.stlx} is supposed to be
+called with two arguments: 
 \begin{enumerate}
 \item The first argument $t$ is a term that is interpreted as an arithmetic expression.
 \item The second argument $x$ is a term that is interpreted as  the name of a variable.
 \end{enumerate}
 The function \texttt{diff} interprets the term $t$ as a mathematical function and takes the
-derivative of this function with respect to the variable $x$.  For example, in order to compute the
-derivative of the function 
+\href{https://en.wikipedia.org/wiki/Derivative}{\emph{derivative}} of this function with respect to the
+variable $x$.  For example, in order to compute the derivative of the function 
 \\[0.2cm]
 \hspace*{1.3cm}
 $x \mapsto x^x$

@@ -203,7 +203,15 @@ public class Closure extends Procedure {
         sb.append(")");
     }
 
-    /* term operations */
+    @Override
+    protected void appendBeforeStatements(State state, StringBuilder sb, int tabs) {
+        if (closure != null && closure.size() > 0) {
+            sb.append("/* ");
+            closure.appendString(state, sb, tabs);
+            sb.append("; */ ");
+        }
+    }
+/* term operations */
 
     @Override
     public Value toTerm(final State state) throws SetlException {

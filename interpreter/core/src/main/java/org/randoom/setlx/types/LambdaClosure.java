@@ -66,6 +66,11 @@ public class LambdaClosure extends Closure {
     @Override
     public void appendString(final State state, final StringBuilder sb, final int tabs) {
         object = null;
+        if (closure != null && closure.size() > 0) {
+            sb.append("/* ");
+            closure.appendString(state, sb, 0);
+            sb.append("; */ ");
+        }
         if (parameters.hasSizeOfOne()) {
             parameters.appendString(state, sb);
         } else {

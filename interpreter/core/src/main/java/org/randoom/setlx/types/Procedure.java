@@ -207,9 +207,16 @@ public class Procedure extends ImmutableValue {
 
     @Override
     public void appendString(final State state, final StringBuilder sb, final int tabs) {
+        final String endl      = state.getEndl();
         appendStringWithoutStatements(state, sb);
         sb.append(" ");
-        statements.appendString(state, sb, tabs, /* brackets = */ true);
+        sb.append("{");
+        sb.append(endl);
+        appendBeforeStatements(state, sb, tabs + 1);
+        statements.appendString(state, sb, tabs + 1, /* brackets = */ false);
+        sb.append(endl);
+        state.appendLineStart(sb, tabs);
+        sb.append("}");
     }
 
     /**
@@ -226,6 +233,21 @@ public class Procedure extends ImmutableValue {
         sb.append("procedure(");
         parameters.appendString(state, sb);
         sb.append(")");
+    }
+
+
+    /**
+     * Appends something before printing the statements of this Procedure to the given
+     * StringBuilder object.
+     *
+     * @see org.randoom.setlx.utilities.CodeFragment#toString(State)
+     *
+     * @param state Current state of the running setlX program.
+     * @param sb    StringBuilder to append to.
+     * @param tabs  Number of tabs to use as indentation for statements.
+     */
+    protected void appendBeforeStatements(State state, StringBuilder sb, int tabs) {
+        // append nothing by default
     }
 
     /* term operations */

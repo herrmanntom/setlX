@@ -696,7 +696,7 @@ There are four predefined functions that use regular expressions.
       A common way to invoke the function is given by the following example:
       \\[0.2cm]
       \hspace*{1.3cm}
-      \texttt{l := split("1; 2; 3", ',\symbol{92}s*');}
+      \texttt{l := split("1; 2; 3", ';\symbol{92}s*');}
       \\[0.2cm]
       Here, the string \texttt{"1, 2, 3"} is split at every position where there the character
       ``\texttt{;}'' is followed by white space.  As a result, we have
@@ -707,7 +707,7 @@ There are four predefined functions that use regular expressions.
       If the previous example is changed into
       \\[0.2cm]
       \hspace*{1.3cm}
-      \texttt{l := split("1; 2; 3;", ',\symbol{92}s*');}
+      \texttt{l := split("1; 2; 3;", ';\symbol{92}s*');}
       \\[0.2cm]
       i.e.~the string is terminated with a ``\texttt{;}'', then the result changes to
       \\[0.2cm]

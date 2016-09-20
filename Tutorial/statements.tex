@@ -1018,7 +1018,7 @@ Then, matching $t$ against $p$ proceeds as follows:
             case f ** n | isNumber(n): 
                  return n * diff(f, x) * f ** (n-1);
             case f ** g:
-                 return diff( @exp(g * @ln(f)), x);
+                 return diff(@exp(g * @ln(f)), x);
             case @ln(a):
                  return diff(a, x) / a;
             case @exp(a):

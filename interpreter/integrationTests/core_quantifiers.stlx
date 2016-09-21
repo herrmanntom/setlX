@@ -1,0 +1,31 @@
+load("baseIntegrationTest.stlx");
+registerTestSuite("core_quantifiers");
+
+// ************************************************************************** \\
+
+forallTests := procedure() {
+    a := b := c := d := "test";
+    // none fails
+    e := forall(a in [1 .. 5], b in [1 .. 5] | a * b <= 25);
+    // first fail: c == 4, d == 4
+    f := forall(c in [1 .. 5], d in [1 .. 5] | (c * d) < 16);
+
+    registerTestResult(a == om && b == om && e && c == 4 && d == 4 && !f, "forall");
+};
+forallTests();
+
+existsTests := procedure() {
+    a := b := c := d := "test";
+    // first exists: a == 4, b == 4
+    e := exists(a in [1 .. 5], b in [1 .. 5] | a * b >= 16);
+    // nothing exists
+    f := exists(c in [1 .. 5], d in [1 .. 5] | c * d > 25);
+
+    registerTestResult(a == 4 && b == 4 && e && c == om && d == om && !f, "exists");
+};
+existsTests();
+
+// ************************************************************************** \\
+
+printTestResult();
+

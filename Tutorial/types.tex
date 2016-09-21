@@ -334,8 +334,8 @@ expressions can be constructed using the binary comparison operators ``\texttt{=
 Note that these operators are identical to the comparison operators used in the programming languages
 \texttt{C} and \textsl{Java}.
 
- \setlx\
-provides the following operators from propositional logic to combine Boolean expressions.
+\subsection{Boolean Operators}
+\setlx\ provides the following operators from propositional logic to combine Boolean expressions.
 \begin{enumerate}
 \item ``\texttt{\&\&}'' denotes the logical \emph{and} (also known as \emph{conjunction}), so the expression
       \\[0.2cm]
@@ -415,8 +415,9 @@ than the precedence of the arithmetical operators like ``\texttt{+}'' and ``\tex
 than the precedence of the logical operators ``\texttt{\&\&}'' and ``\texttt{||}''.  Therefore, we
 recommend the use of ``\texttt{<==>}'' and ``\texttt{<!=>}'' when comparing Boolean expressions.
 
-Furthermore, \setlx\ supports both the universal quantifier ``\texttt{forall}'' and the
-existential quantifier ``\texttt{exists}''.  For example, to test whether the formula
+\subsection{Quantifiers}
+In addition to the propositional operators, \setlx\ supports both the universal quantifier
+``\texttt{forall}'' and the existential quantifier ``\texttt{exists}''.  For example, to test whether the formula
 \\[0.2cm]
 \hspace*{1.3cm}
 $\forall x \in \{ 1, \cdots, 10 \}: x^2 \leq 2^x$
@@ -456,11 +457,11 @@ is true, we have to write:
 \texttt{exists (x in \{1..10\} | 2 ** x < x ** 2);}
 \\[0.2cm]
 This expression checks whether there exists a natural number $x \in \{1, \cdots, 10\}$
-such that $2^x$ is less than $x^2$.
+such that $2^x< x^2$.
 \vspace*{0.3cm}
 
 \noindent
-\textbf{Important}:  \texttt{forall} and \texttt{exists} expressions do \underline{not}
+\textbf{Important}:  The quantifiers \texttt{forall} and \texttt{exists} expressions do \underline{not}
 create their own local scope.  For example, the sequence of statements
 \begin{verbatim}
     exists ([x, y] in {[a,b] : a in {1..10}, b in {1..10}} | 3*x - 4*y == 5);
@@ -477,7 +478,7 @@ since for \texttt{x = 3} and \texttt{y = 1} the equation
 \texttt{3*x - 4*y == 5}
 \\[0.2cm]
 is true.
-This Example Shows that the values of the variables \texttt{x} and \texttt{y} is available
+This Example shows that the values of the variables \texttt{x} and \texttt{y} is available
 outside of the existentially quantified expression.  The execution of
 a \texttt{forall} or an \texttt{exists} expression stops as soon as the
 truth value of the statement is known.
@@ -490,7 +491,18 @@ statement is needed.  It is also useful for a \texttt{forall} statement in case 
 \\[0.2cm]
 evaluates to \texttt{false} and, furthermore, it assigns the value $3$ to the variable \texttt{n},
 since $3$ is the first integer in the list \texttt{[1..10]}
-such that the expression $n^2 \leq 2^n$ is false.
+such that the expression $n^2 \leq 2^n$ is false.  In the case that an expression of the form
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{forall ($x$ in $s$ | $f(x)$)}
+\\[0.2cm]
+is true,  the variable $x$ will be set to the undefined value \texttt{om}.  Similarly, if an
+expression of the form
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{exists ($x$ in $s$ | $f(x)$)}
+\\[0.2cm]
+is false, the variable $x$ is set  to the undefined value \texttt{om}.
 
 \section{Sets}
 The most interesting data type provided by \setlx\ is the \emph{set} type.  

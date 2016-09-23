@@ -361,18 +361,18 @@ public class SetlMatrixTest {
         }
         assertTrue("Iterator error: wrong result " + b + " vs 10", b.equalTo(sdi.get(10)));
 
-        List<Value> idx = new ArrayList<Value>();
+        List<Value> idx = new ArrayList<>();
         idx.add(Rational.ONE);
-        SetlList tmpList;
+        SetlVector tmpVector;
         try {
-            tmpList = (SetlList) simple.collectionAccess(state, idx);
+            tmpVector = (SetlVector) simple.collectionAccess(state, idx);
         } catch (SetlException ex) {
             System.err.println(ex.getMessage());
             fail("matrix[] access error: exception");
             return;
         }
         int i = 1;
-        for (Value v : tmpList) {
+        for (Value v : tmpVector) {
             assertTrue("matrix[" + i + "] error: wrong result: " + v, v.equalTo(sdi.get(i)));
             i++;
         }

@@ -291,9 +291,8 @@ If the code shown in Figure \ref{fig:find-comments.stlx} is stored in the file
 The option ``\texttt{--params}'' creates the global variable \texttt{params} that contains
 a list containing all the remaining arguments given to the program.   In this case, there is just
 one argument, which is the string ``\texttt{file.stlx}''.   Therefore, \texttt{params} is a list
-of length one.  The first element of this list is the string
-``\texttt{file.stlx}''.  Hence the \texttt{for} loop in line 11 will call the
-function \texttt{printComments} with the string ``\texttt{file.stlx}''.  If we invoke the
+of length one containing the file name as a string.   Hence the \texttt{for} loop in line 11 will call the
+function \texttt{printComments} with the given string.  If we invoke the
 program using the command
 \\[0.2cm]
 \hspace*{1.3cm}

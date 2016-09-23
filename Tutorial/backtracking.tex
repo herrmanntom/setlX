@@ -68,10 +68,10 @@ needs to be different from the sign of $f(b)$.
                   xleftmargin   = 0.8cm,
                   xrightmargin  = 0.8cm,
                 ]
-    askUser := procedure() {
+    findZero := procedure() {
         try {
             s := read("Please enter a function: ");
-            f := evalTerm(parse("x |-> " + s));
+            f := eval("x |-> " + s);
             a := read("Enter left  boundary: ");
             b := read("Enter right boundary: ");
             z := findZero(f, a, b);
@@ -79,10 +79,10 @@ needs to be different from the sign of $f(b)$.
         } catch (e) {
             print(e);
             print("Please try again.\n");
-            askUser();
+            findZero();
         }
     };
-    findZero := procedure(f, a, b) {
+    bisection := procedure(f, a, b) {
         if (a > b) {
             throw("Left boundary a has to be less than right boundary b!");   
         }
@@ -107,7 +107,7 @@ needs to be different from the sign of $f(b)$.
 \label{fig:bisection-exception.stlx}
 \end{figure}
 
-The function \texttt{askUser} asks the user to input the function $f$ together with the left and
+The function \texttt{findZero} asks the user to input the function $f$ together with the left and
 right boundary of the interval $[a,b]$.  The idea is that the user inputs a term describing the
 function value of $f$ for a given value of $x$.  For example, in order to compute the zero of the
 function
@@ -121,7 +121,7 @@ line 3.  The string \texttt{s} that is input by the user is then converted into 
 \hspace*{1.3cm}
 \texttt{x |-> x*x-2}
 \\[0.2cm]
-in line 4 and, furthermore, the resulting string is parsed and then evaluated.  In this way, the
+in line 4 and the resulting string is then evaluated.  In this way, the
 variable \texttt{f} in line 4 will be assigned the function mapping \texttt{x} to \texttt{x*x-2}
 just as if the user had written
 \\[0.2cm]
@@ -131,7 +131,7 @@ just as if the user had written
 in the command line.
 
  
-There are a couple of things that can go wrong with the function \texttt{askUser}.  First,
+There are a couple of things that can go wrong with the function \texttt{findZero}.  First,
 the string \texttt{s} that is input by the user might not be a proper function and then
 we would presumably get a parse error in line 4.  In this case, the function \texttt{parse}
 invoked in line 4 will raise an exception. Next, if the user enters a string of the form
@@ -151,12 +151,12 @@ Furthermore, either of the two conditions
 $a < b$ \quad or \quad $f(a) * f(b) \leq 0$
 \\[0.2cm]
 might be violated.  In this case, we raise an exception in line 17 or
-line 21 of the function \texttt{findZero}.  This is done using the function \texttt{throw}.
+line 21 of the function \texttt{bisection}.  This is done using the function \texttt{throw}.
 Since we don't want to abort the program on the occurrence of an exception, the whole block of
 code from line 3 up to line 8 is enclosed in a \texttt{try}/\texttt{catch}-block.  In case there is
 an exception, the value of this exception, which is a string containing an error message, is
 caught in the variable \texttt{e} in line 9.  To continue our program, we print the error message
-in line 10 and then invoke the function \texttt{askUser} recursively so that the user of
+in line 10 and then invoke the function \texttt{findZero} recursively so that the user of
 the program gets another chance to enter valid input.
 
 \subsection{Different Kinds of Exceptions}

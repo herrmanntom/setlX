@@ -6,8 +6,7 @@ class tracer() {
     trace := procedure(function, functionName) {
         mStoredProcedures[functionName] := function;
         tracedFunction := closure(*args) {
-            argsString := args + "";
-            argsString := argsString[2..-2];
+            argsString := join(args, ", ");
             print("calling $functionName$($argsString$)");
             result := function(*args);
             print("$functionName$($argsString$) = $result$");

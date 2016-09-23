@@ -1,11 +1,12 @@
 class tracer() {
+    // dictionary for the original procedure definitions
     mStoredProcedures := {};
     
+    // Modify the given function so that the invocation of the function is traced
     trace := procedure(function, functionName) {
         mStoredProcedures[functionName] := function;
         tracedFunction := closure(*args) {
-            argsString := args + "";
-            argsString := argsString[2..-2];
+            argsString := join(args, ", ");
             print("calling $functionName$($argsString$)");
             result := function(*args);
             print("$functionName$($argsString$) = $result$");

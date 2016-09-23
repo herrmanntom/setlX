@@ -136,64 +136,6 @@ Here, the function \texttt{sort} takes two arguments:
       contains elements that are not numbers.  In order to do so, we just have to implement an
       appropriate version of the function \texttt{cmp}.
 \end{enumerate}
-So far, the functions we have discussed did not return functions.  The next example will change
-that.  In mathematics, given a function
-\\[0.2cm]
-\hspace*{1.3cm}
-$f: \mathbb{N} \rightarrow \mathbb{N}$
-\\[0.2cm]
-mapping natural numbers into natural numbers, the \emph{discrete derivative} of $f$ is again a
-function mapping natural numbers to natural numbers and is denoted
-as $\Delta f$.  For $n \in \mathbb{N}$, the value $(\Delta f)(n)$ is defined as
-\\[0.2cm]
-\hspace*{1.3cm}
-$(\Delta f)(n) := f(n+1) - f(n)$.
-\\[0.2cm]
-For example, given the function $f: \mathbb{N} \rightarrow \mathbb{N}$ defined as $f(n) := 2^n$,
-we have
-\\[0.2cm]
-\hspace*{1.3cm}
-$(\Delta f)(n) = 2^{n+1} - 2^n = 2^n = f(n)$.
-\\[0.2cm]
-To give another example, the discrete derivative of the identity function is the function that
-maps every natural number to the number $1$, since $(n+1) - n = 1$.  
-
-\begin{figure}[!ht]
-\centering
-\begin{Verbatim}[ frame         = lines, 
-                  framesep      = 0.3cm, 
-                  firstnumber   = 1,
-                  labelposition = bottomline,
-                  numbers       = left,
-                  numbersep     = -0.2cm,
-                  xleftmargin   = 0.8cm,
-                  xrightmargin  = 0.8cm,
-                ]
-    delta := procedure(f) {
-        return n |=> f(n+1) - f(n);
-    };    
-    g := n |-> n;
-    h := n |-> 2 ** n;
-    deltaG := delta(g);
-    deltaH := delta(h);
-    
-    print([ deltaG(n) : n in [1 .. 10]]);
-    print([ deltaH(n) : n in [1 .. 10]]);
-\end{Verbatim}
-\vspace*{-0.3cm}
-\caption{Computing the discrete derivative of a given function.}
-\label{fig:finite-difference.stlx}
-\end{figure}
-
-\noindent
-Figure \ref{fig:finite-difference.stlx} shows the implementation of the function \texttt{delta}
-that takes a function $f$ as input and then returns the discrete derivative of $f$.  In line 6
-and 7, this function is applied to the identity function and to the function $n \mapsto 2^n$,
-respectively.  The resulting functions \texttt{deltaG} and \texttt{deltaH} are then applied to
-the sequence of natural numbers from 1 to 10.  In the first case, the result is a list
-containing the number one ten times, while in the second case the the result is a list of the
-first ten powers of two.
-
 
 \subsection{Implementing Counters via Closures}
 The concept of a closure is non-trivial, therefore we introduce the idea using some simple
@@ -247,15 +189,12 @@ respectively.
 \label{fig:counter-closure.stlx}
 \end{figure}
 
-Notice that the variable \texttt{count} is defined outside the procedure
-\texttt{counter}.  Still, it is accessible in the closure \texttt{counter} because \texttt{counter}
-has been defined using the keyword \texttt{closure} instead of the keyword \texttt{procedure}.
-
-You should also notice that the function \texttt{ctr9} created in line 10 gets its
+You should notice that the function \texttt{ctr9} created in line 10 gets its
 \underline{own} copy of the variable \texttt{count}.  In the case of the function
 \texttt{ctr9}, this copy of \texttt{count} is initialized with the value 9.  Therefore, after
 we have called the function \texttt{ctr9} in line 13, the variables \texttt{x}, \texttt{y}, and
 \texttt{z} will have the values $10$, $11$, and $12$. 
+
 
 \subsection{Lambda Definitions for Closures}
 There is a short-hand notation for the definition of a closure that can be used if the closure only
@@ -264,12 +203,12 @@ procedures.  This short-hand notation is called a \emph{lambda closure}.  Here i
 The following two lines define a function \texttt{f} that computes the cube of its argument.
 \\[0.2cm]
 \hspace*{1.3cm} \texttt{c := 3;}            \\
-\hspace*{1.3cm} \texttt{f := x |=> x * c;}
+\hspace*{1.3cm} \texttt{f := x |=> x ** c;}
 \\[0.2cm]
 These two lines are equivalent to the following two lines:
 \\[0.2cm]
 \hspace*{1.3cm} \texttt{c := 3;}            \\
-\hspace*{1.3cm} \texttt{f := closure(x) \{ return x * c; \};}
+\hspace*{1.3cm} \texttt{f := closure(x) \{ return x ** c; \};}
 \\[0.2cm]
 In general, the expression
 \\[0.2cm]
@@ -291,6 +230,70 @@ is equivalent to
 \\[0.2cm]
 \hspace*{1.3cm}
 \texttt{f := closure(x,y) \{ return sqrt(x ** c + y ** c); \};}
+
+\subsection{Closures as Return Values}
+So far, the functions we have discussed did not return functions.  The next example will change
+that.  In mathematics, given a function
+\\[0.2cm]
+\hspace*{1.3cm}
+$f: \mathbb{N} \rightarrow \mathbb{N}$
+\\[0.2cm]
+mapping natural numbers into natural numbers, the 
+\href{https://en.wikipedia.org/wiki/Finite_difference}{\emph{discrete derivative}} of $f$ is again a
+function mapping natural numbers to natural numbers and is denoted
+as $\Delta f$.  For $n \in \mathbb{N}$, the value $(\Delta f)(n)$ is defined as
+\\[0.2cm]
+\hspace*{1.3cm}
+$(\Delta f)(n) := f(n+1) - f(n)$.
+\\[0.2cm]
+For example, given the function $f: \mathbb{N} \rightarrow \mathbb{N}$ defined as $f(n) := 2^n$,
+we have
+\\[0.2cm]
+\hspace*{1.3cm}
+$(\Delta f)(n) = 2^{n+1} - 2^n = 2^n = f(n)$.
+\\[0.2cm]
+To give another example, the discrete derivative of the identity function is the function that
+maps every natural number to the number $1$, since $(n+1) - n = 1$.  
+
+\begin{figure}[!ht]
+\centering
+\begin{Verbatim}[ frame         = lines, 
+                  framesep      = 0.3cm, 
+                  firstnumber   = 1,
+                  labelposition = bottomline,
+                  numbers       = left,
+                  numbersep     = -0.2cm,
+                  xleftmargin   = 0.8cm,
+                  xrightmargin  = 0.8cm,
+                ]
+    delta := procedure(f) {
+        return n |=> f(n+1) - f(n);
+    };    
+    g := n |-> n;
+    h := n |-> 2 ** n;
+    deltaG := delta(g);
+    deltaH := delta(h);
+    
+    print([ deltaG(n) : n in [1 .. 10]]);
+    print([ deltaH(n) : n in [1 .. 10]]);
+\end{Verbatim}
+\vspace*{-0.3cm}
+\caption{Computing the discrete derivative of a given function.}
+\label{fig:finite-difference.stlx}
+\end{figure}
+
+\noindent
+Figure \ref{fig:finite-difference.stlx} shows the implementation of the function \texttt{delta}
+that takes a function \texttt{f} as input and then returns the discrete derivative of \texttt{f}.  In line 6
+and 7, this function is applied to the identity function and to the function $n \mapsto 2^n$,
+respectively.  The resulting functions \texttt{deltaG} and \texttt{deltaH} are then applied to
+the sequence of natural numbers from 1 to 10.  In the first case, the result is a list
+containing the number one ten times, while in the second case the the result is a list of the
+first ten powers of two.
+
+Note that we had to define the return value of the function \texttt{delta} as a closure.  The reason
+is that otherwise the value \texttt{f} referring to the function would not be in the local scope of
+the function that is returned by \texttt{delta} and hence \texttt{f} would be undefined.
 
 \section[Closures in Action]{Closures in Action: Generating Finite State Machines from Regular Expressions}
 In this section we demonstrate a non-trivial application of closures.  We present a program that
@@ -324,8 +327,7 @@ For the purpose of the program we are going to develop, composite regular expres
 represented by terms.  In detail, we have the following representation of regular
 expressions.
 \begin{enumerate}
-\item A regular expression $r$ of the form $r = c$ where $c$ is a single character from the alphabet $\Sigma$ is
-      represented by the string consisting of the character $c$.
+\item A regular expression $r$ of the form $r = c$ where $c\in \Sigma$ is represented the character $c$.
 \item A regular expression $r$ of the form $r = r_1 \cdot r_2$ is represented by the term
       \\[0.2cm]
       \hspace*{1.3cm}
@@ -721,6 +723,8 @@ recursion on $r$:
 The reader should note that we have made heavy use of closures to implement the functions
 \texttt{genCharNFA}, \texttt{catenate}, \texttt{disjunction}, and \texttt{kleene}.
 
+
+
 \begin{figure}[!ht]
 \centering
 \begin{Verbatim}[ frame         = lines, 
@@ -749,6 +753,11 @@ The reader should note that we have made heavy use of closures to implement the 
 \caption{Generating a non-deterministic fsm from a regular expression.}
 \label{fig:regexp2NFA.stlx}
 \end{figure}
+Let us take a step back and consider what we have achieved so far.  We have implemented a function
+for converting regular expressions to non-deterministic finite state machines.
+It is rather straightforward to implement a function that scans a given string using a non-deterministic
+finite state machine. If we would implement this function, we would then have implemented our own
+support for regular expressions.
 
 \section{Decorators \label{sec:decorators}}
 The programming language \href{https://www.python.org}{\textsl{Python}} has a nice feature called 
@@ -846,8 +855,7 @@ anything when called.
         trace := procedure(function, functionName) {
             mStoredProcedures[functionName] := function;
             tracedFunction := closure(*args) {
-                argsString := args + "";
-                argsString := argsString[2..-2];
+                argsString := join(args, ", ");
                 print("calling $functionName$($argsString$)");
                 result := function(*args);
                 print("$functionName$($argsString$) = $result$");
@@ -896,17 +904,17 @@ implementation line by line.
             function \texttt{gcd} that takes two arguments.  We could just as well have traced a
             procedure taking only one argument as we could have traced a procedure taking nine
             arguments.
-      \item In line 7 to 9, the closure \texttt{tracedFunction} constructs a string containing the
+      \item In line 7 and 8, the closure \texttt{tracedFunction} constructs a string containing the
             arguments and the name of the function and then prints this string.  This
             \texttt{tracedFunction} refers to \texttt{function} and \texttt{functionName}.  As these
             variables  are only defined in the method \texttt{trace}, the function \texttt{tracedFunction} needs to
             be defined as a \texttt{closure} so that it can access these variables.
-      \item Line 10 is the most important line of the whole implementation:  It is here that the
+      \item Line 9 is the most important line of the whole implementation:  It is here that the
             original procedure is called with the given arguments.  Note how prefixing the list of
             arguments \texttt{args} with the operator ``\texttt{*}'' makes it possible to call this
             function without knowing how many arguments the procedure actually takes.
-      \item Line 11 print the result that has been computed.
-      \item This result is then returned in line 12.
+      \item Line 10 prints the result that has been computed.
+      \item This result is then returned in line 11.
       \item Finally, the method \texttt{trace} returns the newly created closure.  By assigning this
             closure to the name of the original procedure we can thus trace this procedure.
       \end{enumerate}

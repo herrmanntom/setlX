@@ -42,7 +42,7 @@ public class Assignment extends AUnaryPrefixOperator {
     }
 
     @Override
-    public Value evaluate(State state, Stack<Value> values) throws SetlException {
+    public Value evaluate(State state, Stack<Value> values, OperatorExpression operatorExpression, int currentStackDepth) throws SetlException {
         Value value = values.poll().clone();
         assignableExpression.assignUncloned(state, value, FUNCTIONAL_CHARACTER);
         return value.clone();

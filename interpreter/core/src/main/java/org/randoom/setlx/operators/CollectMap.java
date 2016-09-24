@@ -42,7 +42,7 @@ public class CollectMap extends AUnaryPostfixOperator {
     }
 
     @Override
-    public Value evaluate(State state, Stack<Value> values) throws SetlException {
+    public Value evaluate(State state, Stack<Value> values, OperatorExpression operatorExpression, int currentStackDepth) throws SetlException {
         final Value lhs = values.poll();
         if (lhs == Om.OM) {
             throw new UnknownFunctionException(

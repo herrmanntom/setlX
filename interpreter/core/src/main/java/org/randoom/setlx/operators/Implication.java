@@ -27,7 +27,7 @@ public class Implication extends ALazyBinaryInfixOperator {
     }
 
     @Override
-    public Value evaluate(State state, Stack<Value> values) throws SetlException {
+    public Value evaluate(State state, Stack<Value> values, OperatorExpression operatorExpression, int currentStackDepth) throws SetlException {
         return values.poll().implication(state, getRightHandSide());
     }
 

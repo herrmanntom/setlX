@@ -2,6 +2,7 @@ package org.randoom.setlx.operators;
 
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.TermConversionException;
+import org.randoom.setlx.operatorUtilities.OperatorExpression;
 import org.randoom.setlx.operatorUtilities.Stack;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
@@ -18,7 +19,7 @@ public class SumOfMembersBinary extends ABinaryInfixOperator {
     private SumOfMembersBinary() {}
 
     @Override
-    public Value evaluate(State state, Stack<Value> values) throws SetlException {
+    public Value evaluate(State state, Stack<Value> values, OperatorExpression operatorExpression, int currentStackDepth) throws SetlException {
         Value rhs = values.poll();
         Value lhs = values.poll();
         return rhs.sumOfMembers(state, lhs);

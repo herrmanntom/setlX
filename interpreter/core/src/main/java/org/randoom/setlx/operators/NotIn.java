@@ -2,6 +2,8 @@ package org.randoom.setlx.operators;
 
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.TermConversionException;
+import org.randoom.setlx.operatorUtilities.OperatorExpression;
+import org.randoom.setlx.operatorUtilities.OperatorExpression.ExpressionFragment;
 import org.randoom.setlx.operatorUtilities.Stack;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
@@ -18,14 +20,17 @@ public class NotIn extends ABinaryInfixOperator {
     private NotIn() {}
 
     @Override
-    public Value evaluate(State state, Stack<Value> values) throws SetlException {
+    public Value evaluate(State state, Stack<Value> values, OperatorExpression operatorExpression, int currentStackDepth) throws SetlException {
         Value rhs = values.poll();
         Value lhs = values.poll();
         try {
             // note: rhs and lhs swapped!
             return rhs.containsMember(state, lhs).not(state);
         } catch (final SetlException se) {
-            se.addToTrace("Error in substitute comparison \"!(" + lhs.toString(state) + " in " + rhs.toString(state) +  ")\":");
+            Stack<ExpressionFragment> stack = operatorExpression.computeExpressionFragmentStack(state, currentStackDepth);
+            String rhsString = stack.poll().getExpression();
+            String lhsString = stack.poll().getExpression();
+            se.addToTrace("Error in substitute comparison \"!(" + lhsString + " in " + rhsString +  ")\":");
             throw se;
         }
     }

@@ -60,7 +60,7 @@ public class CollectionAccess extends AUnaryPostfixOperator {
     }
 
     @Override
-    public Value evaluate(State state, Stack<Value> values) throws SetlException {
+    public Value evaluate(State state, Stack<Value> values, OperatorExpression operatorExpression, int currentStackDepth) throws SetlException {
         final Value lhs = values.poll();
         if (lhs == Om.OM) {
             throw new UnknownFunctionException(
@@ -68,7 +68,7 @@ public class CollectionAccess extends AUnaryPostfixOperator {
             );
         }
         // evaluate all arguments
-        List<Value> args = new ArrayList<Value>(this.arguments.size());
+        List<Value> args = new ArrayList<>(this.arguments.size());
         for (final OperatorExpression arg: this.arguments) {
             args.add(arg.evaluate(state).clone());
         }
@@ -77,7 +77,7 @@ public class CollectionAccess extends AUnaryPostfixOperator {
             for (Value arg : args) {
                 argumentList.addMember(state, arg);
             }
-            args = new ArrayList<Value>(1);
+            args = new ArrayList<>(1);
             args.add(argumentList);
         }
         // execute
@@ -120,7 +120,7 @@ public class CollectionAccess extends AUnaryPostfixOperator {
 
             OperatorExpression.appendFromTerm(state, term.firstMember(), operatorStack);
 
-            FragmentList<OperatorExpression> arguments = new FragmentList<OperatorExpression>();
+            FragmentList<OperatorExpression> arguments = new FragmentList<>();
             for (final Value argument : (SetlList) term.getMember(2)) {
                 arguments.add(OperatorExpression.createFromTerm(state, argument));
             }

@@ -2,6 +2,8 @@ package org.randoom.setlx.operators;
 
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.TermConversionException;
+import org.randoom.setlx.operatorUtilities.OperatorExpression;
+import org.randoom.setlx.operatorUtilities.OperatorExpression.ExpressionFragment;
 import org.randoom.setlx.operatorUtilities.Stack;
 import org.randoom.setlx.types.SetlBoolean;
 import org.randoom.setlx.types.Term;
@@ -19,13 +21,16 @@ public class LessOrEqual extends ABinaryInfixOperator {
     private LessOrEqual() {}
 
     @Override
-    public Value evaluate(State state, Stack<Value> values) throws SetlException {
+    public Value evaluate(State state, Stack<Value> values, OperatorExpression operatorExpression, int currentStackDepth) throws SetlException {
         Value rhs = values.poll();
         Value lhs = values.poll();
         try {
             return SetlBoolean.valueOf(lhs.isEqualTo(state, rhs) == SetlBoolean.TRUE || lhs.isLessThan(state, rhs) == SetlBoolean.TRUE);
         } catch (final SetlException se) {
-            se.addToTrace("Error in substitute comparison \"(" + lhs.toString(state) + " == " + rhs.toString(state) + ") || (" + lhs.toString(state) + " < " + rhs.toString(state) +  ")\":");
+            Stack<ExpressionFragment> stack = operatorExpression.computeExpressionFragmentStack(state, currentStackDepth);
+            String rhsString = stack.poll().getExpression();
+            String lhsString = stack.poll().getExpression();
+            se.addToTrace("Error in substitute comparison \"(" + lhsString + " == " + rhsString + ") || (" + lhsString + " < " + rhsString +  ")\":");
             throw se;
         }
     }

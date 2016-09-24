@@ -5,6 +5,7 @@ import org.randoom.setlx.assignments.AssignableMember;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.exceptions.UndefinedOperationException;
+import org.randoom.setlx.operatorUtilities.OperatorExpression;
 import org.randoom.setlx.operatorUtilities.Stack;
 import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.Term;
@@ -45,7 +46,7 @@ public class MemberAccess extends AUnaryPostfixOperator {
     }
 
     @Override
-    public Value evaluate(State state, Stack<Value> values) throws SetlException {
+    public Value evaluate(State state, Stack<Value> values, OperatorExpression operatorExpression, int currentStackDepth) throws SetlException {
         return values.poll().getObjectMemberUnCloned(state, id);
     }
 

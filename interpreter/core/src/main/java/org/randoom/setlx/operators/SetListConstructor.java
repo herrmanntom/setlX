@@ -6,6 +6,7 @@ import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.exceptions.UndefinedOperationException;
 import org.randoom.setlx.operatorUtilities.CollectionBuilder;
+import org.randoom.setlx.operatorUtilities.OperatorExpression;
 import org.randoom.setlx.operatorUtilities.Stack;
 import org.randoom.setlx.types.CollectionValue;
 import org.randoom.setlx.types.SetlList;
@@ -63,7 +64,7 @@ public class SetListConstructor extends AZeroOperator {
     }
 
     @Override
-    public Value evaluate(State state, Stack<Value> values) throws SetlException {
+    public Value evaluate(State state, Stack<Value> values, OperatorExpression operatorExpression, int currentStackDepth) throws SetlException {
         if (type == CollectionType.SET) {
             final SetlSet set = new SetlSet();
             if (builder != null) {

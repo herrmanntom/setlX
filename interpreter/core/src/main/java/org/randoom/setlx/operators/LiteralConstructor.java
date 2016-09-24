@@ -1,6 +1,7 @@
 package org.randoom.setlx.operators;
 
 import org.randoom.setlx.exceptions.TermConversionException;
+import org.randoom.setlx.operatorUtilities.OperatorExpression;
 import org.randoom.setlx.operatorUtilities.Stack;
 import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.Term;
@@ -36,7 +37,7 @@ public class LiteralConstructor extends AZeroOperator {
     }
 
     @Override
-    public SetlString evaluate(State state, Stack<Value> values)  {
+    public SetlString evaluate(State state, Stack<Value> values, OperatorExpression operatorExpression, int currentStackDepth)  {
         return runtimeString;
     }
 

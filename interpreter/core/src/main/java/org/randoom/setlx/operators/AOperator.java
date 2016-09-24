@@ -3,6 +3,7 @@ package org.randoom.setlx.operators;
 import org.randoom.setlx.assignments.AAssignableExpression;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.UndefinedOperationException;
+import org.randoom.setlx.operatorUtilities.OperatorExpression;
 import org.randoom.setlx.operatorUtilities.OperatorExpression.OptimizerData;
 import org.randoom.setlx.operatorUtilities.Stack;
 import org.randoom.setlx.types.Value;
@@ -18,9 +19,9 @@ public abstract class AOperator extends ImmutableCodeFragment {
     /**
      * Create an assignable expression from this operator.
      *
+     * @param assignable                   assignable
      * @return                             AssignableExpression.
      * @throws UndefinedOperationException if operator can not be converted.
-     * @param assignable
      */
     public AAssignableExpression convertToAssignableExpression(AAssignableExpression assignable) throws UndefinedOperationException {
         throw new UndefinedOperationException("Expression cannot be converted");
@@ -41,12 +42,14 @@ public abstract class AOperator extends ImmutableCodeFragment {
     /**
      * Evaluate this operator, taking arguments from value stack and returning results.
      *
-     * @param state          Current state of the running setlX program.
-     * @param values         Value stack to work with.
-     * @return               Result of the evaluation.
-     * @throws SetlException Thrown in case of some (user-) error.
+     * @param state              Current state of the running setlX program.
+     * @param values             Value stack to work with.
+     * @param operatorExpression Entire operator expression, that is currently evaluated (useful for printing error messages)
+     * @param currentStackDepth  Place of this operator in operatorExpression
+     * @return                   Result of the evaluation.
+     * @throws SetlException     Thrown in case of some (user-) error.
      */
-    public abstract Value evaluate(State state, Stack<Value> values) throws SetlException;
+    public abstract Value evaluate(State state, Stack<Value> values, OperatorExpression operatorExpression, int currentStackDepth) throws SetlException;
 
     /**
      * Does this operator have and argument to print before operator symbol?

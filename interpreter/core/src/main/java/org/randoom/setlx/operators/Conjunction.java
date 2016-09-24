@@ -27,7 +27,7 @@ public class Conjunction extends ALazyBinaryInfixOperator {
     }
 
     @Override
-    public Value evaluate(State state, Stack<Value> values) throws SetlException {
+    public Value evaluate(State state, Stack<Value> values, OperatorExpression operatorExpression, int currentStackDepth) throws SetlException {
         return values.poll().conjunction(state, getRightHandSide());
     }
 

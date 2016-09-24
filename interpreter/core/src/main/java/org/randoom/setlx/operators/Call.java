@@ -4,6 +4,7 @@ import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.exceptions.UnknownFunctionException;
 import org.randoom.setlx.operatorUtilities.OperatorExpression;
+import org.randoom.setlx.operatorUtilities.OperatorExpression.ExpressionFragment;
 import org.randoom.setlx.operatorUtilities.OperatorExpression.OptimizerData;
 import org.randoom.setlx.operatorUtilities.Stack;
 import org.randoom.setlx.types.*;
@@ -48,7 +49,7 @@ public class Call extends AUnaryPostfixOperator {
     }
 
     @Override
-    public Value evaluate(State state, Stack<Value> values) throws SetlException {
+    public Value evaluate(State state, Stack<Value> values, OperatorExpression operatorExpression, int currentStackDepth) throws SetlException {
         final Value lhs = values.poll();
         if (lhs == Om.OM) {
             throw new UnknownFunctionException(
@@ -59,9 +60,12 @@ public class Call extends AUnaryPostfixOperator {
         try {
             return lhs.call(state, arguments, listArgument);
         } catch (final SetlException se) {
+            Stack<ExpressionFragment> stack = operatorExpression.computeExpressionFragmentStack(state, currentStackDepth);
+            String lhsString = stack.poll().getExpression();
+
             final StringBuilder error = new StringBuilder();
             error.append("Error in \"");
-            lhs.appendString(state, error, 0);
+            error.append(lhsString);
             appendOperatorSign(state, error);
             error.append("\":");
             se.addToTrace(error.toString());

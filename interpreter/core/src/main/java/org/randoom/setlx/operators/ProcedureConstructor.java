@@ -2,6 +2,7 @@ package org.randoom.setlx.operators;
 
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.functions.PreDefinedProcedure;
+import org.randoom.setlx.operatorUtilities.OperatorExpression;
 import org.randoom.setlx.operatorUtilities.Stack;
 import org.randoom.setlx.types.*;
 import org.randoom.setlx.utilities.CodeFragment;
@@ -77,7 +78,7 @@ public class ProcedureConstructor extends AZeroOperator {
     }
 
     @Override
-    public Procedure evaluate(State state, Stack<Value> values) throws SetlException {
+    public Procedure evaluate(State state, Stack<Value> values, OperatorExpression operatorExpression, int currentStackDepth) throws SetlException {
         if (isClosure) {
             if (closureVariables == null) {
                 this.optimize(state);

@@ -42,7 +42,7 @@ public class CollectionAccessRangeDummy extends AZeroOperator {
     }
 
     @Override
-    public RangeDummy evaluate(final State state, Stack<Value> values) throws UndefinedOperationException {
+    public RangeDummy evaluate(final State state, Stack<Value> values, OperatorExpression operatorExpression, int currentStackDepth) throws UndefinedOperationException {
         return RangeDummy.RD;
     }
 

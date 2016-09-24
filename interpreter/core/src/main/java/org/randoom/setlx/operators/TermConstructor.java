@@ -42,7 +42,7 @@ public class TermConstructor extends AZeroOperator {
     }
 
     @Override
-    public Value evaluate(State state, Stack<Value> values) throws SetlException {
+    public Value evaluate(State state, Stack<Value> values, OperatorExpression operatorExpression, int currentStackDepth) throws SetlException {
         final Term result = new Term(fChar, args.size());
 
         for (final OperatorExpression arg: args) {

@@ -158,7 +158,7 @@ public class StringConstructor extends AZeroOperator {
     }
 
     @Override
-    public SetlString evaluate(State state, Stack<Value> values) throws SetlException {
+    public SetlString evaluate(State state, Stack<Value> values, OperatorExpression operatorExpression, int currentStackDepth) throws SetlException {
         final Iterator<String>             fIter = fragments.iterator();
         final Iterator<OperatorExpression> eIter = expressions.iterator();
         final StringBuilder                data  = new StringBuilder();
@@ -239,8 +239,8 @@ public class StringConstructor extends AZeroOperator {
                 final SetlList frags = (SetlList) term.getMember(2);
                 final SetlList exps = (SetlList) term.lastMember();
 
-                final ArrayList<String> fragments = new ArrayList<String>(frags.size());
-                final ArrayList<OperatorExpression> expressions = new ArrayList<OperatorExpression>(exps.size());
+                final ArrayList<String> fragments = new ArrayList<>(frags.size());
+                final ArrayList<OperatorExpression> expressions = new ArrayList<>(exps.size());
 
                 final Iterator<Value> fIterator = frags.iterator();
                 final Iterator<Value> eIterator = exps.iterator();

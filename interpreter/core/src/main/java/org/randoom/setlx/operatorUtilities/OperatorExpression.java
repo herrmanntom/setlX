@@ -185,7 +185,7 @@ public class OperatorExpression extends Expression {
         for (int i = 0; i < numberOfOperators; i++) {
             AOperator operator = operators.get(i);
             try {
-                values.push(operator.evaluate(state, values));
+                values.push(operator.evaluate(state, values, this, i));
             } catch (final SetlException se) {
                 while (i < numberOfOperators) {
                     StringBuilder error = new StringBuilder();
@@ -226,6 +226,10 @@ public class OperatorExpression extends Expression {
     }
 
     private void appendExpression(State state, StringBuilder sb, int maxOperatorDepth) {
+        sb.append(computeExpressionFragmentStack(state, maxOperatorDepth).poll().getExpression());
+    }
+
+    public Stack<ExpressionFragment> computeExpressionFragmentStack(State state, int maxOperatorDepth) {
         Stack<ExpressionFragment> expressionFragments = new Stack<>();
 
         for (int i = 0; i < maxOperatorDepth; i++) {
@@ -262,15 +266,14 @@ public class OperatorExpression extends Expression {
             }
             expressionFragments.push(new ExpressionFragment(expressionFragment.toString(), operator.precedence()));
         }
-
-        sb.append(expressionFragments.poll().getExpression());
+        return expressionFragments;
     }
 
-    private static class ExpressionFragment {
+    public static class ExpressionFragment {
         private String  expression;
         private int     precedence;
 
-        public ExpressionFragment(String expression, int precedence) {
+        private ExpressionFragment(String expression, int precedence) {
             this.expression      = expression;
             this.precedence      = precedence;
         }

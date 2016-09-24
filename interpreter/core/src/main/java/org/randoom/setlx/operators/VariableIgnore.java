@@ -4,6 +4,7 @@ import org.randoom.setlx.assignments.AAssignableExpression;
 import org.randoom.setlx.assignments.AssignableIgnore;
 import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.exceptions.UndefinedOperationException;
+import org.randoom.setlx.operatorUtilities.OperatorExpression;
 import org.randoom.setlx.operatorUtilities.Stack;
 import org.randoom.setlx.types.IgnoreDummy;
 import org.randoom.setlx.types.Term;
@@ -55,7 +56,7 @@ public class VariableIgnore extends AZeroOperator {
     }
 
     @Override
-    public IgnoreDummy evaluate(final State state, Stack<Value> values) throws UndefinedOperationException {
+    public IgnoreDummy evaluate(final State state, Stack<Value> values, OperatorExpression operatorExpression, int currentStackDepth) throws UndefinedOperationException {
         return IgnoreDummy.ID;
     }
 

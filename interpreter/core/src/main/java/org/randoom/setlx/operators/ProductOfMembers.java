@@ -2,6 +2,7 @@ package org.randoom.setlx.operators;
 
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.TermConversionException;
+import org.randoom.setlx.operatorUtilities.OperatorExpression;
 import org.randoom.setlx.operatorUtilities.Stack;
 import org.randoom.setlx.types.Om;
 import org.randoom.setlx.types.Term;
@@ -20,7 +21,7 @@ public class ProductOfMembers extends AUnaryPrefixOperator {
     private ProductOfMembers() {}
 
     @Override
-    public Value evaluate(State state, Stack<Value> values) throws SetlException {
+    public Value evaluate(State state, Stack<Value> values, OperatorExpression operatorExpression, int currentStackDepth) throws SetlException {
         return values.poll().productOfMembers(state, Om.OM);
     }
 

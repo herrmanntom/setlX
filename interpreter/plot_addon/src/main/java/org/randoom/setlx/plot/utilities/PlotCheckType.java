@@ -1,5 +1,6 @@
 package org.randoom.setlx.plot.utilities;
 
+import org.randoom.setlx.plot.types.Canvas;
 import org.randoom.setlx.types.SetlBoolean;
 import org.randoom.setlx.types.SetlList;
 import org.randoom.setlx.types.Value;

@@ -1,11 +1,11 @@
-package org.randoom.setlx.plot.utilities;
+package org.randoom.setlx.plot.types;
 
-
-import org.randoom.setlx.plot.types.Graph;
+import org.randoom.setlx.plot.utilities.FrameWrapper;
+import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.CodeFragment;
 import org.randoom.setlx.utilities.State;
-import org.randoom.setlx.types.Value;
 
+import java.util.Objects;
 
 public class Canvas extends Value {
 
@@ -29,7 +29,6 @@ public class Canvas extends Value {
         return this.frame;
     }
 
-
     @Override
     public Value clone() {
         Canvas result = new Canvas(this.frame);
@@ -43,12 +42,34 @@ public class Canvas extends Value {
 
     @Override
     public int compareTo(CodeFragment other) {
-        return 0;
+        if (other.getClass() == Canvas.class) {
+            return title.compareTo(((Canvas) other).title);
+        }  else {
+            return (this.compareToOrdering() < other.compareToOrdering())? -1 : 1;
+        }
     }
+
+    private final static long COMPARE_TO_ORDER_CONSTANT = generateCompareToOrderConstant(Canvas.class);
 
     @Override
     public long compareToOrdering() {
-        return 0;
+        return COMPARE_TO_ORDER_CONSTANT;
+    }
+
+    @Override
+    public boolean equalTo(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        if (!super.equals(o)) {
+            return false;
+        }
+        Canvas canvas = (Canvas) o;
+        return Objects.equals(frame, canvas.frame) &&
+               Objects.equals(title, canvas.title);
     }
 
     @Override
@@ -56,17 +77,5 @@ public class Canvas extends Value {
         int result = (title != null ? title.hashCode() : 0);
         result = 36 * result + (frame != null ? frame.hashCode() : 0);
         return result;
-    }
-
-    @Override
-    public boolean equalTo(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Graph)) return false;
-
-        Canvas c = (Canvas) o;
-
-        if(this.title != c.getTitle()){ return false;}
-        return (this.frame == c.getFrame());
-
     }
 }

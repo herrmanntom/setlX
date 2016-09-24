@@ -2,7 +2,7 @@ package org.randoom.setlx.functions;
 
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.UndefinedOperationException;
-import org.randoom.setlx.plot.utilities.Canvas;
+import org.randoom.setlx.plot.types.Canvas;
 import org.randoom.setlx.plot.utilities.ConnectJFreeChart;
 import org.randoom.setlx.plot.utilities.ConvertSetlTypes;
 import org.randoom.setlx.plot.utilities.PlotCheckType;

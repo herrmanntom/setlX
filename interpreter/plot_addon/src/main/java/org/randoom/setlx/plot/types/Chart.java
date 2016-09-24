@@ -1,12 +1,10 @@
 package org.randoom.setlx.plot.types;
 
-
+import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.CodeFragment;
 import org.randoom.setlx.utilities.State;
-import org.randoom.setlx.types.Value;
 
 import java.util.List;
-import java.util.Objects;
 
 /**
  * Created by arne on 03.06.15.
@@ -50,11 +48,10 @@ public abstract class Chart<T> extends Value {
 
     @Override
     public int compareTo(CodeFragment other) {
-        return 0;
-    }
-
-    @Override
-    public long compareToOrdering() {
-        return 0;
+        if (this.getClass() == other.getClass()) {
+            return 0;
+        }  else {
+            return (this.compareToOrdering() < other.compareToOrdering())? -1 : 1;
+        }
     }
 }

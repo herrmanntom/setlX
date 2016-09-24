@@ -129,12 +129,18 @@ public class Graph extends Value {
 
     @Override
     public int compareTo(CodeFragment other) {
-        return 0;
+        if (other.getClass() == Graph.class) {
+            return 0;
+        }  else {
+            return (this.compareToOrdering() < other.compareToOrdering())? -1 : 1;
+        }
     }
+
+    private final static long COMPARE_TO_ORDER_CONSTANT = generateCompareToOrderConstant(Graph.class);
 
     @Override
     public long compareToOrdering() {
-        return 0;
+        return COMPARE_TO_ORDER_CONSTANT;
     }
 
     @Override

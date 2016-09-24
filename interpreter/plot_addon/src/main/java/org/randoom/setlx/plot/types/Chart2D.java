@@ -16,6 +16,13 @@ public class Chart2D extends Chart<List<Double>> {
         return new Chart2D(getValues(), getCategories(), getName(), getLabel());
     }
 
+    private final static long COMPARE_TO_ORDER_CONSTANT = generateCompareToOrderConstant(Chart2D.class);
+
+    @Override
+    public long compareToOrdering() {
+        return COMPARE_TO_ORDER_CONSTANT;
+    }
+
     @Override
     public int hashCode() {
         return Objects.hash(getValues(), getCategories(), getName(), getLabel());
@@ -23,14 +30,18 @@ public class Chart2D extends Chart<List<Double>> {
 
     @Override
     public boolean equalTo(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Chart2D)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof Chart2D)) {
+            return false;
+        }
 
         Chart2D chart = (Chart2D) o;
 
         return getLabel() == chart.getLabel() &&
-                Objects.equals(getValues(), chart.getValues()) &&
-                Objects.equals(getCategories(), chart.getCategories()) &&
-                Objects.equals(getName(), chart.getName());
+               Objects.equals(getValues(), chart.getValues()) &&
+               Objects.equals(getCategories(), chart.getCategories()) &&
+               Objects.equals(getName(), chart.getName());
     }
 }

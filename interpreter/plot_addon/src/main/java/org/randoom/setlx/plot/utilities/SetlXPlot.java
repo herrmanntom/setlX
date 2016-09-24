@@ -4,6 +4,7 @@ import org.randoom.setlx.exceptions.FileNotWritableException;
 import org.randoom.setlx.exceptions.IllegalRedefinitionException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.UndefinedOperationException;
+import org.randoom.setlx.plot.types.Canvas;
 import org.randoom.setlx.plot.types.Chart1D;
 import org.randoom.setlx.plot.types.Chart2D;
 import org.randoom.setlx.plot.types.Graph;

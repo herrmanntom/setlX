@@ -9,9 +9,7 @@ import org.randoom.setlx.exceptions.FileNotWritableException;
 import org.randoom.setlx.exceptions.IllegalRedefinitionException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.UndefinedOperationException;
-import org.randoom.setlx.plot.types.Chart1D;
-import org.randoom.setlx.plot.types.Chart2D;
-import org.randoom.setlx.plot.types.Graph;
+import org.randoom.setlx.plot.types.*;
 import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.types.Value;
 
@@ -35,22 +33,22 @@ public class ConnectJFreeChart implements SetlXPlot {
     }
 
     @Override
-    public org.randoom.setlx.plot.utilities.Canvas createCanvas() {
-        org.randoom.setlx.plot.utilities.Canvas canvas = new org.randoom.setlx.plot.utilities.Canvas(new FrameWrapper());
+    public org.randoom.setlx.plot.types.Canvas createCanvas() {
+        org.randoom.setlx.plot.types.Canvas canvas = new org.randoom.setlx.plot.types.Canvas(new FrameWrapper());
         canvas.setTitle("Graphic output");
         return canvas;
     }
 
     @Override
-    public org.randoom.setlx.plot.utilities.Canvas createCanvas(String title) {
-        org.randoom.setlx.plot.utilities.Canvas canvas = new org.randoom.setlx.plot.utilities.Canvas(new FrameWrapper());
+    public org.randoom.setlx.plot.types.Canvas createCanvas(String title) {
+        org.randoom.setlx.plot.types.Canvas canvas = new org.randoom.setlx.plot.types.Canvas(new FrameWrapper());
         canvas.setTitle(title);
         return canvas;
     }
 
 
     @Override
-    public Graph addGraph(org.randoom.setlx.plot.utilities.Canvas canvas, String function, String name, State interpreterState, List<Integer> color, boolean plotArea) throws SetlException {
+    public Graph addGraph(org.randoom.setlx.plot.types.Canvas canvas, String function, String name, State interpreterState, List<Integer> color, boolean plotArea) throws SetlException {
         if(canvas.getFrame().getFrameType() == FrameWrapper.VIRGIN_FRAME){
             canvas.getFrame().setFrameType(FrameWrapper.DRAW_FRAME);
             canvas.getFrame().setFrame(new DrawFrame(canvas.getTitle(), canvas.getFrame().getWidth(), canvas.getFrame().getHeight()));
@@ -64,7 +62,7 @@ public class ConnectJFreeChart implements SetlXPlot {
 
 
     @Override
-    public Graph addListGraph(org.randoom.setlx.plot.utilities.Canvas canvas, List<List<Double>> function, String name, List<Integer> color, boolean plotArea) throws IllegalRedefinitionException {
+    public Graph addListGraph(org.randoom.setlx.plot.types.Canvas canvas, List<List<Double>> function, String name, List<Integer> color, boolean plotArea) throws IllegalRedefinitionException {
         if(canvas.getFrame().getFrameType() == FrameWrapper.VIRGIN_FRAME){
             canvas.getFrame().setFrameType(FrameWrapper.DRAW_FRAME);
             canvas.getFrame().setFrame(new DrawFrame(canvas.getTitle(), canvas.getFrame().getWidth(), canvas.getFrame().getHeight()));
@@ -78,7 +76,7 @@ public class ConnectJFreeChart implements SetlXPlot {
 
 
     @Override
-    public Graph addParamGraph(org.randoom.setlx.plot.utilities.Canvas canvas, String xfunction, String yfunction, String name, State interpreterState, List<Integer> color, Boolean plotArea, List<Double> limits) throws SetlException {
+    public Graph addParamGraph(org.randoom.setlx.plot.types.Canvas canvas, String xfunction, String yfunction, String name, State interpreterState, List<Integer> color, Boolean plotArea, List<Double> limits) throws SetlException {
         if(canvas.getFrame().getFrameType() == FrameWrapper.VIRGIN_FRAME){
             canvas.getFrame().setFrameType(FrameWrapper.DRAW_FRAME);
             canvas.getFrame().setFrame(new DrawFrame(canvas.getTitle(), canvas.getFrame().getWidth(), canvas.getFrame().getHeight()));
@@ -91,7 +89,7 @@ public class ConnectJFreeChart implements SetlXPlot {
     }
 
     @Override
-    public Chart1D addBarChart(org.randoom.setlx.plot.utilities.Canvas canvas, List<Double> values, List<String> categories) throws IllegalRedefinitionException {
+    public Chart1D addBarChart(org.randoom.setlx.plot.types.Canvas canvas, List<Double> values, List<String> categories) throws IllegalRedefinitionException {
         if(canvas.getFrame().getFrameType() == FrameWrapper.DRAW_FRAME){
             throw new IllegalRedefinitionException("This canvas is defined for graphs. Create a new canvas to draw charts");
         }
@@ -107,7 +105,7 @@ public class ConnectJFreeChart implements SetlXPlot {
     }
 
     @Override
-    public Chart1D addBarChart(org.randoom.setlx.plot.utilities.Canvas canvas, List<Double> values, List<String> categories, String name) throws IllegalRedefinitionException {
+    public Chart1D addBarChart(org.randoom.setlx.plot.types.Canvas canvas, List<Double> values, List<String> categories, String name) throws IllegalRedefinitionException {
         if(canvas.getFrame().getFrameType() == FrameWrapper.DRAW_FRAME){
             throw new IllegalRedefinitionException("This canvas is defined for graphs. Create a new canvas to draw charts");
         }
@@ -124,7 +122,7 @@ public class ConnectJFreeChart implements SetlXPlot {
     }
 
     @Override
-    public Chart1D addPieChart(Canvas canvas, List<Double> values, List<String> categories) throws IllegalRedefinitionException {
+    public Chart1D addPieChart(org.randoom.setlx.plot.types.Canvas canvas, List<Double> values, List<String> categories) throws IllegalRedefinitionException {
         if(canvas.getFrame().getFrameType() == FrameWrapper.DRAW_FRAME){
             throw new IllegalRedefinitionException("This canvas is defined for graphs. Create a new canvas to draw charts");
         }
@@ -141,7 +139,7 @@ public class ConnectJFreeChart implements SetlXPlot {
     }
 
     @Override
-    public Chart2D addBoxChart(Canvas canvas, List<List<Double>> values, List<String> categories) throws IllegalRedefinitionException {
+    public Chart2D addBoxChart(org.randoom.setlx.plot.types.Canvas canvas, List<List<Double>> values, List<String> categories) throws IllegalRedefinitionException {
         if(canvas.getFrame().getFrameType() == FrameWrapper.DRAW_FRAME){
             throw new IllegalRedefinitionException("This canvas is defined for graphs. Create a new canvas to draw charts");
         }
@@ -158,7 +156,7 @@ public class ConnectJFreeChart implements SetlXPlot {
     }
 
     @Override
-    public Chart2D addBoxChart(org.randoom.setlx.plot.utilities.Canvas canvas, List<List<Double>> values, List<String> categories, String name) throws IllegalRedefinitionException {
+    public Chart2D addBoxChart(org.randoom.setlx.plot.types.Canvas canvas, List<List<Double>> values, List<String> categories, String name) throws IllegalRedefinitionException {
         if(canvas.getFrame().getFrameType() == FrameWrapper.DRAW_FRAME){
             throw new IllegalRedefinitionException("This canvas is defined for graphs. Create a new canvas to draw charts");
         }
@@ -175,19 +173,19 @@ public class ConnectJFreeChart implements SetlXPlot {
     }
 
     @Override
-    public void removeGraph(org.randoom.setlx.plot.utilities.Canvas canvas, Value value) throws SetlException {
+    public void removeGraph(org.randoom.setlx.plot.types.Canvas canvas, Value value) throws SetlException {
 
         canvas.getFrame().getFrame().removeGraph(value);
     }
 
     @Override
-    public void labelAxis(org.randoom.setlx.plot.utilities.Canvas canvas, String xLabel, String yLabel) throws IllegalRedefinitionException {
+    public void labelAxis(org.randoom.setlx.plot.types.Canvas canvas, String xLabel, String yLabel) throws IllegalRedefinitionException {
         canvas.getFrame().getFrame().setLabel(xLabel, yLabel);
 
     }
 
     @Override
-    public Value addLabel(org.randoom.setlx.plot.utilities.Canvas canvas, List<Double> coordinates, String text) throws UndefinedOperationException {
+    public Value addLabel(org.randoom.setlx.plot.types.Canvas canvas, List<Double> coordinates, String text) throws UndefinedOperationException {
         if(canvas.getFrame().getFrameType() == FrameWrapper.VIRGIN_FRAME){
             throw new UndefinedOperationException("label cannot be added, if no Graph or Chart is defined. Please add a Graph or Chart first");
         }
@@ -195,7 +193,7 @@ public class ConnectJFreeChart implements SetlXPlot {
     }
 
     @Override
-    public void defineTitle(org.randoom.setlx.plot.utilities.Canvas canvas, String title) {
+    public void defineTitle(org.randoom.setlx.plot.types.Canvas canvas, String title) {
         canvas.setTitle(title);
         if(canvas.getFrame().getFrame() != null) {
             canvas.getFrame().getFrame().setTitle(title);
@@ -203,7 +201,7 @@ public class ConnectJFreeChart implements SetlXPlot {
     }
 
     @Override
-    public void legendVisible(org.randoom.setlx.plot.utilities.Canvas canvas, Boolean visible) {
+    public void legendVisible(org.randoom.setlx.plot.types.Canvas canvas, Boolean visible) {
         ChartPanel chartPanel = canvas.getFrame().getFrame().chartPanel;
         canvas.getFrame().getFrame().setLegendVisible(visible);
         if (visible) {
@@ -218,7 +216,7 @@ public class ConnectJFreeChart implements SetlXPlot {
     }
 
     @Override
-    public void modScale(org.randoom.setlx.plot.utilities.Canvas canvas, double xMin, double xMax, double yMin, double yMax) throws SetlException {
+    public void modScale(org.randoom.setlx.plot.types.Canvas canvas, double xMin, double xMax, double yMin, double yMax) throws SetlException {
         if(canvas.getFrame().getFrameType() >= FrameWrapper.BAR_FRAME){
             throw new IllegalRedefinitionException("This Canvas can only be used for Graphs, not for Charts. Create a new Canvas, to draw Graphs");
         }
@@ -227,7 +225,7 @@ public class ConnectJFreeChart implements SetlXPlot {
     }
 
     @Override
-    public void exportCanvas(org.randoom.setlx.plot.utilities.Canvas canvas, String path) throws FileNotWritableException {
+    public void exportCanvas(org.randoom.setlx.plot.types.Canvas canvas, String path) throws FileNotWritableException {
         BufferedImage image = new BufferedImage(canvas.getFrame().getFrame().getWidth(), canvas.getFrame().getFrame().getHeight(), BufferedImage.TYPE_INT_RGB);
         Graphics2D graphics2D = image.createGraphics();
         canvas.getFrame().getFrame().paint(graphics2D);
@@ -240,7 +238,7 @@ public class ConnectJFreeChart implements SetlXPlot {
     }
 
     @Override
-    public void modScaleType(org.randoom.setlx.plot.utilities.Canvas canvas, String xType, String yType) throws UndefinedOperationException, IllegalRedefinitionException {
+    public void modScaleType(org.randoom.setlx.plot.types.Canvas canvas, String xType, String yType) throws UndefinedOperationException, IllegalRedefinitionException {
 
         if(canvas.getFrame().getFrameType() >= FrameWrapper.BAR_FRAME){
             throw new IllegalRedefinitionException("This Canvas can only be used for Graphs, not for Charts. Create a new Canvas, to draw Graphs");
@@ -266,7 +264,7 @@ public class ConnectJFreeChart implements SetlXPlot {
 
 
     @Override
-    public Graph addBullets(org.randoom.setlx.plot.utilities.Canvas canvas, List<List<Double>> bullets, List<Integer> color, Double bulletSize) throws IllegalRedefinitionException {
+    public Graph addBullets(org.randoom.setlx.plot.types.Canvas canvas, List<List<Double>> bullets, List<Integer> color, Double bulletSize) throws IllegalRedefinitionException {
         if(canvas.getFrame().getFrameType() == FrameWrapper.VIRGIN_FRAME){
             canvas.getFrame().setFrameType(FrameWrapper.DRAW_FRAME);
             canvas.getFrame().setFrame(new DrawFrame(canvas.getTitle(), canvas.getFrame().getWidth(), canvas.getFrame().getHeight()));
@@ -278,7 +276,7 @@ public class ConnectJFreeChart implements SetlXPlot {
     }
 
     @Override
-    public void modSize(org.randoom.setlx.plot.utilities.Canvas canvas, List<Double> size) {
+    public void modSize(org.randoom.setlx.plot.types.Canvas canvas, List<Double> size) {
         canvas.getFrame().setWidth(size.get(0));
         canvas.getFrame().setHeight(size.get(1));
         if(!(canvas.getFrame().getFrameType() == FrameWrapper.VIRGIN_FRAME)){

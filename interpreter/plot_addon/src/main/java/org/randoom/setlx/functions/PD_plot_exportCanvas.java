@@ -36,7 +36,7 @@ public class PD_plot_exportCanvas extends PreDefinedProcedure {
 
         Canvas canvas = (Canvas)args.get(CANVAS);
         SetlString path = (SetlString)args.get(PATH);
-        String pathString = path.toString().replace("\"", "");
+        String pathString = state.filterFileName(path.getUnquotedString(state));
         ConnectJFreeChart.getInstance().exportCanvas(canvas, pathString);
         return new SetlString("Exported Canvas to "+pathString);
     }

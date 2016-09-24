@@ -84,7 +84,7 @@ public abstract class Statement extends ImmutableCodeFragment {
             return EXECUTE.EXIT;
 
         } catch (final SetlException se) { // user/code did something wrong
-            se.printExceptionsTrace(state);
+            se.printExceptionsTraceAndReplay(state);
             return EXECUTE.ERROR;
 
         } catch (final StackOverflowError soe) {

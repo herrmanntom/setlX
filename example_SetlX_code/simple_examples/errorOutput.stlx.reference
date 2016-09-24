@@ -1,0 +1,14 @@
+2
+Error in "f(1, z)":
+Error in "print(x * y)":
+Error in "x * y":
+Right-hand-side of '1 * om' is not a number, list or string.
+
+Replay: 
+3.3: x * y FAILED 
+3.2: y <~> om
+3.1: x <~> 1
+2.2: print(x * y) FAILED 
+2.1: print <~> procedure(*value) { /* predefined procedure `print' */ }
+1.2: f(1, z) FAILED 
+1.1: f <~> procedure(x, y) { print(x * y); }

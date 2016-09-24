@@ -361,7 +361,7 @@ public class SetlX {
                     }
                 } catch (final SetlException se) {
                     state.errWriteLn("Error during termLoop!");
-                    se.printExceptionsTrace(state);
+                    se.printExceptionsTraceAndReplay(state);
                 }
             }
             programs = termConvertedPrograms;
@@ -381,7 +381,7 @@ public class SetlX {
                         programs.get(i).toTerm(state).canonical(state, sb);
                     } catch (SetlException se) {
                         state.errWriteLn("Error during termDump!");
-                        se.printExceptionsTrace(state);
+                        se.printExceptionsTraceAndReplay(state);
                     }
                     programTerm = sb.toString();
                 }

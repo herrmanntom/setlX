@@ -28,6 +28,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -181,20 +182,37 @@ public class OperatorExpression extends Expression {
     @Override
     public Value evaluate(final State state) throws SetlException {
         Stack<Value> values = new Stack<>();
+        LinkedList<Value> valuesForReplay = new LinkedList<>();
 
         for (int i = 0; i < numberOfOperators; i++) {
             AOperator operator = operators.get(i);
             try {
-                values.push(operator.evaluate(state, values, this, i));
+                Value result = operator.evaluate(state, values, this, i);
+                values.push(result);
+                valuesForReplay.push(result);
             } catch (final SetlException se) {
-                while (i < numberOfOperators) {
+                List<String> replayFrames = new ArrayList<>();
+                for (int j = i + 1; j > 0; --j) {
+                    StringBuilder replayFrame = new StringBuilder();
+                    appendExpression(state, replayFrame, j);
+                    if (j <= i) {
+                        replayFrame.append(" <~> ");
+                        replayFrame.append(valuesForReplay.pollFirst());
+                    } else {
+                        replayFrame.append(" FAILED ");
+                    }
+                    replayFrames.add(replayFrame.toString());
+                }
+                se.addToReplay(replayFrames);
+
+                for (int j = i; j < numberOfOperators;) {
                     StringBuilder error = new StringBuilder();
                     error.append("Error in \"");
-                    appendExpression(state, error, ++i);
+                    appendExpression(state, error, ++j);
                     error.append("\":");
                     se.addToTrace(error.toString());
-                    while (i < numberOfOperators && operators.get(i) instanceof AZeroOperator) {
-                        ++i;
+                    while (j < numberOfOperators && operators.get(j) instanceof AZeroOperator) {
+                        ++j;
                     }
                 }
                 throw se;

@@ -57,20 +57,7 @@ public class Call extends AUnaryPostfixOperator {
             );
         }
         // supply the original expressions (args), which are needed for 'rw' parameters
-        try {
-            return lhs.call(state, arguments, listArgument);
-        } catch (final SetlException se) {
-            Stack<ExpressionFragment> stack = operatorExpression.computeExpressionFragmentStack(state, currentStackDepth);
-            String lhsString = stack.poll().getExpression();
-
-            final StringBuilder error = new StringBuilder();
-            error.append("Error in \"");
-            error.append(lhsString);
-            appendOperatorSign(state, error);
-            error.append("\":");
-            se.addToTrace(error.toString());
-            throw se;
-        }
+        return lhs.call(state, arguments, listArgument);
     }
 
     @Override

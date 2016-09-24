@@ -564,7 +564,9 @@ public class SetlObject extends Value {
     private void canonical(final State state, final StringBuilder sb, final int tabs) {
         sb.append("object<{");
         members.appendString(state, sb, tabs);
-        sb.append("; ");
+        if (members.size() > 0) {
+            sb.append("; ");
+        }
         sb.append(GET_CLASS_MEMBER);
         sb.append(" := ");
         getClassMember().appendString(state, sb, tabs);

@@ -85,9 +85,9 @@ public class SetlClass extends Value {
     private Block getStaticBlock() {
         if (staticBlock == REBUILD_MARKER) {
             // rebuild static block
-            final FragmentList<Statement> sBlock = new FragmentList<Statement>(staticDefs.size());
+            final FragmentList<Statement> sBlock = new FragmentList<>(staticDefs.size());
             for (final Entry<String, Value> entry : staticDefs.entrySet()) {
-                FragmentList<AOperator> assignment = new FragmentList<AOperator>();
+                FragmentList<AOperator> assignment = new FragmentList<>();
                 assignment.add(new ValueOperator(entry.getValue()));
                 assignment.add(new Assignment(new AssignableVariable(entry.getKey())));
                 sBlock.add(new ExpressionStatement(new OperatorExpression(assignment)));
@@ -116,7 +116,7 @@ public class SetlClass extends Value {
     public SetlClass clone() {
         HashSet<String> initVars = null;
         if (this.initVars != null) {
-            initVars = new HashSet<String>(this.initVars);
+            initVars = new HashSet<>(this.initVars);
         }
         Block staticBlock = null;
         if (getStaticBlock() != null) {
@@ -124,11 +124,11 @@ public class SetlClass extends Value {
         }
         HashSet<String> staticVars = null;
         if (this.staticVars != null) {
-            staticVars = new HashSet<String>(this.staticVars);
+            staticVars = new HashSet<>(this.staticVars);
         }
         SetlHashMap<Value> staticDefs = null;
         if (this.staticDefs != null) {
-            staticDefs = new SetlHashMap<Value>();
+            staticDefs = new SetlHashMap<>();
             for (final Entry<String, Value> entry: this.staticDefs.entrySet()) {
                 staticDefs.put(entry.getKey(), entry.getValue().clone());
             }
@@ -144,22 +144,22 @@ public class SetlClass extends Value {
         final List<String> usedVariables
     ) {
         /* collect and optimize the inside */
-        final List<String> innerBoundVariables   = new ArrayList<String>();
-        final List<String> innerUnboundVariables = new ArrayList<String>();
-        final List<String> innerUsedVariables    = new ArrayList<String>();
+        final List<String> innerBoundVariables   = new ArrayList<>();
+        final List<String> innerUnboundVariables = new ArrayList<>();
+        final List<String> innerUsedVariables    = new ArrayList<>();
 
         // add all parameters to bound
         parameters.collectVariablesAndOptimize(state, innerBoundVariables, innerBoundVariables, innerBoundVariables);
 
         int preBound = innerBoundVariables.size();
         initBlock.collectVariablesAndOptimize(state, innerBoundVariables, innerUnboundVariables, innerUsedVariables);
-        final HashSet<String> initVars = new HashSet<String>(innerBoundVariables.subList(preBound, innerBoundVariables.size()));
+        final HashSet<String> initVars = new HashSet<>(innerBoundVariables.subList(preBound, innerBoundVariables.size()));
 
         preBound = innerBoundVariables.size();
         if (getStaticBlock() != null) {
             getStaticBlock().collectVariablesAndOptimize(state, innerBoundVariables, innerUnboundVariables, innerUsedVariables);
         }
-        final HashSet<String> staticVars = new HashSet<String>(innerBoundVariables.subList(preBound, innerBoundVariables.size()));
+        final HashSet<String> staticVars = new HashSet<>(innerBoundVariables.subList(preBound, innerBoundVariables.size()));
 
         this.initVars   = initVars;
         this.staticVars = staticVars;
@@ -203,7 +203,7 @@ public class SetlClass extends Value {
         }
 
         // evaluate arguments
-        final ArrayList<Value> values = new ArrayList<Value>(nArguments);
+        final ArrayList<Value> values = new ArrayList<>(nArguments);
         for (final OperatorExpression arg : args) {
             values.add(arg.evaluate(state));
         }
@@ -223,7 +223,7 @@ public class SetlClass extends Value {
         final boolean            rwParameters = parameters.putParameterValuesIntoScope(state, values, FUNCTIONAL_CHARACTER);
 
               WriteBackAgent     wba          = null;
-        final SetlHashMap<Value> members      = new SetlHashMap<Value>();
+        final SetlHashMap<Value> members      = new SetlHashMap<>();
         final SetlObject         newObject    = SetlObject.createNew(members, this);
 
         newScope.linkToThisObject(newObject);
@@ -279,7 +279,7 @@ public class SetlClass extends Value {
     }
 
     private SetlHashMap<Value> extractBindings(final State state, final HashSet<String> vars) throws SetlException {
-        final SetlHashMap<Value> bindings = new SetlHashMap<Value>();
+        final SetlHashMap<Value> bindings = new SetlHashMap<>();
 
         for (final String var : vars) {
             final Value value = state.findValue(var);
@@ -301,10 +301,6 @@ public class SetlClass extends Value {
     }
 
     /* features of objects */
-
-    public Value getObjectMember(final State state, final String variable) throws SetlException {
-        return getObjectMemberUnCloned(state, variable).clone();
-    }
 
     @Override
     public Value getObjectMemberUnCloned(final State state, final String variable) throws SetlException {

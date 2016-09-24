@@ -21,7 +21,7 @@ public class SetlVector extends IndexedCollectionValue {
      * @param vector initialization array
      */
     public SetlVector(final ArrayList<Double> vector) {
-        this.vector = new ArrayList<Double>(vector);
+        this.vector = new ArrayList<>(vector);
     }
 
     /**
@@ -34,7 +34,7 @@ public class SetlVector extends IndexedCollectionValue {
     public SetlVector(final State state, final CollectionValue init) throws SetlException {
         final int itemCount = init.size();
         if(itemCount > 0) {
-            vector = new ArrayList<Double>(itemCount);
+            vector = new ArrayList<>(itemCount);
             for(Value item : init) {
                 if(item.jDoubleConvertible()) {
                     vector.add(item.toJDoubleValue(state));
@@ -53,12 +53,12 @@ public class SetlVector extends IndexedCollectionValue {
      * @return internal representation of this vector.
      */
     /*protected*/ ArrayList<Double> getVectorCopy() {
-        return new ArrayList<Double>(vector);
+        return new ArrayList<>(vector);
     }
 
     @Override
     public Value clone() {
-        return new SetlVector(new ArrayList<Double>(vector));
+        return new SetlVector(new ArrayList<>(vector));
     }
 
     private static class SetlVectorIterator implements Iterator<Value> {
@@ -138,7 +138,7 @@ public class SetlVector extends IndexedCollectionValue {
             if(this.size() != subd.size()) {
                 throw new IncompatibleTypeException("Vectors with different number of dimensions cannot be added to one another.");
             }
-            ArrayList<Double> result = new ArrayList<Double>(this.size());
+            ArrayList<Double> result = new ArrayList<>(this.size());
             for(int i = 0; i < this.size(); i++) {
                 result.add(vector.get(i) - subd.vector.get(i));
             }
@@ -158,13 +158,29 @@ public class SetlVector extends IndexedCollectionValue {
             return this.scalarProduct(((SetlMatrix) multiplier).toVector());
         } else if (multiplier.jDoubleConvertible()) {
             double doubleValue = multiplier.toJDoubleValue(state);
-            ArrayList<Double> result = new ArrayList<Double>(this.vector.size());
+            ArrayList<Double> result = new ArrayList<>(this.vector.size());
             for (int i = 0; i < this.size(); i++) {
                 result.add(vector.get(i) * doubleValue);
             }
             return new SetlVector(result);
         } else if (multiplier instanceof Term) {
             return ((Term) multiplier).productFlipped(state, this);
+        } else {
+            throw new IncompatibleTypeException("Given parameter is not of supported type.");
+        }
+    }
+
+    @Override
+    public Value quotient(final State state, final Value multiplier) throws SetlException {
+        if (multiplier.jDoubleConvertible()) {
+            double doubleValue = multiplier.toJDoubleValue(state);
+            ArrayList<Double> result = new ArrayList<>(this.vector.size());
+            for (int i = 0; i < this.size(); i++) {
+                result.add(vector.get(i) / doubleValue);
+            }
+            return new SetlVector(result);
+        } else if (multiplier instanceof Term) {
+            return ((Term) multiplier).quotientFlipped(state, this);
         } else {
             throw new IncompatibleTypeException("Given parameter is not of supported type.");
         }
@@ -178,7 +194,7 @@ public class SetlVector extends IndexedCollectionValue {
             if(this.size() != sumd.size()) {
                 throw new IncompatibleTypeException("Vectors with different number of dimensions cannot be added to one another.");
             }
-            ArrayList<Double> result = new ArrayList<Double>(this.size());
+            ArrayList<Double> result = new ArrayList<>(this.size());
             for(int i = 0; i < this.size(); i++) {
                 result.add(vector.get(i) + sumd.vector.get(i));
             }
@@ -305,7 +321,7 @@ public class SetlVector extends IndexedCollectionValue {
         if (size < 0 || lowFromStart < 1 || highFromStart < 1 || lowFromStart > vectorSize) {
             size = 0;
         }
-        final ArrayList<Double> result = new ArrayList<Double>(size);
+        final ArrayList<Double> result = new ArrayList<>(size);
         // in java the index is one lower
         for (int i = lowFromStart - 1; size > 0 && i < highFromStart && i < vectorSize; ++i) {
             result.add(vector.get(i));
@@ -365,13 +381,7 @@ public class SetlVector extends IndexedCollectionValue {
         return Om.OM;
     }
 
-    /**
-     * Remove a specified member of this vector.
-     *
-     * @param index Index of the member to get. Note: Index starts with 1, not 0.
-     * @return      Member of this vector at the specified index.
-     */
-    public double removeMember(int index) {
+    private double removeMember(int index) {
         if (index > 0 && index < vector.size()) {
             return vector.remove(index - 1);
         } else {
@@ -426,14 +436,7 @@ public class SetlVector extends IndexedCollectionValue {
 
     /* special vector functions */
 
-    /**
-     * Calculates scalar product of two vectors
-     *
-     * @param other second vector
-     * @return      scalar product
-     * @throws UndefinedOperationException Thrown in case of some (user-) error.
-     */
-    public SetlDouble scalarProduct(final SetlVector other) throws UndefinedOperationException {
+    private SetlDouble scalarProduct(final SetlVector other) throws UndefinedOperationException {
         if(this.size() == other.size()) {
             double result = 0.0;
             for(int i = 0; i < this.size(); i++) {
@@ -445,18 +448,11 @@ public class SetlVector extends IndexedCollectionValue {
         }
     }
 
-    /**
-     * Calculates cross/vector product of two vectors
-     *
-     * @param other second vector
-     * @return vector
-     * @throws UndefinedOperationException in case one vectors does not have 3 dimensions.
-     */
-    public SetlVector vectorProduct(final SetlVector other) throws UndefinedOperationException {
+    private SetlVector vectorProduct(final SetlVector other) throws UndefinedOperationException {
         if(this.size() != 3 || other.size() != 3) {
             throw new UndefinedOperationException("Vector product is only defined for 3 dimensional vectors.");
         }
-        ArrayList<Double> result = new ArrayList<Double>(3);
+        ArrayList<Double> result = new ArrayList<>(3);
         result.add(vector.get(1) * other.vector.get(2) - vector.get(2) * other.vector.get(1));
         result.add(vector.get(2) * other.vector.get(0) - vector.get(0) * other.vector.get(2));
         result.add(vector.get(0) * other.vector.get(1) - vector.get(1) * other.vector.get(0));

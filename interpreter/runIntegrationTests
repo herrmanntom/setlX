@@ -37,7 +37,7 @@ if [[ $rc == 0 ]]; then
     done
     
     if [ "${#failedTests[@]}" -ne "0" ]; then     
-        echo "${#failedTests[@]} Errors detected. Please fix them all."
+        echo "Errors in ${#failedTests[@]} test file detected. Please fix them all."
         rc=1
     else
         echo "Every test is fine. Move along sir!"

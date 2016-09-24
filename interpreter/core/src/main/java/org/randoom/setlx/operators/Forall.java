@@ -6,6 +6,7 @@ import org.randoom.setlx.operatorUtilities.Condition;
 import org.randoom.setlx.operatorUtilities.SetlIterator;
 import org.randoom.setlx.operatorUtilities.SetlIteratorExecutionContainer;
 import org.randoom.setlx.operatorUtilities.Stack;
+import org.randoom.setlx.types.Om;
 import org.randoom.setlx.types.SetlBoolean;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
@@ -49,7 +50,7 @@ public class Forall extends AZeroOperator {
         public ReturnMessage execute(final State state, final Value lastIterationValue) throws SetlException {
             result = condition.evaluate(state);
             if (result == SetlBoolean.FALSE) {
-                sideEffectBindings = new SetlHashMap<Value>();
+                sideEffectBindings = new SetlHashMap<>();
                 for (final String variable : iterationVariables) {
                     sideEffectBindings.put(variable, state.findValue(variable));
                 }
@@ -83,10 +84,10 @@ public class Forall extends AZeroOperator {
 
     @Override
     public boolean collectVariablesAndOptimize(State state, List<String> boundVariables, List<String> unboundVariables, List<String> usedVariables) {
-        final List<String> tempVariables = new ArrayList<String>();
+        final List<String> tempVariables = new ArrayList<>();
         iterator.collectVariablesAndOptimize(state, new Exec(condition, null), tempVariables, boundVariables, unboundVariables, usedVariables);
 
-        iterationVariables = new HashSet<String>(tempVariables);
+        iterationVariables = new HashSet<>(tempVariables);
         return false;
     }
 
@@ -101,6 +102,10 @@ public class Forall extends AZeroOperator {
             // restore state in which condition is false
             for (final Map.Entry<String, Value> entry : e.sideEffectBindings.entrySet()) {
                 state.putValue(entry.getKey(), entry.getValue(), FUNCTIONAL_CHARACTER);
+            }
+        } else {
+            for (String variable : iterationVariables) {
+                state.putValue(variable, Om.OM, FUNCTIONAL_CHARACTER);
             }
         }
         return e.result;

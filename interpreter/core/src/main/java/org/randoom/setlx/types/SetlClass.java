@@ -369,14 +369,16 @@ public class SetlClass extends Value {
         parameters.appendString(state, sb);
         sb.append(") {");
         sb.append(endl);
-        initBlock.appendString(state, sb, tabs + 1, /* brackets = */ false);
-        if (getStaticBlock() != null) {
+        if (initBlock.size() > 0 || (getStaticBlock() != null && getStaticBlock().size() > 0)) {
+            initBlock.appendString(state, sb, tabs + 1, /* brackets = */ false);
+            if (getStaticBlock() != null) {
+                sb.append(endl);
+                state.appendLineStart(sb, tabs + 1);
+                sb.append("static ");
+                getStaticBlock().appendString(state, sb, tabs + 1, /* brackets = */ true);
+            }
             sb.append(endl);
-            state.appendLineStart(sb, tabs + 1);
-            sb.append("static ");
-            getStaticBlock().appendString(state, sb, tabs + 1, /* brackets = */ true);
         }
-        sb.append(endl);
         state.appendLineStart(sb, tabs);
         sb.append("}");
     }

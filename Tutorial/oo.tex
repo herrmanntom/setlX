@@ -391,8 +391,8 @@ and get the result
 This shows that the method \texttt{getX} is indeed a property of the class \texttt{point}.  However, 
 we cannot invoke this method on the class \texttt{point} because this method needs access to the
 member variable \texttt{mX} and this member variable is only available in objects of class
-\texttt{point}, but it is not am attribute property of the class \texttt{point} itself, since only members
-defined as \texttt{static} are attribute of a class.  Therefore, the command
+\texttt{point}, but it is not an attribute of the class \texttt{point} itself, since only members
+defined as \texttt{static} are attributes of a class.  Therefore, the command
 \\[0.2cm]
 \hspace*{1.3cm}
 \texttt{point.getX();}
@@ -412,10 +412,10 @@ then accessible by means  of the class name.  This way, we can simulate global v
  using the expression
 \\[0.2cm]
 \hspace*{1.3cm}
-\texttt{universal.gAnswer}
+\texttt{universal.sAnswer}
 \\[0.2cm]
-Note that we can both read and write to this variable.
-
+Note that we can both read and write to this variable.  We have started the name of the variable
+``\texttt{sAnswer}'' with a lower case ``\texttt{s}'' since this is our naming convention for static variables.
 \begin{figure}[!ht]
 \centering
 \begin{Verbatim}[ frame         = lines, 
@@ -429,7 +429,7 @@ Note that we can both read and write to this variable.
                 ]
     class universal() {
       static {
-        gAnswer := 42;
+        sAnswer := 42;
       }
     }
 \end{Verbatim}
@@ -1029,7 +1029,12 @@ them next.
       \hspace*{1.3cm}
       \texttt{class empty() \{\}}
       \\[0.2cm]
-      Then, evaluating the expression
+      Then, after defining
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \texttt{a := empty();}
+      \\[0.2cm]
+      the evaluation of the expression
       \\[0.2cm]
       \hspace*{1.3cm}
       \texttt{a == a}

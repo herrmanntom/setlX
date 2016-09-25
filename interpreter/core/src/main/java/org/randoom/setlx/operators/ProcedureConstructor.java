@@ -118,7 +118,7 @@ public class ProcedureConstructor extends AZeroOperator {
     /* term operations */
 
     @Override
-    public Value modifyTerm(final State state, Term term) throws SetlException {
+    public Value modifyTerm(final State state, Term term, Stack<Value> termFragments) throws SetlException {
         return definition.toTerm(state);
     }
 

@@ -61,7 +61,7 @@ public abstract class AZeroOperator extends AOperator {
     @Override
     public final Value buildTerm(State state, Stack<Value> termFragments) throws SetlException {
         Term term = new Term(FUNCTIONAL_CHARACTER);
-        return modifyTerm(state, term);
+        return modifyTerm(state, term, termFragments);
     }
 
     /**
@@ -69,10 +69,11 @@ public abstract class AZeroOperator extends AOperator {
      *
      * @param state          Current state of the running setlX program.
      * @param term           Term to work with.
+     * @param termFragments  Stack of term fragments
      * @return               Resulting term.
      * @throws SetlException Thrown in case of some (user-) error.
      */
-    public Value modifyTerm(State state, Term term) throws SetlException {
+    public Value modifyTerm(State state, Term term, Stack<Value> termFragments) throws SetlException {
         return term;
     }
 }

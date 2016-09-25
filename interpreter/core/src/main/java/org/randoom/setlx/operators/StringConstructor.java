@@ -204,7 +204,7 @@ public class StringConstructor extends AZeroOperator {
     /* term operations */
 
     @Override
-    public Value modifyTerm(State state, Term term) throws SetlException {
+    public Value modifyTerm(State state, Term term, Stack<Value> termFragments) throws SetlException {
         term.addMember(state, new SetlString(originalStr.substring(1, originalStr.length() -1)));
 
         final SetlList strList = new SetlList(fragments.size());

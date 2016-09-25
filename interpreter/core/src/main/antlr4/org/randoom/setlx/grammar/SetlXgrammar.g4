@@ -371,8 +371,8 @@ prefixOperation [boolean enableIgnore, FragmentList<AOperator> operators]
 
 factor [boolean enableIgnore, FragmentList<AOperator> operators]
     : '!' factor[$enableIgnore, $operators] { operators.add(Not.N); }
-    | TERM '(' termArguments ')'
-      { operators.add(new TermConstructor($TERM.text, $termArguments.args)); }
+    | TERM '(' termArguments[$operators] ')'
+      { operators.add(new TermConstructor($TERM.text, $termArguments.args.size())); }
     | 'forall' '(' iteratorChain[$enableIgnore] '|' condition ')'
       { operators.add(new Forall($iteratorChain.ic, $condition.cnd)); }
     | 'exists' '(' iteratorChain[$enableIgnore] '|' condition ')'
@@ -395,9 +395,9 @@ factor [boolean enableIgnore, FragmentList<AOperator> operators]
       )?
     ;
 
-termArguments returns [FragmentList<OperatorExpression> args]
-    : exprList[true, null] { $args = $exprList.exprs;                        }
-    |  /* epsilon */       { $args = new FragmentList<OperatorExpression>(); }
+termArguments [FragmentList<AOperator> operators] returns [FragmentList<OperatorExpression> args]
+    : exprList[true, $operators] { $args = $exprList.exprs;                        }
+    |  /* epsilon */             { $args = new FragmentList<OperatorExpression>(); }
     ;
 
 procedure returns [Procedure pd]

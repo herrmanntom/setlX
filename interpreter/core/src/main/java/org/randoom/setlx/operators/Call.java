@@ -179,7 +179,7 @@ public class Call extends AOperator {
 
             OperatorExpression.appendFromTerm(state, term.firstMember(), operatorStack);
 
-            FragmentList<OperatorExpression> arguments = new FragmentList<>();
+            final FragmentList<OperatorExpression> arguments = new FragmentList<>();
             for (final Value argument : (SetlList) term.getMember(2)) {
                 arguments.add(
                         new OperatorExpression(

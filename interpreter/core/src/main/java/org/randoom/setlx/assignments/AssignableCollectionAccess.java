@@ -67,7 +67,7 @@ public class AssignableCollectionAccess extends AAssignableExpression {
         }
 
         // evaluate all arguments
-        List<Value> arguments = new ArrayList<Value>(this.arguments.size());
+        List<Value> arguments = new ArrayList<>(this.arguments.size());
         for (final OperatorExpression expression: this.arguments) {
             arguments.add(expression.evaluate(state).clone());
         }
@@ -76,7 +76,7 @@ public class AssignableCollectionAccess extends AAssignableExpression {
             for (Value arg : arguments) {
                 argumentList.addMember(state, arg);
             }
-            arguments = new ArrayList<Value>(1);
+            arguments = new ArrayList<>(1);
             arguments.add(argumentList);
         }
 
@@ -95,7 +95,7 @@ public class AssignableCollectionAccess extends AAssignableExpression {
 
         if (arguments.size() > 1) {
             // evaluate all arguments
-            List<Value> arguments = new ArrayList<Value>(this.arguments.size());
+            List<Value> arguments = new ArrayList<>(this.arguments.size());
             for (final OperatorExpression arg: this.arguments) {
                 arguments.add(arg.evaluate(state).clone());
             }

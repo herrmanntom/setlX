@@ -122,7 +122,7 @@ public class Forall extends AZeroOperator {
     }
 
     @Override
-    public Value modifyTerm(State state, Term term) throws SetlException {
+    public Value modifyTerm(State state, Term term, Stack<Value> termFragments) throws SetlException {
         term.addMember(state, iterator.toTerm(state));
         term.addMember(state, condition.toTerm(state));
         return term;

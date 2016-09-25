@@ -61,7 +61,7 @@ public class LiteralConstructor extends AZeroOperator {
     /* term operations */
 
     @Override
-    public Term modifyTerm(final State state, Term term) {
+    public Term modifyTerm(final State state, Term term, Stack<Value> termFragments) {
         term.addMember(state, runtimeString);
         return term;
     }

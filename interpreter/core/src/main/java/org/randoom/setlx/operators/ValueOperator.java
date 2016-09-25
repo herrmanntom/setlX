@@ -42,7 +42,7 @@ public class ValueOperator extends AZeroOperator {
     }
 
     @Override
-    public Value modifyTerm(State state, Term term) throws SetlException {
+    public Value modifyTerm(State state, Term term, Stack<Value> termFragments) throws SetlException {
         return value.toTerm(state);
     }
 

@@ -71,7 +71,7 @@ public class Variable extends AZeroOperator {
     }
 
     @Override
-    public Value modifyTerm(State state, Term term) {
+    public Value modifyTerm(State state, Term term, Stack<Value> termFragments) {
         final Term result = new Term(FUNCTIONAL_CHARACTER, 1);
         result.addMember(state, new SetlString(id));
         return result;

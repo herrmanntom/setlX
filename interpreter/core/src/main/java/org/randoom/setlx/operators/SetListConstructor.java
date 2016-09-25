@@ -82,7 +82,7 @@ public class SetListConstructor extends AZeroOperator {
     }
 
     @Override
-    public void appendOperatorSign(State state, StringBuilder sb) {
+    public void appendOperatorSign(State state, StringBuilder sb, List<String> expressions) {
         if (type == CollectionType.SET) {
             sb.append("{");
         } else /* if (mType == LIST) */ {

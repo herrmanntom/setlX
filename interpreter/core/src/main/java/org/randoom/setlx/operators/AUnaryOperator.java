@@ -24,6 +24,10 @@ public abstract class AUnaryOperator extends AOperator {
         FUNCTIONAL_CHARACTER = TermUtilities.generateFunctionalCharacter(this.getClass());
     }
 
+    public int numberOfExpressionsRequiredForOperator() {
+        return 0;
+    }
+
     @Override
     public final boolean collectVariablesAndOptimize(State state, List<String> boundVariables, List<String> unboundVariables, List<String> usedVariables) {
         throw new IllegalStateException("Not implemented");

@@ -66,7 +66,7 @@ public class Variable extends AZeroOperator {
     }
 
     @Override
-    public void appendOperatorSign(State state, StringBuilder sb) {
+    public void appendOperatorSign(State state, StringBuilder sb, List<String> expressions) {
         sb.append(id);
     }
 

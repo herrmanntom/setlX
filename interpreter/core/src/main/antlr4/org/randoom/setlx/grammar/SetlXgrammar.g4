@@ -127,7 +127,7 @@ match returns [Match m]
     }
     : 'match' '(' expr[false] ')' '{'
       (
-         'case'  exprList[true] ('|' c1 = condition {condition = $c1.cnd;})? ':' b1 = block
+         'case'  exprList[true, null] ('|' c1 = condition {condition = $c1.cnd;})? ':' b1 = block
              { matchList.add(new MatchCaseBranch($exprList.exprs, condition, $b1.blk)); condition = null; }
        | regexBranch
              { matchList.add($regexBranch.rb);                                                            }
@@ -183,13 +183,26 @@ condition returns [Condition cnd]
     : expr[false]  { $cnd = new Condition($expr.ex); }
     ;
 
-exprList [boolean enableIgnore] returns [FragmentList<OperatorExpression> exprs]
+exprList [boolean enableIgnore, FragmentList<AOperator> operators] returns [FragmentList<OperatorExpression> exprs]
     @init {
         $exprs = new FragmentList<OperatorExpression>();
+        FragmentList<AOperator> expressionOperators = new FragmentList<AOperator>();
     }
-    : e1 = expr[$enableIgnore]       { $exprs.add($e1.ex); }
+    : exprContent[$enableIgnore, expressionOperators]       {
+                                                                $exprs.add(new OperatorExpression(expressionOperators));
+                                                                if (operators != null) {
+                                                                    operators.addAll(expressionOperators);
+                                                                }
+                                                                expressionOperators = new FragmentList<AOperator>();
+                                                            }
       (
-        ',' e2 = expr[$enableIgnore] { $exprs.add($e2.ex); }
+        ',' exprContent[$enableIgnore, expressionOperators] {
+                                                                $exprs.add(new OperatorExpression(expressionOperators));
+                                                                if (operators != null) {
+                                                                    operators.addAll(expressionOperators);
+                                                                }
+                                                                expressionOperators = new FragmentList<AOperator>();
+                                                            }
       )*
     ;
 
@@ -222,13 +235,13 @@ assignmentDirectContent [FragmentList<AOperator> operators] returns [OperatorExp
     ;
 
 assignable [boolean enableIgnore] returns [AAssignableExpression a]
-    : assignableVariable         { $a = $assignableVariable.v;                               }
+    : assignableVariable               { $a = $assignableVariable.v;                               }
       (
-         '.' variable            { $a = new AssignableMember($a, $variable.v);               }
-       | '[' exprList[false] ']' { $a = new AssignableCollectionAccess($a, $exprList.exprs); }
+         '.' variable                  { $a = new AssignableMember($a, $variable.v);               }
+       | '[' exprList[false, null] ']' { $a = new AssignableCollectionAccess($a, $exprList.exprs); }
       )*
-    | '[' assignmentList ']'     { $a = new AssignableList($assignmentList.al);              }
-    | {$enableIgnore}? '_'       { $a = AssignableIgnore.AI;                                 }
+    | '[' assignmentList ']'           { $a = new AssignableList($assignmentList.al);              }
+    | {$enableIgnore}? '_'             { $a = AssignableIgnore.AI;                                 }
     ;
 
 assignmentList returns [FragmentList<AAssignableExpression> al]
@@ -366,25 +379,25 @@ factor [boolean enableIgnore, FragmentList<AOperator> operators]
       { operators.add(new Exists($iteratorChain.ic, $condition.cnd)); }
     | (
          '(' exprContent[$enableIgnore, $operators] ')'
-       | procedure             { operators.add(new ProcedureConstructor($procedure.pd)); }
-       | variable              { operators.add($variable.v);                             }
+       | procedure                       { operators.add(new ProcedureConstructor($procedure.pd)); }
+       | variable                        { operators.add($variable.v);                             }
       )
       (
-         '.' variable          { operators.add(new MemberAccess($variable.v));           }
-       | call[$enableIgnore]   { operators.add($call.c);                                 }
+         '.' variable                    { operators.add(new MemberAccess($variable.v));           }
+       | call[$enableIgnore, $operators] { operators.add($call.c);                                 }
       )*
       (
-        '!'                    { operators.add(Factorial.F);                             }
+        '!'                              { operators.add(Factorial.F);                             }
       )?
-    | value[$enableIgnore]     { operators.add($value.v);                                }
+    | value[$enableIgnore]               { operators.add($value.v);                                }
       (
-        '!'                    { operators.add(Factorial.F);                             }
+        '!'                              { operators.add(Factorial.F);                             }
       )?
     ;
 
 termArguments returns [FragmentList<OperatorExpression> args]
-    : exprList[true] { $args = $exprList.exprs;                        }
-    |  /* epsilon */ { $args = new FragmentList<OperatorExpression>(); }
+    : exprList[true, null] { $args = $exprList.exprs;                        }
+    |  /* epsilon */       { $args = new FragmentList<OperatorExpression>(); }
     ;
 
 procedure returns [Procedure pd]
@@ -434,22 +447,29 @@ procedureListParameter returns [ListParameter param]
     : '*' variable { $param = new ListParameter($variable.v.getId()); }
     ;
 
-call [boolean enableIgnore] returns [AOperator c]
-    : '(' callParameters[$enableIgnore]         ')' { $c = new Call($callParameters.params, $callParameters.ex); }
-    | '[' collectionAccessParams[$enableIgnore] ']' { $c = new CollectionAccess($collectionAccessParams.params); }
-    | '{' expr[$enableIgnore]                   '}' { $c = new CollectMap($expr.ex);                             }
+call [boolean enableIgnore, FragmentList<AOperator> operators] returns [AOperator c]
+    : '(' callParameters[$enableIgnore, $operators] ')' { $c = new Call($callParameters.params, $callParameters.ex); }
+    | '[' collectionAccessParams[$enableIgnore]     ']' { $c = new CollectionAccess($collectionAccessParams.params); }
+    | '{' expr[$enableIgnore]                       '}' { $c = new CollectMap($expr.ex);                             }
     ;
 
-callParameters [boolean enableIgnore] returns [FragmentList<OperatorExpression> params, OperatorExpression ex]
+callParameters [boolean enableIgnore, FragmentList<AOperator> operators] returns [FragmentList<OperatorExpression> params, OperatorExpression ex]
     @init {
-        $params = new FragmentList<OperatorExpression>();
-        $ex     = null;
+        $params                                       = new FragmentList<OperatorExpression>();
+        $ex                                           = null;
+        FragmentList<AOperator> listArgumentOperators = new FragmentList<AOperator>();
     }
-    : exprList[$enableIgnore] { $params = $exprList.exprs; }
+    : exprList[$enableIgnore, $operators]                  { $params = $exprList.exprs;                               }
       (
-         ',' '*' expr[false]  { $ex     = $expr.ex;        }
+         ',' '*' exprContent[false, listArgumentOperators] {
+                                                             $ex     = new OperatorExpression(listArgumentOperators);
+                                                             operators.addAll(listArgumentOperators);
+                                                           }
       )?
-    | '*' expr[false]         { $ex     = $expr.ex;        }
+    | '*' exprContent[false, listArgumentOperators]        {
+                                                             $ex     = new OperatorExpression(listArgumentOperators);
+                                                             operators.addAll(listArgumentOperators);
+                                                           }
     | /* epsilon */
     ;
 

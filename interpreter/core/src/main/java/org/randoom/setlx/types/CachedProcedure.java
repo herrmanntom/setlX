@@ -15,6 +15,7 @@ import org.randoom.setlx.utilities.TermUtilities;
 import java.lang.ref.SoftReference;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * This class represents an automatically caching function definition.
@@ -49,7 +50,7 @@ public class CachedProcedure extends Procedure {
      */
     public CachedProcedure(final ParameterList parameters, final Block statements) {
         super(parameters, statements);
-        cache     = new HashMap<SetlList, SoftReference<Value>>();
+        cache     = new HashMap<>();
         cacheHits = 0;
     }
 
@@ -86,7 +87,7 @@ public class CachedProcedure extends Procedure {
      * Remove references from cache, which where garbage collected.
      */
     private void validateCache() {
-        final ArrayList<SetlList> rmKeys = new ArrayList<SetlList>();
+        final ArrayList<SetlList> rmKeys = new ArrayList<>();
         for (final SetlList key : cache.keySet()) {
             final SoftReference<Value> valueRef = cache.get(key);
             if (valueRef == null || valueRef.get() == null) {
@@ -130,20 +131,23 @@ public class CachedProcedure extends Procedure {
     /* function call */
 
     @Override
-    public Value call(final State state, final FragmentList<OperatorExpression> args, final OperatorExpression listArg) throws SetlException {
+    public Value call(final State state, List<Value> argumentValues, final FragmentList<OperatorExpression> arguments, final Value listValue, final OperatorExpression listArg) throws SetlException {
         final SetlObject object = this.object;
         this.object = null;
 
         SetlList listArguments = null;
-        if (listArg != null) {
-            Value listArgument = listArg.evaluate(state);
-            if (listArgument.getClass() != SetlList.class) {
-                throw new UndefinedOperationException("List argument '" + listArg.toString(state) + "' is not a list.");
+        if (listValue != null) {
+            if (listValue.getClass() != SetlList.class) {
+                StringBuilder error = new StringBuilder();
+                error.append("List argument '");
+                listValue.appendString(state, error, 0);
+                error.append("' is not a list.");
+                throw new UndefinedOperationException(error.toString());
             }
-            listArguments = (SetlList) listArgument;
+            listArguments = (SetlList) listValue;
         }
 
-        int nArguments = args.size();
+        int nArguments = argumentValues.size();
         if (listArguments != null) {
             nArguments += listArguments.size();
         }
@@ -158,12 +162,11 @@ public class CachedProcedure extends Procedure {
         }
 
         // evaluate arguments
-        final ArrayList<Value> values = new ArrayList<Value>(nArguments);
+        final ArrayList<Value> values = new ArrayList<>(nArguments);
         final SetlList key = new SetlList(nArguments);
-        for (OperatorExpression arg : args) {
-            final Value v = arg.evaluate(state);
-            values.add(v);
-            key.addMember(state, v);
+        for (Value value : argumentValues) {
+            values.add(value);
+            key.addMember(state, value);
         }
         if (listArguments != null) {
             for (Value listArgument : listArguments) {
@@ -185,9 +188,9 @@ public class CachedProcedure extends Procedure {
             // cache om to prevent recursion loop
             cache.put(key, new SoftReference<Value>(Om.OM));
             // call function
-            cachedResult = callAfterEval(state, args, values, object);
+            cachedResult = callAfterEval(state, arguments, values, object);
             // put value into cache
-            cache.put(key, new SoftReference<Value>(cachedResult));
+            cache.put(key, new SoftReference<>(cachedResult));
             // return value
             return cachedResult.clone();
         }

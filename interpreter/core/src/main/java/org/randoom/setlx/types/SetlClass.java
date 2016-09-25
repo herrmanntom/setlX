@@ -170,7 +170,7 @@ public class SetlClass extends Value {
     /* function call */
 
     @Override
-    public Value call(final State state, final FragmentList<OperatorExpression> args, final OperatorExpression listArg) throws SetlException {
+    public Value call(final State state, List<Value> argumentValues, final FragmentList<OperatorExpression> arguments, final Value listValue, final OperatorExpression listArg) throws SetlException {
         if (staticVars == null) {
             optimize(state);
         }
@@ -181,15 +181,18 @@ public class SetlClass extends Value {
         }
 
         SetlList listArguments = null;
-        if (listArg != null) {
-            Value listArgument = listArg.evaluate(state);
-            if (listArgument.getClass() != SetlList.class) {
-                throw new UndefinedOperationException("List argument '" + listArg.toString(state) + "' is not a list.");
+        if (listValue != null) {
+            if (listValue.getClass() != SetlList.class) {
+                StringBuilder error = new StringBuilder();
+                error.append("List argument '");
+                listValue.appendString(state, error, 0);
+                error.append("' is not a list.");
+                throw new UndefinedOperationException(error.toString());
             }
-            listArguments = (SetlList) listArgument;
+            listArguments = (SetlList) listValue;
         }
 
-        int nArguments = args.size();
+        int nArguments = argumentValues.size();
         if (listArguments != null) {
             nArguments += listArguments.size();
         }
@@ -204,9 +207,7 @@ public class SetlClass extends Value {
 
         // evaluate arguments
         final ArrayList<Value> values = new ArrayList<>(nArguments);
-        for (final OperatorExpression arg : args) {
-            values.add(arg.evaluate(state));
-        }
+        values.addAll(argumentValues);
         if (listArguments != null) {
             for (Value listArgument : listArguments) {
                 values.add(listArgument);
@@ -235,7 +236,7 @@ public class SetlClass extends Value {
 
             // extract 'rw' arguments from scope, store them into WriteBackAgent
             if (rwParameters) {
-                wba = parameters.extractRwParametersFromScope(state, args);
+                wba = parameters.extractRwParametersFromScope(state, arguments);
             }
 
             members.putAll(extractBindings(state, initVars));

@@ -10,6 +10,8 @@ import org.randoom.setlx.utilities.CodeFragment;
 import org.randoom.setlx.utilities.FragmentList;
 import org.randoom.setlx.utilities.State;
 
+import java.util.List;
+
 /**
  * Operator that inverts one value on the stack.
  */
@@ -25,7 +27,7 @@ public class Not extends AUnaryPrefixOperator {
     }
 
     @Override
-    public void appendOperatorSign(State state, StringBuilder sb) {
+    public void appendOperatorSign(State state, StringBuilder sb, List<String> expressions) {
         sb.append("!");
     }
 

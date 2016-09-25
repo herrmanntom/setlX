@@ -41,7 +41,7 @@ public abstract class ALazyBinaryInfixOperator extends AUnaryPostfixOperator {
     }
 
     @Override
-    public final void appendOperatorSign(State state, StringBuilder sb) {
+    public final void appendOperatorSign(State state, StringBuilder sb, List<String> expressions) {
         sb.append(getOperatorSign());
         boolean insertBrackets = isLeftAssociative()? rightHandSide.precedence() <= precedence() : rightHandSide.precedence() < precedence();
         if (insertBrackets) {

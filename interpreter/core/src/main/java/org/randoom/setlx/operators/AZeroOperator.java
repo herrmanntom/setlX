@@ -34,6 +34,10 @@ public abstract class AZeroOperator extends AOperator {
         return false;
     }
 
+    public int numberOfExpressionsRequiredForOperator() {
+        return 0;
+    }
+
     @Override
     public boolean hasArgumentAfterOperator() {
         return false;

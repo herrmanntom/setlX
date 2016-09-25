@@ -59,6 +59,10 @@ public abstract class ABinaryInfixOperator extends AOperator {
         return true;
     }
 
+    public int numberOfExpressionsRequiredForOperator() {
+        return 0;
+    }
+
     @Override
     public boolean hasArgumentAfterOperator() {
         return true;

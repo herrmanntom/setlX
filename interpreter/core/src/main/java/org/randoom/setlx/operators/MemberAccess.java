@@ -15,6 +15,8 @@ import org.randoom.setlx.utilities.FragmentList;
 import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.TermUtilities;
 
+import java.util.List;
+
 /**
  * Operator that load the the last object from the stack and put its given member on the stack.
  */
@@ -51,7 +53,7 @@ public class MemberAccess extends AUnaryPostfixOperator {
     }
 
     @Override
-    public void appendOperatorSign(State state, StringBuilder sb) {
+    public void appendOperatorSign(State state, StringBuilder sb, List<String> expressions) {
         sb.append(".");
         sb.append(id);
     }

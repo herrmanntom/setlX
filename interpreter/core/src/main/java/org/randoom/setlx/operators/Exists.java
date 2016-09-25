@@ -113,7 +113,7 @@ public class Exists extends AZeroOperator {
     }
 
     @Override
-    public void appendOperatorSign(State state, StringBuilder sb) {
+    public void appendOperatorSign(State state, StringBuilder sb, List<String> expressions) {
         sb.append("exists(");
         iterator.appendString(state, sb, 0);
         sb.append(" | ");

@@ -27,6 +27,7 @@ import org.randoom.setlx.utilities.TermUtilities;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -252,14 +253,27 @@ public class OperatorExpression extends Expression {
 
         for (int i = 0; i < maxOperatorDepth; i++) {
             AOperator operator = operators.get(i);
+
             ExpressionFragment rhs = null;
             if (operator.hasArgumentAfterOperator()) {
                 rhs = expressionFragments.poll();
             }
+
+            List<String> expressionsInOperator = null;
+            int numberOfExpressionsRequiredForOperator = operator.numberOfExpressionsRequiredForOperator();
+            if (numberOfExpressionsRequiredForOperator > 0) {
+                expressionsInOperator = new ArrayList<>(numberOfExpressionsRequiredForOperator);
+                for (int j = 0; j < numberOfExpressionsRequiredForOperator; ++j) {
+                    expressionsInOperator.add(expressionFragments.poll().expression);
+                }
+                Collections.reverse(expressionsInOperator);
+            }
+
             ExpressionFragment lhs = null;
             if (operator.hasArgumentBeforeOperator()) {
                 lhs = expressionFragments.poll();
             }
+
             StringBuilder expressionFragment = new StringBuilder();
             if (lhs != null) {
                 boolean insertBrackets = operator.isRightAssociative()? lhs.getPrecedence() <= operator.precedence() : lhs.getPrecedence() < operator.precedence();
@@ -271,7 +285,7 @@ public class OperatorExpression extends Expression {
                     expressionFragment.append(")");
                 }
             }
-            operator.appendOperatorSign(state, expressionFragment);
+            operator.appendOperatorSign(state, expressionFragment, expressionsInOperator);
             if (rhs != null) {
                 boolean insertBrackets = operator.isLeftAssociative()? rhs.getPrecedence() <= operator.precedence() : rhs.getPrecedence() < operator.precedence();
                 if (insertBrackets) {
@@ -354,9 +368,11 @@ public class OperatorExpression extends Expression {
      * @param state                    Current state of the running setlX program.
      * @param value                    (Term-) value to convert.
      * @param operatorStack            Operator stack to append to.
+     * @return                         List of appended operators.
      * @throws TermConversionException in case the term is malformed.
      */
-    public static void appendFromTerm(State state, Value value, FragmentList<AOperator> operatorStack) throws TermConversionException {
+    public static FragmentList<AOperator> appendFromTerm(State state, Value value, FragmentList<AOperator> operatorStack) throws TermConversionException {
+        FragmentList<AOperator> appendedOperators = new FragmentList<>();
         if (value.getClass() == Term.class) {
             final Term term = (Term) value;
             final String functionalCharacter = term.getFunctionalCharacter();
@@ -384,10 +400,7 @@ public class OperatorExpression extends Expression {
                 // invoke method found
                 if (converter != null) {
                     try {
-                        converter.invoke(null, state, term, operatorStack);
-
-                        return;
-
+                        converter.invoke(null, state, term, appendedOperators);
                     } catch (final InvocationTargetException ite) {
                         Throwable targetException = ite.getTargetException();
                         if (targetException instanceof TermConversionException) {
@@ -398,33 +411,34 @@ public class OperatorExpression extends Expression {
                         // because we know this method exists etc
                         throw new TermConversionException("Impossible error...", e);
                     }
+                } else {
+                    appendValueFromTerm(state, value, appendedOperators);
                 }
+            } else {
+                appendValueFromTerm(state, value, appendedOperators);
             }
         } else if (value == IgnoreDummy.ID) {
-            operatorStack.add(VariableIgnore.VI);
-
-            return;
-
+            appendedOperators.add(VariableIgnore.VI);
         } else if (value == RangeDummy.RD) {
-            operatorStack.add(CollectionAccessRangeDummy.CARD);
-
-            return;
-
+            appendedOperators.add(CollectionAccessRangeDummy.CARD);
         } else if (value.isList() == SetlBoolean.TRUE || value.isSet() == SetlBoolean.TRUE) {
-            operatorStack.add(SetListConstructor.valueToExpr(state, value));
-
-            return;
-
+            appendedOperators.add(SetListConstructor.valueToExpr(state, value));
+        } else {
+            appendValueFromTerm(state, value, appendedOperators);
         }
+        operatorStack.addAll(appendedOperators);
+        return appendedOperators;
+    }
 
+    private static void appendValueFromTerm(State state, Value value, FragmentList<AOperator> operators) throws TermConversionException {
         final Value convertedValue = Value.createFromTerm(state, value);
 
         if (convertedValue instanceof Procedure) {
-            operatorStack.add(new ProcedureConstructor((Procedure) convertedValue));
+            operators.add(new ProcedureConstructor((Procedure) convertedValue));
         } else if (convertedValue.getClass() == Term.class) {
-            TermConstructor.appendToOperatorStack(state, (Term) convertedValue, operatorStack);
+            TermConstructor.appendToOperatorStack(state, (Term) convertedValue, operators);
         } else {
-            operatorStack.add(new ValueOperator(convertedValue));
+            operators.add(new ValueOperator(convertedValue));
         }
     }
 

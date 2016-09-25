@@ -49,7 +49,7 @@ public class Assignment extends AUnaryPrefixOperator {
     }
 
     @Override
-    public void appendOperatorSign(State state, StringBuilder sb) {
+    public void appendOperatorSign(State state, StringBuilder sb, List<String> expressions) {
         assignableExpression.appendString(state, sb, 0);
         sb.append(" := ");
     }

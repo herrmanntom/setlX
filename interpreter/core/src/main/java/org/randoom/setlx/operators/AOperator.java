@@ -10,6 +10,7 @@ import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.ImmutableCodeFragment;
 import org.randoom.setlx.utilities.State;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -52,22 +53,30 @@ public abstract class AOperator extends ImmutableCodeFragment {
     public abstract Value evaluate(State state, Stack<Value> values, OperatorExpression operatorExpression, int currentStackDepth) throws SetlException;
 
     /**
-     * Does this operator have and argument to print before operator symbol?
+     * Does this operator have an argument to print before operator symbol?
      *
      * @return True if argument should be printed.
      */
     public abstract boolean hasArgumentBeforeOperator();
 
     /**
-     * Append the operator symbol to given string builder.
+     * How many arguments this operator needs to be printed "inside" the operator symbol?
      *
-     * @param state Current state of the running setlX program.
-     * @param sb    StringBuilder to append to.
+     * @return True if argument should be printed.
      */
-    public abstract void appendOperatorSign(State state, StringBuilder sb);
+    public abstract int numberOfExpressionsRequiredForOperator();
 
     /**
-     * Does this operator have and argument to print after operator symbol?
+     * Append the operator symbol to given string builder.
+     *
+     * @param state       Current state of the running setlX program.
+     * @param sb          StringBuilder to append to.
+     * @param expressions Expressions required to append operator
+     */
+    public abstract void appendOperatorSign(State state, StringBuilder sb, List<String> expressions);
+
+    /**
+     * Does this operator have an argument to print after operator symbol?
      *
      * @return True if argument should be printed.
      */
@@ -99,7 +108,15 @@ public abstract class AOperator extends ImmutableCodeFragment {
 
     @Override
     public final void appendString(State state, StringBuilder sb, int tabs) {
-        appendOperatorSign(state, sb);
+        int numberOfExpressionsRequired = numberOfExpressionsRequiredForOperator();
+        ArrayList<String> variables = new ArrayList<>(numberOfExpressionsRequired);
+        if (numberOfExpressionsRequired > 0) {
+            char variableName = 'a';
+            for (int i = 0; i < numberOfExpressionsRequired; i++) {
+                variables.add(String.valueOf(variableName + i));
+            }
+        }
+        appendOperatorSign(state, sb, variables);
     }
 
     /**

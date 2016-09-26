@@ -10,6 +10,8 @@ import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.FragmentList;
 import org.randoom.setlx.utilities.State;
 
+import java.util.List;
+
 /**
  * Operator that checks if the second values on the stack is greater then the first.
  */
@@ -36,7 +38,7 @@ public class GreaterThan extends ABinaryInfixOperator {
     }
 
     @Override
-    public void appendOperatorSign(State state, StringBuilder sb) {
+    public void appendOperatorSign(State state, StringBuilder sb, List<String> expressions) {
         sb.append(" > ");
     }
 

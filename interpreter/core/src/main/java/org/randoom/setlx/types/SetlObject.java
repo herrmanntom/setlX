@@ -7,6 +7,9 @@ import org.randoom.setlx.operators.*;
 import org.randoom.setlx.parameters.ParameterList;
 import org.randoom.setlx.utilities.*;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -107,8 +110,7 @@ public class SetlObject extends Value {
     private Value overload(final State  state,
                            final String member
     ) throws SetlException {
-        final FragmentList<OperatorExpression> args = new FragmentList<>();
-        return overloadQuery(state, member).call(state, args, null);
+        return overloadQuery(state, member).call(state, new ArrayList<Value>(), new FragmentList<OperatorExpression>(), null, null);
     }
 
     /**
@@ -131,7 +133,7 @@ public class SetlObject extends Value {
     ) throws SetlException {
         final FragmentList<OperatorExpression> args = new FragmentList<>();
         args.add(new OperatorExpression(new ValueOperator(other)));
-        return overloadQuery(state, member).call(state, args, null);
+        return overloadQuery(state, member).call(state, Collections.singletonList(other), args, null, null);
     }
 
     /**
@@ -532,8 +534,8 @@ public class SetlObject extends Value {
     /* function call */
 
     @Override
-    public Value call(final State state, final FragmentList<OperatorExpression> args, final OperatorExpression listArg) throws SetlException {
-        return overloadQuery(state, CALL).call(state, args, listArg);
+    public Value call(final State state, List<Value> argumentValues, final FragmentList<OperatorExpression> arguments, final Value listValue, final OperatorExpression listArg) throws SetlException {
+        return overloadQuery(state, CALL).call(state, argumentValues, arguments, listValue, listArg);
     }
     private final static String CALL = createOverloadVariable(Call.class);
 

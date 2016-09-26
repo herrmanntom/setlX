@@ -80,9 +80,9 @@ public class Procedure extends ImmutableValue {
         final List<String> usedVariables
     ) {
         /* collect and optimize the inside */
-        final List<String> innerBoundVariables   = new ArrayList<String>();
-        final List<String> innerUnboundVariables = new ArrayList<String>();
-        final List<String> innerUsedVariables    = new ArrayList<String>();
+        final List<String> innerBoundVariables   = new ArrayList<>();
+        final List<String> innerUnboundVariables = new ArrayList<>();
+        final List<String> innerUsedVariables    = new ArrayList<>();
 
         // add all parameters to bound
         parameters.collectVariablesAndOptimize(state, innerBoundVariables, innerBoundVariables, innerBoundVariables);
@@ -102,20 +102,23 @@ public class Procedure extends ImmutableValue {
     /* function call */
 
     @Override
-    public Value call(final State state, final FragmentList<OperatorExpression> args, final OperatorExpression listArg) throws SetlException {
+    public Value call(final State state, List<Value> argumentValues, final FragmentList<OperatorExpression> arguments, final Value listValue, final OperatorExpression listArg) throws SetlException {
         final SetlObject object = this.object;
         this.object = null;
 
         SetlList listArguments = null;
-        if (listArg != null) {
-            Value listArgument = listArg.evaluate(state);
-            if (listArgument.getClass() != SetlList.class) {
-                throw new UndefinedOperationException("List argument '" + listArg.toString(state) + "' is not a list.");
+        if (listValue != null) {
+            if (listValue.getClass() != SetlList.class) {
+                StringBuilder error = new StringBuilder();
+                error.append("List argument '");
+                listValue.appendString(state, error, 0);
+                error.append("' is not a list.");
+                throw new UndefinedOperationException(error.toString());
             }
-            listArguments = (SetlList) listArgument;
+            listArguments = (SetlList) listValue;
         }
 
-        int nArguments = args.size();
+        int nArguments = argumentValues.size();
         if (listArguments != null) {
             nArguments += listArguments.size();
         }
@@ -130,17 +133,15 @@ public class Procedure extends ImmutableValue {
         }
 
         // evaluate arguments
-        final ArrayList<Value> values = new ArrayList<Value>(nArguments);
-        for (final OperatorExpression arg : args) {
-            values.add(arg.evaluate(state));
-        }
+        final ArrayList<Value> values = new ArrayList<>(nArguments);
+        values.addAll(argumentValues);
         if (listArguments != null) {
             for (Value listArgument : listArguments) {
                 values.add(listArgument);
             }
         }
 
-        return callAfterEval(state, args, values, object);
+        return callAfterEval(state, arguments, values, object);
     }
 
     /**

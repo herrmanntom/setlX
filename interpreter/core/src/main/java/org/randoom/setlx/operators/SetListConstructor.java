@@ -82,7 +82,7 @@ public class SetListConstructor extends AZeroOperator {
     }
 
     @Override
-    public void appendOperatorSign(State state, StringBuilder sb) {
+    public void appendOperatorSign(State state, StringBuilder sb, List<String> expressions) {
         if (type == CollectionType.SET) {
             sb.append("{");
         } else /* if (mType == LIST) */ {
@@ -99,7 +99,7 @@ public class SetListConstructor extends AZeroOperator {
     }
 
     @Override
-    public Value modifyTerm(State state, Term term) throws SetlException {
+    public Value modifyTerm(State state, Term term, Stack<Value> termFragments) throws SetlException {
         final CollectionValue result;
         if (type == CollectionType.SET) {
             result = new SetlSet();

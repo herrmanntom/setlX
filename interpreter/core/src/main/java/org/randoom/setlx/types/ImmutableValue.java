@@ -7,11 +7,6 @@ public abstract class ImmutableValue extends Value {
 
     private Integer hashCode = null;
 
-    @Override
-    public boolean isImmutable() {
-        return true;
-    }
-
     /* comparisons */
 
     /**

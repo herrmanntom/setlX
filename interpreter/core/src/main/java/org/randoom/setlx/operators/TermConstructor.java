@@ -3,7 +3,9 @@ package org.randoom.setlx.operators;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.operatorUtilities.OperatorExpression;
+import org.randoom.setlx.operatorUtilities.OperatorExpression.OptimizerData;
 import org.randoom.setlx.operatorUtilities.Stack;
+import org.randoom.setlx.types.SetlList;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.CodeFragment;
@@ -17,57 +19,73 @@ import java.util.List;
  */
 public class TermConstructor extends AZeroOperator {
 
-    private final String fChar;                          // functional character of the term
-    private final FragmentList<OperatorExpression> args; // list of arguments
+    private final String fChar;             // functional character of the term
+    private final int    numberOfArguments; // size of the list of arguments
 
     /**
      * Constructor.
      *
-     * @param fChar Functional character of the term.
-     * @param args  List of arguments.
+     * @param fChar             Functional character of the term.
+     * @param numberOfArguments Size of the list of arguments (arguments are pulled form the stack)
      */
-    public TermConstructor(final String fChar, final FragmentList<OperatorExpression> args) {
+    public TermConstructor(final String fChar, int numberOfArguments) {
         this.fChar = fChar;
-        this.args = unify(args);
+        this.numberOfArguments = numberOfArguments;
+    }
+
+    public int numberOfExpressionsRequiredForOperator() {
+        return numberOfArguments;
     }
 
     @Override
-    public boolean collectVariablesAndOptimize(State state, List<String> boundVariables, List<String> unboundVariables, List<String> usedVariables) {
+    public final boolean collectVariablesAndOptimize(State state, List<String> boundVariables, List<String> unboundVariables, List<String> usedVariables) {
+        throw new IllegalStateException("Not implemented");
+    }
+
+    @Override
+    public final OptimizerData collectVariables(State state, List<String> boundVariables, List<String> unboundVariables, List<String> usedVariables, Stack<OptimizerData> optimizerData) {
         boolean allowOptimization = true;
-        for (final OperatorExpression arg: args) {
-            allowOptimization = arg.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables)
-                    && allowOptimization;
+        for (int i = 0; i < numberOfArguments; i++) {
+            allowOptimization = optimizerData.poll().isAllowOptimization() && allowOptimization;
         }
-        return allowOptimization;
+
+        return new OptimizerData(
+                allowOptimization
+        );
     }
 
     @Override
     public Value evaluate(State state, Stack<Value> values, OperatorExpression operatorExpression, int currentStackDepth) throws SetlException {
-        final Term result = new Term(fChar, args.size());
+        final Term result = new Term(fChar, numberOfArguments);
 
-        for (final OperatorExpression arg: args) {
-            result.addMember(state, arg.evaluate(state).toTerm(state)); // evaluate arguments at runtime
+        for (int i = numberOfArguments; i > 0; i--) {
+            result.setMember(state, i, values.poll().toTerm(state));
         }
 
         return result;
     }
 
     @Override
-    public void appendOperatorSign(State state, StringBuilder sb) {
+    public void appendOperatorSign(State state, StringBuilder sb, List<String> expressions) {
         sb.append(fChar);
         sb.append("(");
 
-        args.appendString(state, sb);
+        for (int i = 0; i < numberOfArguments; i++) {
+            sb.append(expressions.get(i));
+            if (i < numberOfArguments - 1) {
+                sb.append(", ");
+            }
+        }
 
         sb.append(")");
     }
 
     @Override
-    public Value modifyTerm(State state, Term term) throws SetlException {
-        final Term result = new Term(fChar, args.size());
+    public Value modifyTerm(State state, Term term, Stack<Value> termFragments) throws SetlException {
+        final Term result = new Term(fChar, numberOfArguments);
 
-        for (final OperatorExpression arg: args) {
-            result.addMember(state, arg.toTerm(state)); // do not evaluate here
+        for (int i = 0; i < numberOfArguments; i++) {
+            result.setMember(state, numberOfArguments - i, termFragments.poll());
         }
 
         return result;
@@ -83,11 +101,10 @@ public class TermConstructor extends AZeroOperator {
      */
     public static void appendToOperatorStack(final State state, final Term term, FragmentList<AOperator> operatorStack) throws TermConversionException {
         final String functionalCharacter = term.getFunctionalCharacter();
-        final FragmentList<OperatorExpression> arguments = new FragmentList<>(term.size());
-        for (final Value v : term) {
-            arguments.add(OperatorExpression.createFromTerm(state, v));
+        for (final Value argument : term) {
+            OperatorExpression.appendFromTerm(state, argument, operatorStack);
         }
-        operatorStack.add(new TermConstructor(functionalCharacter, arguments));
+        operatorStack.add(new TermConstructor(functionalCharacter, term.size()));
     }
 
     private final static long COMPARE_TO_ORDER_CONSTANT = generateCompareToOrderConstant(TermConstructor.class);
@@ -98,14 +115,15 @@ public class TermConstructor extends AZeroOperator {
             return 0;
         } else if (other.getClass() == TermConstructor.class) {
             TermConstructor otr = (TermConstructor) other;
-            if (fChar == otr.fChar && args == otr.args) {
+            //noinspection StringEquality
+            if (fChar == otr.fChar && numberOfArguments == otr.numberOfArguments) {
                 return 0; // clone
             }
             int cmp = fChar.compareTo(otr.fChar);
             if (cmp != 0) {
                 return cmp;
             }
-            return args.compareTo(otr.args);
+            return Integer.compare(numberOfArguments, otr.numberOfArguments);
         } else {
             return (this.compareToOrdering() < other.compareToOrdering())? -1 : 1;
         }
@@ -122,10 +140,11 @@ public class TermConstructor extends AZeroOperator {
             return true;
         } else if (obj.getClass() == TermConstructor.class) {
             TermConstructor other = (TermConstructor) obj;
-            if (fChar == other.fChar && args == other.args) {
+            //noinspection StringEquality
+            if (fChar == other.fChar && numberOfArguments == other.numberOfArguments) {
                 return true; // clone
             } else if (fChar.equals(other.fChar)) {
-                return args.equals(other.args);
+                return numberOfArguments == other.numberOfArguments;
             }
             return false;
         }
@@ -135,6 +154,6 @@ public class TermConstructor extends AZeroOperator {
     @Override
     public int computeHashCode() {
         int hash = ((int) COMPARE_TO_ORDER_CONSTANT) + fChar.hashCode();
-        return hash * 31 + args.hashCode();
+        return hash * 31 + numberOfArguments;
     }
 }

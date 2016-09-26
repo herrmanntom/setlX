@@ -63,7 +63,7 @@ public class VariableIgnore extends AZeroOperator {
     /* string operations */
 
     @Override
-    public void appendOperatorSign(final State state, final StringBuilder sb) {
+    public void appendOperatorSign(final State state, final StringBuilder sb, List<String> expressions) {
         sb.append("_");
     }
 

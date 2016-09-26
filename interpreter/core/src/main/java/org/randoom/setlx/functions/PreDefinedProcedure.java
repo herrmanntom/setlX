@@ -16,6 +16,7 @@ import org.randoom.setlx.utilities.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * Base class for all procedures, which can be loaded at runtime by setlX.
@@ -124,17 +125,20 @@ public abstract class PreDefinedProcedure extends Procedure {
 
     // this function is called from within SetlX
     @Override
-    public final Value call(final State state, final FragmentList<OperatorExpression> args, final OperatorExpression listArg) throws SetlException {
+    public final Value call(final State state, List<Value> argumentValues, final FragmentList<OperatorExpression> arguments, final Value listValue, final OperatorExpression listArg) throws SetlException {
         SetlList listArguments = null;
-        if (listArg != null) {
-            Value listArgument = listArg.evaluate(state);
-            if (listArgument.getClass() != SetlList.class) {
-                throw new UndefinedOperationException("List argument '" + listArg.toString(state) + "' is not a list.");
+        if (listValue != null) {
+            if (listValue.getClass() != SetlList.class) {
+                StringBuilder error = new StringBuilder();
+                error.append("List argument '");
+                listValue.appendString(state, error, 0);
+                error.append("' is not a list.");
+                throw new UndefinedOperationException(error.toString());
             }
-            listArguments = (SetlList) listArgument;
+            listArguments = (SetlList) listValue;
         }
 
-        int nArguments = args.size();
+        int nArguments = argumentValues.size();
         if (listArguments != null) {
             nArguments += listArguments.size();
         }
@@ -152,9 +156,7 @@ public abstract class PreDefinedProcedure extends Procedure {
 
         // evaluate arguments
         final ArrayList<Value> values = new ArrayList<>(nArguments);
-        for (final OperatorExpression arg : args) {
-            values.add(arg.evaluate(state).clone());
-        }
+        values.addAll(argumentValues);
         if (listArguments != null) {
             for (Value listArgument : listArguments) {
                 values.add(listArgument);
@@ -168,7 +170,7 @@ public abstract class PreDefinedProcedure extends Procedure {
         final Value result  = this.execute(state, assignments);
 
         // extract 'rw' arguments from writeBackVars list and store them into WriteBackAgent
-        final WriteBackAgent wba = parameters.extractRwParametersFromMap(assignments, args);
+        final WriteBackAgent wba = parameters.extractRwParametersFromMap(assignments, arguments);
         if (wba != null) {
             // assign variables
             wba.writeBack(state, FUNCTIONAL_CHARACTER);

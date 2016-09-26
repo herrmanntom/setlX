@@ -37,12 +37,12 @@ public class ValueOperator extends AZeroOperator {
     }
 
     @Override
-    public void appendOperatorSign(State state, StringBuilder sb) {
+    public void appendOperatorSign(State state, StringBuilder sb, List<String> expressions) {
         value.appendString(state, sb, 0);
     }
 
     @Override
-    public Value modifyTerm(State state, Term term) throws SetlException {
+    public Value modifyTerm(State state, Term term, Stack<Value> termFragments) throws SetlException {
         return value.toTerm(state);
     }
 

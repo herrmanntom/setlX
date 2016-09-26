@@ -113,7 +113,7 @@ public class Forall extends AZeroOperator {
     }
 
     @Override
-    public void appendOperatorSign(State state, StringBuilder sb) {
+    public void appendOperatorSign(State state, StringBuilder sb, List<String> expressions) {
         sb.append("forall(");
         iterator.appendString(state, sb, 0);
         sb.append(" | ");
@@ -122,7 +122,7 @@ public class Forall extends AZeroOperator {
     }
 
     @Override
-    public Value modifyTerm(State state, Term term) throws SetlException {
+    public Value modifyTerm(State state, Term term, Stack<Value> termFragments) throws SetlException {
         term.addMember(state, iterator.toTerm(state));
         term.addMember(state, condition.toTerm(state));
         return term;

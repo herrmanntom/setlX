@@ -111,14 +111,14 @@ public class ProcedureConstructor extends AZeroOperator {
     /* string operations */
 
     @Override
-    public void appendOperatorSign(final State state, final StringBuilder sb) {
+    public void appendOperatorSign(final State state, final StringBuilder sb, List<String> expressions) {
         definition.appendString(state, sb, 0);
     }
 
     /* term operations */
 
     @Override
-    public Value modifyTerm(final State state, Term term) throws SetlException {
+    public Value modifyTerm(final State state, Term term, Stack<Value> termFragments) throws SetlException {
         return definition.toTerm(state);
     }
 

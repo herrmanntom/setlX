@@ -93,15 +93,6 @@ public abstract class Value extends CodeFragment {
 
     /* type checks (sort of Boolean operation) */
 
-    /**
-     * Check if this value is an immutable value, i.e. the contents of it cannot be changed at runtime.
-     *
-     * @return true, if this value is an immutable value
-     */
-    public boolean isImmutable() {
-        return false;
-    }
-
     public SetlBoolean isBoolean() {
         return SetlBoolean.FALSE;
     }
@@ -832,17 +823,19 @@ public abstract class Value extends CodeFragment {
      * Implementation of the function call.
      *
      * @param state          Current state of the running setlX program.
-     * @param args           Arguments of the function call.
+     * @param argumentValues Values of arguments of the function call.
+     * @param arguments      Arguments of the function call.
+     * @param listValue      Value of list argument of the function call.
      * @param listArg        List argument of the function call.
      * @return               Return value of the call.
      * @throws SetlException Thrown in case of some (user-) error.
      */
-    public Value call(final State state, final FragmentList<OperatorExpression> args, final OperatorExpression listArg) throws SetlException {
+    public Value call(final State state, List<Value> argumentValues, final FragmentList<OperatorExpression> arguments, final Value listValue, final OperatorExpression listArg) throws SetlException {
         final StringBuilder error = new StringBuilder();
         error.append("Can not perform call with arguments '");
-        args.appendString(state, error);
-        if (listArg != null) {
-            if (! args.isEmpty()) {
+        arguments.appendString(state, error);
+        if (listValue != null) {
+            if (! arguments.isEmpty()) {
                 error.append(", ");
             }
             error.append("*");
@@ -991,6 +984,7 @@ public abstract class Value extends CodeFragment {
      */
     public abstract boolean equalTo (final Object other);
 
+    @SuppressWarnings("EqualsWhichDoesntCheckParameterClass")
     @Override
     public final boolean equals(final Object o) {
         return this.equalTo(o);

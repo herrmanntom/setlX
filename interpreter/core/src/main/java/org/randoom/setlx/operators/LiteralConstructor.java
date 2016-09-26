@@ -54,14 +54,14 @@ public class LiteralConstructor extends AZeroOperator {
     /* string operations */
 
     @Override
-    public void appendOperatorSign(final State state, final StringBuilder sb) {
+    public void appendOperatorSign(final State state, final StringBuilder sb, List<String> expressions) {
         sb.append(originalLiteral);
     }
 
     /* term operations */
 
     @Override
-    public Term modifyTerm(final State state, Term term) {
+    public Term modifyTerm(final State state, Term term, Stack<Value> termFragments) {
         term.addMember(state, runtimeString);
         return term;
     }

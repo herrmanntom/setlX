@@ -1,9 +1,9 @@
 // this "program" demonstrates the error messages of setlX
 
-f := procedure(x, y) {
-   print(x * y);
+f := procedure(x, y, z) {
+   print(x * y * z);
 };
 
-f(1,2);
-z := om;
-f(1,z);
+f(1,2,3);
+args := [1,om,3];
+f(*args);

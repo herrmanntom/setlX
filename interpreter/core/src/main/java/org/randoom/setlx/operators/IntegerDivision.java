@@ -9,6 +9,8 @@ import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.FragmentList;
 import org.randoom.setlx.utilities.State;
 
+import java.util.List;
+
 /**
  * Operator that computes the integer division of two values from the stack.
  */
@@ -26,7 +28,7 @@ public class IntegerDivision extends ABinaryInfixOperator {
     }
 
     @Override
-    public void appendOperatorSign(State state, StringBuilder sb) {
+    public void appendOperatorSign(State state, StringBuilder sb, List<String> expressions) {
         sb.append(" \\ ");
     }
 

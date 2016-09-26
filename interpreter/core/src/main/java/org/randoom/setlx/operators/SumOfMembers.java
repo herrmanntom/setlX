@@ -11,6 +11,8 @@ import org.randoom.setlx.utilities.CodeFragment;
 import org.randoom.setlx.utilities.FragmentList;
 import org.randoom.setlx.utilities.State;
 
+import java.util.List;
+
 /**
  * Operator that computes the sum of the members of the next value from the stack.
  */
@@ -27,7 +29,7 @@ public class SumOfMembers extends AUnaryPrefixOperator {
     }
 
     @Override
-    public void appendOperatorSign(State state, StringBuilder sb) {
+    public void appendOperatorSign(State state, StringBuilder sb, List<String> expressions) {
         sb.append("*/");
     }
 

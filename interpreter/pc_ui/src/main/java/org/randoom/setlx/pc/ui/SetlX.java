@@ -4,6 +4,7 @@ import org.randoom.setlx.exceptions.*;
 import org.randoom.setlx.statements.Block;
 import org.randoom.setlx.statements.ExpressionStatement;
 import org.randoom.setlx.statements.Statement;
+import org.randoom.setlx.types.Om;
 import org.randoom.setlx.types.SetlList;
 import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.Term;

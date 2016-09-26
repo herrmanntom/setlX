@@ -4,21 +4,26 @@ import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.exceptions.UnknownFunctionException;
 import org.randoom.setlx.operatorUtilities.OperatorExpression;
-import org.randoom.setlx.operatorUtilities.OperatorExpression.ExpressionFragment;
 import org.randoom.setlx.operatorUtilities.OperatorExpression.OptimizerData;
 import org.randoom.setlx.operatorUtilities.Stack;
-import org.randoom.setlx.types.*;
+import org.randoom.setlx.types.Om;
+import org.randoom.setlx.types.SetlList;
+import org.randoom.setlx.types.SetlString;
+import org.randoom.setlx.types.Term;
+import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.CodeFragment;
 import org.randoom.setlx.utilities.FragmentList;
 import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.TermUtilities;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
  * Operator that evaluates a function and puts the result on the stack.
  */
-public class Call extends AUnaryPostfixOperator {
+public class Call extends AOperator {
     private static final String FUNCTIONAL_CHARACTER = TermUtilities.generateFunctionalCharacter(Call.class);
 
     private final FragmentList<OperatorExpression> arguments;
@@ -35,14 +40,57 @@ public class Call extends AUnaryPostfixOperator {
         this.listArgument = unify(listArgument);
     }
 
+    /**
+     * Append arguments and the operator represented by a term to the supplied operator stack.
+     *
+     * @param state                    Current state of the running setlX program.
+     * @param term                     Term to convert.
+     * @param operatorStack            OperatorStack to append to.
+     * @param operator                 Operator to append to the end.
+     * @throws TermConversionException If term is malformed.
+     */
+    protected static void appendToOperatorStack(State state, Term term, FragmentList<AOperator> operatorStack, Call operator) throws TermConversionException {
+        if (term.size() < 1) {
+            throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
+        } else {
+            OperatorExpression.appendFromTerm(state, term.firstMember(), operatorStack);
+            operatorStack.add(operator);
+        }
+    }
+
     @Override
-    public OptimizerData collectVariablesAndOptimize(State state, List<String> boundVariables, List<String> unboundVariables, List<String> usedVariables, OptimizerData lhs) {
-        for (final OperatorExpression expr : arguments) {
-            expr.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
-        }
+    public boolean hasArgumentBeforeOperator() {
+        return true;
+    }
+
+    public int numberOfExpressionsRequiredForOperator() {
+        int numberOfExpressionsRequired = arguments.size();
         if (listArgument != null) {
-            listArgument.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
+            numberOfExpressionsRequired += 1;
         }
+        return numberOfExpressionsRequired;
+    }
+
+    @Override
+    public boolean hasArgumentAfterOperator() {
+        return false;
+    }
+
+    @Override
+    public final boolean collectVariablesAndOptimize(State state, List<String> boundVariables, List<String> unboundVariables, List<String> usedVariables) {
+        throw new IllegalStateException("Not implemented");
+    }
+
+    @Override
+    public final OptimizerData collectVariables(State state, List<String> boundVariables, List<String> unboundVariables, List<String> usedVariables, Stack<OptimizerData> optimizerData) {
+        // we do not care about the optimization data of the lhs... just remove it from the stack
+        optimizerData.poll();
+
+        // we also do not care about the optimization data of the arguments... just remove them from the stack
+        for (int i = 0; i < numberOfExpressionsRequiredForOperator(); i++) {
+            optimizerData.poll();
+        }
+
         return new OptimizerData(
                 false
         );
@@ -50,46 +98,68 @@ public class Call extends AUnaryPostfixOperator {
 
     @Override
     public Value evaluate(State state, Stack<Value> values, OperatorExpression operatorExpression, int currentStackDepth) throws SetlException {
+        Value listValue = null;
+        if (listArgument != null) {
+            listValue = values.poll();
+        }
+
+        List<Value> argumentValues = new ArrayList<>(arguments.size());
+        for (int i = 0; i < arguments.size(); i++) {
+            argumentValues.add(values.poll());
+        }
+        Collections.reverse(argumentValues);
+
         final Value lhs = values.poll();
         if (lhs == Om.OM) {
             throw new UnknownFunctionException(
                     "Left hand side is undefined (om)."
             );
         }
-        // supply the original expressions (args), which are needed for 'rw' parameters
-        return lhs.call(state, arguments, listArgument);
+        // supply the original expressions (arguments), which are needed for 'rw' parameters
+        return lhs.call(state, argumentValues, arguments, listValue, listArgument);
     }
 
     @Override
-    public void appendOperatorSign(State state, StringBuilder sb) {
+    public void appendOperatorSign(State state, StringBuilder sb, List<String> expressions) {
         sb.append("(");
 
-        arguments.appendString(state, sb);
+        for (int i = 0; i < arguments.size(); i++) {
+            sb.append(expressions.get(i));
+            if (i < arguments.size() - 1) {
+                sb.append(", ");
+            }
+        }
 
         if (listArgument != null) {
             if ( ! arguments.isEmpty()) {
                 sb.append(", ");
             }
             sb.append("*");
-            listArgument.appendString(state, sb, 0);
+            sb.append(expressions.get(expressions.size() -1));
         }
 
         sb.append(")");
     }
 
     @Override
-    public Value modifyTerm(State state, Term term) throws SetlException {
-        final SetlList args = new SetlList(arguments.size());
-        for (final OperatorExpression arg: arguments) {
-            args.addMember(state, arg.toTerm(state));
-        }
-        term.addMember(state, args);
-
+    public Value buildTerm(State state, Stack<Value> termFragments) throws SetlException {
+        Value listArg = SetlString.NIL;
         if (listArgument != null) {
-            term.addMember(state, listArgument.toTerm(state));
-        } else {
-            term.addMember(state, SetlString.NIL);
+            listArg = termFragments.poll();
         }
+
+        final SetlList args = new SetlList(arguments.size());
+        for (int i = 0; i < arguments.size(); i++) {
+            args.setMember(state, arguments.size() - i, termFragments.poll());
+        }
+
+        Value lhs = termFragments.poll();
+
+        Term term = new Term(FUNCTIONAL_CHARACTER);
+        term.addMember(state, lhs);
+        term.addMember(state, args);
+        term.addMember(state, listArg);
+
         return term;
     }
 
@@ -109,14 +179,20 @@ public class Call extends AUnaryPostfixOperator {
 
             OperatorExpression.appendFromTerm(state, term.firstMember(), operatorStack);
 
-            FragmentList<OperatorExpression> arguments = new FragmentList<OperatorExpression>();
+            final FragmentList<OperatorExpression> arguments = new FragmentList<>();
             for (final Value argument : (SetlList) term.getMember(2)) {
-                arguments.add(OperatorExpression.createFromTerm(state, argument));
+                arguments.add(
+                        new OperatorExpression(
+                                OperatorExpression.appendFromTerm(state, argument, operatorStack)
+                        )
+                );
             }
 
             OperatorExpression listArgument = null;
             if (!term.lastMember().equals(SetlString.NIL)) {
-                listArgument = OperatorExpression.createFromTerm(state, term.lastMember());
+                listArgument = new OperatorExpression(
+                        OperatorExpression.appendFromTerm(state, term.lastMember(), operatorStack)
+                );
             }
 
             operatorStack.add(new Call(arguments, listArgument));

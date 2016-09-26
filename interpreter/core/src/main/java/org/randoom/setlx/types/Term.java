@@ -412,7 +412,7 @@ public class Term extends IndexedCollectionValue {
     // viral operation
     @Override
     public Value collectionAccess(final State state, final List<Value> args) throws SetlException {
-        final FragmentList<OperatorExpression> arguments = new FragmentList<OperatorExpression>(args.size());
+        final FragmentList<OperatorExpression> arguments = new FragmentList<>(args.size());
         for (final Value v : args) {
             arguments.add(OperatorExpression.createFromTerm(state, v));
         }
@@ -562,16 +562,17 @@ public class Term extends IndexedCollectionValue {
 
     // viral operation
     @Override
-    public Value call(final State state, final FragmentList<OperatorExpression> args, final OperatorExpression listArg) throws SetlException {
+    public Value call(final State state, List<Value> argumentValues, final FragmentList<OperatorExpression> arguments, final Value listValue, final OperatorExpression listArg) throws SetlException {
         if (functionalCharacter.equalsIgnoreCase(VariableIgnore.getFunctionalCharacter())) {
-            FragmentList<AOperator> operators = new FragmentList<AOperator>(2);
-            operators.add(
+            OperatorExpression operatorExpression = new OperatorExpression(
                     new Variable(OperatorExpression.createFromTerm(state, this).toString(state))
             );
-            operators.add(
-                    new Call(args, listArg)
+            operatorExpression = new OperatorExpression(
+                    operatorExpression,
+                    listArg,
+                    new Call(arguments, listArg)
             );
-            return new OperatorExpression(operators).toTerm(state);
+            return operatorExpression.toTerm(state);
         } else {
             throw new IncompatibleTypeException(
                 "Viral term expansion is only supported when performing a call on a term representing a variable."

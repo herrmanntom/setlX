@@ -1,2 +1,10 @@
 c := plot_createCanvas();
+plot_addGraph(c, "x*x", "f(x) = x*x", [0, 0, 255]);
+plot_modScale(c, [-4, 4], [-1,17]);
+plot_addListGraph(c, [[-4, 0], [4, 0]], "x-axis", [0,0,0]);
+plot_addListGraph(c, [[ 0,-1], [0,17]], "y-axis");
+plot_addListGraph(c, [[-4,-9], [4, 7]], "x |-> 2*(x-1)+1", [0,255,0]);
+plot_addBullets(c, [[1,1]], [255,0,0], 3.0);
+plot_exportCanvas(c, "parabola3");
 plot_modSize(c, [800, 600]);
+get("Press <Enter> to continue");

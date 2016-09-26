@@ -2,3 +2,4 @@ c := plot_createCanvas();
 g1 := plot_addGraph(c, "x", "line");
 g2 := plot_addGraph(c, "x+1", "line+1, colored", [200, 100, 0]);
 g3 := plot_addGraph(c, "x-1", "line-1, colored, area", [0, 100, 200], true);
+get("Press <Enter> to continue"); 

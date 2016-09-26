@@ -1,3 +1,4 @@
 c := plot_createCanvas();
 g := plot_addGraph(c, "x*x+2*x-1", "graph 1");
 plot_legendVisible(c, false);
+get("Press <Enter> to continue");

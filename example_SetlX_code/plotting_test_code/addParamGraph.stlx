@@ -2,3 +2,4 @@ c := plot_createCanvas();
 g1 := plot_addParamGraph(c, "cos(x)", "sin(x)", "simple circle",[-3.15, 3.15]);
 g2 := plot_addParamGraph(c, "2*cos(x)", "2*sin(x)", "circle with color", [-3.15, 3.15], [0, 255, 0]);
 g3 := plot_addParamGraph(c, "3*cos(x)", "3*sin(x)", "circle with color and area", [-3.15, 3.15], [0, 255, 0], true);
+get("Press <Enter> to continue"); 

@@ -2,4 +2,6 @@ c := plot_createCanvas();
 g1 := plot_addGraph(c, "x*x", "parable");
 g2 := plot_addGraph(c, "x", "angle bisector");
 l1 := plot_addLabel(c, [0,0], "point of origin");
-l2 := plot_addLabel(c, [1,1], "intersection with angle bisector");
+l2 := plot_addLabel(c, [1,1], "intersection with angle bisector");print("gfx-test successful");
+get("Press <Enter> to continue"); 
+

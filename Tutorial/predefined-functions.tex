@@ -405,7 +405,7 @@ operators and functions, even those that have already been discussed.
       character as in the following example:
       \\[0.2cm]
       \hspace*{1.3cm}
-      \texttt{split("abc|xyz", "\symbol{92}\symbol{92}|");}
+      \texttt{split("abc|xyz", '\symbol{92}|');}
       \\[0.2cm]
       The function \texttt{split} is very handy when processing comma separated values from
       \textsc{CSV} files.
@@ -798,7 +798,7 @@ The function \setlx\ provides the following mathematical functions.
 \item \texttt{log10($x$)} computes the base 10 logarithm of $x$.
 \item \texttt{sqrt($x$)} computes the \href{https://en.wikipedia.org/wiki/Square_root}{square root}
       of $x$, i.e.~it computes $\sqrt{x}$.  Therefore, as long as $x$ is small enough so that there
-      is no overflow when computing $x\mathtt{*}x$ large, the equation 
+      is no overflow when computing $x\mathtt{*}x$, the equation 
       \\[0.2cm]
       \hspace*{1.3cm}
       \texttt{sqrt($x$*$x$)$=x$}
@@ -964,9 +964,9 @@ The function \texttt{rnd} has a number of different uses.
       fraction of the form
       \\[0.2cm]
       \hspace*{1.3cm}
-      $a/100$ \quad such that $a \in \{0, 1, \cdots 100\}$.
+      $a/200$ \quad such that $a \in \{0, 1, \cdots 100\}$.
       \\[0.2cm]
-      Of course, the user will never see a result of the form $50/100$ as this is immediately
+      Of course, the user will never see a result of the form $100/200$ as this is immediately
       reduced to $1/2$. 
 
       The second parameter also works if the first argument is a natural number.  For example, the

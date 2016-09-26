@@ -177,15 +177,6 @@ The program used to create this plot showing the parabola is shown in Figure \re
 on page \pageref{fig:parabola.stlx}.  This program contains three lines the we have not yet
 discussed.
 \begin{enumerate}
-\item Line 2 contains a call to the function \texttt{sleep}.  This call is necessary if we want to
-      run this program from the command line.  The reason is that the function
-      \texttt{plot\_createCanvas} runs concurrently to the rest of the program.  However, the invocation
-      of the function \texttt{plot\_addGraph} in line 3 uses the canvas created in line 1.  If the
-      creation of this canvas has not been finished, the \textsl{Java} runtime system that is lying
-      beneath \setlx\ might create a \emph{concurrent modification exception}.  By calling
-      \texttt{sleep} the execution of the main thread of the program is halted for 100 milliseconds.
-      This should be more than enough for the function \texttt{plot\_createCanvas} to finish its
-      work. 
 \item Line 9 exports the plot into a
       \href{https://en.wikipedia.org/wiki/Portable_Network_Graphics}{\texttt{png}-file} named
       \texttt{parabola.png}.  This file is saved into the current directory.
@@ -207,7 +198,7 @@ discussed.
                   xrightmargin  = 0.8cm,
                 ]
     c := plot_createCanvas("The Parabola");
-    sleep(100);
+
     plot_addGraph(c, "x*x", "f(x) = x*x", [0, 0, 255]);
     plot_modScale(c, [-4, 4], [-1,17]);
     plot_addListGraph(c, [[-4, 0], [4, 0]], "x-axis", [0,0,0]);
@@ -240,7 +231,7 @@ circle is shown in Figure \ref{fig:circle.eps} on page \pageref{fig:circle.eps}.
                   xrightmargin  = 0.8cm,
                 ]
     c := plot_createCanvas("The Unit Circle");
-    sleep(100);
+
     interval := [0, 2*mathConst("Pi")];
     blue     := [0, 0, 255];
     plot_addParamGraph(c, "cos(x)", "sin(x)", "circle", interval, blue);
@@ -329,7 +320,7 @@ We proceed to discuss the program shown in Figure \ref{fig:circle.stlx} line by 
     };
     hypotrochoid := procedure(bigR, smallR, d) {
         c := plot_createCanvas("The Hypotrochroid R=$bigR$, r=$smallR$, d=$d$.");
-        sleep(100);
+
         interval := [0, 2.01*mathConst("Pi")*period(bigR, smallR)];
         red      := [255, 0, 0];
         sum      := (bigR - smallR + d) + 0.5;

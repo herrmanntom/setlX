@@ -2,4 +2,4 @@ c := plot_createCanvas();
 b1 := plot_addBullets(c, [[0,0]]);
 b2 := plot_addBullets(c, [[1,1], [2,2], [3,3]]);
 b2 := plot_addBullets(c, [[1,2]], [20, 20, 20]);
-print("gfx-test successful");
+get("Press <Enter> to continue"); 

@@ -2,3 +2,4 @@ c := plot_createCanvas();
 g := plot_addGraph(c, "x**3+x*x+2*x-1", "graph to mod scale");
 plot_modScale(c, [0, 5], [-10, 100]);
 plot_modScale(c, [-0.5, 2], [-10, 20]);
+get("Press <Enter> to continue"); 

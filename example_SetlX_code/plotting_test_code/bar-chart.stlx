@@ -1,8 +1,0 @@
-raceChart := procedure(white, black, latino) {
-    
-};
-
-
-raceChart(10933313, 2404566, 6669666, "population");
-raceChart(   38396,   51649,   35028, "inmates"   );
-

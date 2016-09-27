@@ -1,5 +1,4 @@
 c := plot_createCanvas("The Parabola");
-sleep(100);
 plot_addGraph(c, "x*x", "f(x) = x*x", [0, 0, 255]);
 plot_modScale(c, [-4, 4], [-1,17]);
 plot_addListGraph(c, [[-4, 0], [4, 0]], "x-axis", [0,0,0]);

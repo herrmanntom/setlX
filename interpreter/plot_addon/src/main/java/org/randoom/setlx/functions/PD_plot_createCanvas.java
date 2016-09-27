@@ -32,8 +32,9 @@ public class PD_plot_createCanvas extends PreDefinedProcedure {
             canvas = ConnectJFreeChart.getInstance().createCanvas();
         }
 
+        // give some time to render the swing UI in the background
         try {
-            Thread.sleep(250);
+            Thread.sleep(100);
         } catch (final Exception e) {
             // don't care if anything happens here...
         }

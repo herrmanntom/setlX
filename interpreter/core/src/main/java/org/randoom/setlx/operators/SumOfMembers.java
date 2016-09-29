@@ -30,7 +30,7 @@ public class SumOfMembers extends AUnaryPrefixOperator {
 
     @Override
     public void appendOperatorSign(State state, StringBuilder sb, List<String> expressions) {
-        sb.append("*/");
+        sb.append("+/");
     }
 
     /**

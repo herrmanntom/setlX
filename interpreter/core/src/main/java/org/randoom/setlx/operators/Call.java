@@ -5,7 +5,6 @@ import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.exceptions.UnknownFunctionException;
 import org.randoom.setlx.operatorUtilities.OperatorExpression;
 import org.randoom.setlx.operatorUtilities.OperatorExpression.OptimizerData;
-import org.randoom.setlx.operatorUtilities.Stack;
 import org.randoom.setlx.types.Om;
 import org.randoom.setlx.types.SetlList;
 import org.randoom.setlx.types.SetlString;
@@ -16,6 +15,7 @@ import org.randoom.setlx.utilities.FragmentList;
 import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.TermUtilities;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -82,7 +82,7 @@ public class Call extends AOperator {
     }
 
     @Override
-    public final OptimizerData collectVariables(State state, List<String> boundVariables, List<String> unboundVariables, List<String> usedVariables, Stack<OptimizerData> optimizerData) {
+    public final OptimizerData collectVariables(State state, List<String> boundVariables, List<String> unboundVariables, List<String> usedVariables, ArrayDeque<OptimizerData> optimizerData) {
         // we do not care about the optimization data of the lhs... just remove it from the stack
         optimizerData.poll();
 
@@ -97,7 +97,7 @@ public class Call extends AOperator {
     }
 
     @Override
-    public Value evaluate(State state, Stack<Value> values, OperatorExpression operatorExpression, int currentStackDepth) throws SetlException {
+    public Value evaluate(State state, ArrayDeque<Value> values, OperatorExpression operatorExpression, int currentStackDepth) throws SetlException {
         Value listValue = null;
         if (listArgument != null) {
             listValue = values.poll();
@@ -142,7 +142,7 @@ public class Call extends AOperator {
     }
 
     @Override
-    public Value buildTerm(State state, Stack<Value> termFragments) throws SetlException {
+    public Value buildTerm(State state, ArrayDeque<Value> termFragments) throws SetlException {
         Value listArg = SetlString.NIL;
         if (listArgument != null) {
             listArg = termFragments.poll();

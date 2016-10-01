@@ -3,12 +3,12 @@ package org.randoom.setlx.operators;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.functions.PreDefinedProcedure;
 import org.randoom.setlx.operatorUtilities.OperatorExpression;
-import org.randoom.setlx.operatorUtilities.Stack;
 import org.randoom.setlx.types.*;
 import org.randoom.setlx.utilities.CodeFragment;
 import org.randoom.setlx.utilities.SetlHashMap;
 import org.randoom.setlx.utilities.State;
 
+import java.util.ArrayDeque;
 import java.util.HashSet;
 import java.util.List;
 
@@ -78,7 +78,7 @@ public class ProcedureConstructor extends AZeroOperator {
     }
 
     @Override
-    public Procedure evaluate(State state, Stack<Value> values, OperatorExpression operatorExpression, int currentStackDepth) throws SetlException {
+    public Procedure evaluate(State state, ArrayDeque<Value> values, OperatorExpression operatorExpression, int currentStackDepth) throws SetlException {
         if (isClosure) {
             if (closureVariables == null) {
                 this.optimize(state);
@@ -118,7 +118,7 @@ public class ProcedureConstructor extends AZeroOperator {
     /* term operations */
 
     @Override
-    public Value modifyTerm(final State state, Term term, Stack<Value> termFragments) throws SetlException {
+    public Value modifyTerm(final State state, Term term, ArrayDeque<Value> termFragments) throws SetlException {
         return definition.toTerm(state);
     }
 

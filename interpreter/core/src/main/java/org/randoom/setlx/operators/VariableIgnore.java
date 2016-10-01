@@ -5,7 +5,6 @@ import org.randoom.setlx.assignments.AssignableIgnore;
 import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.exceptions.UndefinedOperationException;
 import org.randoom.setlx.operatorUtilities.OperatorExpression;
-import org.randoom.setlx.operatorUtilities.Stack;
 import org.randoom.setlx.types.IgnoreDummy;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
@@ -14,6 +13,7 @@ import org.randoom.setlx.utilities.FragmentList;
 import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.TermUtilities;
 
+import java.util.ArrayDeque;
 import java.util.List;
 
 /**
@@ -56,7 +56,7 @@ public class VariableIgnore extends AZeroOperator {
     }
 
     @Override
-    public IgnoreDummy evaluate(final State state, Stack<Value> values, OperatorExpression operatorExpression, int currentStackDepth) throws UndefinedOperationException {
+    public IgnoreDummy evaluate(final State state, ArrayDeque<Value> values, OperatorExpression operatorExpression, int currentStackDepth) throws UndefinedOperationException {
         return IgnoreDummy.ID;
     }
 

@@ -5,11 +5,11 @@ import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.UndefinedOperationException;
 import org.randoom.setlx.operatorUtilities.OperatorExpression;
 import org.randoom.setlx.operatorUtilities.OperatorExpression.OptimizerData;
-import org.randoom.setlx.operatorUtilities.Stack;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.ImmutableCodeFragment;
 import org.randoom.setlx.utilities.State;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,7 +38,7 @@ public abstract class AOperator extends ImmutableCodeFragment {
      * @param optimizerData    Stack of data for optimization.
      * @return                 Data for optimization.
      */
-    public abstract OptimizerData collectVariables(State state, List<String> boundVariables, List<String> unboundVariables, List<String> usedVariables, Stack<OptimizerData> optimizerData);
+    public abstract OptimizerData collectVariables(State state, List<String> boundVariables, List<String> unboundVariables, List<String> usedVariables, ArrayDeque<OptimizerData> optimizerData);
 
     /**
      * Evaluate this operator, taking arguments from value stack and returning results.
@@ -50,7 +50,7 @@ public abstract class AOperator extends ImmutableCodeFragment {
      * @return                   Result of the evaluation.
      * @throws SetlException     Thrown in case of some (user-) error.
      */
-    public abstract Value evaluate(State state, Stack<Value> values, OperatorExpression operatorExpression, int currentStackDepth) throws SetlException;
+    public abstract Value evaluate(State state, ArrayDeque<Value> values, OperatorExpression operatorExpression, int currentStackDepth) throws SetlException;
 
     /**
      * Does this operator have an argument to print before operator symbol?
@@ -127,7 +127,7 @@ public abstract class AOperator extends ImmutableCodeFragment {
      * @return               Resulting term.
      * @throws SetlException Thrown in case of some (user-) error.
      */
-    public abstract Value buildTerm(State state, Stack<Value> termFragments) throws SetlException;
+    public abstract Value buildTerm(State state, ArrayDeque<Value> termFragments) throws SetlException;
 
     @Override
     public final Value toTerm(State state) throws SetlException {

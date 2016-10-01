@@ -4,13 +4,13 @@ import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.operatorUtilities.OperatorExpression;
 import org.randoom.setlx.operatorUtilities.OperatorExpression.ExpressionFragment;
-import org.randoom.setlx.operatorUtilities.Stack;
 import org.randoom.setlx.types.SetlBoolean;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.FragmentList;
 import org.randoom.setlx.utilities.State;
 
+import java.util.ArrayDeque;
 import java.util.List;
 
 /**
@@ -23,14 +23,14 @@ public class GreaterOrEqual extends ABinaryInfixOperator {
     private GreaterOrEqual() {}
 
     @Override
-    public Value evaluate(State state, Stack<Value> values, OperatorExpression operatorExpression, int currentStackDepth) throws SetlException {
+    public Value evaluate(State state, ArrayDeque<Value> values, OperatorExpression operatorExpression, int currentStackDepth) throws SetlException {
         Value rhs = values.poll();
         Value lhs = values.poll();
         try {
             // note: rhs and lhs swapped!
             return SetlBoolean.valueOf(rhs.isEqualTo(state, lhs) == SetlBoolean.TRUE || rhs.isLessThan(state, lhs) == SetlBoolean.TRUE);
         } catch (final SetlException se) {
-            Stack<ExpressionFragment> stack = operatorExpression.computeExpressionFragmentStack(state, currentStackDepth);
+            ArrayDeque<ExpressionFragment> stack = operatorExpression.computeExpressionFragmentStack(state, currentStackDepth);
             String rhsString = stack.poll().getExpression();
             String lhsString = stack.poll().getExpression();
             se.addToTrace("Error in substitute comparison \"(" + rhsString + " == " + lhsString + ") || (" + rhsString + " < " + lhsString +  ")\":");

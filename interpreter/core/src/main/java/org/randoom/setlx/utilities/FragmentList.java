@@ -15,15 +15,15 @@ public class FragmentList<B extends CodeFragment> implements Iterable<B>, Compar
     protected ArrayList<B> fragmentList;
 
     public FragmentList() {
-        fragmentList = new ArrayList<B>();
+        fragmentList = new ArrayList<>();
     }
 
     public FragmentList(int initialCapacity) {
-        fragmentList = new ArrayList<B>(initialCapacity);
+        fragmentList = new ArrayList<>(initialCapacity);
     }
 
     public FragmentList(B singleElement) {
-        fragmentList = new ArrayList<B>(1);
+        fragmentList = new ArrayList<>(1);
         fragmentList.add(singleElement);
     }
 
@@ -32,19 +32,19 @@ public class FragmentList<B extends CodeFragment> implements Iterable<B>, Compar
     }
 
     public <T extends B> FragmentList(FragmentList<T> firstElements, T element) {
-        fragmentList = new ArrayList<B>(firstElements.size() + 1);
+        fragmentList = new ArrayList<>(firstElements.size() + 1);
         fragmentList.addAll(firstElements.fragmentList);
         fragmentList.add(element);
     }
 
     public <T extends B> FragmentList(FragmentList<T> firstElements, FragmentList<T> secondElements) {
-        fragmentList = new ArrayList<B>(firstElements.size() + secondElements.size());
+        fragmentList = new ArrayList<>(firstElements.size() + secondElements.size());
         fragmentList.addAll(firstElements.fragmentList);
         fragmentList.addAll(secondElements.fragmentList);
     }
 
     public <T extends B> FragmentList(FragmentList<T> firstElements, FragmentList<T> secondElements, T element) {
-        fragmentList = new ArrayList<B>(firstElements.size() + secondElements.size() + 1);
+        fragmentList = new ArrayList<>(firstElements.size() + secondElements.size() + 1);
         fragmentList.addAll(firstElements.fragmentList);
         fragmentList.addAll(secondElements.fragmentList);
         fragmentList.add(element);
@@ -144,8 +144,8 @@ public class FragmentList<B extends CodeFragment> implements Iterable<B>, Compar
             thisIterator  = fragmentList.iterator();
             otherIterator = other.fragmentList.iterator();
         } else {
-            thisIterator = new TreeSet<B>(fragmentList).iterator();
-            otherIterator = new TreeSet<B>(other.fragmentList).iterator();
+            thisIterator = new TreeSet<>(fragmentList).iterator();
+            otherIterator = new TreeSet<>(other.fragmentList).iterator();
         }
         while (thisIterator.hasNext() && otherIterator.hasNext()) {
             B first = thisIterator.next();
@@ -158,6 +158,7 @@ public class FragmentList<B extends CodeFragment> implements Iterable<B>, Compar
         return 0;
     }
 
+    @SuppressWarnings("EqualsWhichDoesntCheckParameterClass")
     @Override
     public final boolean equals(final Object obj) {
         return equals(obj, true);
@@ -176,8 +177,8 @@ public class FragmentList<B extends CodeFragment> implements Iterable<B>, Compar
                     thisIterator  = fragmentList.iterator();
                     otherIterator = otherList.iterator();
                 } else {
-                    thisIterator = new TreeSet<B>(fragmentList).iterator();
-                    otherIterator = new TreeSet<B>(otherList).iterator();
+                    thisIterator = new TreeSet<>(fragmentList).iterator();
+                    otherIterator = new TreeSet<>(otherList).iterator();
                 }
                 while (thisIterator.hasNext() && otherIterator.hasNext()) {
                     B first = thisIterator.next();
@@ -207,7 +208,7 @@ public class FragmentList<B extends CodeFragment> implements Iterable<B>, Compar
                     hash = hash * 31 + fragmentList.get(size - 1).hashCode();
                 }
             } else {
-                TreeSet<B> set = new TreeSet<B>(fragmentList);
+                TreeSet<B> set = new TreeSet<>(fragmentList);
                 hash = hash * 31 + set.first().hashCode();
                 if (size > 1) {
                     hash = hash * 31 + set.last().hashCode();

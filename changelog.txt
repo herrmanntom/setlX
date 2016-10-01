@@ -1,6 +1,6 @@
 Changes (* notice | + feature added, replaced or improved | - feature removed | # bugfix):
 
----v2.5.0--- 2016-09-27
+---v2.5.0--- 2016-10-01
  * Note: the setlX start scripts changed - please update yours!
  * Note: setlX now requires Java7 or higher to run
  + Changed confusing matching of variables and functions

@@ -4,14 +4,13 @@ import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.operatorUtilities.OperatorExpression;
 import org.randoom.setlx.operatorUtilities.OperatorExpression.OptimizerData;
-import org.randoom.setlx.operatorUtilities.Stack;
-import org.randoom.setlx.types.SetlList;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.CodeFragment;
 import org.randoom.setlx.utilities.FragmentList;
 import org.randoom.setlx.utilities.State;
 
+import java.util.ArrayDeque;
 import java.util.List;
 
 /**
@@ -43,7 +42,7 @@ public class TermConstructor extends AZeroOperator {
     }
 
     @Override
-    public final OptimizerData collectVariables(State state, List<String> boundVariables, List<String> unboundVariables, List<String> usedVariables, Stack<OptimizerData> optimizerData) {
+    public final OptimizerData collectVariables(State state, List<String> boundVariables, List<String> unboundVariables, List<String> usedVariables, ArrayDeque<OptimizerData> optimizerData) {
         boolean allowOptimization = true;
         for (int i = 0; i < numberOfArguments; i++) {
             allowOptimization = optimizerData.poll().isAllowOptimization() && allowOptimization;
@@ -55,7 +54,7 @@ public class TermConstructor extends AZeroOperator {
     }
 
     @Override
-    public Value evaluate(State state, Stack<Value> values, OperatorExpression operatorExpression, int currentStackDepth) throws SetlException {
+    public Value evaluate(State state, ArrayDeque<Value> values, OperatorExpression operatorExpression, int currentStackDepth) throws SetlException {
         final Term result = new Term(fChar, numberOfArguments);
 
         for (int i = numberOfArguments; i > 0; i--) {
@@ -81,7 +80,7 @@ public class TermConstructor extends AZeroOperator {
     }
 
     @Override
-    public Value modifyTerm(State state, Term term, Stack<Value> termFragments) throws SetlException {
+    public Value modifyTerm(State state, Term term, ArrayDeque<Value> termFragments) throws SetlException {
         final Term result = new Term(fChar, numberOfArguments);
 
         for (int i = 0; i < numberOfArguments; i++) {

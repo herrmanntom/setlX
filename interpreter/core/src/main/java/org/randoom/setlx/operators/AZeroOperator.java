@@ -2,12 +2,12 @@ package org.randoom.setlx.operators;
 
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.operatorUtilities.OperatorExpression.OptimizerData;
-import org.randoom.setlx.operatorUtilities.Stack;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.TermUtilities;
 
+import java.util.ArrayDeque;
 import java.util.List;
 
 /**
@@ -23,7 +23,7 @@ public abstract class AZeroOperator extends AOperator {
     }
 
     @Override
-    public OptimizerData collectVariables(State state, List<String> boundVariables, List<String> unboundVariables, List<String> usedVariables, Stack<OptimizerData> optimizerData) {
+    public OptimizerData collectVariables(State state, List<String> boundVariables, List<String> unboundVariables, List<String> usedVariables, ArrayDeque<OptimizerData> optimizerData) {
         return new OptimizerData(
                 collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables)
         );
@@ -59,7 +59,7 @@ public abstract class AZeroOperator extends AOperator {
     }
 
     @Override
-    public final Value buildTerm(State state, Stack<Value> termFragments) throws SetlException {
+    public final Value buildTerm(State state, ArrayDeque<Value> termFragments) throws SetlException {
         Term term = new Term(FUNCTIONAL_CHARACTER);
         return modifyTerm(state, term, termFragments);
     }
@@ -73,7 +73,7 @@ public abstract class AZeroOperator extends AOperator {
      * @return               Resulting term.
      * @throws SetlException Thrown in case of some (user-) error.
      */
-    public Value modifyTerm(State state, Term term, Stack<Value> termFragments) throws SetlException {
+    public Value modifyTerm(State state, Term term, ArrayDeque<Value> termFragments) throws SetlException {
         return term;
     }
 }

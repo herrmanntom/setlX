@@ -6,7 +6,6 @@ import org.randoom.setlx.operatorUtilities.Condition;
 import org.randoom.setlx.operatorUtilities.OperatorExpression;
 import org.randoom.setlx.operatorUtilities.SetlIterator;
 import org.randoom.setlx.operatorUtilities.SetlIteratorExecutionContainer;
-import org.randoom.setlx.operatorUtilities.Stack;
 import org.randoom.setlx.types.Om;
 import org.randoom.setlx.types.SetlBoolean;
 import org.randoom.setlx.types.Term;
@@ -18,6 +17,7 @@ import org.randoom.setlx.utilities.SetlHashMap;
 import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.TermUtilities;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -93,7 +93,7 @@ public class Forall extends AZeroOperator {
     }
 
     @Override
-    public Value evaluate(State state, Stack<Value> values, OperatorExpression operatorExpression, int currentStackDepth) throws SetlException {
+    public Value evaluate(State state, ArrayDeque<Value> values, OperatorExpression operatorExpression, int currentStackDepth) throws SetlException {
         if (iterationVariables == null) {
             optimize(state);
         }
@@ -122,7 +122,7 @@ public class Forall extends AZeroOperator {
     }
 
     @Override
-    public Value modifyTerm(State state, Term term, Stack<Value> termFragments) throws SetlException {
+    public Value modifyTerm(State state, Term term, ArrayDeque<Value> termFragments) throws SetlException {
         term.addMember(state, iterator.toTerm(state));
         term.addMember(state, condition.toTerm(state));
         return term;

@@ -4,7 +4,6 @@ import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.operatorUtilities.OperatorExpression;
 import org.randoom.setlx.operatorUtilities.OperatorExpression.OptimizerData;
-import org.randoom.setlx.operatorUtilities.Stack;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.CodeFragment;
@@ -12,6 +11,7 @@ import org.randoom.setlx.utilities.FragmentList;
 import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.TermUtilities;
 
+import java.util.ArrayDeque;
 import java.util.List;
 
 /**
@@ -31,7 +31,7 @@ public abstract class ABinaryInfixOperator extends AOperator {
     }
 
     @Override
-    public final OptimizerData collectVariables(State state, List<String> boundVariables, List<String> unboundVariables, List<String> usedVariables, Stack<OptimizerData> optimizerData) {
+    public final OptimizerData collectVariables(State state, List<String> boundVariables, List<String> unboundVariables, List<String> usedVariables, ArrayDeque<OptimizerData> optimizerData) {
         OptimizerData rhs = optimizerData.poll();
         OptimizerData lhs = optimizerData.poll();
         return collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables, lhs, rhs);
@@ -69,7 +69,7 @@ public abstract class ABinaryInfixOperator extends AOperator {
     }
 
     @Override
-    public Value buildTerm(State state, Stack<Value> termFragments) throws SetlException {
+    public Value buildTerm(State state, ArrayDeque<Value> termFragments) throws SetlException {
         Value rhs = termFragments.poll();
         Value lhs = termFragments.poll();
         Term term = new Term(FUNCTIONAL_CHARACTER);

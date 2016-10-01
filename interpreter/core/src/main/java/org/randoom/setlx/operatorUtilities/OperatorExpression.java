@@ -26,10 +26,10 @@ import org.randoom.setlx.utilities.TermUtilities;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -106,7 +106,7 @@ public class OperatorExpression extends Expression {
         final int preUsedSize    = usedVariables.size();
 
         // collect variables in this expression
-        Stack<OptimizerData> optimizerFragments = new Stack<>();
+        ArrayDeque<OptimizerData> optimizerFragments = new ArrayDeque<>(numberOfOperators);
 
         for (AOperator operator : operators) {
             optimizerFragments.push(operator.collectVariables(state, boundVariables, unboundVariables, usedVariables, optimizerFragments));
@@ -182,8 +182,8 @@ public class OperatorExpression extends Expression {
      */
     @Override
     public Value evaluate(final State state) throws SetlException {
-        Stack<Value> values = new Stack<>();
-        LinkedList<Value> valuesForReplay = new LinkedList<>();
+        ArrayDeque<Value> values = new ArrayDeque<>(numberOfOperators);
+        ArrayDeque<Value> valuesForReplay = new ArrayDeque<>(numberOfOperators);
 
         for (int i = 0; i < numberOfOperators; i++) {
             AOperator operator = operators.get(i);
@@ -198,7 +198,7 @@ public class OperatorExpression extends Expression {
                     appendExpression(state, replayFrame, j);
                     if (j <= i) {
                         replayFrame.append(" <~> ");
-                        replayFrame.append(valuesForReplay.pollFirst());
+                        replayFrame.append(valuesForReplay.poll());
                     } else {
                         replayFrame.append(" FAILED ");
                     }
@@ -248,8 +248,8 @@ public class OperatorExpression extends Expression {
         sb.append(computeExpressionFragmentStack(state, maxOperatorDepth).poll().getExpression());
     }
 
-    public Stack<ExpressionFragment> computeExpressionFragmentStack(State state, int maxOperatorDepth) {
-        Stack<ExpressionFragment> expressionFragments = new Stack<>();
+    public ArrayDeque<ExpressionFragment> computeExpressionFragmentStack(State state, int maxOperatorDepth) {
+        ArrayDeque<ExpressionFragment> expressionFragments = new ArrayDeque<>(numberOfOperators);
 
         for (int i = 0; i < maxOperatorDepth; i++) {
             AOperator operator = operators.get(i);
@@ -339,7 +339,7 @@ public class OperatorExpression extends Expression {
 
     @Override
     public Value toTerm(State state) throws SetlException {
-        Stack<Value> termFragments = new Stack<>();
+        ArrayDeque<Value> termFragments = new ArrayDeque<>(numberOfOperators);
 
         for (AOperator operator : operators) {
             termFragments.push(operator.buildTerm(state, termFragments));

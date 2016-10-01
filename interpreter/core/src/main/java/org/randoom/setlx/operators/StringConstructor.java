@@ -7,7 +7,6 @@ import org.randoom.setlx.exceptions.SyntaxErrorException;
 import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.exceptions.UndefinedOperationException;
 import org.randoom.setlx.operatorUtilities.OperatorExpression;
-import org.randoom.setlx.operatorUtilities.Stack;
 import org.randoom.setlx.types.SetlList;
 import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.Term;
@@ -18,6 +17,7 @@ import org.randoom.setlx.utilities.ParseSetlX;
 import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.TermUtilities;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -158,7 +158,7 @@ public class StringConstructor extends AZeroOperator {
     }
 
     @Override
-    public SetlString evaluate(State state, Stack<Value> values, OperatorExpression operatorExpression, int currentStackDepth) throws SetlException {
+    public SetlString evaluate(State state, ArrayDeque<Value> values, OperatorExpression operatorExpression, int currentStackDepth) throws SetlException {
         final Iterator<String>             fIter = fragments.iterator();
         final Iterator<OperatorExpression> eIter = expressions.iterator();
         final StringBuilder                data  = new StringBuilder();
@@ -204,7 +204,7 @@ public class StringConstructor extends AZeroOperator {
     /* term operations */
 
     @Override
-    public Value modifyTerm(State state, Term term, Stack<Value> termFragments) throws SetlException {
+    public Value modifyTerm(State state, Term term, ArrayDeque<Value> termFragments) throws SetlException {
         term.addMember(state, new SetlString(originalStr.substring(1, originalStr.length() -1)));
 
         final SetlList strList = new SetlList(fragments.size());

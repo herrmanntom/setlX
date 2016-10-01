@@ -7,7 +7,6 @@ import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.exceptions.UndefinedOperationException;
 import org.randoom.setlx.operatorUtilities.CollectionBuilder;
 import org.randoom.setlx.operatorUtilities.OperatorExpression;
-import org.randoom.setlx.operatorUtilities.Stack;
 import org.randoom.setlx.types.CollectionValue;
 import org.randoom.setlx.types.SetlList;
 import org.randoom.setlx.types.SetlSet;
@@ -16,6 +15,7 @@ import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.CodeFragment;
 import org.randoom.setlx.utilities.State;
 
+import java.util.ArrayDeque;
 import java.util.List;
 
 /**
@@ -64,7 +64,7 @@ public class SetListConstructor extends AZeroOperator {
     }
 
     @Override
-    public Value evaluate(State state, Stack<Value> values, OperatorExpression operatorExpression, int currentStackDepth) throws SetlException {
+    public Value evaluate(State state, ArrayDeque<Value> values, OperatorExpression operatorExpression, int currentStackDepth) throws SetlException {
         if (type == CollectionType.SET) {
             final SetlSet set = new SetlSet();
             if (builder != null) {
@@ -99,7 +99,7 @@ public class SetListConstructor extends AZeroOperator {
     }
 
     @Override
-    public Value modifyTerm(State state, Term term, Stack<Value> termFragments) throws SetlException {
+    public Value modifyTerm(State state, Term term, ArrayDeque<Value> termFragments) throws SetlException {
         final CollectionValue result;
         if (type == CollectionType.SET) {
             result = new SetlSet();

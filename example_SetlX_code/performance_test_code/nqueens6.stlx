@@ -1,0 +1,41 @@
+// 
+// n-queens problem in SetlX
+// 
+// One dimensional version of N-queens problem:
+// http://en.wikipedia.org/wiki/Eight_queens_puzzle
+// 
+// This SetlX program was created by Hakan Kjellerstrand (hakank@bonetmail.com)
+// Also see my SETL page: http://www.hakank.org/setl/
+//
+
+all_different := procedure(x) {
+  return #x == #{i : i in x};
+};
+
+// nextPermutation + all_different
+nqueens6 := procedure(n) {
+  c := 0;
+  s := [1..n];
+  q := [1..n];
+  while (q != om) {
+    if (
+        all_different([q[i]+i : i in s]) &&
+        all_different([q[i]-i : i in s])
+        ) {
+      // print(q);
+      c += 1;
+    }
+    q := nextPermutation(q);
+  }
+
+  print("It was $c$ solutions.");
+  return c;
+
+};
+
+for (n in [8..10]) {
+  print("nqueens6($n$)");
+  nqueens6(n);
+  print();
+}
+

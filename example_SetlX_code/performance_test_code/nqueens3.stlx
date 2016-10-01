@@ -1,0 +1,45 @@
+// 
+// n-queens problem in SetlX
+// 
+// One dimensional version of N-queens problem:
+// http://en.wikipedia.org/wiki/Eight_queens_puzzle
+// 
+// This SetlX program was created by Hakan Kjellerstrand (hakank@bonetmail.com)
+// Also see my SETL page: http://www.hakank.org/setl/
+//
+
+// Permutations (exhaustive)
+perms := procedure(s) {
+  if (s == []) {
+    return [[]];
+  } else {
+    return [ [a]+b : a in s, b in perms([ p : p in s | p != a]) ];
+  }
+
+};
+
+// Using perms()
+nqueens3 := procedure(n) {
+  c := 0;
+  s := [1..n];
+  for (q in perms({1..n})) {
+    if (forall(i in s, j in [i+1..n] | 
+               q[i]     != q[j]     &&
+               q[i] + i != q[j] + j &&
+               q[i] - i != q[j] - j
+               )) {
+      // print(q);
+      c += 1;
+    }
+  }
+
+  print("It was $c$ solutions.");
+  return c;
+};
+
+for (n in [8..10]) {
+  print("nqueens3($n$)");
+  nqueens3(n);
+  print();
+}
+

@@ -10,7 +10,7 @@ export OVERRIDE_setlXJarDirectory="$PWD"
 export SETLX_LIBRARY_PATH="$PWD/setlXlibrary"
 
 # rebuild the interpreter from scratch
-mvn clean install
+mvn clean verify
 rc=$?
 
 if [[ $rc == 0 ]]; then

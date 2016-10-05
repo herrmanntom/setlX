@@ -1,18 +1,22 @@
 package org.randoom.setlx.functions;
 
-import org.randoom.setlx.exceptions.IncompatibleTypeException;
 import org.randoom.setlx.exceptions.FileNotReadableException;
+import org.randoom.setlx.exceptions.IncompatibleTypeException;
 import org.randoom.setlx.exceptions.SetlException;
-import org.randoom.setlx.types.*;
 import org.randoom.setlx.parameters.ParameterDefinition;
+import org.randoom.setlx.types.CollectionValue;
+import org.randoom.setlx.types.Om;
+import org.randoom.setlx.types.SetlBoolean;
+import org.randoom.setlx.types.SetlList;
+import org.randoom.setlx.types.SetlString;
+import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.State;
 
 import java.io.BufferedReader;
-import java.io.DataInputStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.InputStreamReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.HashSet;
 
@@ -54,7 +58,7 @@ public class PD_readFile extends PreDefinedProcedure {
                     "ListOfLineNumbers-argument '" + numbers.toString(state) + "' is not a collection value."
                 );
             }
-            lineNumbers = new HashSet<Integer>(numbers.size());
+            lineNumbers = new HashSet<>(numbers.size());
             for (final Value num : (CollectionValue) numbers) {
                 if (num.isInteger() == SetlBoolean.FALSE) {
                     throw new IncompatibleTypeException(
@@ -76,20 +80,17 @@ public class PD_readFile extends PreDefinedProcedure {
         final String    fileName    = state.filterFileName(fileArg.getUnquotedString(state));
 
         // read file
-        FileInputStream fstream     = null;
-        DataInputStream fIn         = null;
-        BufferedReader  fBr         = null;
         int             lineCounter = 0;
-
         final SetlList  fileContent = new SetlList();
 
-        try {
-            fstream = new FileInputStream(fileName);
-            fIn     = new DataInputStream(fstream);
-            fBr     = new BufferedReader(new InputStreamReader(fIn));
+        try (
+                FileInputStream   fileStream        = new FileInputStream(fileName);
+                InputStreamReader inputStreamReader = new InputStreamReader(fileStream);
+                BufferedReader    bufferedReader    = new BufferedReader(inputStreamReader)
+        ) {
             String line;
 
-            while ((line = fBr.readLine()) != null) {
+            while ((line = bufferedReader.readLine()) != null) {
                 if (lineNumbers == null || lineNumbers.contains(++lineCounter)) {
                     fileContent.addMember(state, new SetlString(line));
 
@@ -108,18 +109,6 @@ public class PD_readFile extends PreDefinedProcedure {
             throw new FileNotReadableException("File '" + fileName + "' does not exist.", fnfe);
         } catch (final IOException ioe) {
             throw new FileNotReadableException("Unable to read file '" + fileName + "'.", ioe);
-        } finally {
-            try {
-                if (fBr != null) {
-                    fBr.close();
-                }
-                if (fIn != null) {
-                    fIn.close();
-                }
-                if (fstream != null) {
-                    fstream.close();
-                }
-            } catch (final IOException ioe) { /* who cares */ }
         }
     }
 }

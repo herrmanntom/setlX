@@ -1,5 +1,6 @@
 package org.randoom.setlx.functions;
 
+import org.randoom.setlx.exceptions.JVMException;
 import org.randoom.setlx.exceptions.JVMIOException;
 import org.randoom.setlx.exceptions.StopExecutionException;
 import org.randoom.setlx.types.Rational;
@@ -146,7 +147,7 @@ public class PD_logo extends PreDefinedProcedure {
                         break;
                     }
                 }
-            } catch (final JVMIOException ioe) { /* who cares? */}
+            } catch (final JVMException ioe) { /* who cares? */}
         }
         if (payUp <= 0) {
             if (++count == 3) {

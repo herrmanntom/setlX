@@ -1,5 +1,6 @@
 package org.randoom.setlx.functions;
 
+import org.randoom.setlx.exceptions.JVMException;
 import org.randoom.setlx.exceptions.JVMIOException;
 import org.randoom.setlx.types.Om;
 import org.randoom.setlx.types.SetlList;
@@ -40,8 +41,8 @@ public class PD_get extends PreDefinedProcedure {
         try {
             state.prompt(prompt.toString());
             input = state.inReadLine();
-        } catch (final JVMIOException ioe) {
-            state.errWriteLn("IO error trying to read from stdin!");
+        } catch (final JVMException ioe) {
+            state.errWriteLn("Error trying to read from stdin!");
         }
 
         if (input != null) {

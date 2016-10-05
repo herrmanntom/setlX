@@ -1,6 +1,7 @@
 package org.randoom.setlx.utilities;
 
 import org.randoom.setlx.exceptions.IllegalRedefinitionException;
+import org.randoom.setlx.exceptions.JVMException;
 import org.randoom.setlx.exceptions.JVMIOException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.functions.PreDefinedProcedure;
@@ -10,14 +11,20 @@ import org.randoom.setlx.types.SetlDouble.DoublePrintMode;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
 
+import java.io.BufferedWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.lang.reflect.Method;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Random;
 import java.util.jar.Manifest;
@@ -25,6 +32,7 @@ import java.util.jar.Manifest;
 /**
  * This class represents the current state of the interpreter.
  */
+@SuppressWarnings("WeakerAccess")
 public class State {
 
     /**
@@ -146,8 +154,8 @@ public class State {
     public State(final EnvironmentProvider envProvider) {
         parserErrorCapture      = null;
         parserErrorCount        = 0;
-        loadedLibraries         = new HashSet<String>();
-        classDefinitions        = new SetlHashMap<SetlClass>();
+        loadedLibraries         = new HashSet<>();
+        classDefinitions        = new SetlHashMap<>();
         human                   = false;
         randoomPredictable      = false;
         multiLineMode           = false;
@@ -218,7 +226,7 @@ public class State {
      * @return                Contents of the line read.
      * @throws JVMIOException Thrown in case of IO errors.
      */
-    public String inReadLine() throws JVMIOException {
+    public String inReadLine() throws JVMException {
         return envProvider.inReadLine();
     }
 
@@ -445,7 +453,7 @@ public class State {
      * @return                True if input comes from a human.
      * @throws JVMIOException Thrown in case input cannot be opened.
      */
-    public boolean prompt(final String prompt) throws JVMIOException {
+    public boolean prompt(final String prompt) throws JVMException {
         // Only if a pipe is connected the input is ready (has input buffered)
         // BEFORE the prompt.
         // A human usually takes time AFTER the prompt to type something ;-)
@@ -470,7 +478,7 @@ public class State {
      * @return                Answer selected by the user.
      * @throws JVMIOException Thrown in case of IO errors.
      */
-    public String promptSelectionFromAnswerss(final String question, final List<String> answers) throws JVMIOException {
+    public String promptSelectionFromAnswerss(final String question, final List<String> answers) throws JVMException {
         return envProvider.promptSelectionFromAnswers(question, answers);
     }
 
@@ -584,6 +592,7 @@ public class State {
      *
      * @return True if random number generator is predictable.
      */
+    @SuppressWarnings("unused")
     public boolean isRandoomPredictable() {
         return randoomPredictable;
     }
@@ -596,15 +605,6 @@ public class State {
      */
     public int getRandomInt(final int upperBoundary) {
         return randoom.nextInt(upperBoundary);
-    }
-
-    /**
-     * Get random number (all int values are possible).
-     *
-     * @return Random number.
-     */
-    public int getRandomInt() {
-        return randoom.nextInt();
     }
 
     /**
@@ -632,6 +632,7 @@ public class State {
      *
      * @param stopExecution True to stop execution, false otherwise.
      */
+    @SuppressWarnings("unused")
     public void stopExecution(final boolean stopExecution) {
         executionStopped = stopExecution;
     }
@@ -780,6 +781,7 @@ public class State {
      *
      * @return Tabulator character.
      */
+    @SuppressWarnings("unused")
     public String getTab() {
         if (printVerbose) {
             return envProvider.getTab();
@@ -987,4 +989,5 @@ public class State {
         return variableScope.toTerm(this, classDefinitions);
     }
 }
+
 

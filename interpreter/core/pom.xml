@@ -21,6 +21,10 @@
             <groupId>gov.nist.math</groupId>
             <artifactId>jama</artifactId>
         </dependency>
+        <dependency>
+            <groupId>net.iharder</groupId>
+            <artifactId>base64</artifactId>
+        </dependency>
 
 
         <!-- testing -->

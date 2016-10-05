@@ -2,6 +2,7 @@ package org.randoom.setlx.utilities;
 
 import java.util.List;
 
+import org.randoom.setlx.exceptions.JVMException;
 import org.randoom.setlx.exceptions.JVMIOException;
 
 /**
@@ -15,7 +16,7 @@ public interface EnvironmentProvider {
      * @return                True if input has queued input.
      * @throws JVMIOException Thrown in case of IO errors.
      */
-    boolean inReady() throws JVMIOException;
+    boolean inReady() throws JVMException;
 
     /**
      * Read a single line without termination character(s) from user provided
@@ -24,7 +25,7 @@ public interface EnvironmentProvider {
      * @return                Contents of the line read.
      * @throws JVMIOException Thrown in case of IO errors.
      */
-    String  inReadLine() throws JVMIOException;
+    String  inReadLine() throws JVMException;
 
     /**
      * Write to standard output.
@@ -56,7 +57,7 @@ public interface EnvironmentProvider {
      * @return                Answer selected by the user.
      * @throws JVMIOException Thrown in case of IO errors.
      */
-    String  promptSelectionFromAnswers(final String question, final List<String> answers) throws JVMIOException;
+    String  promptSelectionFromAnswers(final String question, final List<String> answers) throws JVMException;
 
     /**
      * Get the tabulator character to use.

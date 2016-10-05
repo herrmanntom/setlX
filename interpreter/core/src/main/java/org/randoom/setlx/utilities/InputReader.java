@@ -1,7 +1,7 @@
 package org.randoom.setlx.utilities;
 
 import org.randoom.setlx.exceptions.EndOfFileException;
-import org.randoom.setlx.exceptions.JVMIOException;
+import org.randoom.setlx.exceptions.JVMException;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -52,9 +52,7 @@ public final class InputReader {
                     return new ByteArrayInputStream(byteArray);
                 }
             }
-        } catch (final EndOfFileException eof) {
-            throw eof;
-        } catch (final JVMIOException e) {
+        } catch (final JVMException e) {
             // should never happen
             throw new EndOfFileException("unable to read from stdin...", e);
         }

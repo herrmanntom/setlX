@@ -1,0 +1,76 @@
+load("baseIntegrationTest.stlx");
+registerTestSuite("core");
+
+// ************************************************************************** \\
+
+equality := procedure() {
+    if (1.0 == 1.0 && 1 == 1 && 1/2 == 1/2) {
+        correct := true;
+    } else {
+        print("Error is in: 1.0 == 1.0 && 1 == 1 && 1/2 == 1/2");
+        correct := false;
+    }
+
+    if (2.0 == 2 && 2 == 2.0 && 3/4 == 0.75 && 0.75 == 3/4) {
+        correct := correct && true;
+    } else {
+        print("Error is in: 2.0 == 2 && 2 == 2.0 && 3/4 == 0.75 && 0.75 == 3/4");
+        correct := correct && false;
+    }
+
+    if (double(2) == 2.0 && 2.0 == double(2.0) && rational(2.0) == 2 && 2 == rational(2.0)) {
+        correct := correct && true;
+    } else {
+        print("Error is in: $double(2)$ == $2.0$ && $2.0$ == $double(2.0)$ && $rational(2.0)$ == $2$ && $2$ == $rational(2.0)$");
+        correct := correct && false;
+    }
+
+    if (double(1/4) == 0.25 && 0.25 == double(1/4) && rational(0.25) == 1/4 && 1/4 == rational(0.25)) {
+        correct := correct && true;
+    } else {
+        print("Error is in: $double(1/4)$ == $0.25$ && $0.25$ == $double(1/4)$ && $rational(0.25)$ == $1/4$ && $1/4$ == $rational(0.25)$");
+        correct := correct && false;
+    }
+
+    registerTestResult(correct, "equality");
+};
+equality();
+
+infinityTests := procedure() {
+    inf := mathConst("infinity");
+
+    if (1.0/0.0 == inf && 1/0.0 == inf && 1.0/0 == inf) {
+        correct := true;
+    } else {
+        correct := false;
+    }
+
+    if (2.9/inf == 0.0) {
+        correct := correct && true;
+    } else {
+        correct := false;
+    }
+
+    if (exp(inf) == inf && exp(-inf) == 0.0) {
+        correct := correct && true;
+    } else {
+        correct := false;
+    }
+
+    try {
+        // this test will rightfully raise an exception
+        sin(inf) == cos(inf); // both values are NaN
+        correct := false;
+    } catch (error) {
+        // any parser error fails the test
+        correct := correct && true;
+    }
+
+    registerTestResult(correct, "infinity computation");
+};
+infinityTests();
+
+// ************************************************************************** \\
+
+printTestResult();
+

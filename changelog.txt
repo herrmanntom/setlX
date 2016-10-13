@@ -1,5 +1,10 @@
 Changes (* notice | + feature added, replaced or improved | - feature removed | # bugfix):
 
+---v2.5.0--- 2016-10-13
+ # fix bug that doubles and rationals are regarded equal in too many cases
+ * Note: now set of equal doubles and rationals will contain both values,
+   instead of just one ({1.0, 1, 1} -> {1.0, 1} instead of just {1} or {1.0})
+
 ---v2.5.0--- 2016-10-01
  * Note: the setlX start scripts changed - please update yours!
  * Note: setlX now requires Java7 or higher to run

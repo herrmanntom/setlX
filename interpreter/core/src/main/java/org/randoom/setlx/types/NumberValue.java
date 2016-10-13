@@ -1,6 +1,7 @@
 package org.randoom.setlx.types;
 
 import org.randoom.setlx.exceptions.IncompatibleTypeException;
+import org.randoom.setlx.exceptions.NumberToLargeException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.UndefinedOperationException;
 import org.randoom.setlx.utilities.State;
@@ -9,6 +10,39 @@ import org.randoom.setlx.utilities.State;
  * This base class provides some functionality for all numeric values.
  */
 public abstract class NumberValue extends ImmutableValue {
+
+    /* type checks (sort of Boolean operation) */
+
+    @Override
+    public SetlBoolean isNumber() {
+        return SetlBoolean.TRUE;
+    }
+
+    /* type conversions */
+
+    @Override
+    public final SetlDouble toDouble(final State state) throws NumberToLargeException {
+        return toDouble();
+    }
+
+    /**
+     * Convert this value into a setlX double.
+     *
+     * @return                        Equivalent double of this value.
+     * @throws NumberToLargeException if this value cannot be converted.
+     */
+    public abstract SetlDouble toDouble() throws NumberToLargeException;
+
+    public Rational toRational(final State state) {
+        return toRational();
+    }
+
+    /**
+     * Convert this SetlDouble into a Rational
+     *
+     * @return Rational number representing this value.
+     */
+    public abstract Rational toRational();
 
     /* arithmetic operations */
 
@@ -80,11 +114,11 @@ public abstract class NumberValue extends ImmutableValue {
     /* comparisons */
 
     @Override
-    public final    SetlBoolean isLessThan(final State state, final Value other) throws IncompatibleTypeException {
+    public final SetlBoolean isLessThan(final State state, final Value other) throws IncompatibleTypeException {
         if (this == other) {
             return SetlBoolean.FALSE;
         } else if (other.isNumber() == SetlBoolean.TRUE) {
-            return SetlBoolean.valueOf(this.compareTo(other) < 0);
+            return SetlBoolean.valueOf(this.numericalComparisonTo((NumberValue) other) < 0);
         } else {
             throw new IncompatibleTypeException(
                 "Right-hand-side of '" + this.toString(state) + " < " + other.toString(state) + "' is not a number."
@@ -93,16 +127,13 @@ public abstract class NumberValue extends ImmutableValue {
     }
 
     @Override
-    public SetlBoolean isNumber() {
-        return SetlBoolean.TRUE;
+    public final boolean equalTo(final Object other) {
+        return other instanceof NumberValue && this.numericalComparisonTo((NumberValue) other) == 0;
     }
 
-    private final static long COMPARE_TO_ORDER_CONSTANT = generateCompareToOrderConstant(NumberValue.class);
+    protected abstract int numericalComparisonTo(final NumberValue other);
 
-    @Override
-    public final long compareToOrdering() {
-        return COMPARE_TO_ORDER_CONSTANT;
-    }
+    public abstract boolean equals(final Object o);
 
 }
 

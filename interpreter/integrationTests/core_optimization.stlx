@@ -1,0 +1,30 @@
+load("baseIntegrationTest.stlx");
+registerTestSuite("core_optimization");
+
+// ************************************************************************** \\
+
+solve := procedure(f, x0) {
+    x := x0;
+    for (n in [1 .. 10000]) {
+        oldX := x;
+        x := f(x);
+        if (abs(x - oldX) < 1.0e-15) {
+            return x;
+        }
+    }
+};
+
+solveTest := procedure() {
+    registerTestResult(solve(x |-> 1.0/(1 + x), 0) == 0.6180339887498948, "solveTest");
+};
+solveTest();
+
+nDecimalPlacesSolveTest := procedure() {
+    registerTestResult(nDecimalPlaces(solve(x |-> 1/(1+x), 0), 15) == "0.618033988749894", "nDecimalPlacesSolveTest");
+};
+nDecimalPlacesSolveTest();
+
+// ************************************************************************** \\
+
+printTestResult();
+

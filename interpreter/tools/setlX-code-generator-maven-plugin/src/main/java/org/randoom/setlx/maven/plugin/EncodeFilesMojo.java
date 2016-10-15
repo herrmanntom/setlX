@@ -11,24 +11,30 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
-import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.TreeMap;
 
 @SuppressWarnings("unused")
 @Mojo(name = "encodeFiles")
 public class EncodeFilesMojo extends AbstractMojo {
+    @SuppressWarnings("FieldCanBeLocal")
+    private final int MAX_LINE_LENGTH = 512;
 
-    @Parameter(property = "encodeFiles.sourceDirectory")
+    @Parameter(property = "encodeFiles.sourceDirectory", required = true)
     private File sourceDirectory;
 
-    @Parameter(property = "encodeFiles.targetDirectory")
+    @Parameter(property = "encodeFiles.excludedFileEndings")
+    private List<String> excludedFileEndings;
+
+    @Parameter(property = "encodeFiles.targetDirectory", required = true)
     private File targetDirectory;
 
-    @Parameter(property = "encodeFiles.targetClass")
+    @Parameter(property = "encodeFiles.targetClass", required = true)
     private String targetClass;
 
-    @Parameter(property = "encodeFiles.targetPackage")
+    @Parameter(property = "encodeFiles.targetPackage", required = true)
     private String targetPackage;
 
     public void execute() throws MojoFailureException {
@@ -38,12 +44,12 @@ public class EncodeFilesMojo extends AbstractMojo {
         validateTargetPackage();
 
         writeTargetClass(
-                getEncodedFiles()
+                encodeFiles("", sourceDirectory.listFiles())
         );
     }
 
     private void writeTargetClass(Map<String, String> encodedFiles) throws MojoFailureException {
-        File targetFile = getTargetFile();
+        File targetFile = buildTargetFile();
         try (
                 FileOutputStream outputStream = new FileOutputStream(targetFile);
                 OutputStreamWriter outputStreamWriter = new OutputStreamWriter(outputStream);
@@ -55,13 +61,30 @@ public class EncodeFilesMojo extends AbstractMojo {
                     "import java.util.HashMap;\n" +
                     "import java.util.Map;\n" +
                     "\n" +
+                    "@SuppressWarnings(\"StringBufferReplaceableByString\")\n" +
                     "public class " + targetClass + " {\n" +
                     "    private static final Map<String, String> base64EncodedFiles = new HashMap<>();\n" +
                     "    static {\n"
             );
             for (Entry<String, String> encodedFile : encodedFiles.entrySet()) {
                 writer.write(
-                        "        base64EncodedFiles.put(\"" + encodedFile.getKey() + "\", \"" + encodedFile.getValue() + "\");\n"
+                        "        base64EncodedFiles.put(\n" +
+                        "                \"" + encodedFile.getKey() + "\",\n" +
+                        "                new StringBuilder()\n"
+                );
+                String encodedFileContents = encodedFile.getValue();
+                while (encodedFileContents.length() > MAX_LINE_LENGTH) {
+                    writer.write(
+                            "                        .append(\"" + encodedFileContents.substring(0, MAX_LINE_LENGTH) + "\")\n"
+                    );
+                    encodedFileContents = encodedFileContents.substring(MAX_LINE_LENGTH);
+                }
+                writer.write(
+                        "                        .append(\"" + encodedFileContents + "\")\n"
+                );
+                writer.write(
+                        "                        .toString()\n" +
+                        "        );\n"
                 );
             }
             writer.write(
@@ -78,7 +101,7 @@ public class EncodeFilesMojo extends AbstractMojo {
         }
     }
 
-    private File getTargetFile() {
+    private File buildTargetFile() {
         File targetFile = targetDirectory;
         String[] packages = targetPackage.split("\\.");
         for (String aPackage : packages) {
@@ -89,21 +112,42 @@ public class EncodeFilesMojo extends AbstractMojo {
         return new File(targetFile, targetClass + ".java");
     }
 
-    private Map<String, String> getEncodedFiles() throws MojoFailureException {
-        Map<String, String> encodedFiles = new HashMap<>();
+    private Map<String, String> encodeFiles(String filePrefix, File[] files) throws MojoFailureException {
+        Map<String, String> encodedFiles = new TreeMap<>();
         //noinspection ConstantConditions
-        for (File file : sourceDirectory.listFiles()) {
-            try {
-                String fileContentAsBase64 = Base64.encodeFromFile(file.getAbsolutePath());
-                encodedFiles.put(
-                        file.getName(),
-                        fileContentAsBase64
+        for (File file : files) {
+            if (file.isFile() && isIncluded(file)) {
+                try {
+                    String fileContentAsBase64 = Base64.encodeFromFile(file.getAbsolutePath());
+                    encodedFiles.put(
+                            filePrefix + file.getName(),
+                            fileContentAsBase64
+                    );
+                } catch (IOException e) {
+                    throw new MojoFailureException("Source file '" + file.getAbsolutePath() + "' cannot be read.", e);
+                }
+            } else if (file.isDirectory()){
+                encodedFiles.putAll(
+                        encodeFiles(
+                                filePrefix + file.getName() + "/",
+                                file.listFiles()
+                        )
                 );
-            } catch (IOException e) {
-                throw new MojoFailureException("Source file '" + file.getAbsolutePath() + "' cannot be read.", e);
             }
         }
         return encodedFiles;
+    }
+
+    private boolean isIncluded(File file) {
+        if (excludedFileEndings == null || excludedFileEndings.isEmpty()) {
+            return true;
+        }
+        for (String suffix : excludedFileEndings) {
+            if (file.getName().endsWith(suffix)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     private void validateTargetPackage() throws MojoFailureException {

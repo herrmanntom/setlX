@@ -161,8 +161,8 @@ public class PcEnvProvider implements EnvironmentProvider {
     @Override
     public String   filterLibraryName(String name) {
         name = name.trim();
-        if (name.length() >= 1 && name.charAt(0) != '/' && (name.length() < 2 || name.charAt(1) != ':')) {
-            return new File(libraryPath).toPath().resolve(name).toString();
+        if (libraryPath != null && !libraryPath.equals("") && name.length() >= 1 && name.charAt(0) != '/' && (name.length() < 2 || name.charAt(1) != ':')) {
+            return new File(libraryPath, name).getAbsolutePath();
         }
         return name;
     }

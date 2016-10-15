@@ -1,10 +1,11 @@
 package org.randoom.setlx.functions;
 
 import org.randoom.setlx.exceptions.SetlException;
+import org.randoom.setlx.files.EncodedLibraryFiles;
 import org.randoom.setlx.parameters.ParameterDefinition;
 import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.Value;
-import org.randoom.setlx.utilities.EncodedLibraryFiles;
+import org.randoom.setlx.utilities.EncodedFilesWriter;
 import org.randoom.setlx.utilities.State;
 
 import java.util.HashMap;
@@ -28,7 +29,7 @@ public class PD_writeLibrary extends PreDefinedProcedure {
     @Override
     public Value execute(final State state, final HashMap<ParameterDefinition, Value> args) throws SetlException {
         String result = "Wrote library files:\n";
-        List<String> libraryFiles = EncodedLibraryFiles.write(state);
+        List<String> libraryFiles = EncodedFilesWriter.writeLibraryFiles(state, EncodedLibraryFiles.getBase64EncodedFiles());
         for (int i = 0; i < libraryFiles.size(); i++) {
             if (i > 0) {
                 result += "\n";

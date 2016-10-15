@@ -53,6 +53,24 @@
                     <treatWarningsAsErrors>true</treatWarningsAsErrors>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.randoom.setlx.mojo</groupId>
+                <artifactId>setlX-code-generator-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>encodeFiles</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <sourceDirectory>../setlXlibrary</sourceDirectory>
+                    <targetDirectory>${project.build.sourceDirectory}</targetDirectory>
+                    <targetClass>EncodedLibraryFiles</targetClass>
+                    <targetPackage>org.randoom.setlx.files</targetPackage>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 

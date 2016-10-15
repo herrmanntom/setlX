@@ -18,8 +18,11 @@
     <modules>
         <module>core</module>
         <module>pc_ui</module>
+
         <module>gfx_addon</module>
         <module>plot_addon</module>
+
+        <module>tools</module>
     </modules>
 
     <dependencyManagement>
@@ -66,6 +69,17 @@
                 <artifactId>junit</artifactId>
                 <version>4.11</version>
             </dependency>
+
+            <dependency>
+                <groupId>org.apache.maven</groupId>
+                <artifactId>maven-plugin-api</artifactId>
+                <version>3.3.9</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.maven.plugin-tools</groupId>
+                <artifactId>maven-plugin-annotations</artifactId>
+                <version>3.5</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -96,6 +110,12 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-clean-plugin</artifactId>
                     <version>3.0.0</version>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.randoom.setlx.mojo</groupId>
+                    <artifactId>setlX-code-generator-maven-plugin</artifactId>
+                    <version>${project.version}</version>
                 </plugin>
 
                 <plugin>

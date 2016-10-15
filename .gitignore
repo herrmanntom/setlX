@@ -15,6 +15,7 @@
 /grammar_pure/Pure.g4
 /interpreter/core/src/main/java/org/randoom/setlx/files/*.java
 /interpreter/*/target
+/interpreter/*/*/target
 /interpreter/*.jar
 /Tutorial/*.?00pk
 /Tutorial/*.aux

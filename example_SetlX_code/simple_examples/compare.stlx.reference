@@ -2,7 +2,7 @@
 
 `["test"]' comes after `["foo", "bar"]'
 
-`om' comes after `77'
+`om' comes before `77'
 
 `1/3' and `1/3' are equal
 

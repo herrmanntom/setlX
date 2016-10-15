@@ -304,22 +304,12 @@ public class Rational extends NumberValue {
     }
 
     @Override
-    public Rational toRational(final State state) {
+    public Rational toRational() {
         return this;
     }
 
     @Override
-    public SetlDouble toDouble(final State state) throws NumberToLargeException, UndefinedOperationException {
-        return SetlDouble.valueOf(numerator, denominator);
-    }
-
-    /**
-     * Convert this value into a setlX double.
-     *
-     * @return                        Equivalent double of this value.
-     * @throws NumberToLargeException if this value cannot be converted.
-     */
-    /*package*/ SetlDouble toDouble() throws NumberToLargeException {
+    public SetlDouble toDouble() throws NumberToLargeException {
         return SetlDouble.valueOf(numerator, denominator);
     }
 
@@ -793,42 +783,53 @@ public class Rational extends NumberValue {
         if (this == other) {
             return 0;
         } else if (other.getClass() == Rational.class) {
-            final Rational r = (Rational) other;
-            if (isInteger && r.isInteger) {
-                // a/1 == p/1  <==>  a == p
-                return numerator.compareTo(r.numerator);
-            } else {
-                // a/b == p/q  <==>  a * q == b * p
-                final BigInteger aq = numerator.multiply(r.denominator);
-                final BigInteger bp = denominator.multiply(r.numerator);
-                return aq.compareTo(bp);
-            }
-        } else if (other.getClass() == SetlDouble.class) {
+            return compareTo((Rational) other);
+        } else {
+            return (this.compareToOrdering() < other.compareToOrdering()) ? -1 : 1;
+        }
+    }
+
+    @Override
+    public int numericalComparisonTo(final NumberValue other) {
+        if (this == other) {
+            return 0;
+        } else if (other.getClass() == Rational.class) {
+            return compareTo((Rational) other);
+        } else {
             try {
                 return toDouble().compareTo(other);
             } catch (final NumberToLargeException e) {
-                return this.compareTo(((SetlDouble) other).toRational());
+                return compareTo(other.toRational());
             }
-        } else {
-            return (this.compareToOrdering() < other.compareToOrdering())? -1 : 1;
         }
+    }
+
+    private int compareTo(Rational r) {
+        if (isInteger && r.isInteger) {
+            // a/1 == p/1  <==>  a == p
+            return numerator.compareTo(r.numerator);
+        } else {
+            // a/b == p/q  <==>  a * q == b * p
+            final BigInteger aq = numerator.multiply(r.denominator);
+            final BigInteger bp = denominator.multiply(r.numerator);
+            return aq.compareTo(bp);
+        }
+    }
+
+    private final static long COMPARE_TO_ORDER_CONSTANT = generateCompareToOrderConstant(Rational.class);
+
+    @Override
+    public final long compareToOrdering() {
+        return COMPARE_TO_ORDER_CONSTANT;
     }
 
     @Override
-    public boolean equalTo(final Object other) {
-        if (other instanceof Value) {
-            final Value v = (Value) other;
-            if (v.isNumber() == SetlBoolean.TRUE) {
-                return this.compareTo(v) == 0;
-            }
-        }
-        return false;
+    public boolean equals(final Object other) {
+        return other.getClass() == Rational.class && this.compareTo((Rational) other) == 0;
     }
-
-    private final static int initHashCode = Rational.class.hashCode();
 
     @Override
     public int computeHashCode() {
-        return (initHashCode + numerator.hashCode()) * 31 + denominator.hashCode();
+        return ((int) COMPARE_TO_ORDER_CONSTANT + numerator.hashCode()) * 31 + denominator.hashCode();
     }
 }

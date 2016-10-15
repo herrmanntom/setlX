@@ -986,7 +986,7 @@ public abstract class Value extends CodeFragment {
 
     @SuppressWarnings("EqualsWhichDoesntCheckParameterClass")
     @Override
-    public final boolean equals(final Object o) {
+    public boolean equals(final Object o) {
         return this.equalTo(o);
     }
 

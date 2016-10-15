@@ -174,18 +174,7 @@ public class SetlDouble extends NumberValue {
        case, the bias only has the value 1022.
      */
     @Override
-    public Rational toRational(final State state)
-        throws UndefinedOperationException
-    {
-        return toRational();
-    }
-
-    /**
-     * Convert this SetlDouble into a Rational
-     *
-     * @return Rational number representing this value.
-     */
-    /*package*/ Rational toRational() {
+    public Rational toRational() {
         final long bits         = Double.doubleToLongBits(this.doubleValue);
         final long signMask     = 0x8000000000000000L;
         final long exponentMask = 0x7ff0000000000000L;
@@ -247,7 +236,7 @@ public class SetlDouble extends NumberValue {
     }
 
     @Override
-    public SetlDouble toDouble(final State state) {
+    public SetlDouble toDouble() {
         return this;
     }
 
@@ -512,37 +501,42 @@ public class SetlDouble extends NumberValue {
         if (this == other) {
             return 0;
         } else if (other.getClass() == SetlDouble.class) {
-            final SetlDouble rhs = (SetlDouble) other;
-            final Double d = this.doubleValue;
-            return d.compareTo(rhs.doubleValue);
-        } else if (other.getClass() == Rational.class) {
-            try {
-                final Double d = this.doubleValue;
-                return d.compareTo(((Rational) other).toDouble().doubleValue);
-            } catch (final NumberToLargeException e) {
-                return toRational().compareTo(other);
-            }
+            return Double.compare(this.doubleValue, ((SetlDouble) other).doubleValue);
         } else {
             return (this.compareToOrdering() < other.compareToOrdering())? -1 : 1;
         }
     }
 
     @Override
-    public boolean equalTo(final Object other) {
-        if (other instanceof Value) {
-            final Value v = (Value) other;
-            if (v.isNumber() == SetlBoolean.TRUE) {
-                return this.compareTo(v) == 0;
+    public int numericalComparisonTo(final NumberValue other) {
+        if (this == other) {
+            return 0;
+        } else if (other.getClass() == SetlDouble.class) {
+            return Double.compare(this.doubleValue, ((SetlDouble) other).doubleValue);
+        } else {
+            try {
+                return Double.compare(this.doubleValue, other.toDouble().doubleValue);
+            } catch (final NumberToLargeException e) {
+                return toRational().numericalComparisonTo(other);
             }
         }
-        return false;
     }
 
-    private final static int initHashCode = SetlDouble.class.hashCode();
+    private final static long COMPARE_TO_ORDER_CONSTANT = generateCompareToOrderConstant(SetlDouble.class);
+
+    @Override
+    public final long compareToOrdering() {
+        return COMPARE_TO_ORDER_CONSTANT;
+    }
+
+    @Override
+    public boolean equals(final Object other) {
+        return other.getClass() == SetlDouble.class && this.compareTo((SetlDouble) other) == 0;
+    }
 
     @Override
     public int computeHashCode() {
         final Double d = this.doubleValue;
-        return initHashCode + d.hashCode();
+        return (int) COMPARE_TO_ORDER_CONSTANT + d.hashCode();
     }
 }

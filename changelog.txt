@@ -5,9 +5,9 @@ Changes (* notice | + feature added, replaced or improved | - feature removed | 
  * Note: now set of equal doubles and rationals will contain both values,
    instead of just one ({1.0, 1, 1} -> {1.0, 1} instead of just {1} or {1.0})
  + added procedure writeLibrary() that will (re)write the default library
-   matching this setlX version into the library path
+   matching the running setlX version into the library path
  + added procedure writeExamples(directoryPath) that will (re)write the
-   examples of this setlX version into the supplied path
+   examples of the running setlX version into the supplied path
 
 ---v2.5.0--- 2016-10-01
  * Note: the setlX start scripts changed - please update yours!

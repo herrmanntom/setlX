@@ -32,7 +32,7 @@ public class EncodedFilesWriter {
             if (isExcluded(filePath, directoriesToSkip)) {
                 continue;
             }
-            filePath = filePath.replaceAll("/", File.separator);
+            filePath = filePath.replace("/", File.separator);
 
             String nameOfFileToWrite;
             if (isLibrary) {

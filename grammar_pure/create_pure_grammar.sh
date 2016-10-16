@@ -25,6 +25,7 @@ grep "^REMAINDER " "$sourceGrammar" >> "$tmpFileA"
 echo "" >> "$tmpFileA"
 
 mv "$tmpFileA" "$targetGrammar"
+mkdir -p $(dirname "$targetGrammarForTester")
 cp "$targetGrammar" "$targetGrammarForTester"
 rm "$tmpFileB"
 

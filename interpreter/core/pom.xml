@@ -79,7 +79,8 @@
                         <configuration>
                             <sourceDirectory>../../example_SetlX_code</sourceDirectory>
                             <excludedFileEndings>
-                                <excludedFileEnding>.reference</excludedFileEnding>
+                                <excludedFileEnding>.stlx.reference</excludedFileEnding>
+                                <excludedFileEnding>.stlx.input</excludedFileEnding>
                                 <excludedFileEnding>.real.csv</excludedFileEnding>
                                 <excludedFileEnding>.sys.csv</excludedFileEnding>
                                 <excludedFileEnding>.user.csv</excludedFileEnding>

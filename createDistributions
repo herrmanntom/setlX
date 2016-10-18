@@ -171,7 +171,7 @@ echo -n "=> Creating example code distribution ... "
 cp -r example_SetlX_code zipContents
 while read -r -d $'\0' filename; do
     rm -f "$filename"
-done < <( find "zipContents" -type f \( -name "*.reference" -o -name "*.real.csv" -o -name "*.sys.csv" -o -name "*.user.csv" \) -print0 )
+done < <( find "zipContents" -type f \( -name "*.stlx.reference" -o -name "*.stlx.input" -o -name "*.real.csv" -o -name "*.sys.csv" -o -name "*.user.csv" \) -print0 )
 while read -r -d $'\0' emptyDir; do
     rmdir "$emptyDir"
 done < <( find "zipContents" -type d -empty -print0 )

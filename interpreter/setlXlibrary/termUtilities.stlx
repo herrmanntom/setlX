@@ -33,6 +33,11 @@ parseTerm := procedure(s) {
     return toTerm(parse(s));
 };
 
+// Extract the name of a term representing a variable.
+varName := procedure(v) {
+    return args(v)[1];
+};
+
 // Take a simple term produced by the function toTerm and transform it
 // back into a term that represents the internal structure required by
 // setlX. This way it can be evaluated using evalTerm().

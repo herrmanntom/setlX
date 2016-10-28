@@ -23,6 +23,14 @@ expressionLoopTest := procedure(expression) {
     afterFromTerm := fromTerm(afterToTerm);
     registerTestResult(expressionTerm == afterFromTerm, "expression loop '$expression$'");
 };
+varNameTest := procedure(name) {
+    term   := parse(name);
+    result := varName(term);
+    registerTestResult(result == name, "varName");
+};
+varNameTest("x");
+varNameTest("a_bC");
+varNameTest("Hugo");
 
 toTermTest("sin(x)", "@sin(x)");
 toTermTest("sin(x) / cos(x)", "@sin(x) / @cos(x)");

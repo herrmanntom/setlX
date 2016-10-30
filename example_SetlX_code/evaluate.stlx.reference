@@ -1,0 +1,4 @@
+evaluate((p => q) => (!p => q) => q, {["p", true], ["q", true]}) = true
+evaluate((p => q) => (!p => q) => q, {["p", true], ["q", false]}) = true
+evaluate((p => q) => (!p => q) => q, {["p", false], ["q", true]}) = true
+evaluate((p => q) => (!p => q) => q, {["p", false], ["q", false]}) = true

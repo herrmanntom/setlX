@@ -76,7 +76,7 @@ public class Term extends IndexedCollectionValue {
     public Value conjunction(final State state, final OperatorExpression other) throws SetlException {
         return new OperatorExpression(
                 OperatorExpression.createFromTerm(state, this),
-                new Conjunction(other)
+                new Conjunction(OperatorExpression.createFromTerm(state, other.evaluate(state)))
         ).toTerm(state);
     }
 
@@ -100,7 +100,7 @@ public class Term extends IndexedCollectionValue {
     public Value disjunction(final State state, final OperatorExpression other) throws SetlException {
         return new OperatorExpression(
                 OperatorExpression.createFromTerm(state, this),
-                new Disjunction(other)
+                new Disjunction(OperatorExpression.createFromTerm(state, other.evaluate(state)))
         ).toTerm(state);
     }
 
@@ -124,7 +124,7 @@ public class Term extends IndexedCollectionValue {
     public Value implication(final State state, final OperatorExpression other) throws SetlException {
         return new OperatorExpression(
                 OperatorExpression.createFromTerm(state, this),
-                new Implication(other)
+                new Implication(OperatorExpression.createFromTerm(state, other.evaluate(state)))
         ).toTerm(state);
     }
 

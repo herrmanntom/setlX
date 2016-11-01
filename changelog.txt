@@ -1,5 +1,9 @@
 Changes (* notice | + feature added, replaced or improved | - feature removed | # bugfix):
 
+---v2.5.2--- 201x-yy-zz
+ # fix bug that terms are not viral in Boolean operations
+ + added varName to termUtilities
+
 ---v2.5.1--- 2016-10-15
  # fix bug that doubles and rationals are regarded equal in too many cases
  * Note: now set of equal doubles and rationals will contain both values,

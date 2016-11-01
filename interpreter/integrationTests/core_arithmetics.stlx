@@ -1,5 +1,5 @@
 load("baseIntegrationTest.stlx");
-registerTestSuite("core");
+registerTestSuite("core_arithmetics");
 
 // ************************************************************************** \\
 

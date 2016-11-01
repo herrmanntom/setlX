@@ -1,0 +1,25 @@
+load("baseIntegrationTest.stlx");
+registerTestSuite("core_terms");
+
+// ************************************************************************** \\
+
+lazyTermsConjunction := procedure() {
+    s := @f();
+    t := @g();
+    r := s && t;
+    registerTestResult(canonical(r) == "@@@conjunction(@f(), @g())", "lazyTermsConjunction");
+};
+lazyTermsConjunction();
+
+lazyTermsDisjunction := procedure() {
+    s := @f();
+    t := @g();
+    r := s || t;
+    registerTestResult(canonical(r) == "@@@disjunction(@f(), @g())", "lazyTermsDisjunction");
+};
+lazyTermsDisjunction();
+
+// ************************************************************************** \\
+
+printTestResult();
+

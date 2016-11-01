@@ -1,5 +1,5 @@
 rule stack: [initExpr, expr, exprContent]
-line 1:1 no viable alternative at input '%'
+line 1:1 extraneous input '%' expecting !, #, (, */, +/, -, <<, [, _, {, DOUBLE, ID, LITERAL, NUMBER, STRING, TERM, cachedProcedure, closure, exists, false, forall, om, procedure, true
 1 syntax error(s) encountered.
 
 Oh... you did that wrong... try again!
@@ -7,7 +7,7 @@ Oh... you did that wrong... try again!
 value	:= om
 
 rule stack: [initExpr, expr, exprContent]
-line 1:1 no viable alternative at input '%'
+line 1:1 extraneous input '%' expecting !, #, (, */, +/, -, <<, [, _, {, DOUBLE, ID, LITERAL, NUMBER, STRING, TERM, cachedProcedure, closure, exists, false, forall, om, procedure, true
 1 syntax error(s) encountered.
 
 Oh... you did that wrong... try again!

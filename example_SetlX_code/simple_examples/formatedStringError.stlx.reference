@@ -1,6 +1,6 @@
 Error(s) while parsing string "This will fail: $]$" {
 	rule stack: [initExpr, expr, exprContent]
-line 1:1 no viable alternative at input ']'
+line 1:1 mismatched input ']' expecting !, #, (, */, +/, -, <<, [, _, {, DOUBLE, ID, LITERAL, NUMBER, STRING, TERM, cachedProcedure, closure, exists, false, forall, om, procedure, true
 }
 Error(s) while parsing string "Guess what this will do: $99 / 5" {
 	closing '$' missing

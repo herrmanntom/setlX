@@ -126,7 +126,7 @@ public class SetlMatrix extends IndexedCollectionValue {
             if(elem.jDoubleConvertible()) {
                 base[i][0] = elem.toJDoubleValue(state);
             } else {
-                throw new IncompatibleTypeException("Vector could not be converted to a matrix, because its dimension " + i + " matrix could not be converted to a double.");
+                throw new IncompatibleTypeException("Vector could not be converted to a matrix, because its dimension " + i + " could not be converted to a double.");
             }
         }
         matrix = new Jama.Matrix(base);
@@ -287,13 +287,27 @@ public class SetlMatrix extends IndexedCollectionValue {
      */
     @Override
     public Value product(final State state, final Value multiplier) throws SetlException {
-        boolean isMatrix = multiplier instanceof SetlMatrix;
-        if(isMatrix || multiplier instanceof SetlVector) {
-            SetlMatrix b = isMatrix ? (SetlMatrix)multiplier : new SetlMatrix(state, (SetlVector)multiplier);
+        if(multiplier instanceof SetlMatrix) {
+            SetlMatrix b = (SetlMatrix) multiplier;
             if(this.matrix.getColumnDimension() == b.matrix.getRowDimension()) {
                 return new SetlMatrix(this.matrix.times(b.matrix));
             } else {
                 throw new IncompatibleTypeException("Matrix multiplication is only defined if the number of columns of the first matrix equals the number of rows of the second matrix.");
+            }
+        } else if(multiplier instanceof SetlVector) {
+            SetlMatrix vectorMatrix = new SetlMatrix(state, (SetlVector) multiplier);
+            if(this.matrix.getColumnDimension() == vectorMatrix.matrix.getRowDimension()) {
+                Matrix result = this.matrix.times(vectorMatrix.matrix);
+                if (result.getColumnDimension() == 1) {
+                    ArrayList<Double> vector = new ArrayList<>();
+                    for (int i = 0; i < result.getRowDimension(); i++) {
+                        vector.add(result.get(i, 0));
+                    }
+                    return new SetlVector(vector);
+                }
+                throw new UndefinedOperationException("Multiplication result has unexpected dimensions: " + new SetlMatrix(result).toString(state));
+            } else {
+                throw new IncompatibleTypeException("Multiplication is only defined if the number of columns of the matrix equals the number of dimensions of the vector.");
             }
         } else if(multiplier instanceof NumberValue) {
             return new SetlMatrix(this.matrix.times(multiplier.toJDoubleValue(state)));

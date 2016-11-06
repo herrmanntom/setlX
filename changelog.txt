@@ -1,5 +1,8 @@
 Changes (* notice | + feature added, replaced or improved | - feature removed | # bugfix):
 
+---v2.x.y--- 201z-mm-dd
+ + multiplication of matrix and vector will result in a vector instead of a matrix
+
 ---v2.5.2--- 2016-11-01
  # fix bug that terms are not viral in Boolean operations
  + added varName to termUtilities library

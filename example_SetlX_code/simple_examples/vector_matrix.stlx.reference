@@ -36,7 +36,7 @@ Implicit conversion
 Matrix operations taking vectors as parameters:
 f + c: << <<2.0>> <<4.0>> <<6.0>> >>
 f - d: << <<-8.0>> <<-4.0>> <<-4.0>> >>
-e * c: << <<14.0>> >>
+e * c: <<14.0>>
 Vector operations taking (single row or single column) matrices as parameters:
 c + e: <<2.0 4.0 6.0>>
 d - f: <<8.0 4.0 4.0>>

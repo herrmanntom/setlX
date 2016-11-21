@@ -392,24 +392,24 @@ public abstract class Value extends CodeFragment {
     }
 
     /**
-     * Compute the modulo between this value and another.
+     * Compute the modulus between this value and another.
      *
      * @param state          Current state of the running setlX program.
-     * @param modulo         Value to divide by.
-     * @return               Modulo of this and modulo.
+     * @param modulus        Value to divide by.
+     * @return               Modulo of this and modulus.
      * @throws SetlException Thrown in case of some (user-) error.
      */
-    public Value modulo(final State state, final Value modulo) throws SetlException {
-        if (modulo.getClass() == Term.class) {
-            return ((Term) modulo).moduloFlipped(state, this);
+    public Value modulo(final State state, final Value modulus) throws SetlException {
+        if (modulus.getClass() == Term.class) {
+            return ((Term) modulus).moduloFlipped(state, this);
         }
         throw new UndefinedOperationException(
-            "'" + this.toString(state) + " % " + modulo.toString(state) + "' is undefined."
+            "'" + this.toString(state) + " % " + modulus.toString(state) + "' is undefined."
         );
     }
 
-    public Value moduloAssign(final State state, final Value modulo) throws SetlException {
-        return modulo(state, modulo);
+    public Value moduloAssign(final State state, final Value modulus) throws SetlException {
+        return modulo(state, modulus);
     }
 
     /**

@@ -280,11 +280,11 @@ public class SetlObject extends Value {
     private final static String MINUS = createOverloadVariable(Minus.class);
 
     @Override
-    public Value modulo(final State state, final Value modulo) throws SetlException {
-        if (modulo.getClass() == Term.class) {
-            return ((Term) modulo).moduloFlipped(state, this);
+    public Value modulo(final State state, final Value modulus) throws SetlException {
+        if (modulus.getClass() == Term.class) {
+            return ((Term) modulus).moduloFlipped(state, this);
         }
-        return overload(state, MODULO, modulo);
+        return overload(state, MODULO, modulus);
     }
     private final static String MODULO = createOverloadVariable(Modulo.class);
 

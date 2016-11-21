@@ -539,16 +539,25 @@ public class Rational extends NumberValue {
     // a = (a/b) * b + r with 0 <= r < b.  Rather, Java always rounds to 0.
     @Override
     public Rational floor(final State state) {
-        if (numerator.compareTo(BigInteger.ZERO) < 0 && ! isInteger) {
+        if (numerator.signum() == -1 && ! isInteger) {
             return new Rational(numerator.divide(denominator).subtract(BigInteger.ONE));
         }
         return new Rational(numerator.divide(denominator));
     }
 
+    // The mathematical specification of the integer division is:
+    //  for b > 0
+    //     a \ b = floor(a/b)
+    //  for b < 0
+    //     a \ b = -floor(a / (-b))
     @Override
     public Value integerDivision(final State state, final Value divisor) throws SetlException {
         if (divisor.isNumber() == SetlBoolean.TRUE) {
-            return this.quotient(state, divisor).floor(state);
+            if (((NumberValue) divisor).numericalComparisonTo(Rational.ZERO) > 0) {
+                return this.quotient(state, divisor).floor(state);
+            } else {
+                return this.quotient(state, divisor.minus(state)).floor(state).minus(state);
+            }
         } else if (divisor.getClass() == Term.class) {
             return ((Term) divisor).integerDivisionFlipped(state, this);
         } else {
@@ -564,26 +573,30 @@ public class Rational extends NumberValue {
     }
 
     // The mathematical specification of the modulo function is:
+    //  for b > 0
     //     a % b = a - floor(a/b) * b
+    //  for b < 0
+    //     a % b = a + floor(a / (-b)) * b
     @Override
-    public Value modulo(final State state, final Value modulo) throws SetlException {
-        if (modulo.getClass() == Rational.class) {
-            final Rational b = (Rational) modulo;
-            if (isInteger && b.isInteger) {
-                if (b.numerator.equals(BigInteger.ZERO)) {
-                    throw new UndefinedOperationException("'" + this.toString(state) + " % 0' is undefined.");
-                } else {
-                    return new Rational(numerator.mod(b.numerator));
-                }
-            } else {
+    public Value modulo(final State state, final Value modulus) throws SetlException {
+        if (modulus.getClass() == Rational.class) {
+            final Rational b = (Rational) modulus;
+            if (isInteger && b.isInteger && b.numerator.equals(BigInteger.ZERO)) {
+                throw new UndefinedOperationException("'" + this.toString(state) + " % 0' is undefined.");
+            } else if (isInteger && b.isInteger && numerator.signum() == 1) {
+                return new Rational(numerator.remainder(b.numerator));
+            } else if (b.numerator.signum() == 1) {
                 final Rational ab = (Rational) this.quotient(state, b);
                 return this.difference(state, ab.floor(state).product(state, b));
+            } else /*if (b.numerator.signum() == 1) */ {
+                final Rational ab = (Rational) this.quotient(state, b.minus(state));
+                return this.sum(state, ab.floor(state).product(state, b));
             }
-        } else if (modulo.getClass() == Term.class) {
-            return ((Term) modulo).moduloFlipped(state, this);
+        } else if (modulus.getClass() == Term.class) {
+            return ((Term) modulus).moduloFlipped(state, this);
         } else {
             throw new IncompatibleTypeException(
-                "Right-hand-side of '" + this.toString(state) + " % " + modulo.toString(state) + "' is not a rational number."
+                    "Right-hand-side of '" + this.toString(state) + " % " + modulus.toString(state) + "' is not a rational number."
             );
         }
     }

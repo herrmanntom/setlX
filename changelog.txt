@@ -1,5 +1,8 @@
 Changes (* notice | + feature added, replaced or improved | - feature removed | # bugfix):
 
+---v2.5.2--- 2016-xx-yy
+ # fix modulo and integer division when negative numbers are involved
+
 ---v2.5.2--- 2016-11-01
  # fix bug that terms are not viral in Boolean operations
  + added varName to termUtilities library

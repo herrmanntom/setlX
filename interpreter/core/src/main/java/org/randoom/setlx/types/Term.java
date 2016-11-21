@@ -233,10 +233,10 @@ public class Term extends IndexedCollectionValue {
 
     // viral operation
     @Override
-    public Value modulo(final State state, final Value modulo) throws SetlException {
+    public Value modulo(final State state, final Value modulus) throws SetlException {
         return new OperatorExpression(
                 OperatorExpression.createFromTerm(state, this),
-                OperatorExpression.createFromTerm(state, modulo),
+                OperatorExpression.createFromTerm(state, modulus),
                 Modulo.M
         ).toTerm(state);
     }

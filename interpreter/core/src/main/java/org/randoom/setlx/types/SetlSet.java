@@ -196,9 +196,9 @@ public class SetlSet extends CollectionValue {
     //  tmp = b - a
     //  c   = tmp + (a - b)
     @Override
-    public Value modulo(final State state, final Value modulo) throws SetlException {
-        if (modulo.getClass() == SetlSet.class) {
-            final SetlSet mSet = (SetlSet) modulo;
+    public Value modulo(final State state, final Value modulus) throws SetlException {
+        if (modulus.getClass() == SetlSet.class) {
+            final SetlSet mSet = (SetlSet) modulus;
 
             final SetlSet mClone = mSet.clone();
             mClone.separateFromOriginal();
@@ -210,11 +210,11 @@ public class SetlSet extends CollectionValue {
 
             result.set.addAll(mClone.set);
             return result;
-        } else if (modulo.getClass() == Term.class) {
-            return ((Term) modulo).productFlipped(state, this);
+        } else if (modulus.getClass() == Term.class) {
+            return ((Term) modulus).productFlipped(state, this);
         } else {
             throw new IncompatibleTypeException(
-                "Right-hand-side of '" + this.toString(state) + " % " + modulo.toString(state) + "' is not a set."
+                    "Right-hand-side of '" + this.toString(state) + " % " + modulus.toString(state) + "' is not a set."
             );
         }
     }
@@ -226,9 +226,9 @@ public class SetlSet extends CollectionValue {
     //  a  -= b
     //  a  += tmp
     @Override
-    public Value moduloAssign(final State state, final Value modulo) throws SetlException {
-        if (modulo.getClass() == SetlSet.class) {
-            final SetlSet mSet = (SetlSet) modulo;
+    public Value moduloAssign(final State state, final Value modulus) throws SetlException {
+        if (modulus.getClass() == SetlSet.class) {
+            final SetlSet mSet = (SetlSet) modulus;
             separateFromOriginal();
 
             final SetlSet mClone = mSet.clone();
@@ -240,11 +240,11 @@ public class SetlSet extends CollectionValue {
             this.set.addAll(mClone.set);
 
             return this;
-        } else if (modulo.getClass() == Term.class) {
-            return ((Term) modulo).productFlipped(state, this);
+        } else if (modulus.getClass() == Term.class) {
+            return ((Term) modulus).productFlipped(state, this);
         } else {
             throw new IncompatibleTypeException(
-                "Right-hand-side of '" + this.toString(state) + " % " + modulo.toString(state) + "' is not a set."
+                    "Right-hand-side of '" + this.toString(state) + " % " + modulus.toString(state) + "' is not a set."
             );
         }
     }

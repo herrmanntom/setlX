@@ -71,25 +71,9 @@ infinityTests := procedure() {
 infinityTests();
 
 moduloAndIntegerDivisionTests := procedure() {
-    modulo := procedure(a, b) {
-        if (b > 0) {
-            return a - floor(a / b) * b;
-        } else {
-            return a + floor(a / (-b)) * b;
-        }
-    };
-
-    integerDivision := procedure(a, b) {
-        if (b > 0) {
-            return floor(a / b);
-        } else {
-            return - floor(a / (-b));
-        }
-    };
-
     verify := procedure(a, b) {
-        q := integerDivision(a, b);
-        r := modulo(a, b);
+        q := a \ b;
+        r := a % b;
         registerTestResult(a == q * b + r, "modulo and integer division: $a$ == $q$ * $b$ + $r$");
         registerTestResult(0 <= r        , "modulo and integer division: 0 <= $r$");
         registerTestResult(r < abs(b)    , "modulo and integer division: $r$ < |$b$|");

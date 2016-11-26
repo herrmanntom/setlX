@@ -1,6 +1,6 @@
 Changes (* notice | + feature added, replaced or improved | - feature removed | # bugfix):
 
----v2.5.2--- 2016-xx-yy
+---v2.5.3--- 2016-11-26
  # fix modulo and integer division when negative numbers are involved
 
 ---v2.5.2--- 2016-11-01

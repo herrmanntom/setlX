@@ -12,6 +12,12 @@ import org.randoom.setlx.utilities.ParseSetlX;
 import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.WriteFile;
 
+import org.jline.terminal.Terminal;
+import org.jline.terminal.TerminalBuilder;
+import org.jline.reader.LineReader;
+import org.jline.reader.LineReaderBuilder;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -231,15 +237,25 @@ public class SetlX {
     }
 
     private static void parseAndExecuteInteractive(final State state) {
+        Terminal terminal;
+        LineReader reader;
+        try {
+            terminal = TerminalBuilder.builder().system(true).build();
+            reader = LineReaderBuilder.builder().terminal(terminal).build();
+        } catch (IOException ex) {
+            state.errWriteLn(ex.getMessage());
+            return;
+        }
+
         state.setInteractive(true);
         Block   blk;
         boolean skipTest;
         do {
             try {
                 // prompt including newline to visually separate the next input
-                state.prompt("\n=> ");
+                String line = reader.readLine("\n=> ");
                 state.resetParserErrorCount();
-                blk = ParseSetlX.parseInteractive(state);
+                blk = ParseSetlX.parseStringToBlock(state, line);
                 if ( ! state.isMultiLineEnabled()) {
                     state.outWriteLn();
                 }

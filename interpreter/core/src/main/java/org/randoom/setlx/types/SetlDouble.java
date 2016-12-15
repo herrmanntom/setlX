@@ -48,31 +48,43 @@ public class SetlDouble extends NumberValue {
     /**
      * Double value of positive infinity.
      */
-    public  final static SetlDouble POSITIVE_INFINITY = SetlDouble.valueOfNoEx(Double.POSITIVE_INFINITY);
+    public  final static SetlDouble POSITIVE_INFINITY             = SetlDouble.valueOfNoEx(Double.POSITIVE_INFINITY);
     /**
      * Double value of negative infinity.
      */
-    public  final static SetlDouble NEGATIVE_INFINITY = SetlDouble.valueOfNoEx(Double.NEGATIVE_INFINITY);
+    public  final static SetlDouble NEGATIVE_INFINITY             = SetlDouble.valueOfNoEx(Double.NEGATIVE_INFINITY);
     /**
      * Double value of Euler's number, i.e. lim_n->oo (1+1/n)^n
      */
-    public  final static SetlDouble E                 = SetlDouble.valueOfNoEx(Math.E);
+    public  final static SetlDouble E                             = SetlDouble.valueOfNoEx(Math.E);
     /**
      * Double value of pi, i.e. the ratio of the circumference of a circle to its diameter.
      */
-    public  final static SetlDouble PI                = SetlDouble.valueOfNoEx(Math.PI);
+    public  final static SetlDouble PI                            = SetlDouble.valueOfNoEx(Math.PI);
     /**
      * Double value of zero.
      */
-    public  final static SetlDouble ZERO              = SetlDouble.valueOfNoEx(0.0);
+    public  final static SetlDouble ZERO                          = SetlDouble.valueOfNoEx(0.0);
     /**
      * Double value of one.
      */
-    public  final static SetlDouble ONE               = SetlDouble.valueOfNoEx(1.0);
+    public  final static SetlDouble ONE                           = SetlDouble.valueOfNoEx(1.0);
     /**
      * Double value of five.
      */
-    public  final static SetlDouble FIVE              = SetlDouble.valueOfNoEx(5.0);
+    public  final static SetlDouble FIVE                          = SetlDouble.valueOfNoEx(5.0);
+    /**
+     * Double value of negative five.
+     */
+    public  final static SetlDouble NEGATIVE_FIVE                 = SetlDouble.valueOfNoEx(-5.0);
+    /**
+     * Double value of five.
+     */
+    public  final static SetlDouble TEN                           = SetlDouble.valueOfNoEx(10);
+    /**
+     * Double value for the default plot interval.
+     */
+    public  final static SetlDouble DEFAULT_INTERVAL              = SetlDouble.valueOfNoEx(0.01);
 
     private SetlDouble(final Double d) {
         this.doubleValue = d;

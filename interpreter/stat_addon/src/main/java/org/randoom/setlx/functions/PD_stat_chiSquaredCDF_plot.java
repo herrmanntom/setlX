@@ -48,13 +48,16 @@ public class PD_stat_chiSquaredCDF_plot extends PreDefinedProcedure {
 
         ChiSquaredDistribution csd = new ChiSquaredDistribution(k.toJDoubleValue(state));
 
-        Canvas canvas = ConnectJFreeChart.getInstance().createCanvas();
+        Canvas canvas = ConnectJFreeChart.getInstance().createCanvas("\u03A7² Distribution");
 
+        /** The valueList is the list of every pair of coordinates [x,y] that the graph consists of.
+         *  It is filled by iteratively increasing the variable 'counter' (x), and calculating the cumulative probability for every new value of 'counter' (y).
+         */
         List<List<Double>> valueList = new ArrayList<>();
         for (double counter = lowerBound.toJDoubleValue(state); counter < upperBound.toJDoubleValue(state); counter += interval.toJDoubleValue(state)) {
             valueList.add(new ArrayList<Double>(Arrays.asList(counter, csd.cumulativeProbability(counter))));
         }
 
-        return ConnectJFreeChart.getInstance().addListGraph(canvas, valueList, "Cumulative ChiSquared Distribution Function (" + k.toString() + " degree(s) of freedom)", Defaults.DEFAULT_COLOR_SCHEME, false);
+        return ConnectJFreeChart.getInstance().addListGraph(canvas, valueList, "Cumulative Distribution Function (" + k.toString() + " degree(s) of freedom)", Defaults.DEFAULT_COLOR_SCHEME, false);
     }
 }

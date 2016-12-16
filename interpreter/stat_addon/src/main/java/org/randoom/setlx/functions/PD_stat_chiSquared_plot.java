@@ -49,13 +49,16 @@ public class PD_stat_chiSquared_plot extends PreDefinedProcedure {
 
         ChiSquaredDistribution csd = new ChiSquaredDistribution(k.toJDoubleValue(state));
 
-        Canvas canvas = ConnectJFreeChart.getInstance().createCanvas();
+        Canvas canvas = ConnectJFreeChart.getInstance().createCanvas("\u03A7² Distribution");
 
+        /** The valueList is the list of every pair of coordinates [x,y] that the graph consists of.
+         *  It is filled by iteratively increasing the variable 'counter' (x), and calculating the density for every new value of 'counter' (y).
+         */
         List<List<Double>> valueList = new ArrayList<>();
         for (double counter = lowerBound.toJDoubleValue(state); counter < upperBound.toJDoubleValue(state); counter += interval.toJDoubleValue(state)) {
             valueList.add(new ArrayList<Double>(Arrays.asList(counter, csd.density(counter))));
         }
 
-        return ConnectJFreeChart.getInstance().addListGraph(canvas, valueList, "ChiSquared Distribution Probability Density Function (" + k.toString() + " degree(s) of freedom)", Defaults.DEFAULT_COLOR_SCHEME, false);
+        return ConnectJFreeChart.getInstance().addListGraph(canvas, valueList, "Probability Density Function (" + k.toString() + " degree(s) of freedom)", Defaults.DEFAULT_COLOR_SCHEME, false);
     }
 }

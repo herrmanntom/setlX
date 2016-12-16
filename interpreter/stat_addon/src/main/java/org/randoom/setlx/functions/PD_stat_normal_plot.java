@@ -52,13 +52,16 @@ public class PD_stat_normal_plot extends PreDefinedProcedure {
 
         NormalDistribution nd = new NormalDistribution(mu.toJDoubleValue(state), sigma.toJDoubleValue(state));
 
-        Canvas canvas = ConnectJFreeChart.getInstance().createCanvas();
+        Canvas canvas = ConnectJFreeChart.getInstance().createCanvas("Normal Distribution");
 
+        /** The valueList is the list of every pair of coordinates [x,y] that the graph consists of.
+         *  It is filled by iteratively increasing the variable 'counter' (x), and calculating the density for every new value of 'counter' (y).
+         */
         List<List<Double>> valueList = new ArrayList<>();
         for (double counter = lowerBound.toJDoubleValue(state); counter < upperBound.toJDoubleValue(state); counter += interval.toJDoubleValue(state)) {
             valueList.add(new ArrayList<Double>(Arrays.asList(counter, nd.density(counter))));
         }
 
-        return ConnectJFreeChart.getInstance().addListGraph(canvas, valueList, "Normal Distribution Probability Density Function (mean: " + mu.toString() + ", standard deviation: " + sigma.toString(), Defaults.DEFAULT_COLOR_SCHEME, false);
+        return ConnectJFreeChart.getInstance().addListGraph(canvas, valueList, "Probability Density Function (mean: " + mu.toString() + ", standard deviation: " + sigma.toString(), Defaults.DEFAULT_COLOR_SCHEME, false);
     }
 }

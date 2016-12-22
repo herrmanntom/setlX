@@ -2,6 +2,7 @@ package org.randoom.setlx.utilities;
 
 import org.randoom.setlx.exceptions.IncompatibleTypeException;
 import org.randoom.setlx.exceptions.SetlException;
+import org.randoom.setlx.plot.types.Canvas;
 import org.randoom.setlx.types.SetlBoolean;
 import org.randoom.setlx.types.Value;
 
@@ -81,6 +82,16 @@ public class Checker {
                         "Input-argument '" + value.toString(state) + "' is not greater zero."
                 );
             }
+        }
+        return true;
+    }
+
+    /** Checks if a Value is a canvas */
+    public static boolean checkIfCanvas(State state, Value value) throws IncompatibleTypeException {
+        if (! (value instanceof Canvas)) {
+            throw new IncompatibleTypeException(
+                    "Input-argument '" + value.toString(state) + "' is not of type canvas."
+            );
         }
         return true;
     }

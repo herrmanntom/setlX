@@ -5,10 +5,10 @@ This program uses the ANTLR parser generator,
 which is also licensed under the BSD license.
 
 The functions for plotting require jfreechart,
-which is also licensed under the LGPL licence.
+which is licensed under the LGPL licence.
 
 [The "BSD license"]
-Copyright (c) 2011-2015, Tom Herrmann
+Copyright (c) 2011-2017, Tom Herrmann
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or

@@ -19,6 +19,14 @@ lazyTermsDisjunction := procedure() {
 };
 lazyTermsDisjunction();
 
+viralBooleanEqual := procedure() {
+    x := parse("a ** b");
+    y := parse("a ** b");
+    registerTestResult(x == y, "viralBooleanEqual: terms with equal");
+    registerTestResult(canonical(x <==> y) == "@@@booleanEqual(@@@power(@@@variable(\"a\"), @@@variable(\"b\")), @@@power(@@@variable(\"a\"), @@@variable(\"b\")))", "viralBooleanEqual: terms with boolean equal");
+};
+viralBooleanEqual();
+
 // ************************************************************************** \\
 
 printTestResult();

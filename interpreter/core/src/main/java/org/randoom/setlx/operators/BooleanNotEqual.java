@@ -3,7 +3,6 @@ package org.randoom.setlx.operators;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.operatorUtilities.OperatorExpression;
-import org.randoom.setlx.operatorUtilities.OperatorExpression.ExpressionFragment;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.FragmentList;
@@ -25,15 +24,7 @@ public class BooleanNotEqual extends ABinaryInfixOperator {
     public Value evaluate(State state, ArrayDeque<Value> values, OperatorExpression operatorExpression, int currentStackDepth) throws SetlException {
         Value rhs = values.poll();
         Value lhs = values.poll();
-        try {
-            return lhs.isEqualTo(state, rhs).not(state);
-        } catch (final SetlException se) {
-            ArrayDeque<ExpressionFragment> stack = operatorExpression.computeExpressionFragmentStack(state, currentStackDepth);
-            String rhsString = stack.poll().getExpression();
-            String lhsString = stack.poll().getExpression();
-            se.addToTrace("Error in substitute comparison \"!(" + lhsString + " == " + rhsString + ")\":");
-            throw se;
-        }
+        return lhs.isBooleanNotEqualTo(state, rhs);
     }
 
     @Override

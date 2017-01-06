@@ -70,7 +70,7 @@ setlXlibraryPath="$HOME/setlXlibrary/"
 \begin{lstlisting}[frame=none,numbers=none]
 chmod +x /usr/local/bin/setlX
 \end{lstlisting}
-	\item (Optional) You should also install the `\command{rlwrap}' utility to greatly increase the usability of the interactive mode (see \ref{LimitationsInteractiveMode}). 
+	\item (Optional) You should also install the `\command{rlwrap}' utility (see \ref{LimitationsInteractiveMode}). If present, it will be used automatically.
 
 \end{enumerate}
 
@@ -196,7 +196,7 @@ To work around these problems, edit the used launching script (`\command{setlX}'
 
 \subsection{Input in Interactive Mode on Unix}\label{LimitationsInteractiveMode}
 
-On UNIX (-like) systems, the prompt in interactive mode does not handle control sequences correctly. This is a Java limitation and no platform independent solutions are available. You may install the `rlwrap' program to work around this issue.
+On UNIX (-like) systems, the prompt in interactive mode does not handle control sequences correctly. This is a Java limitation and no good platform independent solutions are available. You may install the `rlwrap' program to work around this issue. If present, it will be used automatically.
 
 %\subsection{Known Bugs}
 %The following bugs are known to be present in this version of the interpreter:

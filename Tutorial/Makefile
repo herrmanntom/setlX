@@ -8,7 +8,7 @@ pdf: tutorial.pdf
 
 %.dvi: tutorial.tex backtracking.tex basics.tex closures.tex introduction.tex \
        oo.tex predefined-functions.tex regular-expressions.tex statements.tex \
-       tutorial.tex types.tex graphics.tex
+       linear-algebra.tex tutorial.tex types.tex graphics.tex
 	latex $<
 	if [ -f $@ ]; then latex $< ; fi
 	if [ -f $@ ]; then latex $< ; fi

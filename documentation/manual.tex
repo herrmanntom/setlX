@@ -48,7 +48,7 @@ The \setlX{} interpreter, which currently is the \SetlX{} reference implementati
 
 To comfortably use \setlX{} it may be installed into the search-path. After this is done, it may be launched just like any other command-line program on your system.
 
-\subsection{Unix-like OS (Linux, MacOS X, etc.)}\label{Unix}
+\subsection{Unix-like OS (Linux, MacOS X, etc.)}
 
 \begin{enumerate}
 	\item Copy all `\command{setlX*.jar}'-files into some folder, which is accessible by all users, who should be able to execute \setlX{} (e.g. `\command{/usr/local/setlX/}').\\
@@ -70,8 +70,13 @@ setlXlibraryPath="$HOME/setlXlibrary/"
 \begin{lstlisting}[frame=none,numbers=none]
 chmod +x /usr/local/bin/setlX
 \end{lstlisting}
+	\item (Optional) You should also install the `\command{rlwrap}' utility to greatly increase the usability of the interactive mode (see \ref{LimitationsInteractiveMode}). 
 
 \end{enumerate}
+
+\subsection{MacOS X with homebrew}\label{MacOsHomebrew}
+
+\setlX{} may be installed easily if you use homebrew (\url{http://brew.sh/}). Just follow the very short instructions by Niklas Korz at \url{https://github.com/niklaskorz/homebrew-setlx}.
 
 \subsection{Microsoft Windows}
 
@@ -189,7 +194,7 @@ The JVM is only able to dynamically increase its memory allocation in very limit
 
 To work around these problems, edit the used launching script (`\command{setlX}' or `\command{setlX.cmd}') with a text editor and follow the directions given at the top.
 
-\subsection{Input in Interactive Mode on Unix}
+\subsection{Input in Interactive Mode on Unix}\label{LimitationsInteractiveMode}
 
 On UNIX (-like) systems, the prompt in interactive mode does not handle control sequences correctly. This is a Java limitation and no platform independent solutions are available. You may install the `rlwrap' program to work around this issue.
 

@@ -7,7 +7,13 @@ lazyTermsConjunction := procedure() {
     s := @f();
     t := @g();
     r := s && t;
-    registerTestResult(canonical(r) == "@@@conjunction(@f(), @g())", "lazyTermsConjunction");
+
+    validateForTestCase("lazyTermsConjunction")
+        .that(
+            canonical(r)
+        ).is(
+            "@@@conjunction(@f(), @g())"
+        );
 };
 lazyTermsConjunction();
 
@@ -15,15 +21,45 @@ lazyTermsDisjunction := procedure() {
     s := @f();
     t := @g();
     r := s || t;
-    registerTestResult(canonical(r) == "@@@disjunction(@f(), @g())", "lazyTermsDisjunction");
+
+    validateForTestCase("lazyTermsDisjunction")
+        .that(
+            canonical(r)
+        ).is(
+            "@@@disjunction(@f(), @g())"
+        );
 };
 lazyTermsDisjunction();
 
 viralBooleanEqual := procedure() {
     x := parse("a ** b");
     y := parse("a ** b");
-    registerTestResult(x == y, "viralBooleanEqual: terms with equal");
-    registerTestResult(canonical(x <==> y) == "@@@booleanEqual(@@@power(@@@variable(\"a\"), @@@variable(\"b\")), @@@power(@@@variable(\"a\"), @@@variable(\"b\")))", "viralBooleanEqual: terms with boolean equal");
+
+    validateForTestCase("viralBooleanEqual: terms with equal")
+        .that(
+            x == y
+        ).is(
+            true
+        );
+
+    validateForTestCase("viralBooleanEqual: terms with not equal")
+        .that(
+            x != y
+        ).is(
+            false
+        );
+    validateForTestCase("viralBooleanEqual: terms with boolean equal")
+        .that(
+            canonical(x <==> y)
+         ).is(
+            "@@@booleanEqual(@@@power(@@@variable(\"a\"), @@@variable(\"b\")), @@@power(@@@variable(\"a\"), @@@variable(\"b\")))"
+         );
+    validateForTestCase("viralBooleanEqual: terms with boolean not equal")
+        .that(
+            canonical(x <!=> y)
+         ).is(
+            "@@@booleanNotEqual(@@@power(@@@variable(\"a\"), @@@variable(\"b\")), @@@power(@@@variable(\"a\"), @@@variable(\"b\")))"
+         );
 };
 viralBooleanEqual();
 

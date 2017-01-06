@@ -20,12 +20,22 @@ optimizationOfNumbersOfDifferentTypes := procedure() {
     };
 
     solveTest := procedure() {
-        registerTestResult(solve(x |-> 1.0/(1 + x), 0) == 0.6180339887498948, "optimizationOfNumbersOfDifferentTypes: solveTest");
+        validateForTestCase("optimizationOfNumbersOfDifferentTypes: solveTest")
+            .that(
+                solve(x |-> 1.0/(1 + x), 0)
+            ).is(
+                0.6180339887498948
+            );
     };
     solveTest();
 
     nDecimalPlacesSolveTest := procedure() {
-        registerTestResult(nDecimalPlaces(solve(x |-> 1/(1+x), 0), 15) == "0.618033988749894", "optimizationOfNumbersOfDifferentTypes: nDecimalPlacesSolveTest");
+        validateForTestCase("optimizationOfNumbersOfDifferentTypes: nDecimalPlacesSolveTest")
+            .that(
+                nDecimalPlaces(solve(x |-> 1/(1+x), 0), 15)
+            ).is(
+                "0.618033988749894"
+            );
     };
     nDecimalPlacesSolveTest();
 };
@@ -52,7 +62,12 @@ concurrentModification := procedure() {
     nodes:={1 .. 10};
     edges:={[1,2],[2,4],[3,7],[3,6],[5,6]};
     parts:=unionfind(nodes,edges);
-    registerTestResult(parts == {{1, 2, 4}, {3, 5, 6, 7}, {8}, {9}, {10}}, "concurrentModification");
+    validateForTestCase("concurrentModification")
+        .that(
+            parts
+        ).is(
+            {{1, 2, 4}, {3, 5, 6, 7}, {8}, {9}, {10}}
+        );
 };
 concurrentModification();
 

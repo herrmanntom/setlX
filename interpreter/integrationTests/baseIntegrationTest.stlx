@@ -6,21 +6,40 @@ class stateOfTests() {
     }
 }
 
+class testStub(nameOfTest, executionResult) {
+    this.nameOfTest := nameOfTest;
+    this.executionResult := executionResult;
+    static {
+        is := procedure(referenceResult) {
+            stateOfTests.testNumber += 1;
+
+            if (executionResult == referenceResult) {
+                stateOfTests.testsOK += 1;
+                print("$stateOfTests.testName$: test $stateOfTests.testNumber$ successful ($this.nameOfTest$)");
+            } else {
+                print("$stateOfTests.testName$: test $stateOfTests.testNumber$ failed ($this.nameOfTest$):");
+                print("  reference result is:");
+                print("    ", referenceResult);
+                print("  but got:");
+                print("    ", executionResult);
+            }
+
+            return executionResult == referenceResult;
+        };
+    }
+}
+
+class validateForTestCase(nameOfTest) {
+    this.nameOfTest := nameOfTest;
+    static {
+        that := procedure(executionResult) {
+            return testStub(this.nameOfTest, executionResult);
+        };
+    }
+}
+
 registerTestSuite := procedure(name) {
     stateOfTests.testName := name;
-};
-
-registerTestResult := procedure(boolean, name) {
-    stateOfTests.testNumber += 1;
-
-    if (boolean) {
-        stateOfTests.testsOK += 1;
-        print("$stateOfTests.testName$: test $stateOfTests.testNumber$ successful ($name$)");
-    } else {
-        print("$stateOfTests.testName$: test $stateOfTests.testNumber$ failed ($name$)");
-    }
-
-    return boolean;
 };
 
 printTestResult := procedure() {

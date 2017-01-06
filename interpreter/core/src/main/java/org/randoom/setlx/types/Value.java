@@ -1020,6 +1020,22 @@ public abstract class Value extends CodeFragment {
     }
 
     /**
+     * Test if two Values are not boolean equal.
+     * This operation is different from not(isEqualTo) for certain types.
+     *
+     * @param state          Current state of the running setlX program.
+     * @param other          Other value to compare to `this'
+     * @return               Most likely a SetlBoolean or term.
+     * @throws SetlException Thrown in case of some (user-) error.
+     */
+    public Value isBooleanNotEqualTo(final State state, final Value other) throws SetlException {
+        if (other.getClass() == Term.class) {
+            return ((Term) other).isBooleanNotEqualToFlipped(state, this);
+        }
+        return isEqualTo(state, other).not(state);
+    }
+
+    /**
      * Test if the value of this is lower than the value of `other'.
      * This comparison is different than `this.compareTo(other) < 0' insofar as
      * it throw errors on seemingly incomparable types like `5 < TRUE'.

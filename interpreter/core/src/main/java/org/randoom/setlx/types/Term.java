@@ -697,7 +697,16 @@ public class Term extends IndexedCollectionValue {
         return new OperatorExpression(
                 OperatorExpression.createFromTerm(state, this),
                 OperatorExpression.createFromTerm(state, value),
-                Equals.E
+                BooleanEqual.BE
+        ).toTerm(state);
+    }
+
+    @Override
+    public Value isBooleanNotEqualTo(State state, Value value) throws SetlException {
+        return new OperatorExpression(
+                OperatorExpression.createFromTerm(state, this),
+                OperatorExpression.createFromTerm(state, value),
+                BooleanNotEqual.BNE
         ).toTerm(state);
     }
 
@@ -705,7 +714,15 @@ public class Term extends IndexedCollectionValue {
         return new OperatorExpression(
                 OperatorExpression.createFromTerm(state, value),
                 OperatorExpression.createFromTerm(state, this),
-                Equals.E
+                BooleanEqual.BE
+        ).toTerm(state);
+    }
+
+    /*package*/ Value isBooleanNotEqualToFlipped(State state, Value value) throws SetlException {
+        return new OperatorExpression(
+                OperatorExpression.createFromTerm(state, value),
+                OperatorExpression.createFromTerm(state, this),
+                BooleanNotEqual.BNE
         ).toTerm(state);
     }
 

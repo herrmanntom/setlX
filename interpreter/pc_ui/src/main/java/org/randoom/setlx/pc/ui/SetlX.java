@@ -1,10 +1,13 @@
 package org.randoom.setlx.pc.ui;
 
-import org.randoom.setlx.exceptions.*;
+import org.randoom.setlx.exceptions.EndOfFileException;
+import org.randoom.setlx.exceptions.FileNotWritableException;
+import org.randoom.setlx.exceptions.IllegalRedefinitionException;
+import org.randoom.setlx.exceptions.ParserException;
+import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.statements.Block;
 import org.randoom.setlx.statements.ExpressionStatement;
 import org.randoom.setlx.statements.Statement;
-import org.randoom.setlx.types.Om;
 import org.randoom.setlx.types.SetlList;
 import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.Term;
@@ -20,7 +23,7 @@ import java.util.List;
  */
 public class SetlX {
     private final static String  SETLX_URL              = "http://setlX.randoom.org/";
-    private final static String  C_YEARS                = "2011-2016";
+    private final static String  C_YEARS                = "2011-2017";
     private final static String  VERSION_PREFIX         = "v";
     private final static String  HEADER                 = "-====================================setlX====================================-";
 

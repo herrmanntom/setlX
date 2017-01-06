@@ -2,6 +2,7 @@ Changes (* notice | + feature added, replaced or improved | - feature removed | 
 
 ---v2.6.y--- 2017-mm-dd
  + multiplication of matrix and vector will result in a vector instead of a matrix
+ + the <==> operator is now a viral operation when terms are involved
 
 ---v2.5.3--- 2016-11-26
  # fix modulo and integer division when negative numbers are involved

@@ -1,0 +1,6 @@
+The formulae !(p || q) and !p && !q are equivalent.
+The formulae p => q and (!p => q) => q are equivalent.
+The formulae !(p || q) and !p || !q are nor equivalent:
+    Counter example: {[p, false], [q, true]}
+The formulae p <!=> q and q <!=> p are equivalent.
+The formulae p <!=> p <!=> q and q are equivalent.

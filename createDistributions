@@ -32,7 +32,7 @@ mvn clean -P dist-clean
 # build the binary version
 echo "=> Rebuilding the setlX interpreter ..."
 mvn install
-if [[ -f "$OVERRIDE_setlXJarDirectory/setlX.jar" && "$OVERRIDE_setlXJarDirectory/setlX-gfx.jar" && "$OVERRIDE_setlXJarDirectory/setlX-plot.jar" ]]; then
+if [[ -f "$OVERRIDE_setlXJarDirectory/setlX.jar" && "$OVERRIDE_setlXJarDirectory/setlX-gfx.jar" && "$OVERRIDE_setlXJarDirectory/setlX-plot.jar" && "$OVERRIDE_setlXJarDirectory/setlX-stat.jar" ]]; then
     # clean it up again (does not remove the jar)
     mvn clean
     echo "=> The setlX interpreter was build correctly."
@@ -159,7 +159,7 @@ rm -f test_failure.*.result
 # create binary only zip
 echo -n "=> Creating binary only distribution ... "
 mkdir -p zipContents
-cp changelog.txt manual.pdf tutorial.pdf $OVERRIDE_setlXJarDirectory/setlX $OVERRIDE_setlXJarDirectory/setlX.cmd $OVERRIDE_setlXJarDirectory/setlX.jar $OVERRIDE_setlXJarDirectory/setlX-gfx.jar $OVERRIDE_setlXJarDirectory/setlX-plot.jar zipContents/.
+cp changelog.txt manual.pdf tutorial.pdf $OVERRIDE_setlXJarDirectory/setlX $OVERRIDE_setlXJarDirectory/setlX.cmd $OVERRIDE_setlXJarDirectory/setlX.jar $OVERRIDE_setlXJarDirectory/setlX-gfx.jar $OVERRIDE_setlXJarDirectory/setlX-plot.jar $OVERRIDE_setlXJarDirectory/setlX-stat.jar zipContents/.
 cp -r syntax_highlighting zipContents/.
 cp -r interpreter/setlXlibrary zipContents/.
 cd zipContents; zip -qr "../$binOnly.zip" . ; cd ..

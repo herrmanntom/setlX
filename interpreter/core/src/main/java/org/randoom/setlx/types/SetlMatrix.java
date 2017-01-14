@@ -1,6 +1,9 @@
 package org.randoom.setlx.types;
 
-import Jama.*;
+import Jama.EigenvalueDecomposition;
+import Jama.LUDecomposition;
+import Jama.Matrix;
+import Jama.QRDecomposition;
 import org.randoom.setlx.exceptions.IncompatibleTypeException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.UndefinedOperationException;
@@ -667,6 +670,46 @@ public class SetlMatrix extends IndexedCollectionValue {
             vectors.addMember(state, new SetlVector(vector));
         }
         return vectors;
+    }
+
+    /**
+     * Hadamard product of two matrices, which is calculated like this:
+     *
+     * hadamard := procedure(A, B) {
+     *      n := #A;
+     *      m := #A[1];
+     *      return la_matrix([ [A[i][j] * B[i][j] : j in [1..m]] : i in [1..n] ]);
+     * };
+     *
+     * @param state Current state of the running setlX program.
+     * @param other other matrix
+     * @return list of numbers
+     * @throws IncompatibleTypeException thrown if 'other' is not a matrix.
+     * @throws UndefinedOperationException thrown if both matrices are not of the same size.
+     */
+    public SetlMatrix hadamardProduct(State state, Value other) throws IncompatibleTypeException, UndefinedOperationException {
+        if (other.getClass() == SetlMatrix.class) {
+            final double[][] thisMatrix = matrix.getArray();
+            final int n = thisMatrix.length;
+            final int m = thisMatrix[0].length;
+
+            final double[][] otherMatrix = ((SetlMatrix) other).matrix.getArray();
+            if (n != otherMatrix.length || m != otherMatrix[0].length) {
+                throw new UndefinedOperationException("Both matrices must be of equal dimensions.");
+            }
+
+            double[][] result = new double[n][m];
+            for (int i = 0; i < n; i++) {
+                for (int j = 0; j < m; j++) {
+                    result[i][j] =  thisMatrix[i][j] * otherMatrix[i][j];
+                }
+            }
+
+            return new SetlMatrix(new Jama.Matrix(result, n, m));
+
+        } else {
+            throw new IncompatibleTypeException("Operand '" + other.toString(state) + "' is not a matrix.");
+        }
     }
 
     /**

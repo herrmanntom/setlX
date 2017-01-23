@@ -1,0 +1,14 @@
+//
+// Example for stat_normalCDF(x, mu, sigma)
+//
+
+statNormalCDF := procedure(x, mu, sigma) {
+
+	print(stat_normalCDF(x, mu, sigma));
+};
+
+x := 2;
+mu := 3;
+sigma := 9;
+
+statNormalCDF(x, mu, sigma);

@@ -1,0 +1,14 @@
+//
+// Example for stat_normal(x, mu, sigma)
+//
+
+statNormal := procedure(x, mu, sigma) {
+
+	print(stat_normal(x, mu, sigma));
+};
+
+x := 2;
+mu := 3;
+sigma := 9;
+
+statNormal(x, mu, sigma);

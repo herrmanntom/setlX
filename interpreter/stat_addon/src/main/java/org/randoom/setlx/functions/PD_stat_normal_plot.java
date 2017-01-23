@@ -1,13 +1,10 @@
 package org.randoom.setlx.functions;
 
 import org.apache.commons.math3.distribution.NormalDistribution;
-import org.randoom.setlx.exceptions.IncompatibleTypeException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.parameters.ParameterDefinition;
 import org.randoom.setlx.plot.types.Canvas;
 import org.randoom.setlx.plot.utilities.ConnectJFreeChart;
-import org.randoom.setlx.types.SetlDouble;
-import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.Checker;
 import org.randoom.setlx.utilities.Defaults;
@@ -27,9 +24,9 @@ public class PD_stat_normal_plot extends PreDefinedProcedure {
     private final static ParameterDefinition MU          = createParameter("mu");
     private final static ParameterDefinition SIGMA       = createParameter("sigma");
     private final static ParameterDefinition CANVAS      = createParameter("canvas");
-    private final static ParameterDefinition LOWER_BOUND = createOptionalParameter("lowerBound", SetlDouble.NEGATIVE_FIVE);
-    private final static ParameterDefinition INTERVAL    = createOptionalParameter("interval", SetlDouble.DEFAULT_INTERVAL);
-    private final static ParameterDefinition UPPER_BOUND = createOptionalParameter("upperBound", SetlDouble.FIVE);
+    private final static ParameterDefinition LOWER_BOUND = createOptionalParameter("lowerBound", Defaults.getDefaultLowerBoundOfNegativeFive());
+    private final static ParameterDefinition INTERVAL    = createOptionalParameter("interval", Defaults.getDefaultPlotInterval());
+    private final static ParameterDefinition UPPER_BOUND = createOptionalParameter("upperBound", Defaults.getDefaultUpperBoundOfFive());
 
     /** Definition of the PreDefinedProcedure 'stat_normal_plot' */
     public final static PreDefinedProcedure DEFINITION = new PD_stat_normal_plot();
@@ -53,7 +50,8 @@ public class PD_stat_normal_plot extends PreDefinedProcedure {
         final Value interval   = args.get(INTERVAL);
         final Value upperBound = args.get(UPPER_BOUND);
 
-        Checker.checkIfNumber(state, mu, sigma, lowerBound, interval, upperBound);
+        Checker.checkIfNumber(state, mu, lowerBound, interval, upperBound);
+        Checker.checkIfNumberAndNotZero(state, "sigma", sigma);
         Checker.checkIfCanvas(state, canvas);
 
         NormalDistribution nd = new NormalDistribution(mu.toJDoubleValue(state), sigma.toJDoubleValue(state));

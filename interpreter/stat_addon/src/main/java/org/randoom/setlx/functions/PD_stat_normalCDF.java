@@ -11,7 +11,7 @@ import org.randoom.setlx.utilities.State;
 import java.util.HashMap;
 
 /**
- * stat_normal(x, mu, sigma):
+ * stat_normalCDF(x, mu, sigma):
  *                  Computes the cumulative normal distribution with mean 'mu' and standard deviation 'sigma'.
  */
 public class PD_stat_normalCDF extends PreDefinedProcedure {

@@ -1,10 +1,10 @@
 package org.randoom.setlx.functions;
 
 import org.apache.commons.math3.distribution.NormalDistribution;
-import org.randoom.setlx.exceptions.IncompatibleTypeException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.parameters.ParameterDefinition;
-import org.randoom.setlx.types.*;
+import org.randoom.setlx.types.SetlDouble;
+import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.Checker;
 import org.randoom.setlx.utilities.State;
 
@@ -36,7 +36,8 @@ public class PD_stat_normal extends PreDefinedProcedure {
         final Value mu    = args.get(MU);
         final Value sigma = args.get(SIGMA);
 
-        Checker.checkIfNumber(state, x, mu, sigma);
+        Checker.checkIfNumber(state, x, mu);
+        Checker.checkIfNumberAndNotZero(state, "sigma", sigma);
 
         NormalDistribution nd = new NormalDistribution(mu.toJDoubleValue(state), sigma.toJDoubleValue(state));
         return SetlDouble.valueOf(nd.density(x.toJDoubleValue(state)));

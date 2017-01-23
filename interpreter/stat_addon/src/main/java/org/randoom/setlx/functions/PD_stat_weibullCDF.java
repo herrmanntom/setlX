@@ -37,7 +37,7 @@ public class PD_stat_weibullCDF extends PreDefinedProcedure {
         final Value shape   = args.get(SHAPE);
         final Value scale   = args.get(SCALE);
 
-        Checker.checkIfNumberAndGreaterOrEqualZero(state, x);
+        Checker.checkIfNumberAndGreaterZero(state, x);
         Checker.checkIfNumberAndGreaterZero(state, shape, scale);
 
         WeibullDistribution wdcdf = new WeibullDistribution(shape.toJDoubleValue(state), scale.toJDoubleValue(state));

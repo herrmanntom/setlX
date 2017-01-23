@@ -5,8 +5,6 @@ import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.parameters.ParameterDefinition;
 import org.randoom.setlx.plot.types.Canvas;
 import org.randoom.setlx.plot.utilities.ConnectJFreeChart;
-import org.randoom.setlx.types.SetlDouble;
-import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.Checker;
 import org.randoom.setlx.utilities.Defaults;
@@ -25,9 +23,9 @@ public class PD_stat_chiSquared_plot extends PreDefinedProcedure {
 
     private final static ParameterDefinition K           = createParameter("k");
     private final static ParameterDefinition CANVAS      = createParameter("canvas");
-    private final static ParameterDefinition LOWER_BOUND = createOptionalParameter("lowerBound", SetlDouble.ZERO);
-    private final static ParameterDefinition INTERVAL    = createOptionalParameter("interval", SetlDouble.DEFAULT_INTERVAL);
-    private final static ParameterDefinition UPPER_BOUND = createOptionalParameter("upperBound", SetlDouble.TEN);
+    private final static ParameterDefinition LOWER_BOUND = createOptionalParameter("lowerBound", Defaults.getDefaultLowerBoundOfZero());
+    private final static ParameterDefinition INTERVAL    = createOptionalParameter("interval", Defaults.getDefaultPlotInterval());
+    private final static ParameterDefinition UPPER_BOUND = createOptionalParameter("upperBound", Defaults.getDefaultUpperBoundOfTen());
 
     /** Definition of the PreDefinedProcedure 'stat_chiSquared_plot' */
     public final static PreDefinedProcedure DEFINITION = new PD_stat_chiSquared_plot();

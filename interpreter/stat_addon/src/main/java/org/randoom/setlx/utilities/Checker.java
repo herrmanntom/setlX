@@ -11,7 +11,7 @@ import org.randoom.setlx.types.Value;
  */
 public class Checker {
 
-    /** Checks if a Value is a Number and if not, throws an exception */
+    /** Checks if given values are numbers and if not, throws an exception */
     public static boolean checkIfNumber(State state, Value... values) throws IncompatibleTypeException {
         for (Value value : values) {
             if (! (value.isRational() == SetlBoolean.TRUE || value.isDouble() == SetlBoolean.TRUE)) {
@@ -23,7 +23,23 @@ public class Checker {
         return true;
     }
 
-    /** Checks if a Value is a Number and greater zero and if not, throws an exception */
+    /** Checks if given values are numbers and different to zero and if not, throws an exception */
+    public static boolean checkIfNumberAndNotZero(State state, String parameterName, Value... values) throws SetlException{
+        for (Value value: values) {
+            if (! (value.isRational() == SetlBoolean.TRUE || value.isDouble() == SetlBoolean.TRUE)) {
+                throw new IncompatibleTypeException(
+                        "Input-argument '" + value.toString(state) + "' is not a number."
+                );
+            } else if (value.toJDoubleValue(state) == 0) {
+                throw new IncompatibleTypeException(
+                        "The parameter '" + parameterName + "' cannot be zero."
+                );
+            }
+        }
+        return true;
+    }
+
+    /** Checks if given values are numbers and greater zero and if not, throws an exception */
     public static boolean checkIfNumberAndGreaterZero(State state, Value... values) throws SetlException {
         for (Value value : values) {
             if (! (value.isRational() == SetlBoolean.TRUE || value.isDouble() == SetlBoolean.TRUE)) {
@@ -40,7 +56,7 @@ public class Checker {
         return true;
     }
 
-    /** Checks if a Value is a Number and greater or equal zero and if not, throws an exception */
+    /** Checks if given values are numbers and greater or equal zero and if not, throws an exception */
     public static boolean checkIfNumberAndGreaterOrEqualZero(State state, Value... values) throws SetlException {
         for (Value value : values) {
             if (! (value.isRational() == SetlBoolean.TRUE || value.isDouble() == SetlBoolean.TRUE)) {
@@ -57,7 +73,7 @@ public class Checker {
         return true;
     }
 
-    /** Checks if a Value is a natural Number and if not, throws an exception */
+    /** Checks if given values are natural numbers and if not, throws an exception */
     public static boolean checkIfNaturalNumber(State state, Value... values) throws IncompatibleTypeException {
         for (Value value : values) {
             if (! (value.isInteger() == SetlBoolean.TRUE)) {
@@ -69,7 +85,7 @@ public class Checker {
         return true;
     }
 
-    /** Checks if a Value is a natural Number and greater zero and if not, throws an exception */
+    /** Checks if given values are natural numbers and greater zero and if not, throws an exception */
     public static boolean checkIfNaturalNumberAndGreaterZero(State state, Value... values) throws SetlException {
         for (Value value : values) {
             if (! (value.isInteger() == SetlBoolean.TRUE)) {

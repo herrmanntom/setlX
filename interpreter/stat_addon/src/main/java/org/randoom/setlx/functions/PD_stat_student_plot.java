@@ -1,6 +1,7 @@
 package org.randoom.setlx.functions;
 
-import org.apache.commons.math3.distribution.ChiSquaredDistribution;
+import org.apache.commons.math3.distribution.NormalDistribution;
+import org.apache.commons.math3.distribution.TDistribution;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.parameters.ParameterDefinition;
 import org.randoom.setlx.plot.types.Canvas;
@@ -16,22 +17,23 @@ import java.util.HashMap;
 import java.util.List;
 
 /**
- * stat_chiSquaredCDF_plot(k, canvas):
- *                  Plots the cumulative distribution function for chiSquared distributions with 'k' degrees of freedom on a given canvas.
+ * stat_student_plot(nu, canvas):
+ *                  Plots the probability density function for student distributions with with 'nu' degrees of freedom on a given canvas.
  */
-public class PD_stat_chiSquaredCDF_plot extends PreDefinedProcedure {
+public class PD_stat_student_plot extends PreDefinedProcedure {
 
-    private final static ParameterDefinition K           = createParameter("k");
+    private final static ParameterDefinition NU          = createParameter("nu");
     private final static ParameterDefinition CANVAS      = createParameter("canvas");
-    private final static ParameterDefinition LOWER_BOUND = createOptionalParameter("lowerBound", Defaults.getDefaultLowerBoundOfZero());
+    private final static ParameterDefinition LOWER_BOUND = createOptionalParameter("lowerBound", Defaults.getDefaultLowerBoundOfNegativeFive());
     private final static ParameterDefinition INTERVAL    = createOptionalParameter("interval", Defaults.getDefaultPlotInterval());
-    private final static ParameterDefinition UPPER_BOUND = createOptionalParameter("upperBound", Defaults.getDefaultUpperBoundOfTen());
+    private final static ParameterDefinition UPPER_BOUND = createOptionalParameter("upperBound", Defaults.getDefaultUpperBoundOfFive());
 
-    public final static PreDefinedProcedure DEFINITION = new PD_stat_chiSquaredCDF_plot();
+    /** Definition of the PreDefinedProcedure 'stat_student_plot' */
+    public final static PreDefinedProcedure DEFINITION = new PD_stat_student_plot();
 
-    private PD_stat_chiSquaredCDF_plot() {
+    private PD_stat_student_plot() {
         super();
-        addParameter(K);
+        addParameter(NU);
         addParameter(CANVAS);
         addParameter(LOWER_BOUND);
         addParameter(INTERVAL);
@@ -40,25 +42,26 @@ public class PD_stat_chiSquaredCDF_plot extends PreDefinedProcedure {
 
     @Override
     public Value execute(State state, HashMap<ParameterDefinition, Value> args) throws SetlException {
-        final Value k          = args.get(K);
+        final Value nu         = args.get(NU);
         final Value canvas     = args.get(CANVAS);
         final Value lowerBound = args.get(LOWER_BOUND);
         final Value interval   = args.get(INTERVAL);
         final Value upperBound = args.get(UPPER_BOUND);
 
-        Checker.checkIfNaturalNumber(state, k);
+        Checker.checkIfNumber(state, nu, lowerBound, interval, upperBound);
+        Checker.checkIfNaturalNumber(state, nu);
         Checker.checkIfCanvas(state, canvas);
 
-        ChiSquaredDistribution csd = new ChiSquaredDistribution(k.toJDoubleValue(state));
+        TDistribution td = new TDistribution(nu.toJDoubleValue(state));
 
         /** The valueList is the list of every pair of coordinates [x,y] that the graph consists of.
-         *  It is filled by iteratively increasing the variable 'counter' (x), and calculating the cumulative probability for every new value of 'counter' (y).
+         *  It is filled by iteratively increasing the variable 'counter' (x), and calculating the density for every new value of 'counter' (y).
          */
         List<List<Double>> valueList = new ArrayList<>();
         for (double counter = lowerBound.toJDoubleValue(state); counter < upperBound.toJDoubleValue(state); counter += interval.toJDoubleValue(state)) {
-            valueList.add(new ArrayList<Double>(Arrays.asList(counter, csd.cumulativeProbability(counter))));
+            valueList.add(new ArrayList<Double>(Arrays.asList(counter, td.density(counter))));
         }
 
-        return ConnectJFreeChart.getInstance().addListGraph((Canvas) canvas, valueList, "Cumulative Distribution Function (" + k.toString() + " degree(s) of freedom)", Defaults.DEFAULT_COLOR_SCHEME, false);
+        return ConnectJFreeChart.getInstance().addListGraph((Canvas) canvas, valueList, "Probability Density Function (" + nu.toString() + " degree(s) of freedom)", Defaults.DEFAULT_COLOR_SCHEME, false);
     }
 }

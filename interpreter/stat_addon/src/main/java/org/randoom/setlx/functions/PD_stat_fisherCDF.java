@@ -16,6 +16,7 @@ import java.util.HashMap;
  *      stat_fisherCDF(x, a, b) x>=0; a,b integer
  */
 public class PD_stat_fisherCDF extends PreDefinedProcedure {
+
     private final static ParameterDefinition X = createParameter("x");
     private final static ParameterDefinition A = createParameter("a");
     private final static ParameterDefinition B = createParameter("b");

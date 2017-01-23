@@ -23,9 +23,9 @@ public class PD_stat_chiSquared_plot extends PreDefinedProcedure {
 
     private final static ParameterDefinition K           = createParameter("k");
     private final static ParameterDefinition CANVAS      = createParameter("canvas");
-    private final static ParameterDefinition LOWER_BOUND = createOptionalParameter("lowerBound", Defaults.getDefaultLowerBoundOfZero());
+    private final static ParameterDefinition LOWER_BOUND = createOptionalParameter("lowerBound", Defaults.createSetlDoubleValue(0.0));
     private final static ParameterDefinition INTERVAL    = createOptionalParameter("interval", Defaults.getDefaultPlotInterval());
-    private final static ParameterDefinition UPPER_BOUND = createOptionalParameter("upperBound", Defaults.getDefaultUpperBoundOfTen());
+    private final static ParameterDefinition UPPER_BOUND = createOptionalParameter("upperBound", Defaults.createSetlDoubleValue(10.0));
 
     /** Definition of the PreDefinedProcedure 'stat_chiSquared_plot' */
     public final static PreDefinedProcedure DEFINITION = new PD_stat_chiSquared_plot();

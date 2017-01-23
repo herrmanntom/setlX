@@ -24,9 +24,9 @@ public class PD_stat_normalCDF_plot extends PreDefinedProcedure {
     private final static ParameterDefinition MU          = createParameter("mu");
     private final static ParameterDefinition SIGMA       = createParameter("sigma");
     private final static ParameterDefinition CANVAS      = createParameter("canvas");
-    private final static ParameterDefinition LOWER_BOUND = createOptionalParameter("lowerBound", Defaults.getDefaultLowerBoundOfNegativeFive());
+    private final static ParameterDefinition LOWER_BOUND = createOptionalParameter("lowerBound", Defaults.createSetlDoubleValue(-5.0));
     private final static ParameterDefinition INTERVAL    = createOptionalParameter("interval", Defaults.getDefaultPlotInterval());
-    private final static ParameterDefinition UPPER_BOUND = createOptionalParameter("upperBound", Defaults.getDefaultUpperBoundOfFive());
+    private final static ParameterDefinition UPPER_BOUND = createOptionalParameter("upperBound", Defaults.createSetlDoubleValue(5.0));
 
     /** Definition of the PreDefinedProcedure 'stat_normalCDF_plot' */
     public final static PreDefinedProcedure DEFINITION = new PD_stat_normalCDF_plot();

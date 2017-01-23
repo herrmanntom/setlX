@@ -11,24 +11,9 @@ import java.util.List;
  */
 public class Defaults {
 
+    /** Default plot interval of 0.01 **/
     public static SetlDouble getDefaultPlotInterval() {
         return createSetlDoubleValue(0.01);
-    }
-
-    public static SetlDouble getDefaultLowerBoundOfNegativeFive() {
-        return createSetlDoubleValue(-5.0);
-    }
-
-    public static SetlDouble getDefaultUpperBoundOfFive() {
-        return createSetlDoubleValue(5.0);
-    }
-
-    public static SetlDouble getDefaultLowerBoundOfZero() {
-        return createSetlDoubleValue(0.0);
-    }
-
-    public static SetlDouble getDefaultUpperBoundOfTen() {
-        return createSetlDoubleValue(10.0);
     }
 
     /** Default graph color scheme (black) */
@@ -40,7 +25,7 @@ public class Defaults {
         DEFAULT_COLOR_SCHEME.add(0);
     }
 
-    private static SetlDouble createSetlDoubleValue(double value) {
+    public static SetlDouble createSetlDoubleValue(double value) {
         try {
             return SetlDouble.valueOf(value);
         } catch (UndefinedOperationException e) {

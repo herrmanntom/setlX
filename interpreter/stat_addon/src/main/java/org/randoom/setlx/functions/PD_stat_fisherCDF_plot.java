@@ -1,7 +1,6 @@
 package org.randoom.setlx.functions;
 
-import org.apache.commons.math3.distribution.NormalDistribution;
-import org.apache.commons.math3.distribution.TDistribution;
+import org.apache.commons.math3.distribution.FDistribution;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.parameters.ParameterDefinition;
 import org.randoom.setlx.plot.types.Canvas;
@@ -17,23 +16,25 @@ import java.util.HashMap;
 import java.util.List;
 
 /**
- * stat_student_plot(nu, canvas):
- *                  Plots the probability density function for student distributions with with 'nu' degrees of freedom on a given canvas.
+ * stat_fisherCDF_plot(mu, sigma, canvas):
+ *                  Plots the cumulative distribution function for fisher distributions on a given canvas.
  */
-public class PD_stat_student_plot extends PreDefinedProcedure {
+public class PD_stat_fisherCDF_plot extends PreDefinedProcedure {
 
-    private final static ParameterDefinition NU          = createParameter("nu");
+    private final static ParameterDefinition A           = createParameter("a");
+    private final static ParameterDefinition B           = createParameter("b");
     private final static ParameterDefinition CANVAS      = createParameter("canvas");
-    private final static ParameterDefinition LOWER_BOUND = createOptionalParameter("lowerBound", Defaults.createSetlDoubleValue(-5.0));
+    private final static ParameterDefinition LOWER_BOUND = createOptionalParameter("lowerBound", Defaults.createSetlDoubleValue(0.0));
     private final static ParameterDefinition INTERVAL    = createOptionalParameter("interval", Defaults.getDefaultPlotInterval());
     private final static ParameterDefinition UPPER_BOUND = createOptionalParameter("upperBound", Defaults.createSetlDoubleValue(5.0));
 
-    /** Definition of the PreDefinedProcedure 'stat_student_plot' */
-    public final static PreDefinedProcedure DEFINITION = new PD_stat_student_plot();
+    /** Definition of the PreDefinedProcedure 'stat_fisherCDF_plot' */
+    public final static PreDefinedProcedure DEFINITION = new PD_stat_fisherCDF_plot();
 
-    private PD_stat_student_plot() {
+    private PD_stat_fisherCDF_plot() {
         super();
-        addParameter(NU);
+        addParameter(A);
+        addParameter(B);
         addParameter(CANVAS);
         addParameter(LOWER_BOUND);
         addParameter(INTERVAL);
@@ -42,26 +43,27 @@ public class PD_stat_student_plot extends PreDefinedProcedure {
 
     @Override
     public Value execute(State state, HashMap<ParameterDefinition, Value> args) throws SetlException {
-        final Value nu         = args.get(NU);
+        final Value a          = args.get(A);
+        final Value b          = args.get(B);
         final Value canvas     = args.get(CANVAS);
         final Value lowerBound = args.get(LOWER_BOUND);
         final Value interval   = args.get(INTERVAL);
         final Value upperBound = args.get(UPPER_BOUND);
 
-        Checker.checkIfNumber(state, nu, lowerBound, interval, upperBound);
-        Checker.checkIfNaturalNumber(state, nu);
+        Checker.checkIfNumber(state, lowerBound, interval, upperBound);
+        Checker.checkIfNaturalNumber(state, a, b);
         Checker.checkIfCanvas(state, canvas);
 
-        TDistribution td = new TDistribution(nu.toJDoubleValue(state));
+        FDistribution fd = new FDistribution(a.toJDoubleValue(state), b.toJDoubleValue(state));
 
         /** The valueList is the list of every pair of coordinates [x,y] that the graph consists of.
-         *  It is filled by iteratively increasing the variable 'counter' (x), and calculating the density for every new value of 'counter' (y).
+         *  It is filled by iteratively increasing the variable 'counter' (x), and calculating the cumulative probability for every new value of 'counter' (y).
          */
         List<List<Double>> valueList = new ArrayList<>();
         for (double counter = lowerBound.toJDoubleValue(state); counter < upperBound.toJDoubleValue(state); counter += interval.toJDoubleValue(state)) {
-            valueList.add(new ArrayList<Double>(Arrays.asList(counter, td.density(counter))));
+            valueList.add(new ArrayList<Double>(Arrays.asList(counter, fd.cumulativeProbability(counter))));
         }
 
-        return ConnectJFreeChart.getInstance().addListGraph((Canvas) canvas, valueList, "Probability Density Function (" + nu.toString() + " degree(s) of freedom)", Defaults.DEFAULT_COLOR_SCHEME, false);
+        return ConnectJFreeChart.getInstance().addListGraph((Canvas) canvas, valueList, "Cumulative Distribution Function (a: " + a.toString() + ", b: " + b.toString(), Defaults.DEFAULT_COLOR_SCHEME, false);
     }
 }

@@ -38,9 +38,7 @@ public class PD_stat_fisher extends PreDefinedProcedure {
         final Value b   = args.get(B);
 
         Checker.checkIfNumberAndGreaterOrEqualZero(state, x);
-        Checker.checkIfNaturalNumber(state, a);
-        Checker.checkIfNaturalNumber(state, b);
-
+        Checker.checkIfNaturalNumber(state, a, b);
 
         FDistribution fd = new FDistribution(a.toJDoubleValue(state), b.toJDoubleValue(state));
         return SetlDouble.valueOf(fd.density(x.toJDoubleValue(state)));

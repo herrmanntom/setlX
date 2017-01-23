@@ -16,11 +16,12 @@ import java.util.HashMap;
  *      stat_fisherCDF(x, a, b) x>=0; a,b integer
  */
 public class PD_stat_fisherCDF extends PreDefinedProcedure {
+
     private final static ParameterDefinition X = createParameter("x");
     private final static ParameterDefinition A = createParameter("a");
     private final static ParameterDefinition B = createParameter("b");
 
-    /** Definition of the PreDefinedProcedure 'stat_fisher' */
+    /** Definition of the PreDefinedProcedure 'stat_fisherCDF' */
     public final static PreDefinedProcedure DEFINITION = new PD_stat_fisherCDF();
 
     private PD_stat_fisherCDF() {
@@ -37,11 +38,9 @@ public class PD_stat_fisherCDF extends PreDefinedProcedure {
         final Value b   = args.get(B);
 
         Checker.checkIfNumberAndGreaterOrEqualZero(state, x);
-        Checker.checkIfNaturalNumber(state, a);
-        Checker.checkIfNaturalNumber(state, b);
+        Checker.checkIfNaturalNumber(state, a, b);
 
-
-        FDistribution fdcdf = new FDistribution(a.toJDoubleValue(state), b.toJDoubleValue(state));
-        return SetlDouble.valueOf(fdcdf.cumulativeProbability(x.toJDoubleValue(state)));
+        FDistribution fd = new FDistribution(a.toJDoubleValue(state), b.toJDoubleValue(state));
+        return SetlDouble.valueOf(fd.cumulativeProbability(x.toJDoubleValue(state)));
     }
 }

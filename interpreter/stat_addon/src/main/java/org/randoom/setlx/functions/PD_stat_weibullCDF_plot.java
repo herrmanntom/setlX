@@ -22,12 +22,12 @@ import java.util.List;
  */
 public class PD_stat_weibullCDF_plot extends PreDefinedProcedure {
 
-    private final static ParameterDefinition SHAPE = createParameter("shape");
-    private final static ParameterDefinition SCALE = createParameter("scale");
-    private final static ParameterDefinition CANVAS = createParameter("canvas");
-    private final static ParameterDefinition LOWER_BOUND = createOptionalParameter("lowerBound", Defaults.getDefaultLowerBoundOfNegativeFive());
-    private final static ParameterDefinition INTERVAL = createOptionalParameter("interval", Defaults.getDefaultPlotInterval());
-    private final static ParameterDefinition UPPER_BOUND = createOptionalParameter("upperBound", Defaults.getDefaultUpperBoundOfFive());
+    private final static ParameterDefinition SHAPE       = createParameter("shape");
+    private final static ParameterDefinition SCALE       = createParameter("scale");
+    private final static ParameterDefinition CANVAS      = createParameter("canvas");
+    private final static ParameterDefinition LOWER_BOUND = createOptionalParameter("lowerBound", Defaults.createSetlDoubleValue(0.0));
+    private final static ParameterDefinition INTERVAL    = createOptionalParameter("interval", Defaults.getDefaultPlotInterval());
+    private final static ParameterDefinition UPPER_BOUND = createOptionalParameter("upperBound", Defaults.createSetlDoubleValue(5.0));
 
     /**
      * Definition of the PreDefinedProcedure 'stat_weibullCDF_plot'
@@ -46,16 +46,15 @@ public class PD_stat_weibullCDF_plot extends PreDefinedProcedure {
 
     @Override
     public Value execute(State state, HashMap<ParameterDefinition, Value> args) throws SetlException {
-        final Value shape = args.get(SHAPE);
-        final Value scale = args.get(SCALE);
-        final Value canvas = args.get(CANVAS);
+        final Value shape      = args.get(SHAPE);
+        final Value scale      = args.get(SCALE);
+        final Value canvas     = args.get(CANVAS);
         final Value lowerBound = args.get(LOWER_BOUND);
-        final Value interval = args.get(INTERVAL);
+        final Value interval   = args.get(INTERVAL);
         final Value upperBound = args.get(UPPER_BOUND);
 
-        Checker.checkIfNumberAndGreaterZero(state, shape);
-        Checker.checkIfNumberAndGreaterZero(state, scale);
         Checker.checkIfNumber(state, lowerBound, interval, upperBound);
+        Checker.checkIfNumberAndGreaterZero(state, shape, scale);
         Checker.checkIfCanvas(state, canvas);
 
         WeibullDistribution wd = new WeibullDistribution(shape.toJDoubleValue(state), scale.toJDoubleValue(state));

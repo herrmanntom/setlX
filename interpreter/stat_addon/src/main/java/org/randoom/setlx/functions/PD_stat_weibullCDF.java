@@ -17,7 +17,7 @@ import java.util.HashMap;
  */
 public class PD_stat_weibullCDF extends PreDefinedProcedure {
 
-    private final static ParameterDefinition X = createParameter("x");
+    private final static ParameterDefinition X     = createParameter("x");
     private final static ParameterDefinition SHAPE = createParameter("shape");
     private final static ParameterDefinition SCALE = createParameter("scale");
 
@@ -38,9 +38,7 @@ public class PD_stat_weibullCDF extends PreDefinedProcedure {
         final Value scale   = args.get(SCALE);
 
         Checker.checkIfNumberAndGreaterOrEqualZero(state, x);
-        Checker.checkIfNumberAndGreaterZero(state, shape);
-        Checker.checkIfNumberAndGreaterZero(state, scale);
-
+        Checker.checkIfNumberAndGreaterZero(state, shape, scale);
 
         WeibullDistribution wdcdf = new WeibullDistribution(shape.toJDoubleValue(state), scale.toJDoubleValue(state));
         return SetlDouble.valueOf(wdcdf.cumulativeProbability(x.toJDoubleValue(state)));

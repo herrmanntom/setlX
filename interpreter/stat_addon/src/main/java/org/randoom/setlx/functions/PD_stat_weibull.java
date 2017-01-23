@@ -37,8 +37,7 @@ public class PD_stat_weibull extends PreDefinedProcedure{
         final Value shape   = args.get(SHAPE);
         final Value scale   = args.get(SCALE);
 
-        Checker.checkIfNumberAndGreaterZero(state, x);
-        Checker.checkIfNumberAndGreaterZero(state, shape, scale);
+        Checker.checkIfNumberAndGreaterZero(state, x, shape, scale);
 
         WeibullDistribution wd = new WeibullDistribution(shape.toJDoubleValue(state), scale.toJDoubleValue(state));
         return SetlDouble.valueOf(wd.density(x.toJDoubleValue(state)));

@@ -49,7 +49,7 @@ public class Checker {
             }
             if (! (value.toJDoubleValue(state) > 0)) {
                 throw new IncompatibleTypeException(
-                        "Input-argument '" + value.toString(state) + "' is not greater or equal zero."
+                        "Input-argument '" + value.toString(state) + "' is not greater than zero."
                 );
             }
         }

@@ -35,7 +35,7 @@ public class PD_stat_studentCDF extends PreDefinedProcedure {
         final Value nu    = args.get(NU);
 
         Checker.checkIfNumber(state, x);
-        Checker.checkIfNaturalNumber(state, nu);
+        Checker.checkIfNaturalNumberAndGreaterZero(state, nu);
 
         TDistribution td = new TDistribution(nu.toJDoubleValue(state));
         return SetlDouble.valueOf(td.cumulativeProbability(x.toJDoubleValue(state)));

@@ -49,7 +49,7 @@ public class PD_stat_student_plot extends PreDefinedProcedure {
         final Value upperBound = args.get(UPPER_BOUND);
 
         Checker.checkIfNumber(state, nu, lowerBound, interval, upperBound);
-        Checker.checkIfNaturalNumber(state, nu);
+        Checker.checkIfNaturalNumberAndGreaterZero(state, nu);
         Checker.checkIfCanvas(state, canvas);
 
         TDistribution td = new TDistribution(nu.toJDoubleValue(state));

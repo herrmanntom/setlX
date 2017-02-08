@@ -34,7 +34,7 @@ public class PD_stat_student extends PreDefinedProcedure {
         final Value nu    = args.get(NU);
 
         Checker.checkIfNumber(state, x);
-        Checker.checkIfNaturalNumber(state, nu);
+        Checker.checkIfNaturalNumberAndGreaterZero(state, nu);
 
         TDistribution td = new TDistribution(nu.toJDoubleValue(state));
         return SetlDouble.valueOf(td.density(x.toJDoubleValue(state)));

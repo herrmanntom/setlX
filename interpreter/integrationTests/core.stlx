@@ -9,7 +9,12 @@ fromWithoutSideEffect := procedure() {
     c := a + b;
     d := from(c);
 
-    registerTestResult(a == {{1}, {2}} && b == {{3}, {4}} && #c == 3, "side-effects in from");
+    validateForTestCase("side-effects in from")
+        .that(
+            a == {{1}, {2}} && b == {{3}, {4}} && #c == 3
+        ).is(
+            true
+        );
 };
 fromWithoutSideEffect();
 
@@ -19,7 +24,12 @@ fromListWithoutSideEffect := procedure() {
     c := a + b;
     d := from(c);
 
-    registerTestResult(a == [{1}, {2}] && b == [{3}, {4}] && #c == 3, "side-effects in from lists");
+    validateForTestCase("side-effects in from with lists")
+        .that(
+            a == [{1}, {2}] && b == [{3}, {4}] && #c == 3
+        ).is(
+            true
+        );
 };
 fromListWithoutSideEffect();
 
@@ -28,7 +38,12 @@ fromVariable := procedure() {
     b := a;
     d := from(a);
 
-    registerTestResult(#a == 1 && b == {{1}, {2}}, "from variable");
+    validateForTestCase("from variable")
+        .that(
+            #a == 1 && b == {{1}, {2}}
+        ).is(
+            true
+        );
 };
 fromVariable();
 
@@ -39,7 +54,12 @@ listIndex := procedure() {
     d := c[10];
     e := c[2..3][1];
 
-    registerTestResult(b == [] && d == om && e == 2, "list index");
+    validateForTestCase("list index")
+        .that(
+            b == [] && d == om && e == 2
+        ).is(
+            true
+        );
 };
 listIndex();
 
@@ -49,7 +69,12 @@ collectionsWithOm := procedure() {
     c := [1, om, 3];
     d := {1, om, 3};
 
-    registerTestResult(a == [1] && b == {1} && c == [1, om, 3] && d == {1, 3}, "collections with om");
+    validateForTestCase("collections with om")
+        .that(
+            a == [1] && b == {1} && c == [1, om, 3] && d == {1, 3}
+        ).is(
+            true
+        );
 };
 collectionsWithOm();
 
@@ -59,9 +84,13 @@ listAssignments := procedure() {
     [g, h, i] := "123";
     [j, k, l] := @term("foobar", 99, sin);
 
-    registerTestResult(a == 1   && b == 2   && c == 3   && d == 4        && e == 5  && f == 6            &&
-           g == "1" && h == "2" && i == "3" && j == "foobar" && k == 99 && l == getTerm(sin),
-           "list assignments");
+    validateForTestCase("list assignments")
+        .that(
+            a == 1   && b == 2   && c == 3   && d == 4        && e == 5  && f == 6            &&
+            g == "1" && h == "2" && i == "3" && j == "foobar" && k == 99 && l == getTerm(sin)
+        ).is(
+            true
+        );
 };
 listAssignments();
 
@@ -75,8 +104,13 @@ innerListAssignments := procedure() {
     d := c;
     d[6] := om;
 
-    registerTestResult(a == [1, 6, 3] && b == [[[1, 2, 3]], [[4, 5, 6]], [[7, "t", 9]]] &&
-           c == [1, 2, 3, om, om, 10] && d == [1, 2, 3], "assignments to list content");
+    validateForTestCase("assignments to list content")
+        .that(
+            a == [1, 6, 3] && b == [[[1, 2, 3]], [[4, 5, 6]], [[7, "t", 9]]] &&
+            c == [1, 2, 3, om, om, 10] && d == [1, 2, 3]
+        ).is(
+            true
+        );
 };
 innerListAssignments();
 
@@ -89,7 +123,12 @@ firstClassFunctions := procedure() {
     mystery := arb(boxOfMystery);
     anotherMystery := +/ (boxOfMystery - {mystery});
 
-    registerTestResult(test(mystery, anotherMystery), "first class functions");
+    validateForTestCase("first class functions")
+        .that(
+            test(mystery, anotherMystery)
+        ).is(
+            true
+        );
 };
 firstClassFunctions();
 
@@ -113,14 +152,24 @@ nestedFunctions := procedure() {
     y := screwedSin(1);
     z := callCopysOnlyFunctions();
 
-    registerTestResult(y > 0.8414 + 1 && y < 0.8415 + 1 && z == 42, "nested functions");
+    validateForTestCase("nested functions")
+        .that(
+            y > 0.8414 + 1 && y < 0.8415 + 1 && z == 42
+        ).is(
+            true
+        );
 };
 nestedFunctions();
 
 iterator := procedure() {
     u := [[x, y, z, w]: x in {1, 2}, y in {1, 2}, [z, w] in [[x, y]]];
 
-    registerTestResult(u == [[1, 1, 1, 1], [1, 2, 1, 2], [2, 1, 2, 1], [2, 2, 2, 2]], "iterators");
+    validateForTestCase("iterators")
+        .that(
+            u
+        ).is(
+            [[1, 1, 1, 1], [1, 2, 1, 2], [2, 1, 2, 1], [2, 2, 2, 2]]
+        );
 };
 iterator();
 
@@ -138,7 +187,12 @@ scopeTests := procedure() {
     v := "test";
     w := {v: w in q, v in w};
 
-    registerTestResult(result == " 1 2 3 4 5 6" && q == [[[1, 2, 3], [4, 5, 6]]] && p == "est" && v == "test", "scope");
+    validateForTestCase("scope")
+        .that(
+            result == " 1 2 3 4 5 6" && q == [[[1, 2, 3], [4, 5, 6]]] && p == "est" && v == "test"
+        ).is(
+            true
+        );
 };
 scopeTests();
 
@@ -164,7 +218,12 @@ lazyChecking := procedure() {
     // now a should be 3, but b still 2, c should be false
     correct := correct && a == 3 && b == 2 && !c;
 
-    registerTestResult(correct, "lazy checking");
+    validateForTestCase("lazy checking")
+        .that(
+            correct
+        ).is(
+            true
+        );
 };
 lazyChecking();
 
@@ -185,22 +244,28 @@ relationExtension := procedure() {
 
     correct := correct && r == {[1, 1], [2, 3], [3, 9], [4, 5]};
 
-    registerTestResult(correct, "relation extension");
+    validateForTestCase("relation extension")
+        .that(
+            correct
+        ).is(
+            true
+        );
 };
 relationExtension();
 
 formatedString := procedure() {
-    correct := false;
-
     s := "";
     for (i in [1 .. 9]) {
           s += "p$i$ || ";
     }
     s := s + "false";
 
-    correct := s == "p1 || p2 || p3 || p4 || p5 || p6 || p7 || p8 || p9 || false";
-
-    registerTestResult(correct, "formated string");
+    validateForTestCase("formated string")
+        .that(
+            s
+        ).is(
+            "p1 || p2 || p3 || p4 || p5 || p6 || p7 || p8 || p9 || false"
+        );
 };
 formatedString();
 
@@ -214,7 +279,12 @@ precedences := procedure() {
                             )
             );
 
-    registerTestResult(a == "(a || b || !a && !b) && (a || b || !a && !b)", "precedences");
+    validateForTestCase("precedences")
+        .that(
+            a
+        ).is(
+            "(a || b || !a && !b) && (a || b || !a && !b)"
+        );
 };
 precedences();
 
@@ -225,7 +295,12 @@ complexLhsAssignment := procedure() {
     [a[1], a[2]] := [a[2], a[1]];
     [a[1][1], a[2][2]] := [a[2][2], a[1][1]];
 
-    registerTestResult(a == [[12, 22, 23, 24], [11, 21, 13], [31, 320, 33]], "complex lhs assignment");
+    validateForTestCase("complex lhs assignment")
+        .that(
+            a
+        ).is(
+            [[12, 22, 23, 24], [11, 21, 13], [31, 320, 33]]
+        );
 };
 complexLhsAssignment();
 
@@ -248,7 +323,12 @@ valueVsReference := procedure() {
 
     correct := correct && l2 in s;
 
-    registerTestResult(correct, "value vs reference");
+    validateForTestCase("value vs reference")
+        .that(
+            correct
+        ).is(
+            true
+        );
 };
 valueVsReference();
 
@@ -262,7 +342,12 @@ matchSets := procedure() {
             correct := false;
     }
 
-    registerTestResult(correct, "match sets");
+    validateForTestCase("match sets")
+        .that(
+            correct
+        ).is(
+            true
+        );
 };
 matchSets();
 
@@ -273,7 +358,12 @@ complexIndirectAssignment := procedure() {
 
     correct := s == { ["a", 3], ["b", [1, 2]] };
 
-    registerTestResult(correct, "complex indirect assignment");
+    validateForTestCase("complex indirect assignment")
+        .that(
+            correct
+        ).is(
+            true
+        );
 };
 complexIndirectAssignment();
 
@@ -315,7 +405,12 @@ grammarTests := procedure() {
         correct := false;
     }
 
-    registerTestResult(correct, "grammar");
+    validateForTestCase("grammar")
+        .that(
+            correct
+        ).is(
+            true
+        );
 };
 grammarTests();
 
@@ -336,7 +431,12 @@ regexEscapeTests := procedure() {
     s := "1\\2\\3";
     correct := correct && (split(s, "\\\\") == ["1","2","3"]);
 
-    registerTestResult(correct, "regexEscape");
+    validateForTestCase("regexEscape")
+        .that(
+            correct
+        ).is(
+            true
+        );
 };
 regexEscapeTests();
 
@@ -385,7 +485,12 @@ cacheTest := procedure() {
     }
     correct := correct && cacheStats(f) == {["cache hits", 4], ["cached items", 8]};
 
-    registerTestResult(correct, "cacheTest");
+    validateForTestCase("cacheTest")
+        .that(
+            correct
+        ).is(
+            true
+        );
 };
 cacheTest();
 

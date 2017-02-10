@@ -88,7 +88,7 @@ public class Term extends IndexedCollectionValue {
      * @return      Conjunction of value and this.
      * @throws SetlException in case of (User-) Error.
      */
-    public Value conjunctionFlipped(final State state, final Value other) throws SetlException {
+    /*package*/ Value conjunctionFlipped(final State state, final Value other) throws SetlException {
         return new OperatorExpression(
                 OperatorExpression.createFromTerm(state, other),
                 new Conjunction(OperatorExpression.createFromTerm(state, this))
@@ -112,7 +112,7 @@ public class Term extends IndexedCollectionValue {
      * @return      Disjunction of value and this.
      * @throws SetlException in case of (User-) Error.
      */
-    public Value disjunctionFlipped(final State state, final Value other) throws SetlException {
+    /*package*/ Value disjunctionFlipped(final State state, final Value other) throws SetlException {
         return new OperatorExpression(
                 OperatorExpression.createFromTerm(state, other),
                 new Disjunction(OperatorExpression.createFromTerm(state, this))
@@ -136,7 +136,7 @@ public class Term extends IndexedCollectionValue {
      * @return      Implication of value and this.
      * @throws SetlException in case of (User-) Error.
      */
-    public Value implicationFlipped(final State state, final Value other) throws SetlException {
+    /*package*/ Value implicationFlipped(final State state, final Value other) throws SetlException {
         return new OperatorExpression(
                 OperatorExpression.createFromTerm(state, other),
                 new Implication(OperatorExpression.createFromTerm(state, this))
@@ -179,7 +179,7 @@ public class Term extends IndexedCollectionValue {
      * @return           Difference subtrahend and this.
      * @throws SetlException in case of (User-) Error.
      */
-    public Value differenceFlipped(final State state, final Value subtrahend) throws SetlException {
+    /*package*/ Value differenceFlipped(final State state, final Value subtrahend) throws SetlException {
         return new OperatorExpression(
                 OperatorExpression.createFromTerm(state, subtrahend),
                 OperatorExpression.createFromTerm(state, this),
@@ -214,7 +214,7 @@ public class Term extends IndexedCollectionValue {
      * @return        Integer division of divisor and this.
      * @throws SetlException in case of (User-) Error.
      */
-    public Value integerDivisionFlipped(final State state, final Value divisor) throws SetlException {
+    /*package*/ Value integerDivisionFlipped(final State state, final Value divisor) throws SetlException {
         return new OperatorExpression(
                 OperatorExpression.createFromTerm(state, divisor),
                 OperatorExpression.createFromTerm(state, this),
@@ -249,7 +249,7 @@ public class Term extends IndexedCollectionValue {
      * @return        Modulo of modulo and this.
      * @throws SetlException in case of (User-) Error.
      */
-    public Value moduloFlipped(final State state, final Value modulo) throws SetlException {
+    /*package*/ Value moduloFlipped(final State state, final Value modulo) throws SetlException {
         return new OperatorExpression(
                 OperatorExpression.createFromTerm(state, modulo),
                 OperatorExpression.createFromTerm(state, this),
@@ -275,7 +275,7 @@ public class Term extends IndexedCollectionValue {
      * @return         Exponent raised by the power of this.
      * @throws SetlException in case of (User-) Error.
      */
-    public Value powerFlipped(final State state, final Value exponent) throws SetlException {
+    /*package*/ Value powerFlipped(final State state, final Value exponent) throws SetlException {
         return new OperatorExpression(
                 OperatorExpression.createFromTerm(state, exponent),
                 OperatorExpression.createFromTerm(state, this),
@@ -301,7 +301,7 @@ public class Term extends IndexedCollectionValue {
      * @return           Product of multiplier and this.
      * @throws SetlException in case of (User-) Error.
      */
-    public Value productFlipped(final State state, final Value multiplier) throws SetlException {
+    /*package*/ Value productFlipped(final State state, final Value multiplier) throws SetlException {
         return new OperatorExpression(
                 OperatorExpression.createFromTerm(state, multiplier),
                 OperatorExpression.createFromTerm(state, this),
@@ -327,7 +327,7 @@ public class Term extends IndexedCollectionValue {
      * @return           Division of divisor and this.
      * @throws SetlException in case of (User-) Error.
      */
-    public Value quotientFlipped(final State state, final Value divisor) throws SetlException {
+    /*package*/ Value quotientFlipped(final State state, final Value divisor) throws SetlException {
         return new OperatorExpression(
                 OperatorExpression.createFromTerm(state, divisor),
                 OperatorExpression.createFromTerm(state, this),
@@ -353,7 +353,7 @@ public class Term extends IndexedCollectionValue {
      * @return           Sum of this and summand.
      * @throws SetlException in case of (User-) Error.
      */
-    public Value sumFlipped(final State state, final Value summand) throws SetlException {
+    /*package*/ Value sumFlipped(final State state, final Value summand) throws SetlException {
         return new OperatorExpression(
                 OperatorExpression.createFromTerm(state, summand),
                 OperatorExpression.createFromTerm(state, this),
@@ -401,7 +401,7 @@ public class Term extends IndexedCollectionValue {
      * @return               Cartesian product of this and other.
      * @throws SetlException in case of (User-) Error.
      */
-    public Value cartesianProductFlipped(final State state, final Value other) throws SetlException {
+    /*package*/ Value cartesianProductFlipped(final State state, final Value other) throws SetlException {
         return new OperatorExpression(
                 OperatorExpression.createFromTerm(state, other),
                 OperatorExpression.createFromTerm(state, this),
@@ -690,6 +690,40 @@ public class Term extends IndexedCollectionValue {
         } else {
             return false;
         }
+    }
+
+    @Override
+    public Value isBooleanEqualTo(State state, Value value) throws SetlException {
+        return new OperatorExpression(
+                OperatorExpression.createFromTerm(state, this),
+                OperatorExpression.createFromTerm(state, value),
+                BooleanEqual.BE
+        ).toTerm(state);
+    }
+
+    @Override
+    public Value isBooleanNotEqualTo(State state, Value value) throws SetlException {
+        return new OperatorExpression(
+                OperatorExpression.createFromTerm(state, this),
+                OperatorExpression.createFromTerm(state, value),
+                BooleanNotEqual.BNE
+        ).toTerm(state);
+    }
+
+    /*package*/ Value isBooleanEqualToFlipped(State state, Value value) throws SetlException {
+        return new OperatorExpression(
+                OperatorExpression.createFromTerm(state, value),
+                OperatorExpression.createFromTerm(state, this),
+                BooleanEqual.BE
+        ).toTerm(state);
+    }
+
+    /*package*/ Value isBooleanNotEqualToFlipped(State state, Value value) throws SetlException {
+        return new OperatorExpression(
+                OperatorExpression.createFromTerm(state, value),
+                OperatorExpression.createFromTerm(state, this),
+                BooleanNotEqual.BNE
+        ).toTerm(state);
     }
 
     @Override

@@ -1,8 +1,9 @@
 
 Changes (* notice | + feature added, replaced or improved | - feature removed | # bugfix):
 
----v2.x.y--- 201z-mm-dd
+---v2.6.0--- 2017-01-08
  + multiplication of matrix and vector will result in a vector instead of a matrix
+ + the <==> operator is now a viral operation when terms are involved
 
 ---v2.5.3--- 2016-11-26
  # fix modulo and integer division when negative numbers are involved

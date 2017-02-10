@@ -1,0 +1,216 @@
+load("baseIntegrationTest.stlx");
+registerTestSuite("core_matrix_and_vector");
+
+// ************************************************************************** \\
+
+// Definition
+// ----------
+
+a := << <<1 2>> <<3 4>> >>;
+b := << <<5 6>> <<7 8>> >>;
+c := <<1 2 3>>;
+d := <<5 6 7>>;
+e := << <<1 2 3>> >>;
+f := << <<1>> <<2>> <<3>> >>;
+
+// matrix
+
+validateForTestCase("a * b")
+    .that(
+        a * b
+    ).is(
+        << <<19.0 22.0>> <<43.0 50.0>> >>
+    );
+validateForTestCase("a * 2")
+    .that(
+        a * 2
+    ).is(
+        << <<2.0 4.0>> <<6.0 8.0>> >>
+    );
+validateForTestCase("a + b")
+    .that(
+        a + b
+    ).is(
+        << <<6.0 8.0>> <<10.0 12.0>> >>
+    );
+validateForTestCase("a - b")
+    .that(
+        a - b
+    ).is(
+        << <<-4.0 -4.0>> <<-4.0 -4.0>> >>
+    );
+validateForTestCase("a ** 3")
+    .that(
+        a ** 3
+    ).is(
+        << <<37.0 54.0>> <<81.0 118.0>> >>
+    );
+
+validateForTestCase("a ** -1")
+    .that(
+        a ** -1
+    ).is(
+        << <<-1.9999999999999998 1.0>> <<1.4999999999999998 -0.49999999999999994>> >>
+    );
+validateForTestCase("a!")
+    .that(
+        a!
+    ).is(
+        << <<1.0 3.0>> <<2.0 4.0>> >>
+    );
+validateForTestCase("la_det(a)")
+    .that(
+        la_det(a)
+    ).is(
+        -2.0
+    );
+validateForTestCase("la_solve(a, b)")
+    .that(
+        la_solve(a, b)
+    ).is(
+        << <<-3.0 -4.0>> <<4.0 5.0>> >>
+    );
+validateForTestCase("la_svd(a)")
+    .that(
+        la_svd(a)
+    ).is(
+        [<< <<0.4045535848337569 0.9145142956773045>> <<0.9145142956773045 -0.4045535848337569>> >>, << <<5.464985704219043 0.0>> <<0.0 0.3659661906262574>> >>, << <<0.5760484367663208 -0.8174155604703632>> <<0.8174155604703632 0.5760484367663208>> >>]
+    );
+
+validateForTestCase("la_eigenValues(a)")
+    .that(
+        la_eigenValues(a)
+    ).is(
+        [-0.3722813232690143, 5.372281323269014]
+    );
+validateForTestCase("la_eigenVectors(a)")
+    .that(
+        la_eigenVectors(a)
+    ).is(
+        [<<-0.8245648401323937 0.5657674649689923>>, <<-0.42222915041526043 -0.9230523142501933>>]
+    );
+
+validateForTestCase("a[1]")
+    .that(
+        a[1]
+    ).is(
+        <<1.0 2.0>>
+    );
+a[1] := [5.0,6.0];
+validateForTestCase("a[1] := [5.0,6.0]; a")
+    .that(
+        a
+    ).is(
+        << <<1.0 2.0>> <<5.0 6.0>> >>
+    );
+
+// vector
+
+validateForTestCase("c * 2")
+    .that(
+        c * 2
+    ).is(
+        <<2.0 4.0 6.0>>
+    );
+validateForTestCase("c + d")
+    .that(
+        c + d
+    ).is(
+        <<6.0 8.0 10.0>>
+    );
+validateForTestCase("c - d")
+    .that(
+        c - d
+    ).is(
+        <<-4.0 -4.0 -4.0>>
+    );
+validateForTestCase("c * d")
+    .that(
+        c * d
+    ).is(
+        38.0
+    );
+validateForTestCase("c >< d")
+    .that(
+        c >< d
+    ).is(
+        <<-4.0 8.0 -4.0>>
+    );
+
+validateForTestCase("c[1]")
+    .that(
+        c[1]
+    ).is(
+        1.0
+    );
+d[1] := 9;
+validateForTestCase("d[1] := 9; d")
+    .that(
+        d
+    ).is(
+        <<9.0 6.0 7.0>>
+    );
+
+// conversion
+
+validateForTestCase("la_vector(e)")
+    .that(
+        la_vector(e)
+    ).is(
+        <<1.0 2.0 3.0>>
+    );
+validateForTestCase("la_vector(f)")
+    .that(
+        la_vector(f)
+    ).is(
+        <<1.0 2.0 3.0>>
+    );
+validateForTestCase("la_matrix(c)")
+    .that(
+        la_matrix(c)
+    ).is(
+        << <<1.0>> <<2.0>> <<3.0>> >>
+    );
+
+validateForTestCase("f + c")
+    .that(
+        f + c
+    ).is(
+        << <<2.0>> <<4.0>> <<6.0>> >>
+    );
+validateForTestCase("f - d")
+    .that(
+        f - d
+    ).is(
+        << <<-8.0>> <<-4.0>> <<-4.0>> >>
+    );
+validateForTestCase("e * c")
+    .that(
+        e * c
+    ).is(
+        <<14.0>>
+    );
+
+validateForTestCase("c + e")
+    .that(
+        c + e
+    ).is(
+        <<2.0 4.0 6.0>>
+    );
+validateForTestCase("d - f")
+    .that(
+        d - f
+    ).is(
+        <<8.0 4.0 4.0>>
+    );
+validateForTestCase("c * e")
+    .that(
+        c * e
+    ).is(
+        14.0
+    );
+
+// ************************************************************************** \\
+
+printTestResult();
+

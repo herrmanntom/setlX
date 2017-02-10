@@ -32,7 +32,12 @@ equality := procedure() {
         correct := correct && false;
     }
 
-    registerTestResult(correct, "equality");
+    validateForTestCase("equality")
+        .that(
+            correct
+        ).is(
+            true
+        );
 };
 equality();
 
@@ -66,7 +71,12 @@ infinityTests := procedure() {
         correct := correct && true;
     }
 
-    registerTestResult(correct, "infinity computation");
+    validateForTestCase("infinity computation")
+        .that(
+            correct
+        ).is(
+            true
+        );
 };
 infinityTests();
 
@@ -74,9 +84,24 @@ moduloAndIntegerDivisionTests := procedure() {
     verify := procedure(a, b) {
         q := a \ b;
         r := a % b;
-        registerTestResult(a == q * b + r, "modulo and integer division: $a$ == $q$ * $b$ + $r$");
-        registerTestResult(0 <= r        , "modulo and integer division: 0 <= $r$");
-        registerTestResult(r < abs(b)    , "modulo and integer division: $r$ < |$b$|");
+        validateForTestCase("modulo and integer division: $a$ == $q$ * $b$ + $r$")
+            .that(
+                a
+            ).is(
+                q * b + r
+            );
+        validateForTestCase("modulo and integer division: 0 <= $r$")
+            .that(
+                0 <= r
+            ).is(
+                true
+            );
+        validateForTestCase("modulo and integer division: $r$ < |$b$|")
+            .that(
+                r < abs(b)
+            ).is(
+                true
+            );
     };
 
     verify( 7,  3);

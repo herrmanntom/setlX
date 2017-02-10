@@ -982,7 +982,7 @@ public abstract class Value extends CodeFragment {
      * @param other Other value to compare to `this'
      * @return      True if `this' equals `other', false otherwise.
      */
-    public abstract boolean equalTo (final Object other);
+    public abstract boolean equalTo(final Object other);
 
     @SuppressWarnings("EqualsWhichDoesntCheckParameterClass")
     @Override
@@ -1001,6 +1001,38 @@ public abstract class Value extends CodeFragment {
      */
     public SetlBoolean isEqualTo(final State state, final Value other) throws SetlException {
         return SetlBoolean.valueOf(this.equalTo(other));
+    }
+
+    /**
+     * Test if two Values are boolean equal.
+     * This operation is different from isEqualTo for certain types.
+     *
+     * @param state          Current state of the running setlX program.
+     * @param other          Other value to compare to `this'
+     * @return               Most likely a SetlBoolean or term.
+     * @throws SetlException Thrown in case of some (user-) error.
+     */
+    public Value isBooleanEqualTo(final State state, final Value other) throws SetlException {
+        if (other.getClass() == Term.class) {
+            return ((Term) other).isBooleanEqualToFlipped(state, this);
+        }
+        return isEqualTo(state, other);
+    }
+
+    /**
+     * Test if two Values are not boolean equal.
+     * This operation is different from not(isEqualTo) for certain types.
+     *
+     * @param state          Current state of the running setlX program.
+     * @param other          Other value to compare to `this'
+     * @return               Most likely a SetlBoolean or term.
+     * @throws SetlException Thrown in case of some (user-) error.
+     */
+    public Value isBooleanNotEqualTo(final State state, final Value other) throws SetlException {
+        if (other.getClass() == Term.class) {
+            return ((Term) other).isBooleanNotEqualToFlipped(state, this);
+        }
+        return isEqualTo(state, other).not(state);
     }
 
     /**

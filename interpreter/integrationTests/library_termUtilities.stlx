@@ -10,23 +10,47 @@ loadLibrary("termUtilities");
 toTermTest := procedure(termToConvert, expectedExpression) {
     convertedTerm := toTerm(parse(termToConvert));
     expectedExpressionTerm := parse(expectedExpression);
-    registerTestResult(convertedTerm == expectedExpressionTerm, "toTerm($termToConvert$)");
+    
+    validateForTestCase("toTerm($termToConvert$)")
+        .that(
+            convertedTerm
+        ).is(
+            expectedExpressionTerm
+        );
 };
 fromTermTest := procedure(termToConvert, expectedExpression) {
     convertedTerm := fromTerm(parse(termToConvert));
     expectedExpressionTerm := parse(expectedExpression);
-    registerTestResult(convertedTerm == expectedExpressionTerm, "fromTerm($termToConvert$)");
+    
+    validateForTestCase("fromTerm($termToConvert$)")
+        .that(
+            convertedTerm
+        ).is(
+            expectedExpressionTerm
+        );
 };
 expressionLoopTest := procedure(expression) {
     expressionTerm := parse(expression);
     afterToTerm := toTerm(expressionTerm);
     afterFromTerm := fromTerm(afterToTerm);
-    registerTestResult(expressionTerm == afterFromTerm, "expression loop '$expression$'");
+    
+    validateForTestCase("expression loop '$expression$'")
+        .that(
+            expressionTerm
+        ).is(
+            afterFromTerm
+        );
 };
 varNameTest := procedure(name) {
     term   := parse(name);
     result := varName(term);
-    registerTestResult(result == name, "varName");
+    
+    validateForTestCase("varName")
+        .that(
+            result
+        ).is(
+            name
+        );
 };
 varNameTest("x");
 varNameTest("a_bC");

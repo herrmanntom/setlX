@@ -3,26 +3,73 @@ registerTestSuite("core_optimization");
 
 // ************************************************************************** \\
 
-solve := procedure(f, x0) {
-    x := x0;
-    for (n in [1 .. 10000]) {
-        oldX := x;
-        x := f(x);
-        if (abs(x - oldX) < 1.0e-15) {
-            return x;
+// regression test:
+//     here x |-> 1.0/(1 + x) was unified internaly with x |-> 1/(1+x)
+//     but both are not the same
+
+optimizationOfNumbersOfDifferentTypes := procedure() {
+    solve := procedure(f, x0) {
+        x := x0;
+        for (n in [1 .. 10000]) {
+            oldX := x;
+            x := f(x);
+            if (abs(x - oldX) < 1.0e-15) {
+                return x;
+            }
         }
-    }
-};
+    };
 
-solveTest := procedure() {
-    registerTestResult(solve(x |-> 1.0/(1 + x), 0) == 0.6180339887498948, "solveTest");
-};
-solveTest();
+    solveTest := procedure() {
+        validateForTestCase("optimizationOfNumbersOfDifferentTypes: solveTest")
+            .that(
+                solve(x |-> 1.0/(1 + x), 0)
+            ).is(
+                0.6180339887498948
+            );
+    };
+    solveTest();
 
-nDecimalPlacesSolveTest := procedure() {
-    registerTestResult(nDecimalPlaces(solve(x |-> 1/(1+x), 0), 15) == "0.618033988749894", "nDecimalPlacesSolveTest");
+    nDecimalPlacesSolveTest := procedure() {
+        validateForTestCase("optimizationOfNumbersOfDifferentTypes: nDecimalPlacesSolveTest")
+            .that(
+                nDecimalPlaces(solve(x |-> 1/(1+x), 0), 15)
+            ).is(
+                "0.618033988749894"
+            );
+    };
+    nDecimalPlacesSolveTest();
 };
-nDecimalPlacesSolveTest();
+optimizationOfNumbersOfDifferentTypes();
+
+// regression test:
+//     concurrent modification: the set "ret" is modified while iterating over it
+
+concurrentModification := procedure() {
+    unionfind:=procedure(m,r){
+        ret:={ {x}: x in m};
+        for(x in r){
+            p:={};
+            for(y in ret){
+                if(x[1] in y || x[2] in y){
+                    ret-={y};
+                    p+=y;
+                }
+            }
+            ret+={p};
+        }
+        return ret;
+    };
+    nodes:={1 .. 10};
+    edges:={[1,2],[2,4],[3,7],[3,6],[5,6]};
+    parts:=unionfind(nodes,edges);
+    validateForTestCase("concurrentModification")
+        .that(
+            parts
+        ).is(
+            {{1, 2, 4}, {3, 5, 6, 7}, {8}, {9}, {10}}
+        );
+};
+concurrentModification();
 
 // ************************************************************************** \\
 

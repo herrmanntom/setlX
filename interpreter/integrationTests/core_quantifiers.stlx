@@ -10,7 +10,12 @@ forallTests := procedure() {
     // first fail: c == 4, d == 4
     f := forall(c in [1 .. 5], d in [1 .. 5] | (c * d) < 16);
 
-    registerTestResult(a == om && b == om && e && c == 4 && d == 4 && !f, "forall");
+    validateForTestCase("forall")
+        .that(
+            a == om && b == om && e && c == 4 && d == 4 && !f
+        ).is(
+            true
+        );
 };
 forallTests();
 
@@ -21,9 +26,54 @@ existsTests := procedure() {
     // nothing exists
     f := exists(c in [1 .. 5], d in [1 .. 5] | c * d > 25);
 
-    registerTestResult(a == 4 && b == 4 && e && c == om && d == om && !f, "exists");
+    validateForTestCase("exists")
+        .that(
+            a == 4 && b == 4 && e && c == om && d == om && !f
+        ).is(
+            true
+        );
 };
 existsTests();
+
+recurringVariable := procedure() {
+    isRightUnique := procedure(r) {
+        return forall([x,y1] in r, [x,y2] in r | y1 == y2);
+    };
+
+    validateForTestCase("recurringVariable: isRightUnique 1")
+        .that(
+            isRightUnique({[1, 1], [2, 2]})
+        ).is(
+            true
+        );
+    validateForTestCase("recurringVariable: isRightUnique 2")
+        .that(
+            isRightUnique({[1, 1], [1, 2]})
+        ).is(
+            false
+        );
+};
+recurringVariable();
+
+nestedForall := procedure() {
+    isRightUniqueClumsy := procedure(r) {
+        return forall([x1,y1] in r | forall([x2,y2] in r | x1 == x2 => y1 == y2));
+    };
+
+    validateForTestCase("nestedForall: isRightUniqueClumsy 1")
+        .that(
+            isRightUniqueClumsy({[1, 1], [2, 2]})
+        ).is(
+            true
+        );
+    validateForTestCase("nestedForall: isRightUniqueClumsy 2")
+        .that(
+            isRightUniqueClumsy({[1, 1], [1, 2]})
+        ).is(
+            false
+        );
+};
+nestedForall();
 
 // ************************************************************************** \\
 

@@ -1,0 +1,13 @@
+//
+// Example for stat_studentCDF(x, n)
+//
+
+statStudentCDF := procedure(x, n) {
+
+	print(stat_studentCDF(x, n));
+};
+
+x := 2;
+n := 3;
+
+statStudentCDF(x, n);

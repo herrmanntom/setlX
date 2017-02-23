@@ -5,7 +5,7 @@ no fundamental difference between the type of a function and, say, the type of a
 number, as both can be assigned to variables, converted to strings, used as arguments of other
 functions, or returned from a function.  
 
-Additionaly, \setlx\ supports
+Additionally, \setlx\ supports
 \href{http://en.wikipedia.org/wiki/Closure_(computer_science)}{\emph{closures}}
 in a way similar to languages like \textsl{Scheme} \cite{sussman:75}. 
 In order to introduce closures, we will first present some simple examples.  After that, we show
@@ -18,7 +18,7 @@ After that, we discuss the notion of a closure.
 
 Using functions as arguments to other functions is something that is not often seen in
 conventional programming languages.  Figure \ref{fig:reduce.stlx} on page \pageref{fig:reduce.stlx}
-shows the implementation of the function \texttt{reduce} that takes two arguments:
+shows the implementation of the function \texttt{reduce}, that takes two arguments:
 \begin{enumerate}
 \item The first argument is a list $l$.
 \item The second argument is a binary function $f$.  This function is expected to take two
@@ -61,7 +61,7 @@ function \texttt{add} that just adds its arguments, then $\texttt{reduce}(l,
 \texttt{add})$ computes the sum of
 the elements of $l$.  Therefore, in line 12 the invocation of
 \texttt{reduce(l, add)} computes the sum of all elements of the list $l$.  Since this list 
-contains the natural number from 1 up to 36, reduce effectively computes the sum
+contains the natural numbers from 1 up to 36, \texttt{reduce} effectively computes the sum
 \\[0.2cm]
 \hspace*{1.3cm}
  $\sum\limits_{i=1}^{36} i$. 
@@ -146,14 +146,14 @@ defined via the keyword \texttt{procedure} but rather via the keyword \texttt{cl
 is that this function needs access to the variable \texttt{count} that is defined outside of the
 closure \texttt{counter}.  By defining the function \texttt{counter} as a \texttt{closure} rather
 than as a \texttt{procedure},  the function \texttt{counter} has access to the variable \texttt{count}:
-It can both read its value and can even change the value.  When the function \texttt{counter} is
+It can both read its value and even change the value.  When the function \texttt{counter} is
 defined, the variable \texttt{count} is safely tucked away together with the function
 \texttt{counter}.  Therefore, although the variable \texttt{count} goes out of scope once the
 function \texttt{createCounter} terminates, the function \texttt{counter} still has access
 to a 
 copy of this variable.  Hence, when we call the function \texttt{createCounter} in line 9, 
-the variable \texttt{ctr0} is assigned a version of the function counter where the variable
-\texttt{count} initially has the value 0.  Later, when we call the function \texttt{ctr0},
+the variable \texttt{ctr0} is assigned a version of the function \texttt{counter} where the variable
+\texttt{count} initially has the value 0.  Later, when we call the function \texttt{ctr0}
 in line 12, this counter is incremented 3 times.  Therefore, after line 12 is executed,
 the variables \texttt{u}, \texttt{v}, and \texttt{w} have the values $1$, $2$, and $3$,
 respectively. 

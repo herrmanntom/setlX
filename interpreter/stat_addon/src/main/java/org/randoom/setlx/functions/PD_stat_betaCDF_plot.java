@@ -52,7 +52,9 @@ public class PD_stat_betaCDF_plot extends PreDefinedProcedure {
 
 
         Checker.checkIfNumberAndGreaterZero(state, alpha, beta);
-        Checker.checkIfNumber(state, lowerBound, interval, upperBound);
+        Checker.checkIfNumber(state, lowerBound, upperBound);
+        Checker.checkIfUpperBoundGreaterThanLowerBound(state, lowerBound, upperBound);
+        Checker.checkIfNumberAndGreaterZero(state, interval);
         Checker.checkIfCanvas(state, canvas);
 
 

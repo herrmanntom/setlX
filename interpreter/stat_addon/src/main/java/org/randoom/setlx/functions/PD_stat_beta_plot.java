@@ -52,7 +52,9 @@ public class PD_stat_beta_plot extends PreDefinedProcedure {
 
 
         Checker.checkIfNumberAndGreaterZero(state, alpha, beta);
-        Checker.checkIfNumber(state, lowerBound, interval, upperBound);
+        Checker.checkIfNumber(state, lowerBound, upperBound);
+        Checker.checkIfUpperBoundGreaterThanLowerBound(state, lowerBound, upperBound);
+        Checker.checkIfNumberAndGreaterZero(state, interval);
         Checker.checkIfCanvas(state, canvas);
 
         double minLowerBound = lowerBound.toJDoubleValue(state);
@@ -70,7 +72,7 @@ public class PD_stat_beta_plot extends PreDefinedProcedure {
             maxUpperBound = 1;
         }
 
-        state.outWrite("This function is only defined for the interval [0,1]. The bounds have been set accordingly.");
+        state.outWrite("This function is only defined for the interval [0,1]. The bounds have been set accordingly.\n\n");
 
         BetaDistribution bd = new BetaDistribution(alpha.toJDoubleValue(state), beta.toJDoubleValue(state));
 ;

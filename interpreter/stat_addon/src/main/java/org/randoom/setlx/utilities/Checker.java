@@ -11,6 +11,17 @@ import org.randoom.setlx.types.Value;
  */
 public class Checker {
 
+    /** Checks if the given upper bound is greater than the given lower bound */
+    public static boolean checkIfUpperBoundGreaterThanLowerBound(State state, Value lowerBound, Value upperBound) throws SetlException {
+        if (upperBound.toJDoubleValue(state) > lowerBound.toJDoubleValue(state)) {
+            return true;
+        } else {
+            throw new IncompatibleTypeException(
+                    "Upper Bound is not greater than lower bound."
+            );
+        }
+    }
+
     /** Checks if given values are numbers and if not, throws an exception */
     public static boolean checkIfNumber(State state, Value... values) throws IncompatibleTypeException {
         for (Value value : values) {

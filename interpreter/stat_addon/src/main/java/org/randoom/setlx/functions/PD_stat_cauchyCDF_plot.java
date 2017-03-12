@@ -50,7 +50,9 @@ public class PD_stat_cauchyCDF_plot extends PreDefinedProcedure {
         final Value interval   = args.get(INTERVAL);
         final Value upperBound = args.get(UPPER_BOUND);
 
-        Checker.checkIfNumber(state, t, lowerBound, interval, upperBound);
+        Checker.checkIfNumber(state, t, lowerBound, upperBound);
+        Checker.checkIfUpperBoundGreaterThanLowerBound(state, lowerBound, upperBound);
+        Checker.checkIfNumberAndGreaterZero(state, interval);
         Checker.checkIfNumberAndGreaterZero(state, s);
         Checker.checkIfCanvas(state, canvas);
 

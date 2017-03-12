@@ -5,6 +5,7 @@ import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.parameters.ParameterDefinition;
 import org.randoom.setlx.plot.types.Canvas;
 import org.randoom.setlx.plot.utilities.ConnectJFreeChart;
+import org.randoom.setlx.statements.Check;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.Checker;
 import org.randoom.setlx.utilities.Defaults;
@@ -50,7 +51,9 @@ public class PD_stat_cauchy_plot extends PreDefinedProcedure {
         final Value interval   = args.get(INTERVAL);
         final Value upperBound = args.get(UPPER_BOUND);
 
-        Checker.checkIfNumber(state, t, lowerBound, interval, upperBound);
+        Checker.checkIfNumber(state, t, lowerBound, upperBound);
+        Checker.checkIfUpperBoundGreaterThanLowerBound(state, lowerBound, upperBound);
+        Checker.checkIfNumberAndGreaterZero(state, interval);
         Checker.checkIfNumberAndGreaterZero(state, s);
         Checker.checkIfCanvas(state, canvas);
 

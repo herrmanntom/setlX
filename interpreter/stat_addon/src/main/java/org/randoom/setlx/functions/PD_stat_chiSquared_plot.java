@@ -47,6 +47,9 @@ public class PD_stat_chiSquared_plot extends PreDefinedProcedure {
         final Value interval   = args.get(INTERVAL);
         final Value upperBound = args.get(UPPER_BOUND);
 
+        Checker.checkIfNumber(state, lowerBound, upperBound);
+        Checker.checkIfUpperBoundGreaterThanLowerBound(state, lowerBound, upperBound);
+        Checker.checkIfNumberAndGreaterZero(state, interval);
         Checker.checkIfNaturalNumber(state, k);
         Checker.checkIfCanvas(state, canvas);
 

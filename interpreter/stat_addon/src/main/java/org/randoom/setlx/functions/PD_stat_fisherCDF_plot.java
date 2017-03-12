@@ -50,7 +50,9 @@ public class PD_stat_fisherCDF_plot extends PreDefinedProcedure {
         final Value interval   = args.get(INTERVAL);
         final Value upperBound = args.get(UPPER_BOUND);
 
-        Checker.checkIfNumber(state, lowerBound, interval, upperBound);
+        Checker.checkIfNumber(state, lowerBound, upperBound);
+        Checker.checkIfUpperBoundGreaterThanLowerBound(state, lowerBound, upperBound);
+        Checker.checkIfNumberAndGreaterZero(state, interval);
         Checker.checkIfNaturalNumberAndGreaterZero(state, a, b);
         Checker.checkIfCanvas(state, canvas);
 

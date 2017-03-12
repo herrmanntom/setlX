@@ -47,7 +47,9 @@ public class PD_stat_studentCDF_plot extends PreDefinedProcedure {
         final Value interval   = args.get(INTERVAL);
         final Value upperBound = args.get(UPPER_BOUND);
 
-        Checker.checkIfNumber(state, lowerBound, interval, upperBound);
+        Checker.checkIfNumber(state, lowerBound, upperBound);
+        Checker.checkIfUpperBoundGreaterThanLowerBound(state, lowerBound, upperBound);
+        Checker.checkIfNumberAndGreaterZero(state, interval);
         Checker.checkIfNaturalNumberAndGreaterZero(state, nu);
         Checker.checkIfCanvas(state, canvas);
 

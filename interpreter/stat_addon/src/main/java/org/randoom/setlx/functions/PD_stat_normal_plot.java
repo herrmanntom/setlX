@@ -50,7 +50,9 @@ public class PD_stat_normal_plot extends PreDefinedProcedure {
         final Value interval   = args.get(INTERVAL);
         final Value upperBound = args.get(UPPER_BOUND);
 
-        Checker.checkIfNumber(state, mu, lowerBound, interval, upperBound);
+        Checker.checkIfNumber(state, mu, lowerBound, upperBound);
+        Checker.checkIfUpperBoundGreaterThanLowerBound(state, lowerBound, upperBound);
+        Checker.checkIfNumberAndGreaterZero(state, interval);
         Checker.checkIfNumberAndNotZero(state, "sigma", sigma);
         Checker.checkIfCanvas(state, canvas);
 

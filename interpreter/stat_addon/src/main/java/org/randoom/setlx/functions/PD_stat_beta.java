@@ -39,6 +39,9 @@ public class PD_stat_beta extends PreDefinedProcedure {
         final Value alpha   = args.get(ALPHA);
         final Value beta    = args.get(BETA);
 
+
+        Checker.checkIfNumberAndGreaterZero(state, alpha, beta);
+
         if (alpha.toJDoubleValue(state) < 1 || beta.toJDoubleValue(state) < 1) {
             if (x.toJDoubleValue(state) == 0 || x.toJDoubleValue(state) == 1) {
                 throw new IncompatibleTypeException("The beta distribution is not defined for x == 0 and x == 1 if one of the parameters is less than 1.");
@@ -46,8 +49,6 @@ public class PD_stat_beta extends PreDefinedProcedure {
         } else {
             Checker.checkIfNumber(state, x);
         }
-
-        Checker.checkIfNumberAndGreaterZero(state, alpha, beta);
 
         BetaDistribution bd = new BetaDistribution(alpha.toJDoubleValue(state), beta.toJDoubleValue(state));
         return SetlDouble.valueOf(bd.density(x.toJDoubleValue(state)));

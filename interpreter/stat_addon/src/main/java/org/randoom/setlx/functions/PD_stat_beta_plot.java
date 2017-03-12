@@ -24,9 +24,9 @@ public class PD_stat_beta_plot extends PreDefinedProcedure {
     private final static ParameterDefinition ALPHA       = createParameter("alpha");
     private final static ParameterDefinition BETA        = createParameter("beta");
     private final static ParameterDefinition CANVAS      = createParameter("canvas");
-    private final static ParameterDefinition LOWER_BOUND = createOptionalParameter("lowerBound", Defaults.createSetlDoubleValue(0.0000001));
+    private final static ParameterDefinition LOWER_BOUND = createOptionalParameter("lowerBound", Defaults.createSetlDoubleValue(0));
     private final static ParameterDefinition INTERVAL    = createOptionalParameter("interval", Defaults.getDefaultPlotInterval());
-    private final static ParameterDefinition UPPER_BOUND = createOptionalParameter("upperBound", Defaults.createSetlDoubleValue(1.1));
+    private final static ParameterDefinition UPPER_BOUND = createOptionalParameter("upperBound", Defaults.createSetlDoubleValue(1));
 
     /** Definition of the PreDefinedProcedure 'stat_beta_plot' */
     public final static PreDefinedProcedure DEFINITION = new PD_stat_beta_plot();
@@ -55,7 +55,22 @@ public class PD_stat_beta_plot extends PreDefinedProcedure {
         Checker.checkIfNumber(state, lowerBound, interval, upperBound);
         Checker.checkIfCanvas(state, canvas);
 
+        double minLowerBound = lowerBound.toJDoubleValue(state);
+        double maxUpperBound = upperBound.toJDoubleValue(state);
 
+        // The function is only defined for Interval = [0,1]. Therefore the bounds will be set to [0,1], if the bounds are x1 < 0 or x2 > 1.
+        if (minLowerBound < 0 || minLowerBound > 1) {
+            minLowerBound = 0;
+            // Since the distribution is not defined for x == 0 and x == 1 if one of the parameters is less than 1, the lower bound is set to a value > 0 here.
+            if (alpha.toJDoubleValue(state) < 1 || beta.toJDoubleValue(state) < 1) {
+                minLowerBound = interval.toJDoubleValue(state);
+            }
+        }
+        if (maxUpperBound > 1 || maxUpperBound < 0) {
+            maxUpperBound = 1;
+        }
+
+        state.outWrite("This function is only defined for the interval [0,1]. The bounds have been set accordingly.");
 
         BetaDistribution bd = new BetaDistribution(alpha.toJDoubleValue(state), beta.toJDoubleValue(state));
 ;
@@ -63,7 +78,7 @@ public class PD_stat_beta_plot extends PreDefinedProcedure {
          *  It is filled by iteratively increasing the variable 'counter' (x), and calculating the density for every new value of 'counter' (y).
          */
         List<List<Double>> valueList = new ArrayList<>();
-        for (double counter = lowerBound.toJDoubleValue(state); counter < upperBound.toJDoubleValue(state); counter += interval.toJDoubleValue(state)) {
+        for (double counter = minLowerBound; counter < maxUpperBound; counter += interval.toJDoubleValue(state)) {
             valueList.add(new ArrayList<Double>(Arrays.asList(counter, bd.density(counter))));
         }
 

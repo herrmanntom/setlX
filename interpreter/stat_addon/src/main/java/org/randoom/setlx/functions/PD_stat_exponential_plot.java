@@ -1,6 +1,6 @@
 package org.randoom.setlx.functions;
 
-import org.apache.commons.math3.distribution.NormalDistribution;
+import org.apache.commons.math3.distribution.ExponentialDistribution;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.parameters.ParameterDefinition;
 import org.randoom.setlx.plot.types.Canvas;
@@ -16,25 +16,23 @@ import java.util.HashMap;
 import java.util.List;
 
 /**
- * stat_normalCDF_plot(mu, sigma, canvas):
- *                  Plots the cumulative distribution function for normal distributions with given mean 'mu' and standard deviation 'sigma' on a given canvas.
+ * stat_exponential_plot(l, canvas):
+ *                  Plots the probability density function for exponential distributions with given parameter 'l' on a given canvas.
  */
-public class PD_stat_normalCDF_plot extends PreDefinedProcedure {
+public class PD_stat_exponential_plot extends PreDefinedProcedure {
 
-    private final static ParameterDefinition MU          = createParameter("mu");
-    private final static ParameterDefinition SIGMA       = createParameter("sigma");
+    private final static ParameterDefinition L           = createParameter("l");
     private final static ParameterDefinition CANVAS      = createParameter("canvas");
-    private final static ParameterDefinition LOWER_BOUND = createOptionalParameter("lowerBound", Defaults.createSetlDoubleValue(-5.0));
+    private final static ParameterDefinition LOWER_BOUND = createOptionalParameter("lowerBound", Defaults.createSetlDoubleValue(0.0));
     private final static ParameterDefinition INTERVAL    = createOptionalParameter("interval", Defaults.getDefaultPlotInterval());
     private final static ParameterDefinition UPPER_BOUND = createOptionalParameter("upperBound", Defaults.createSetlDoubleValue(5.0));
 
-    /** Definition of the PreDefinedProcedure 'stat_normalCDF_plot' */
-    public final static PreDefinedProcedure DEFINITION = new PD_stat_normalCDF_plot();
+    /** Definition of the PreDefinedProcedure 'stat_chiSquared_plot' */
+    public final static PreDefinedProcedure DEFINITION = new PD_stat_exponential_plot();
 
-    private PD_stat_normalCDF_plot() {
+    private PD_stat_exponential_plot() {
         super();
-        addParameter(MU);
-        addParameter(SIGMA);
+        addParameter(L);
         addParameter(CANVAS);
         addParameter(LOWER_BOUND);
         addParameter(INTERVAL);
@@ -43,29 +41,27 @@ public class PD_stat_normalCDF_plot extends PreDefinedProcedure {
 
     @Override
     public Value execute(State state, HashMap<ParameterDefinition, Value> args) throws SetlException {
-        final Value mu         = args.get(MU);
-        final Value sigma      = args.get(SIGMA);
+        final Value l          = args.get(L);
         final Value canvas     = args.get(CANVAS);
         final Value lowerBound = args.get(LOWER_BOUND);
         final Value interval   = args.get(INTERVAL);
         final Value upperBound = args.get(UPPER_BOUND);
 
-        Checker.checkIfNumber(state, mu, lowerBound, upperBound);
+        Checker.checkIfNumber(state, lowerBound, upperBound);
         Checker.checkIfUpperBoundGreaterThanLowerBound(state, lowerBound, upperBound);
-        Checker.checkIfNumberAndGreaterZero(state, interval);
-        Checker.checkIfNumberAndNotZero(state, "sigma", sigma);
+        Checker.checkIfNumberAndGreaterZero(state, l, interval);
         Checker.checkIfCanvas(state, canvas);
 
-        NormalDistribution nd = new NormalDistribution(mu.toJDoubleValue(state), sigma.toJDoubleValue(state));
+        ExponentialDistribution ed = new ExponentialDistribution(l.toJDoubleValue(state));
 
         /** The valueList is the list of every pair of coordinates [x,y] that the graph consists of.
-         *  It is filled by iteratively increasing the variable 'counter' (x), and calculating the cumulative probability for every new value of 'counter' (y).
+         *  It is filled by iteratively increasing the variable 'counter' (x), and calculating the density for every new value of 'counter' (y).
          */
         List<List<Double>> valueList = new ArrayList<>();
         for (double counter = lowerBound.toJDoubleValue(state); counter < upperBound.toJDoubleValue(state); counter += interval.toJDoubleValue(state)) {
-            valueList.add(new ArrayList<Double>(Arrays.asList(counter, nd.cumulativeProbability(counter))));
+            valueList.add(new ArrayList<Double>(Arrays.asList(counter, ed.density(counter))));
         }
 
-        return ConnectJFreeChart.getInstance().addListGraph((Canvas) canvas, valueList, "Cumulative Distribution Function (mean: " + mu.toString() + ", standard deviation: " + sigma.toString(), Defaults.DEFAULT_COLOR_SCHEME, false);
+        return ConnectJFreeChart.getInstance().addListGraph((Canvas) canvas, valueList, "Probability Density Function (l: " + l.toString() + ")", Defaults.DEFAULT_COLOR_SCHEME, false);
     }
 }

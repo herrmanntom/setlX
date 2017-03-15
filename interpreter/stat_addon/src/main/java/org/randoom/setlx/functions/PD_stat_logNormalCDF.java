@@ -1,6 +1,6 @@
 package org.randoom.setlx.functions;
 
-import org.apache.commons.math3.distribution.NormalDistribution;
+import org.apache.commons.math3.distribution.LogNormalDistribution;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.parameters.ParameterDefinition;
 import org.randoom.setlx.types.SetlDouble;
@@ -11,19 +11,19 @@ import org.randoom.setlx.utilities.State;
 import java.util.HashMap;
 
 /**
- * stat_normalCDF(x, mu, sigma):
- *                  Computes the cumulative normal distribution with mean 'mu' and standard deviation 'sigma'.
+ * stat_logNormalCDF(x, mu, sigma):
+ *                  Computes the cumulative log-normal distribution with mean 'mu' and standard deviation 'sigma'.
  */
-public class PD_stat_normalCDF extends PreDefinedProcedure {
+public class PD_stat_logNormalCDF extends PreDefinedProcedure {
 
     private final static ParameterDefinition X     = createParameter("x");
     private final static ParameterDefinition MU    = createParameter("mu");
     private final static ParameterDefinition SIGMA = createParameter("sigma");
 
-    /** Definition of the PreDefinedProcedure 'stat_normalCDF' */
-    public static final PreDefinedProcedure DEFINITION = new PD_stat_normalCDF();
+    /** Definition of the PreDefinedProcedure 'stat_logNormalCDF' */
+    public static final PreDefinedProcedure DEFINITION = new PD_stat_logNormalCDF();
 
-    private PD_stat_normalCDF() {
+    private PD_stat_logNormalCDF() {
         super();
         addParameter(X);
         addParameter(MU);
@@ -37,9 +37,9 @@ public class PD_stat_normalCDF extends PreDefinedProcedure {
         final Value sigma = args.get(SIGMA);
 
         Checker.checkIfNumber(state, x, mu);
-        Checker.checkIfNumberAndNotZero(state, "sigma", sigma);
+        Checker.checkIfNumberAndGreaterZero(state, sigma);
 
-        NormalDistribution nd = new NormalDistribution(mu.toJDoubleValue(state), sigma.toJDoubleValue(state));
-        return SetlDouble.valueOf(nd.cumulativeProbability(x.toJDoubleValue(state)));
+        LogNormalDistribution lnd = new LogNormalDistribution(mu.toJDoubleValue(state), Math.pow(sigma.toJDoubleValue(state), 2));
+        return SetlDouble.valueOf(lnd.cumulativeProbability(x.toJDoubleValue(state)));
     }
 }

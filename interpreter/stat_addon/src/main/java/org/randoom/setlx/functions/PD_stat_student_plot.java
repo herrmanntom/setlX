@@ -18,7 +18,7 @@ import java.util.List;
 
 /**
  * stat_student_plot(nu, canvas):
- *                  Plots the probability density function for student distributions with with 'nu' degrees of freedom on a given canvas.
+ *                  Plots the probability density function for student distribution with 'nu' degrees of freedom on a given canvas.
  */
 public class PD_stat_student_plot extends PreDefinedProcedure {
 

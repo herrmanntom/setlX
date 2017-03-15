@@ -23,7 +23,7 @@ public class PD_stat_beta extends PreDefinedProcedure {
     private final static ParameterDefinition ALPHA   = createParameter("alpha");
     private final static ParameterDefinition BETA    = createParameter("beta");
 
-    /** Definition of the PreDefinedProcedure 'stat_normal' */
+    /** Definition of the PreDefinedProcedure 'stat_beta' */
     public final static PreDefinedProcedure DEFINITION = new PD_stat_beta();
 
     private PD_stat_beta() {

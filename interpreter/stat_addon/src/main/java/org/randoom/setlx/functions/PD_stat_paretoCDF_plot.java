@@ -16,7 +16,7 @@ import java.util.HashMap;
 import java.util.List;
 
 /**
- * stat_pareto_plot(k, canvas):
+ * stat_paretoCDF_plot(scale, shape, canvas):
  *      Plots the paretoCDF distribution with scale and shape on a given canvas.
  */
 public class PD_stat_paretoCDF_plot extends PreDefinedProcedure {
@@ -60,7 +60,7 @@ public class PD_stat_paretoCDF_plot extends PreDefinedProcedure {
 
 
         /** The valueList is the list of every pair of coordinates [x,y] that the graph consists of.
-         *  It is filled by iteratively increasing the variable 'counter' (x), and calculating the density for every new value of 'counter' (y).
+         *  It is filled by iteratively increasing the variable 'counter' (x), and calculating the cumulative probability for every new value of 'counter' (y).
          */
         List<List<Double>> valueList = new ArrayList<>();
         for (double counter = lowerBound.toJDoubleValue(state); counter < upperBound.toJDoubleValue(state); counter += interval.toJDoubleValue(state)) {

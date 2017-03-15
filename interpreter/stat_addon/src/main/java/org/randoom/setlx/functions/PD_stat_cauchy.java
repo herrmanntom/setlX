@@ -11,7 +11,7 @@ import org.randoom.setlx.utilities.State;
 import java.util.HashMap;
 
 /**
- * stat_normal(x, t, s):
+ * stat_cauchy(x, t, s):
  *                  Computes the cauchy distribution with parameters 't' and 's'.
  */
 public class PD_stat_cauchy extends PreDefinedProcedure {

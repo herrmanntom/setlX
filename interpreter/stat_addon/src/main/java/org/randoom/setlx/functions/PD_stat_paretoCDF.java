@@ -11,7 +11,7 @@ import org.randoom.setlx.utilities.State;
 import java.util.HashMap;
 
 /**
- * stat_pareto(x, scale, shape):
+ * stat_paretoCDF(x, scale, shape):
  *      Computes the paretoCDF distribution with scale and shape.
  */
 public class PD_stat_paretoCDF extends PreDefinedProcedure {

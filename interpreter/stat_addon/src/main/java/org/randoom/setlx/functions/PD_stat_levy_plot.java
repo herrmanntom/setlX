@@ -1,6 +1,6 @@
 package org.randoom.setlx.functions;
 
-import org.apache.commons.math3.distribution.ParetoDistribution;
+import org.apache.commons.math3.distribution.LevyDistribution;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.parameters.ParameterDefinition;
 import org.randoom.setlx.plot.types.Canvas;
@@ -16,25 +16,25 @@ import java.util.HashMap;
 import java.util.List;
 
 /**
- * stat_pareto_plot(scale, shape, canvas):
- *      Plots the probability density function for pareto distribution with scale and shape on a given canvas.
+ * stat_levy_plot(mu, scale, canvas):
+ *      Plots the probability density function for levy distribution with mu and scale on a given canvas.
  */
-public class PD_stat_pareto_plot extends PreDefinedProcedure {
+public class PD_stat_levy_plot extends PreDefinedProcedure {
 
+    private final static ParameterDefinition MU          = createParameter("mu");
     private final static ParameterDefinition SCALE       = createParameter("scale");
-    private final static ParameterDefinition SHAPE       = createParameter("shape");
     private final static ParameterDefinition CANVAS      = createParameter("canvas");
     private final static ParameterDefinition LOWER_BOUND = createOptionalParameter("lowerBound", Defaults.createSetlDoubleValue(0.0));
     private final static ParameterDefinition INTERVAL    = createOptionalParameter("interval", Defaults.getDefaultPlotInterval());
     private final static ParameterDefinition UPPER_BOUND = createOptionalParameter("upperBound", Defaults.createSetlDoubleValue(10.0));
 
-    /** Definition of the PreDefinedProcedure 'stat_pareto_plot' */
-    public final static PreDefinedProcedure DEFINITION = new PD_stat_pareto_plot();
+    /** Definition of the PreDefinedProcedure 'stat_levy_plot' */
+    public final static PreDefinedProcedure DEFINITION = new PD_stat_levy_plot();
 
-    private PD_stat_pareto_plot() {
+    private PD_stat_levy_plot() {
         super();
+        addParameter(MU);
         addParameter(SCALE);
-        addParameter(SHAPE);
         addParameter(CANVAS);
         addParameter(LOWER_BOUND);
         addParameter(INTERVAL);
@@ -43,20 +43,20 @@ public class PD_stat_pareto_plot extends PreDefinedProcedure {
 
     @Override
     public Value execute(State state, HashMap<ParameterDefinition, Value> args) throws SetlException {
+        final Value mu         = args.get(MU);
         final Value scale      = args.get(SCALE);
-        final Value shape      = args.get(SHAPE);
         final Value canvas     = args.get(CANVAS);
         final Value lowerBound = args.get(LOWER_BOUND);
         final Value interval   = args.get(INTERVAL);
         final Value upperBound = args.get(UPPER_BOUND);
 
-        Checker.checkIfNumber(state, lowerBound, upperBound);
+        Checker.checkIfNumber(state, lowerBound, upperBound, mu);
         Checker.checkIfUpperBoundGreaterThanLowerBound(state, lowerBound, upperBound);
         Checker.checkIfNumberAndGreaterZero(state, interval);
-        Checker.checkIfNumberAndGreaterZero(state, scale, shape);
+        Checker.checkIfNumberAndGreaterZero(state, scale);
         Checker.checkIfCanvas(state, canvas);
 
-        ParetoDistribution pd = new ParetoDistribution(scale.toJDoubleValue(state), shape.toJDoubleValue(state));
+        LevyDistribution ld = new LevyDistribution(mu.toJDoubleValue(state), scale.toJDoubleValue(state));
 
 
         /** The valueList is the list of every pair of coordinates [x,y] that the graph consists of.
@@ -64,9 +64,9 @@ public class PD_stat_pareto_plot extends PreDefinedProcedure {
          */
         List<List<Double>> valueList = new ArrayList<>();
         for (double counter = lowerBound.toJDoubleValue(state); counter < upperBound.toJDoubleValue(state); counter += interval.toJDoubleValue(state)) {
-            valueList.add(new ArrayList<Double>(Arrays.asList(counter, pd.density(counter))));
+            valueList.add(new ArrayList<Double>(Arrays.asList(counter, ld.density(counter))));
         }
 
-        return ConnectJFreeChart.getInstance().addListGraph((Canvas) canvas, valueList, "Probability Density Function (shape: " + shape.toString() + ", scale: " + scale.toString(), Defaults.DEFAULT_COLOR_SCHEME, false);
+        return ConnectJFreeChart.getInstance().addListGraph((Canvas) canvas, valueList, "Probability Density Function (mu: " + mu.toString() + ", scale: " + scale.toString(), Defaults.DEFAULT_COLOR_SCHEME, false);
     }
 }

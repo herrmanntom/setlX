@@ -29,7 +29,7 @@ public class PD_stat_weibull_plot extends PreDefinedProcedure {
     private final static ParameterDefinition INTERVAL    = createOptionalParameter("interval", Defaults.getDefaultPlotInterval());
     private final static ParameterDefinition UPPER_BOUND = createOptionalParameter("upperBound", Defaults.createSetlDoubleValue(5.0));
 
-    /** Definition of the PreDefinedProcedure 'stat_weibullCDF_plot' */
+    /** Definition of the PreDefinedProcedure 'stat_weibull_plot' */
     public final static PreDefinedProcedure DEFINITION = new PD_stat_weibull_plot();
 
     private PD_stat_weibull_plot() {

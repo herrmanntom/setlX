@@ -18,7 +18,7 @@ import java.util.List;
 /**
  * Created on 1/23/17.
  * stat_weibullCDF_plot(shape, scale, canvas):
- *      Plots the probability density function for student distributions with with 'nu' degrees of freedom on a given canvas.
+ *      Plots the probability density function for weibull CDF distribution with scale and shape on a given canvas.
  */
 public class PD_stat_weibullCDF_plot extends PreDefinedProcedure {
 

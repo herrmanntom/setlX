@@ -17,7 +17,7 @@ import java.util.List;
 
 /**
  * stat_studentCDF_plot(nu, canvas):
- *                  Plots the cumulative distribution function for student distributions with 'nu' degrees of freedom on a given canvas.
+ *                  Plots the cumulative distribution function for student distribution with 'nu' degrees of freedom on a given canvas.
  */
 public class PD_stat_studentCDF_plot extends PreDefinedProcedure {
 

@@ -21,7 +21,7 @@ public class PD_stat_weibullCDF extends PreDefinedProcedure {
     private final static ParameterDefinition SHAPE = createParameter("shape");
     private final static ParameterDefinition SCALE = createParameter("scale");
 
-    /** Definition of the PreDefinedProcedure 'stat_weibull' */
+    /** Definition of the PreDefinedProcedure 'stat_weibullCDF' */
     public final static PreDefinedProcedure DEFINITION = new PD_stat_weibullCDF();
 
     private PD_stat_weibullCDF() {

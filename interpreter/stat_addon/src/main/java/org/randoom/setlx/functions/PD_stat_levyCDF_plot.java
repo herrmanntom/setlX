@@ -1,7 +1,6 @@
 package org.randoom.setlx.functions;
 
-import org.apache.commons.math3.distribution.NormalDistribution;
-import org.apache.commons.math3.distribution.TDistribution;
+import org.apache.commons.math3.distribution.LevyDistribution;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.parameters.ParameterDefinition;
 import org.randoom.setlx.plot.types.Canvas;
@@ -17,23 +16,25 @@ import java.util.HashMap;
 import java.util.List;
 
 /**
- * stat_student_plot(nu, canvas):
- *                  Plots the probability density function for student distribution with 'nu' degrees of freedom on a given canvas.
+ * stat_levyCDF_plot(mu, scale, canvas):
+ *      Plots the levyCDF distribution with mu and scale on a given canvas.
  */
-public class PD_stat_student_plot extends PreDefinedProcedure {
+public class PD_stat_levyCDF_plot extends PreDefinedProcedure {
 
-    private final static ParameterDefinition NU          = createParameter("nu");
+    private final static ParameterDefinition MU          = createParameter("mu");
+    private final static ParameterDefinition SCALE       = createParameter("scale");
     private final static ParameterDefinition CANVAS      = createParameter("canvas");
-    private final static ParameterDefinition LOWER_BOUND = createOptionalParameter("lowerBound", Defaults.createSetlDoubleValue(-5.0));
+    private final static ParameterDefinition LOWER_BOUND = createOptionalParameter("lowerBound", Defaults.createSetlDoubleValue(0.0));
     private final static ParameterDefinition INTERVAL    = createOptionalParameter("interval", Defaults.getDefaultPlotInterval());
-    private final static ParameterDefinition UPPER_BOUND = createOptionalParameter("upperBound", Defaults.createSetlDoubleValue(5.0));
+    private final static ParameterDefinition UPPER_BOUND = createOptionalParameter("upperBound", Defaults.createSetlDoubleValue(10.0));
 
-    /** Definition of the PreDefinedProcedure 'stat_student_plot' */
-    public final static PreDefinedProcedure DEFINITION = new PD_stat_student_plot();
+    /** Definition of the PreDefinedProcedure 'stat_levyCDF_plot' */
+    public final static PreDefinedProcedure DEFINITION = new PD_stat_levyCDF_plot();
 
-    private PD_stat_student_plot() {
+    private PD_stat_levyCDF_plot() {
         super();
-        addParameter(NU);
+        addParameter(MU);
+        addParameter(SCALE);
         addParameter(CANVAS);
         addParameter(LOWER_BOUND);
         addParameter(INTERVAL);
@@ -42,28 +43,30 @@ public class PD_stat_student_plot extends PreDefinedProcedure {
 
     @Override
     public Value execute(State state, HashMap<ParameterDefinition, Value> args) throws SetlException {
-        final Value nu         = args.get(NU);
+        final Value mu         = args.get(MU);
+        final Value scale      = args.get(SCALE);
         final Value canvas     = args.get(CANVAS);
         final Value lowerBound = args.get(LOWER_BOUND);
         final Value interval   = args.get(INTERVAL);
         final Value upperBound = args.get(UPPER_BOUND);
 
-        Checker.checkIfNumber(state, nu, lowerBound, upperBound);
+        Checker.checkIfNumber(state, lowerBound, upperBound, mu);
         Checker.checkIfUpperBoundGreaterThanLowerBound(state, lowerBound, upperBound);
         Checker.checkIfNumberAndGreaterZero(state, interval);
-        Checker.checkIfNaturalNumberAndGreaterZero(state, nu);
+        Checker.checkIfNumberAndGreaterZero(state, scale);
         Checker.checkIfCanvas(state, canvas);
 
-        TDistribution td = new TDistribution(nu.toJDoubleValue(state));
+        LevyDistribution ld = new LevyDistribution(mu.toJDoubleValue(state), scale.toJDoubleValue(state));
+
 
         /** The valueList is the list of every pair of coordinates [x,y] that the graph consists of.
-         *  It is filled by iteratively increasing the variable 'counter' (x), and calculating the density for every new value of 'counter' (y).
+         *  It is filled by iteratively increasing the variable 'counter' (x), and calculating the cumulative probability for every new value of 'counter' (y).
          */
         List<List<Double>> valueList = new ArrayList<>();
         for (double counter = lowerBound.toJDoubleValue(state); counter < upperBound.toJDoubleValue(state); counter += interval.toJDoubleValue(state)) {
-            valueList.add(new ArrayList<Double>(Arrays.asList(counter, td.density(counter))));
+            valueList.add(new ArrayList<Double>(Arrays.asList(counter, ld.cumulativeProbability(counter))));
         }
 
-        return ConnectJFreeChart.getInstance().addListGraph((Canvas) canvas, valueList, "Probability Density Function (" + nu.toString() + " degree(s) of freedom)", Defaults.DEFAULT_COLOR_SCHEME, false);
+        return ConnectJFreeChart.getInstance().addListGraph((Canvas) canvas, valueList, "Cumulative Distribution Function (mu: " + mu.toString() + ", scale: " + scale.toString(), Defaults.DEFAULT_COLOR_SCHEME, false);
     }
 }

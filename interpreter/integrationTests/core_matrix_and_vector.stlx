@@ -89,6 +89,12 @@ validateForTestCase("la_eigenVectors(a)")
     ).is(
         [<<-0.8245648401323937 0.5657674649689923>>, <<-0.42222915041526043 -0.9230523142501933>>]
     );
+validateForTestCase("la_hadamard(a, b)")
+    .that(
+        la_hadamard(a, b)
+    ).is(
+        << <<5 12>> <<21 32>> >>
+    );
 
 validateForTestCase("a[1]")
     .that(

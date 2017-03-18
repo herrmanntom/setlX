@@ -31,6 +31,19 @@ sortingWithSameNumberOfDifferentTypes := procedure() {
 };
 sortingWithSameNumberOfDifferentTypes();
 
+setWithDifferentNumberTypes := procedure() {
+    set := {1,1.0,2,2.0,3,4.0,31/30};
+
+    validateForTestCase("setWithDifferentNumberTypes")
+        .that(
+            str(set)
+        ).is(
+            "{1, 1.0, 31/30, 2, 2.0, 3, 4.0}"
+        );
+};
+setWithDifferentNumberTypes();
+
+
 // ************************************************************************** \\
 
 printTestResult();

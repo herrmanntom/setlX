@@ -14,15 +14,13 @@ import org.randoom.setlx.utilities.TermUtilities;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.TreeSet;
 
-import static org.randoom.setlx.types.NumberValue.NUMMERICAL_COMPARATOR;
+import static org.randoom.setlx.types.NumberValue.NUMERICAL_COMPARATOR;
 
 /**
  * This class implements a list of arbitrary SetlX values.
@@ -555,7 +553,7 @@ public class SetlList extends IndexedCollectionValue {
         final Collection<SetlList> permutationsRest = permutations(state, values.subList(1, valuesSize));
         final Collection<SetlList> permutations;
         if (valuesSize == nPermutation || valuesSize % 3 == 0) {
-            permutations = new TreeSet<>();
+            permutations = new TreeSet<>(NUMERICAL_COMPARATOR);
         } else {
             permutations = new ArrayList<>(permutationsRest.size() * (permutationsRest.iterator().next().size() + 1));
         }
@@ -677,7 +675,7 @@ public class SetlList extends IndexedCollectionValue {
     @Override
     public SetlList sort(final State state) {
         final ArrayList<Value> list = new ArrayList<>(this.list);
-        Collections.sort(list, NUMMERICAL_COMPARATOR);
+        Collections.sort(list, NUMERICAL_COMPARATOR);
         return new SetlList(list);
     }
 

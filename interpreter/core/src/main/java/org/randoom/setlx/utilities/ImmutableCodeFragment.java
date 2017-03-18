@@ -15,7 +15,7 @@ public abstract class ImmutableCodeFragment extends CodeFragment {
 
     private Integer hashCode = null;
 
-    public final static void clearFragmentCache() {
+    public static void clearFragmentCache() {
         synchronized (UNIFIED_CODE_FRAGMENTS) {
             UNIFIED_CODE_FRAGMENTS.clear();
         }

@@ -13,7 +13,7 @@ import java.util.Comparator;
  */
 public abstract class NumberValue extends ImmutableValue {
 
-    public static final Comparator<Value> NUMMERICAL_COMPARATOR = new NumericalComparator();
+    public static final Comparator<Value> NUMERICAL_COMPARATOR = new NumericalComparator();
 
     /* type checks (sort of Boolean operation) */
 

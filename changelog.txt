@@ -3,6 +3,7 @@ Changes (* notice | + feature added, replaced or improved | - feature removed | 
 
 ---v2.6.1--- 2017-mm-dd
  + add la_hadamard(matrixA, matrixB) procedure
+ # fix sorting with different number types: sort([1, 3, 2.0, 4.0])
 
 ---v2.6.0--- 2017-01-08
  + multiplication of matrix and vector will result in a vector instead of a matrix

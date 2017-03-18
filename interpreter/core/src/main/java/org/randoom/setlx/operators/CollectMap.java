@@ -30,7 +30,7 @@ public class CollectMap extends AUnaryPostfixOperator {
      * @param argument    Parameter to the call.
      */
     public CollectMap(OperatorExpression argument) {
-        this.argument = unify(argument);
+        this.argument = argument;
     }
 
     @Override

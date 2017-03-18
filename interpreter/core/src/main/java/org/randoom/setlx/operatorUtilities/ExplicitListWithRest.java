@@ -40,7 +40,7 @@ public class ExplicitListWithRest extends ExplicitList {
      */
     public ExplicitListWithRest(final FragmentList<OperatorExpression> exprList, final OperatorExpression rest) {
         super(exprList);
-        this.rest = unify(rest);
+        this.rest = rest;
     }
 
     @Override
@@ -143,7 +143,7 @@ public class ExplicitListWithRest extends ExplicitList {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
             final SetlList exprs = (SetlList) term.firstMember();
-            final FragmentList<OperatorExpression> exprList = new FragmentList<OperatorExpression>(exprs.size());
+            final FragmentList<OperatorExpression> exprList = new FragmentList<>(exprs.size());
             for (final Value v : exprs) {
                 exprList.add(OperatorExpression.createFromTerm(state, v));
             }

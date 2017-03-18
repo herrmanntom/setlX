@@ -33,7 +33,7 @@ public class LambdaProcedure extends Procedure {
      * @param expr       lambda-expression.
      */
     public LambdaProcedure(final ParameterList parameters, final OperatorExpression expr) {
-        this(parameters, new Block(new Return(ImmutableCodeFragment.unify(expr))), expr);
+        this(parameters, new Block(new Return(expr)), expr);
     }
     private LambdaProcedure(
         final ParameterList      parameters,
@@ -41,7 +41,7 @@ public class LambdaProcedure extends Procedure {
         final OperatorExpression expr
     ) {
         super(parameters, statements);
-        this.expr = ImmutableCodeFragment.unify(expr);
+        this.expr = expr;
     }
 
     @Override

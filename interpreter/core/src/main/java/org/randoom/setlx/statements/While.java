@@ -39,7 +39,7 @@ public class While extends Statement {
      * @param statements Statements to execute inside the loop.
      */
     public While(final Condition condition, final Block statements) {
-        this.condition  = unify(condition);
+        this.condition  = condition;
         this.statements = statements;
     }
 

@@ -58,7 +58,7 @@ public class OperatorExpression extends Expression {
      * @param operators Operator stack to evaluate.
      */
     public OperatorExpression(FragmentList<AOperator> operators) {
-        this.operators = unify(operators);
+        this.operators = operators;
         this.numberOfOperators = operators.size();
         isConstant = false;
     }
@@ -232,7 +232,7 @@ public class OperatorExpression extends Expression {
     public AAssignableExpression convertToAssignable() throws UndefinedOperationException {
         AAssignableExpression assignable = null;
         for (AOperator operator : operators) {
-            assignable = unify(operator.convertToAssignableExpression(assignable));
+            assignable = operator.convertToAssignableExpression(assignable);
         }
         return assignable;
     }
@@ -359,7 +359,7 @@ public class OperatorExpression extends Expression {
     public static OperatorExpression createFromTerm(State state, Value value) throws TermConversionException {
         FragmentList<AOperator> operators = new FragmentList<>();
         appendFromTerm(state, value, operators);
-        return unify(new OperatorExpression(operators));
+        return new OperatorExpression(operators);
     }
 
     /**

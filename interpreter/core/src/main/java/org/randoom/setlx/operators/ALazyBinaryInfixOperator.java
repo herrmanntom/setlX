@@ -23,7 +23,7 @@ public abstract class ALazyBinaryInfixOperator extends AUnaryPostfixOperator {
      * @param rightHandSide Expression to evaluate lazily.
      */
     protected ALazyBinaryInfixOperator(OperatorExpression rightHandSide) {
-        this.rightHandSide = unify(rightHandSide);
+        this.rightHandSide = rightHandSide;
     }
 
     /**

@@ -25,7 +25,7 @@ public class AssignableList extends AAssignableExpression {
      * @param assignableExpressions Expressions to assign.
      */
     public AssignableList(final FragmentList<AAssignableExpression> assignableExpressions) {
-        this.assignableExpressions = unify(assignableExpressions);
+        this.assignableExpressions = assignableExpressions;
     }
 
     @Override

@@ -41,8 +41,8 @@ public class Assert extends Statement {
      * @param message   Message to throw as exception, when condition evaluates to false.
      */
     public Assert(final Condition condition, final OperatorExpression message) {
-        this.condition = unify(condition);
-        this.message   = unify(message);
+        this.condition = condition;
+        this.message   = message;
     }
 
     @Override

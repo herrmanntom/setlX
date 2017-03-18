@@ -27,7 +27,7 @@ public class AssignableMember extends AAssignableExpression {
      * @param member Member to access.
      */
     public AssignableMember(final AAssignableExpression lhs, final Variable member) {
-        this.lhs      = unify(lhs);
+        this.lhs      = lhs;
         this.memberID = member.getId();
         this.term     = null;
     }

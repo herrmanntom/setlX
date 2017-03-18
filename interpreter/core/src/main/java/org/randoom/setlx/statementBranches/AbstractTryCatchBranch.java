@@ -33,7 +33,7 @@ public abstract class AbstractTryCatchBranch extends ImmutableCodeFragment {
      * @param blockToRecover Statements to execute when exception is caught.
      */
     protected AbstractTryCatchBranch(final AssignableVariable errorVar, final Block blockToRecover){
-        this.errorVar       = unify(errorVar);
+        this.errorVar       = errorVar;
         this.blockToRecover = blockToRecover;
     }
 

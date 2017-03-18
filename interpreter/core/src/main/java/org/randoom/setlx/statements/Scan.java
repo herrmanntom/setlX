@@ -57,8 +57,8 @@ public class Scan extends Statement {
      * @param branchList List of scan branches.
      */
     public Scan(final OperatorExpression expr, final AssignableVariable posVar, final FragmentList<AbstractMatchScanBranch> branchList) {
-        this.expr       = unify(expr);
-        this.posVar     = unify(posVar);
+        this.expr       = expr;
+        this.posVar     = posVar;
         this.branchList = branchList;
     }
 

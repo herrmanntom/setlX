@@ -36,8 +36,8 @@ public class Call extends AOperator {
      * @param listArgument Expression to evaluate as list-argument of the call.
      */
     public Call(FragmentList<OperatorExpression> arguments, OperatorExpression listArgument) {
-        this.arguments = unify(arguments);
-        this.listArgument = unify(listArgument);
+        this.arguments = arguments;
+        this.listArgument = listArgument;
     }
 
     /**

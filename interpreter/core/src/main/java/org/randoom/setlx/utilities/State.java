@@ -187,7 +187,6 @@ public class State {
         }
         setScope(ROOT_SCOPE.createLinkedScope());
         if (cleanup) {
-            ImmutableCodeFragment.clearFragmentCache();
             ROOT_SCOPE.clearUndefinedAndInnerBindings();
         }
         executionStopped    = false;

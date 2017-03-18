@@ -173,7 +173,7 @@ public abstract class Statement extends ImmutableCodeFragment {
                 // invoke method found
                 if (converter != null) {
                     try {
-                        return unify((Statement) converter.invoke(null, state, term));
+                        return (Statement) converter.invoke(null, state, term);
                     }  catch (final InvocationTargetException ite) {
                         Throwable targetException = ite.getTargetException();
                         if (targetException instanceof TermConversionException) {

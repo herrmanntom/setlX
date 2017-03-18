@@ -40,7 +40,7 @@ public class Match extends Statement {
      * @param branchList List of match branches.
      */
     public Match(final OperatorExpression expr, final FragmentList<AbstractMatchBranch> branchList) {
-        this.expr       = unify(expr);
+        this.expr       = expr;
         this.branchList = branchList;
     }
 

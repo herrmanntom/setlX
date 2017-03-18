@@ -78,8 +78,8 @@ public class Exists extends AZeroOperator {
      * @param condition Condition to evaluate.
      */
     public Exists(final SetlIterator iterator, final Condition condition) {
-        this.iterator           = unify(iterator);
-        this.condition          = unify(condition);
+        this.iterator           = iterator;
+        this.condition          = condition;
         this.iterationVariables = null;
     }
 

@@ -78,9 +78,9 @@ public class SetlIteration extends CollectionBuilder {
      * @param condition Loop condition.
      */
     public SetlIteration(final OperatorExpression expr, final SetlIterator iterator, final Condition condition) {
-        this.expr      = unify(expr);
-        this.iterator  = unify(iterator);
-        this.condition = unify(condition);
+        this.expr      = expr;
+        this.iterator  = iterator;
+        this.condition = condition;
     }
 
     @Override

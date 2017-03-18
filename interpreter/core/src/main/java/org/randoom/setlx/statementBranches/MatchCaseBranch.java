@@ -41,9 +41,9 @@ public class MatchCaseBranch extends AbstractMatchBranch {
      * @param statements Statements to execute when condition is met.
      */
     public MatchCaseBranch(final FragmentList<OperatorExpression> exprs, final Condition condition, final Block statements) {
-        this.exprs      = unify(exprs);
-        this.terms      = new ArrayList<Value>(exprs.size());
-        this.condition  = unify(condition);
+        this.exprs      = exprs;
+        this.terms      = new ArrayList<>(exprs.size());
+        this.condition  = condition;
         this.statements = statements;
     }
 
@@ -85,7 +85,7 @@ public class MatchCaseBranch extends AbstractMatchBranch {
         /* Variables in these expressions get assigned temporarily.
            Collect them into a temporary list, add them to boundVariables and
            remove them again before returning. */
-        final List<String> tempAssigned = new ArrayList<String>();
+        final List<String> tempAssigned = new ArrayList<>();
         for (final OperatorExpression expr : exprs) {
             expr.collectVariablesAndOptimize(state, new ArrayList<String>(), tempAssigned, tempAssigned);
         }
@@ -163,7 +163,7 @@ public class MatchCaseBranch extends AbstractMatchBranch {
         } else {
             try {
                 final SetlList termList = (SetlList) term.firstMember();
-                final FragmentList<OperatorExpression> exprs = new FragmentList<OperatorExpression>(termList.size());
+                final FragmentList<OperatorExpression> exprs = new FragmentList<>(termList.size());
                 for (final Value v : termList) {
                     exprs.add(OperatorExpression.createFromTerm(state, v));
                 }

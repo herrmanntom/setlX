@@ -139,7 +139,7 @@ public class StringConstructor extends AZeroOperator {
     private StringConstructor(final String originalStr, final ArrayList<String> fragments, final ArrayList<OperatorExpression> expressions) {
         this.originalStr = originalStr;
         this.fragments   = fragments;
-        this.expressions = unify(expressions);
+        this.expressions = expressions;
     }
 
     @Override

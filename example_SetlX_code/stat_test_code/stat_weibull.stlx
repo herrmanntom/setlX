@@ -1,0 +1,14 @@
+//
+// Example for stat_weibull(x, a, b)
+//
+
+statWeibull := procedure(x, a, b) {
+
+	print(stat_weibull(x, a, b));
+};
+
+x := 2;
+a := 3;
+b := 4;
+
+statWeibull(x, a, b);

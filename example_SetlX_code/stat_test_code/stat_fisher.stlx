@@ -1,0 +1,14 @@
+//
+// Example for stat_fisher(x, a, b);
+//
+
+fisher := procedure(x, a, b) {
+	
+	print(stat_fisher(x, a, b));
+};
+
+x := 3;  // x>=0
+a := 5;  // a, b integer
+b := 2;
+
+fisher(x, a, b);

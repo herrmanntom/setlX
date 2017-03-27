@@ -1,0 +1,13 @@
+//
+// Example for stat_student(x, n)
+//
+
+statStudent := procedure(x, n) {
+
+	print(stat_student(x, n));
+};
+
+x := 2;
+n := 3;
+
+statStudent(x, n);

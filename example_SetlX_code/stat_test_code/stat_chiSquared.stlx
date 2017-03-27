@@ -1,0 +1,13 @@
+//
+// Example for stat_chiSquared(x, k)
+//
+
+statChiSqared := procedure(x, k) {
+
+	print(stat_chiSquared(x, k));
+};
+
+x := 2;
+k := 3;
+
+statChiSqared(x, k);

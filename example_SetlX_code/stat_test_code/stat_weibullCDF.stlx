@@ -1,0 +1,14 @@
+//
+// Example for stat_weibullCDF(x, a, b)
+//
+
+statWeibullCDF := procedure(x, a, b) {
+
+	print(stat_weibullCDF(x, a, b));
+};
+
+x := 2;
+a := 3;
+b := 4;
+
+statWeibullCDF(x, a, b);

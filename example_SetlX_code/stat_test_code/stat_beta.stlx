@@ -1,0 +1,14 @@
+//
+// Example for stat_beta(x, alpha, beta)
+//
+
+statBeta := procedure(x, alpha, beta) {
+
+	print(stat_beta(x, alpha, beta));
+};
+
+x 	  := 2;
+alpha := 3;
+beta  := 3;
+
+statBeta(x, alpha, beta);

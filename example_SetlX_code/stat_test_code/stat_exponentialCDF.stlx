@@ -1,0 +1,13 @@
+//
+// Example for stat_exponentialCDF(x, l)
+//
+
+statExponentialCDF := procedure(x, l) {
+
+	print(stat_exponentialCDF(x, l));
+};
+
+x := 2;
+l := 6;
+
+statExponentialCDF(x, l);

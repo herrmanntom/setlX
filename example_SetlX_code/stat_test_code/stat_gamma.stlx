@@ -1,0 +1,15 @@
+//
+// Example for stat_gamma(x, p, b)
+//
+
+statGamma := procedure(x, p, b) {
+
+	print(stat_gamma(x, p, b));
+};
+
+x := 4;
+p := 6;
+b := 3;
+
+
+statGamma(x, p, b);

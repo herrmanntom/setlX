@@ -1,0 +1,15 @@
+//
+// Example for stat_levyCDF(x, mu, scale)
+//
+
+statLevyCDF := procedure(x, mu, scale) {
+
+	print(stat_levyCDF(x, mu, scale));
+};
+
+x  		:= 6;
+mu		:= 3;
+scale 	:= 3;
+
+
+statLevyCDF(x, mu, scale);

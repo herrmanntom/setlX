@@ -150,9 +150,7 @@ devel="setlX_v$versionForFileNames.devel"
 examples="setlX_v$versionForFileNames.examples"
 
 # remove distribution zips if present
-rm -f "$binOnly.zip"
-rm -f "$examples.zip"
-rm -f "$devel.zip"
+rm -f "setlX_v"*".zip"
 # remove other stuff
 rm -f test_failure.*.result
 

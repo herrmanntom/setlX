@@ -1,9 +1,9 @@
 #!/bin/bash
 
-export $python_stat_code=$PWD/python_stat_code
+export STAT_PYTHON_CODE="$PWD/stat_python_code"
 
 # execute all python scripts
-for file in `ls -I "*.reference" $python_stat_code`
+for file in `ls -I "*.reference" $STAT_PYTHON_CODE`
     do
-        python $file > $file".reference
+        python $STAT_PYTHON_CODE/$file > $STAT_PYTHON_CODE/$file".reference"
 done

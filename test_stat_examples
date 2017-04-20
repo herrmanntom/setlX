@@ -7,11 +7,51 @@ export OVERRIDE_setlXjavaParameters="-d64 -Xmx6144m"
 
 setlXlaunchScript="$PWD/interpreter/setlX"
 statExamples="$PWD/example_SetlX_code/stat_test_code"
+pythonReferences="$PWD/example_SetlX_stat_code/stat_python_code"
+
+tmpFile=$(mktemp -t setlx-XXXXXXXXXX)
+
+started=0
 
 # execute all test files
 for file in `ls -I "*.reference" $statExamples`
     do
-        echo -n ${file%.*}": "
-        $setlXlaunchScript $statExamples/$file
+	outputFile=$(mktemp -t setlx-XXXXXXXXXX)
+
+        started=$(bc <<< "$started + 1")
+	echo -e "Starting test $started (${file%.*}).\n"
+
+	"$setlXlaunchScript" $statExamples/$file > "$outputFile"
+
+	message=""
+
+	output=$(cat $outputFile)
+	echo "$output"
+	reference=$(cat $pythonReferences/${file%.*}".py.reference")
+	echo "$reference"
+
+	difference=0
+
+	echo "$output > $reference" | bc -l
+
+	if (( $(echo "$output > $reference" | bc -l) ));
+		then difference=$(echo "scale=12;$output-$reference" | bc)
+	else
+		difference=$(echo "scale=12;$reference-$output" | bc)
+	fi
+
+	echo "$difference"
+
+	if [ "$difference" = 0 ]
+	    then
+		message="Test $started successful!\n"
+	else
+		message="Test $started failed ...\n"
+	fi
+	echo -e "$message"
+
+	rm -f "$outputFile"
 done
+
+rm -f "$tmpFile"
 

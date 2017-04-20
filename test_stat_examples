@@ -26,13 +26,16 @@ for file in `ls -I "*.reference" $statExamples`
 	message=""
 
 	output=$(cat $outputFile)
-	echo "$output"
-	reference=$(cat $pythonReferences/${file%.*}".py.reference")
-	echo "$reference"
+	if [ -f $pythonReferences/${file%.*}".py.reference" ]
+		then 
+			reference=$(cat $pythonReferences/${file%.*}".py.reference")
+	else
+		echo -e "Could not find the corresponding python reference file. Did you update the python references by running './example_SetlX_stat_code/create_python_references'?\n"
+		continue
+	fi
 
 	difference=0
-
-	echo "$output > $reference" | bc -l
+	faultTolerance=10E-12
 
 	if (( $(echo "$output > $reference" | bc -l) ));
 		then difference=$(echo "scale=12;$output-$reference" | bc)
@@ -40,13 +43,11 @@ for file in `ls -I "*.reference" $statExamples`
 		difference=$(echo "scale=12;$reference-$output" | bc)
 	fi
 
-	echo "$difference"
-
-	if [ "$difference" = 0 ]
+	if (( $(echo "$difference < $faultTolerance" | bc) ));
 	    then
-		message="Test $started successful!\n"
+		message="Test $started (${file%.*}) successful!\n"
 	else
-		message="Test $started failed ...\n"
+		message="Test $started (${file%.*}) failed ...\n"
 	fi
 	echo -e "$message"
 

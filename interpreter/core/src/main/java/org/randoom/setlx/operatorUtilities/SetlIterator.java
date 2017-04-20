@@ -1,7 +1,6 @@
 package org.randoom.setlx.operatorUtilities;
 
 import org.randoom.setlx.assignments.AAssignableExpression;
-import org.randoom.setlx.exceptions.IllegalRedefinitionException;
 import org.randoom.setlx.exceptions.IncompatibleTypeException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.StopExecutionException;
@@ -10,10 +9,14 @@ import org.randoom.setlx.types.CollectionValue;
 import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
-import org.randoom.setlx.utilities.*;
+import org.randoom.setlx.utilities.CodeFragment;
+import org.randoom.setlx.utilities.ImmutableCodeFragment;
+import org.randoom.setlx.utilities.ReturnMessage;
+import org.randoom.setlx.utilities.State;
+import org.randoom.setlx.utilities.TermUtilities;
+import org.randoom.setlx.utilities.VariableScope;
 
 import java.util.ArrayList;
-import java.util.ConcurrentModificationException;
 import java.util.List;
 
 /**
@@ -51,9 +54,9 @@ public class SetlIterator extends ImmutableCodeFragment {
     }
 
     private SetlIterator(final AAssignableExpression assignable, final OperatorExpression collection, final SetlIterator next) {
-        this.assignable = unify(assignable);
-        this.collection = unify(collection);
-        this.next       = unify(next);
+        this.assignable = assignable;
+        this.collection = collection;
+        this.next       = next;
     }
 
     /**

@@ -6,10 +6,14 @@ import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.UndefinedOperationException;
 import org.randoom.setlx.utilities.State;
 
+import java.util.Comparator;
+
 /**
  * This base class provides some functionality for all numeric values.
  */
 public abstract class NumberValue extends ImmutableValue {
+
+    public static final Comparator<Value> NUMERICAL_COMPARATOR = new NumericalComparator();
 
     /* type checks (sort of Boolean operation) */
 
@@ -33,6 +37,7 @@ public abstract class NumberValue extends ImmutableValue {
      */
     public abstract SetlDouble toDouble() throws NumberToLargeException;
 
+    @Override
     public Rational toRational(final State state) {
         return toRational();
     }
@@ -133,7 +138,23 @@ public abstract class NumberValue extends ImmutableValue {
 
     protected abstract int numericalComparisonTo(final NumberValue other);
 
+    @Override
     public abstract boolean equals(final Object o);
+
+    private static class NumericalComparator implements Comparator<Value> {
+        @Override
+        public int compare(Value o1, Value o2) {
+            if (o1.getClass() != o2.getClass() && o1.isNumber() == SetlBoolean.TRUE && o2.isNumber() == SetlBoolean.TRUE) {
+                int c = ((NumberValue) o1).numericalComparisonTo((NumberValue) o2);
+                if (c == 0) {
+                    return (o1.compareToOrdering() < o2.compareToOrdering())? -1 : 1;
+                } else {
+                    return c;
+                }
+            }
+            return o1.compareTo(o2);
+        }
+    }
 
 }
 

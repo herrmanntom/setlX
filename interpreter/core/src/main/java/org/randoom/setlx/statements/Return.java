@@ -37,7 +37,7 @@ public class Return extends Statement {
      * @param result Expression to evaluate before returning.
      */
     public Return(final OperatorExpression result) {
-        this.result = unify(result);
+        this.result = result;
     }
 
     @Override

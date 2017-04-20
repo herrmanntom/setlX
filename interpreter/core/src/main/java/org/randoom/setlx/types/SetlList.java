@@ -20,6 +20,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
 
+import static org.randoom.setlx.types.NumberValue.NUMERICAL_COMPARATOR;
+
 /**
  * This class implements a list of arbitrary SetlX values.
  * It will most likely be created and filled by an SetListConstructor
@@ -62,7 +64,7 @@ public class SetlList extends IndexedCollectionValue {
      * @param initialCapacity Number of elements to store without resizing.
      */
     public SetlList(final int initialCapacity) {
-        this.list     = new ArrayList<Value>(initialCapacity);
+        this.list     = new ArrayList<>(initialCapacity);
         this.isCloned = false; // new lists are not a clone
     }
 
@@ -100,7 +102,7 @@ public class SetlList extends IndexedCollectionValue {
     private void separateFromOriginal() {
         if (isCloned) {
             final ArrayList<Value> original = this.list;
-            this.list = new ArrayList<Value>(original.size());
+            this.list = new ArrayList<>(original.size());
             for (final Value v: original) {
                 this.list.add(v.clone());
             }
@@ -209,7 +211,7 @@ public class SetlList extends IndexedCollectionValue {
             separateFromOriginal();
 
             final ArrayList<Value> content = this.list;
-            this.list = new ArrayList<Value>(content.size() * m);
+            this.list = new ArrayList<>(content.size() * m);
             for (int i = 0; i < m; ++i) {
                 for(final Value v : content) {
                     this.list.add(v.clone());
@@ -232,7 +234,7 @@ public class SetlList extends IndexedCollectionValue {
         } else if (summand.getClass() == SetlString.class) {
             return ((SetlString) summand).sumFlipped(state, this);
         } else if (summand instanceof CollectionValue) {
-            final ArrayList<Value> list = new ArrayList<Value>(this.list.size() + summand.size());
+            final ArrayList<Value> list = new ArrayList<>(this.list.size() + summand.size());
             for (final Value v: this.list) {
                 list.add(v.clone());
             }
@@ -319,7 +321,7 @@ public class SetlList extends IndexedCollectionValue {
      * @return      Collection of all contained members.
      */
     public SetlSet collect(final State state) {
-        final HashMap<Value, Integer> map         = new HashMap<Value, Integer>();
+        final HashMap<Value, Integer> map         = new HashMap<>();
               Integer                 occurrences;
         for (final Value v : list) {
             occurrences = map.get(v);
@@ -497,7 +499,7 @@ public class SetlList extends IndexedCollectionValue {
         }
 
         isCloned = true;
-        final ArrayList<Value> p = new ArrayList<Value>(list);
+        final ArrayList<Value> p = new ArrayList<>(list);
 
         // Inspired by permutation from
         // http://code.google.com/p/algorithms-java/source/browse/trunk/src/main/java/com/google/code/Permutations.java?r=3
@@ -543,7 +545,7 @@ public class SetlList extends IndexedCollectionValue {
         final int nPermutation = list.size(); // size of one final permutation
         final int valuesSize   = values.size();
         if (valuesSize == 0) {
-            final ArrayList<SetlList> permutations = new ArrayList<SetlList>(1);
+            final ArrayList<SetlList> permutations = new ArrayList<>(1);
             permutations.add(new SetlList(nPermutation));
             return permutations;
         }
@@ -551,14 +553,14 @@ public class SetlList extends IndexedCollectionValue {
         final Collection<SetlList> permutationsRest = permutations(state, values.subList(1, valuesSize));
         final Collection<SetlList> permutations;
         if (valuesSize == nPermutation || valuesSize % 3 == 0) {
-            permutations = new TreeSet<SetlList>();
+            permutations = new TreeSet<>(NUMERICAL_COMPARATOR);
         } else {
-            permutations = new ArrayList<SetlList>(permutationsRest.size() * (permutationsRest.iterator().next().size() + 1));
+            permutations = new ArrayList<>(permutationsRest.size() * (permutationsRest.iterator().next().size() + 1));
         }
         for (final SetlList permutation : permutationsRest) {
             final int size = permutation.size();
             for (int i = 0; i < size; ++i) {
-                final ArrayList<Value> perm = new ArrayList<Value>(nPermutation);
+                final ArrayList<Value> perm = new ArrayList<>(nPermutation);
                 if (i > 0) {
                     perm.addAll(permutation.list.subList(0, i));
                 }
@@ -608,7 +610,7 @@ public class SetlList extends IndexedCollectionValue {
         // mark this list to be clone
         isCloned = true;
         // create reversed clone of this list
-        final ArrayList<Value> reverse = new ArrayList<Value>(size);
+        final ArrayList<Value> reverse = new ArrayList<>(size);
         for (int i = size - 1; i >= 0; --i) {
             reverse.add(list.get(i));
         }
@@ -660,7 +662,7 @@ public class SetlList extends IndexedCollectionValue {
 
     @Override
     public SetlList shuffle(final State state) {
-        final ArrayList<Value> list = new ArrayList<Value>(this.list);
+        final ArrayList<Value> list = new ArrayList<>(this.list);
         Collections.shuffle(list, state.getRandom());
         return new SetlList(list);
     }
@@ -672,8 +674,8 @@ public class SetlList extends IndexedCollectionValue {
 
     @Override
     public SetlList sort(final State state) {
-        final ArrayList<Value> list = new ArrayList<Value>(this.list);
-        Collections.sort(list);
+        final ArrayList<Value> list = new ArrayList<>(this.list);
+        Collections.sort(list, NUMERICAL_COMPARATOR);
         return new SetlList(list);
     }
 
@@ -713,10 +715,10 @@ public class SetlList extends IndexedCollectionValue {
      *
      * @param state       Current state of the running setlX program.
      * @param sb          StringBuilder to append to.
-     * @param addBracktes Append enclosing brackets of the list.
+     * @param addBrackets Append enclosing brackets of the list.
      */
-    public void canonical(final State state, final StringBuilder sb, final boolean addBracktes) {
-        if (addBracktes) {
+    public void canonical(final State state, final StringBuilder sb, final boolean addBrackets) {
+        if (addBrackets) {
             sb.append("[");
         }
 
@@ -728,7 +730,7 @@ public class SetlList extends IndexedCollectionValue {
             }
         }
 
-        if (addBracktes) {
+        if (addBrackets) {
             sb.append("]");
         }
     }

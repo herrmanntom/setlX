@@ -51,7 +51,7 @@ public class SetlSet extends CollectionValue {
      * Create a new empty set.
      */
     public SetlSet() {
-        this.set      = new TreeSet<Value>();
+        this.set      = new TreeSet<>(NumberValue.NUMERICAL_COMPARATOR);
         this.isCloned = false; // new sets are not a clone
     }
 
@@ -61,12 +61,13 @@ public class SetlSet extends CollectionValue {
      * @param permutations List of permutations
      */
     /*package*/ SetlSet(final Collection<SetlList> permutations) {
-        this.set      = new TreeSet<Value>(permutations);
+        this.set      = new TreeSet<>(NumberValue.NUMERICAL_COMPARATOR);
+        this.set.addAll(permutations);
         this.isCloned = false; // this set is not a clone
     }
 
-    private SetlSet(final TreeSet<Value> sortedSet){
-        this.set      = sortedSet;
+    private SetlSet(final TreeSet<Value> values){
+        this.set      = values;
         this.isCloned = true;  // sets created from another set ARE a clone
     }
 
@@ -94,7 +95,7 @@ public class SetlSet extends CollectionValue {
     private void separateFromOriginal() {
         if (isCloned) {
             final TreeSet<Value> original = set;
-            set = new TreeSet<Value>();
+            set = new TreeSet<>(NumberValue.NUMERICAL_COMPARATOR);
             for (final Value v: original) {
                 set.add(v.clone());
             }
@@ -128,7 +129,7 @@ public class SetlSet extends CollectionValue {
 
     @Override
     public SetlBoolean isMap() {
-        final TreeSet<Value> temp = new TreeSet<Value>();
+        final TreeSet<Value> temp = new TreeSet<>(NumberValue.NUMERICAL_COMPARATOR);
         for (final Value v: set) {
             if (v.getClass() == SetlList.class) {
                 final SetlList list = (SetlList) v;
@@ -154,7 +155,7 @@ public class SetlSet extends CollectionValue {
      * @return SetlList of the members in this set.
      */
     /*package*/ SetlList toList() {
-        return new SetlList(new ArrayList<Value>(set));
+        return new SetlList(new ArrayList<>(set));
     }
 
     /* arithmetic operations */
@@ -462,7 +463,7 @@ public class SetlSet extends CollectionValue {
 
     @Override
     public SetlSet domain(final State state) throws SetlException {
-        final TreeSet<Value> result = new TreeSet<Value>();
+        final TreeSet<Value> result = new TreeSet<>(NumberValue.NUMERICAL_COMPARATOR);
         for (final Value v: set) {
             if (v.getClass() == SetlList.class && v.size() == 2) {
                 result.add(v.firstMember(state));
@@ -693,7 +694,7 @@ public class SetlSet extends CollectionValue {
         upperBound.addMember(state, Top.TOP);
 
         // remove all previously map entries which key == `index'
-        set.removeAll(new TreeSet<Value>(set.subSet(lowerBound, true, upperBound, true)));
+        set.removeAll(new TreeSet<>(set.subSet(lowerBound, true, upperBound, true)));
 
         // now this set must either be empty or a map without an entry with `index' as key
         if (v != Om.OM) {
@@ -778,8 +779,8 @@ public class SetlSet extends CollectionValue {
         }
 
         // first match all atomic values
-        final TreeSet<Value> thisCopy  = new TreeSet<Value>(set);
-        final TreeSet<Value> otherCopy = new TreeSet<Value>(((SetlSet) other).set);
+        final TreeSet<Value> thisCopy  = new TreeSet<>(set);
+        final TreeSet<Value> otherCopy = new TreeSet<>(((SetlSet) other).set);
 
         for (final Value v : set) {
             // remove value from both sets, if
@@ -805,9 +806,9 @@ public class SetlSet extends CollectionValue {
         }
 
         // copy remaining members into a new list
-        final SetlList  thisList         = new SetlList(new ArrayList<Value>(thisCopy));
+        final SetlList  thisList         = new SetlList(new ArrayList<>(thisCopy));
         // permute remaining members from `other'
-              Value     otherPermutation = new SetlList(new ArrayList<Value>(otherCopy));
+              Value     otherPermutation = new SetlList(new ArrayList<>(otherCopy));
 
         // both set match, when (at least) one permutation matches
         while (otherPermutation != Om.OM) {

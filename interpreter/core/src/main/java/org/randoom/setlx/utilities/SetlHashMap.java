@@ -32,7 +32,7 @@ public class SetlHashMap<V extends Value> extends HashMap<String, V> implements 
      */
     public SetlHashMap() {
         super();
-        keys = new TreeSet<String>();
+        keys = new TreeSet<>();
     }
 
     /**
@@ -42,7 +42,7 @@ public class SetlHashMap<V extends Value> extends HashMap<String, V> implements 
      */
     public SetlHashMap(final SetlHashMap<? extends V> m) {
         super(m);
-        keys = new TreeSet<String>(m.keys);
+        keys = new TreeSet<>(m.keys);
     }
 
     /**
@@ -52,7 +52,7 @@ public class SetlHashMap<V extends Value> extends HashMap<String, V> implements 
      */
     public SetlHashMap(final Map<String, ? extends V> m) {
         super(m);
-        keys = new TreeSet<String>(m.keySet());
+        keys = new TreeSet<>(m.keySet());
     }
 
     @Override
@@ -147,7 +147,7 @@ public class SetlHashMap<V extends Value> extends HashMap<String, V> implements 
      */
     public static SetlHashMap<Value> valueToSetlHashMap(final State state, final Value value) throws TermConversionException {
         if (value instanceof SetlSet) {
-            final SetlHashMap<Value> result = new SetlHashMap<Value>();
+            final SetlHashMap<Value> result = new SetlHashMap<>();
             for (final Value val : (SetlSet) value) {
                 if (val instanceof SetlList) {
                     final SetlList binding = (SetlList) val;

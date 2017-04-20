@@ -33,16 +33,16 @@ public class ExplicitList extends CollectionBuilder {
      * @param exprList List of expressions to evaluate.
      */
     public ExplicitList(final FragmentList<OperatorExpression> exprList) {
-        this.list = unify(exprList);
+        this.list = exprList;
     }
 
     @Override
     public FragmentList<AAssignableExpression> convertToAssignableExpressions() throws UndefinedOperationException {
-        FragmentList<AAssignableExpression> convertedFragments = new FragmentList<AAssignableExpression>();
+        FragmentList<AAssignableExpression> convertedFragments = new FragmentList<>();
         for (OperatorExpression operatorExpression : list) {
             convertedFragments.add(operatorExpression.convertToAssignable());
         }
-        return unify(convertedFragments);
+        return convertedFragments;
     }
 
     @Override
@@ -101,7 +101,7 @@ public class ExplicitList extends CollectionBuilder {
      * @throws TermConversionException in case the term is malformed.
      */
     public static ExplicitList collectionValueToExplicitList(final State state, final CollectionValue value) throws TermConversionException {
-        final FragmentList<OperatorExpression> exprList = new FragmentList<OperatorExpression>(value.size());
+        final FragmentList<OperatorExpression> exprList = new FragmentList<>(value.size());
         for (final Value v : value) {
             exprList.add(OperatorExpression.createFromTerm(state, v));
         }

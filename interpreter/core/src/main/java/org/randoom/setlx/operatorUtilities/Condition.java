@@ -31,7 +31,7 @@ public class Condition extends ImmutableCodeFragment {
      * @param expr Expression to evaluate to Boolean result.
      */
     public Condition(final OperatorExpression expr) {
-        this.expr = unify(expr);
+        this.expr = expr;
     }
 
     /**

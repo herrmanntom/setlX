@@ -31,8 +31,8 @@ public class AssignableCollectionAccess extends AAssignableExpression {
      * @param arguments    Arguments.
      */
     public AssignableCollectionAccess(final AAssignableExpression leftHandSide, final FragmentList<OperatorExpression> arguments) {
-        this.leftHandSide = unify(leftHandSide);
-        this.arguments = unify(arguments);
+        this.leftHandSide = leftHandSide;
+        this.arguments = arguments;
         this.term = null;
     }
 

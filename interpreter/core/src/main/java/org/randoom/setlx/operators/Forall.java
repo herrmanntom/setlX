@@ -78,8 +78,8 @@ public class Forall extends AZeroOperator {
      * @param condition Condition to evaluate.
      */
     public Forall(final SetlIterator iterator, final Condition condition) {
-        this.iterator           = unify(iterator);
-        this.condition          = unify(condition);
+        this.iterator           = iterator;
+        this.condition          = condition;
         this.iterationVariables = null;
     }
 

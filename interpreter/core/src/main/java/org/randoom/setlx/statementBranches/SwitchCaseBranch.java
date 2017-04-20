@@ -39,7 +39,7 @@ public class SwitchCaseBranch extends AbstractSwitchBranch {
      * @param statements Statements to execute when condition is met.
      */
     public SwitchCaseBranch(final Condition condition, final Block statements){
-        this.condition  = unify(condition);
+        this.condition  = condition;
         this.statements = statements;
     }
 

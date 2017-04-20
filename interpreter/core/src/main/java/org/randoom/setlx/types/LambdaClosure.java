@@ -33,8 +33,8 @@ public class LambdaClosure extends Closure {
      * @param expr       lambda-expression.
      */
     public LambdaClosure(final ParameterList parameters, final OperatorExpression expr) {
-        super(parameters, new Block(new Return(ImmutableCodeFragment.unify(expr))));
-        this.expr = ImmutableCodeFragment.unify(expr);
+        super(parameters, new Block(new Return(expr)));
+        this.expr = expr;
     }
 
     private LambdaClosure(
@@ -44,7 +44,7 @@ public class LambdaClosure extends Closure {
             final SetlHashMap<Value> closure
     ) {
         super(parameters, statements, closure);
-        this.expr = ImmutableCodeFragment.unify(expr);
+        this.expr = expr;
     }
 
     @Override

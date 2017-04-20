@@ -39,7 +39,7 @@ public class IfThenElseIfBranch extends AbstractIfThenBranch {
      * @param statements Statements to execute when condition is met.
      */
     public IfThenElseIfBranch(final Condition condition, final Block statements){
-        this.condition  = unify(condition);
+        this.condition  = condition;
         this.statements = statements;
     }
 

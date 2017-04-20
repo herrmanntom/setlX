@@ -36,7 +36,7 @@ public class CollectionAccess extends AUnaryPostfixOperator {
      * @param arguments    Parameters to the call.
      */
     public CollectionAccess(FragmentList<OperatorExpression> arguments) {
-        this.arguments             = unify(arguments);
+        this.arguments             = arguments;
         this.argumentsContainRange = this.arguments.contains(new OperatorExpression(CollectionAccessRangeDummy.CARD));
     }
 

@@ -1,0 +1,50 @@
+load("baseIntegrationTest.stlx");
+registerTestSuite("core_comparison");
+
+// ************************************************************************** \\
+
+sortingWithDifferentNumberTypes := procedure() {
+    L := [2.5, 1, 4.0, "hello", 31/10, 3, 2.0];
+
+    L2 := sort(L);
+
+    validateForTestCase("sortingWithDifferentNumberTypes")
+        .that(
+            L2
+        ).is(
+            [1, 2.0, 2.5, 3, 31/10, 4.0, "hello"]
+        );
+};
+sortingWithDifferentNumberTypes();
+
+sortingWithSameNumberOfDifferentTypes := procedure() {
+    L := [4, 4.0, 4, 4.0, 4];
+
+    L2 := sort(L);
+
+    validateForTestCase("sortingWithSameNumberOfDifferentTypes")
+        .that(
+            L2
+        ).is(
+            [4, 4, 4, 4.0, 4.0]
+        );
+};
+sortingWithSameNumberOfDifferentTypes();
+
+setWithDifferentNumberTypes := procedure() {
+    set := {1,1.0,2,2.0,3,4.0,31/30};
+
+    validateForTestCase("setWithDifferentNumberTypes")
+        .that(
+            str(set)
+        ).is(
+            "{1, 1.0, 31/30, 2, 2.0, 3, 4.0}"
+        );
+};
+setWithDifferentNumberTypes();
+
+
+// ************************************************************************** \\
+
+printTestResult();
+

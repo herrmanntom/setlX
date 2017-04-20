@@ -80,8 +80,8 @@ public class For extends Statement {
      * @param statements Statements to execute inside the loop.
      */
     public For(final SetlIterator iterator, final Condition condition, final Block statements) {
-        this.iterator   = unify(iterator);
-        this.condition  = unify(condition);
+        this.iterator   = iterator;
+        this.condition  = condition;
         this.statements = statements;
         this.exec       = new Exec(this.condition, this.statements);
     }

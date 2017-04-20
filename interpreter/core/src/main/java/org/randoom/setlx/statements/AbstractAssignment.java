@@ -37,8 +37,8 @@ public abstract class AbstractAssignment extends StatementWithPrintableResult {
      * @param rhs Expression to evaluate.
      */
     protected AbstractAssignment(final AAssignableExpression lhs, final OperatorExpression rhs) {
-        this.lhs            = unify(lhs);
-        this.rhs            = unify(rhs);
+        this.lhs            = lhs;
+        this.rhs            = rhs;
         this.printAfterEval = false;
     }
 

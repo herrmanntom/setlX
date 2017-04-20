@@ -278,7 +278,7 @@ public class ParseSetlX {
         public void exec(State state) {
             switch (type) {
                 case EXPR:
-                    result = ImmutableCodeFragment.unify(parser.initExpr().oe);
+                    result = parser.initExpr().oe;
                     break;
                 case BLOCK:
                     result = parser.initBlock().blk;
@@ -297,8 +297,8 @@ public class ParseSetlX {
     }
 
     private static class SetlErrorListener extends BaseErrorListener {
-        public static final String EOF_SIGN = "<EOF>";
-        public static final String ALTERNATIVES_KEYWORD = "expecting {";
+        private static final String EOF_SIGN = "<EOF>";
+        private static final String ALTERNATIVES_KEYWORD = "expecting {";
         private final State state;
 
         /*package*/ SetlErrorListener(final State state) {
@@ -352,8 +352,8 @@ public class ParseSetlX {
         }
 
         private Collection<String> sortAlternatives(String listOfAlternatives) {
-            Collection<String> sortedWords = new TreeSet<String>();
-            Collection<String> sortedOperators = new TreeSet<String>();
+            Collection<String> sortedWords = new TreeSet<>();
+            Collection<String> sortedOperators = new TreeSet<>();
             List<String> alternatives = Arrays.asList(listOfAlternatives.split(", "));
             boolean containsEOF = false;
             for (String alternative : alternatives) {
@@ -370,7 +370,7 @@ public class ParseSetlX {
                     }
                 }
             }
-            ArrayList<String> allAlternatives = new ArrayList<String>(sortedWords.size() + sortedOperators.size() + 1);
+            ArrayList<String> allAlternatives = new ArrayList<>(sortedWords.size() + sortedOperators.size() + 1);
             allAlternatives.addAll(sortedOperators);
             allAlternatives.addAll(sortedWords);
             if (containsEOF) {

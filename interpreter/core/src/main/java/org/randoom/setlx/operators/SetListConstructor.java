@@ -47,7 +47,7 @@ public class SetListConstructor extends AZeroOperator {
      */
     public SetListConstructor(final CollectionType type, final CollectionBuilder constructor) {
         this.type    = type;
-        this.builder = unify(constructor);
+        this.builder = constructor;
     }
 
     @Override

@@ -1,0 +1,9 @@
+#!/bin/bash
+
+export $python_stat_code=$PWD/python_stat_code
+
+# execute all python scripts
+for file in `ls -I "*.reference" $python_stat_code`
+    do
+        python $file > $file".reference
+done

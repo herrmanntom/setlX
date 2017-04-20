@@ -1,0 +1,14 @@
+//
+// Example for stat_betaCDF(x, alpha, beta)
+//
+
+statBetaCDF := procedure(x, alpha, beta) {
+
+	print(stat_betaCDF(x, alpha, beta));
+};
+
+x 	  := 2;
+alpha := 3;
+beta  := 4;
+
+statBetaCDF(x, alpha, beta);

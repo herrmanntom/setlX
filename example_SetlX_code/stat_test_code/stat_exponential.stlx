@@ -1,0 +1,13 @@
+//
+// Example for stat_exponential(x, l)
+//
+
+statExponential := procedure(x, l) {
+
+	print(stat_exponential(x, l));
+};
+
+x := 2;
+l := 6;
+
+statExponential(x, l);

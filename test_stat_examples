@@ -1,0 +1,17 @@
+#!/bin/bash
+
+# set overrides for setlX launcher script
+export OVERRIDE_setlXJarDirectory="$PWD/interpreter/"
+export SETLX_LIBRARY_PATH="$PWD/interpreter/setlXlibrary"
+export OVERRIDE_setlXjavaParameters="-d64 -Xmx6144m"
+
+setlXlaunchScript="$PWD/interpreter/setlX"
+statExamples="$PWD/example_SetlX_code/stat_test_code"
+
+# execute all test files
+for file in `ls -I "*.reference" $statExamples`
+    do
+        echo -n ${file%.*}": "
+        $setlXlaunchScript $statExamples/$file
+done
+

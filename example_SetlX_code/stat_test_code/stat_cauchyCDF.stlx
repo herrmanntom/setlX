@@ -1,0 +1,14 @@
+//
+// Example for stat_cauchyCDF(x, t, s)
+//
+
+statCauchyCDF := procedure(x, t, s) {
+
+	print(stat_cauchyCDF(x, t, s));
+};
+
+x := 2;
+t := 3;
+s := 3;
+
+statCauchyCDF(x, t, s);

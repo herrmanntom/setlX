@@ -1,0 +1,15 @@
+//
+// Example for stat_levy(x, mu, scale)
+//
+
+statLevy := procedure(x, mu, scale) {
+
+	print(stat_levy(x, mu, scale));
+};
+
+x  		:= 6;
+mu		:= 3;
+scale 	:= 3;
+
+
+statLevy(x, mu, scale);

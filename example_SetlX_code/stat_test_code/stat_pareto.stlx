@@ -1,0 +1,15 @@
+//
+// Example for stat_pareto(x, scale, shape)
+//
+
+statPareto := procedure(x, scale, shape) {
+
+	print(stat_pareto(x, scale, shape));
+};
+
+x  		:= 6;
+scale	:= 3;
+shape 	:= 3;
+
+
+statPareto(x, scale, shape);

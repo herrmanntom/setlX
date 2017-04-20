@@ -1,0 +1,14 @@
+//
+// Example for stat_cauchy(x, t, s)
+//
+
+statCauchy := procedure(x, t, s) {
+
+	print(stat_cauchy(x, t, s));
+};
+
+x := 2;
+t := 3;
+s := 3;
+
+statCauchy(x, t, s);

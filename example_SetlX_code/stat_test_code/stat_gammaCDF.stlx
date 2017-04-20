@@ -1,0 +1,15 @@
+//
+// Example for stat_gammaCDF(x, p, b)
+//
+
+statGammaCDF := procedure(x, p, b) {
+
+	print(stat_gammaCDF(x, p, b));
+};
+
+x := 4;
+p := 6;
+b := 3;
+
+
+statGammaCDF(x, p, b);

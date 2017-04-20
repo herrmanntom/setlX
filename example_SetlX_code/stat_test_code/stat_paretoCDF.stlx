@@ -1,0 +1,15 @@
+//
+// Example for stat_paretoCDF(x, scale, shape)
+//
+
+statParetoCDF := procedure(x, scale, shape) {
+
+	print(stat_paretoCDF(x, scale, shape));
+};
+
+x  		:= 6;
+scale	:= 3;
+shape 	:= 3;
+
+
+statParetoCDF(x, scale, shape);

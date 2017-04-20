@@ -1,4 +1,2 @@
-#from scipy.stats import lognorm
-#print(lognorm.cdf(6,3,3))
-
-pass
+from scipy.stats import lognorm
+print(lognorm.cdf(1,0.5**2,0,1))

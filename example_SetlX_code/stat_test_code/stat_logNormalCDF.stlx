@@ -7,9 +7,9 @@ statLogNormalCDF := procedure(x, mu, sigma) {
 	print(stat_logNormalCDF(x, mu, sigma));
 };
 
-x  		:= 6;
-mu		:= 3;
-sigma 	:= 3;
+x  		:= 1;
+mu		:= 0;
+sigma 	:= 0.5;
 
 
 statLogNormalCDF(x, mu, sigma);

@@ -1,6 +1,12 @@
 #!/bin/bash
 
-# set overrides for setlX launcher script
+# Define colors
+GREEN='\033[0;32m'
+RED='\033[0;31m'
+NC='\033[0m' # No Color
+
+
+# Set overrides for setlX launcher script
 export OVERRIDE_setlXJarDirectory="$PWD/interpreter/"
 export SETLX_LIBRARY_PATH="$PWD/interpreter/setlXlibrary"
 export OVERRIDE_setlXjavaParameters="-d64 -Xmx6144m"
@@ -13,13 +19,14 @@ tmpFile=$(mktemp -t setlx-XXXXXXXXXX)
 
 started=0
 
-# execute all test files
+
+# Execute all test files
 for file in `ls -I "*.reference" $statExamples`
     do
 	outputFile=$(mktemp -t setlx-XXXXXXXXXX)
 
         started=$(bc <<< "$started + 1")
-	echo -e "Starting test $started (${file%.*}).\n"
+	echo -e "Starting Test $started (${file%.*}).\n"
 
 	"$setlXlaunchScript" $statExamples/$file > "$outputFile"
 
@@ -46,9 +53,9 @@ for file in `ls -I "*.reference" $statExamples`
 
 	if (( $(echo "$difference < $faultTolerance" | bc) ));
 	    then
-		message="Test $started (${file%.*}) successful!\n"
+		message="   Test $started (${file%.*}) ${GREEN}successful${NC}!\n"
 	else
-		message="Test $started (${file%.*}) failed ...\n"
+		message="   Test $started (${file%.*}) ${RED}failed${NC} ...\n"
 	fi
 	echo -e "$message"
 

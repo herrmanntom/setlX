@@ -26,6 +26,7 @@ for file in `ls -I "*.reference" $statExamples`
 	message=""
 
 	output=$(cat $outputFile)
+	reference=0
 	if [ -f $pythonReferences/${file%.*}".py.reference" ]
 		then 
 			reference=$(cat $pythonReferences/${file%.*}".py.reference")
@@ -34,7 +35,7 @@ for file in `ls -I "*.reference" $statExamples`
 		continue
 	fi
 
-	difference=0
+	difference=1
 	faultTolerance=10E-12
 
 	if (( $(echo "$output > $reference" | bc -l) ));

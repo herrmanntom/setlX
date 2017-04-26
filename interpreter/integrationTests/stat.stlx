@@ -1,7 +1,26 @@
 load("baseIntegrationTest.stlx");
 registerTestSuite("stat");
 
-// ***************************************************************************************** \\
+// ************************************************************************** \\
+
+statBeta := procedure() {
+	if (stat_beta(2,3,3)==0.0) {
+		correct := true;
+	} else {
+		print("Error is in: stat_beta(2, 3, 3) == $0.0$");
+		correct := false;
+	}
+
+	validateForTestCase("statBeta")
+		.that(
+			correct
+		).is(
+			true
+		);
+};
+statBeta();
+
+
 
 statNormal := procedure() {
 	if (stat_normal(2,3,9)==0.04405413986167643) {
@@ -19,3 +38,8 @@ statNormal := procedure() {
 		);
 };
 statNormal();
+
+// ************************************************************************** \\
+
+printTestResult();
+

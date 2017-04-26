@@ -1,0 +1,21 @@
+load("baseIntegrationTest.stlx");
+registerTestSuite("stat");
+
+// ***************************************************************************************** \\
+
+statNormal := procedure() {
+	if (stat_normal(2,3,9)==0.04405413986167643) {
+		correct := true;
+	} else {
+		print("Error is in: stat_normal(2, 3, 9) == $0.04405413986167643$");
+		correct := false;
+	}
+
+	validateForTestCase("statNormal")
+		.that(
+			correct
+		).is(
+			true
+		);
+};
+statNormal();

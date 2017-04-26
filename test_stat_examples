@@ -21,19 +21,19 @@ started=0
 
 
 # Execute all test files
-for file in `ls -I "*.reference" $statExamples`
+for file in `find $statExamples -name '*.stlx' -prune`
     do
 	outputFile=$(mktemp -t setlx-XXXXXXXXXX)
 
         started=$(bc <<< "$started + 1")
 	echo -e "Starting Test $started (${file%.*}).\n"
+	"$setlXlaunchScript" $file > "$outputFile"
 
-	"$setlXlaunchScript" $statExamples/$file > "$outputFile"
-
-	message=""
+    message=""
 
 	output=$(cat $outputFile)
 	reference=0
+    file=${file##*/}
 	if [ -f $pythonReferences/${file%.*}".py.reference" ]
 		then 
 			reference=$(cat $pythonReferences/${file%.*}".py.reference")

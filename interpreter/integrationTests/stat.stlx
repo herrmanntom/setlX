@@ -255,6 +255,42 @@ statLevyCDF := procedure() {
 statLevyCDF();
 
 
+statLogNormal := procedure() {
+		if (stat_logNormal(1,0,0.5)==1.5957691216057308) {
+			correct := true;
+		} else {
+			print("Error is in: stat_logNormal(1, 0, 0.5) == $1.5957691216057308$");
+			correct := false;
+		}
+
+		validateForTestCase("statLogNormal")
+			.that(
+				correct
+			).is(
+				true
+			);
+};
+statLogNormal();
+
+
+statLogNormalCDF := procedure() {
+		if (stat_logNormalCDF(1,0,0.5) == 0.5) {
+			correct := true;
+		} else {
+			print("Error is in: stat_logNormalCDF(1, 0, 0.5) == $0.5$");
+			correct := false;
+		}
+
+		validateForTestCase("statLogNormalCDF")
+			.that(
+				correct
+			).is(
+				true
+			);
+};
+statLogNormalCDF();
+
+
 statNormal := procedure() {
 	if (stat_normal(2,3,9) == 0.04405413986167643) {
 		correct := true;
@@ -271,6 +307,132 @@ statNormal := procedure() {
 		);
 };
 statNormal();
+
+
+statNormalCDF := procedure() {
+		if (stat_normalCDF(2,3,9) == 0.4557641189546886) {
+			correct := true;
+		} else {
+			print("Error is in: stat_normalCDF(2, 3, 9) == $0.4557641189546886$");
+			correct := false;
+		}
+
+		validateForTestCase("statNormalCDF")
+			.that(
+				correct
+			).is(
+				true
+			);
+};
+statNormalCDF();
+
+
+statPareto := procedure() {
+		if (stat_pareto(6,3,3) == 0.0625) {
+			correct := true;
+		} else {
+			print("Error is in: stat_pareto(6, 3, 3) == $0.0625$");
+			correct := false;
+		}
+
+		validateForTestCase("statPareto")
+			.that(
+				correct
+			).is(
+				true
+		);
+};
+statPareto();
+
+
+statParetoCDF := procedure() {
+		if (stat_paretoCDF(6,3,3) == 0.875) {
+			correct := true;
+		} else {
+			print("Error is in: stat_paretoCDF(6, 3, 3) == $0.875$");
+			correct := false;
+		}
+
+		validateForTestCase("statParetoCDF")
+			.that(
+				correct
+			).is(
+				true
+			);
+};
+statParetoCDF();
+
+
+statStudent := procedure() {
+		if (stat_student(2,3) == 0.06750966066389291) {
+			correct := true;
+		} else {
+			print("Error is in: stat_student(2, 3) == $0.06750966066389291$");
+			correct := false;
+		}
+
+		validateForTestCase("statStudent")
+			.that(
+				correct
+			).is(
+				true
+			);
+};
+statStudent();
+
+
+statStudentCDF := procedure() {
+		if (stat_studentCDF(2,3) == 0.9303370157205785) {
+			correct := true;
+		} else {
+			print("Error is in: stat_studentCDF(2, 3) == $0.9303370157205785$");
+			correct := false;
+		}
+
+		validateForTestCase("statStudentCDF")
+			.that(
+				correct
+			).is(
+				true
+			);
+};
+statStudentCDF();
+
+
+statWeibull := procedure() {
+		if (stat_weibull(2,3,4) == 0.16546816923461166) {
+			correct := true;
+		} else {
+			print("Error is in: stat_weibull(2, 3, 4) == $0.16546816923461166$");
+			correct := false;
+		}
+
+		validateForTestCase("statWeibull")
+			.that(
+				correct
+			).is(
+				true
+			);
+};
+statWeibull();
+
+
+statWeibullCDF := procedure() {
+		if (stat_weibullCDF(2,3,4) == 0.11750309741540454) {
+			correct := true;
+		} else {
+			print("Error is in: stat_weibullCDF(2, 3, 4) == $0.11750309741540454$");
+			correct := false;
+		}
+
+		validateForTestCase("statWeibullCDF")
+			.that(
+				correct
+			).is(
+				true
+			);
+};
+statWeibullCDF();
 
 // ************************************************************************** \\
 

@@ -14,13 +14,23 @@ mvn clean -P dist-clean
 cd ..
 
 # run tests
-if [ "$1" != "noTests" ]; then
+if [ "$1" != "noTests" ] && [[ "$2" != "noTests" ]]; then
     echo "=> Testing the setlX interpreter ..."
     ./test_all_examples; rc=$?
     if [ $rc -ne 0 ]; then
         echo "=> Errors occured while testing the interpreter."
         echo "=> Distribution stopped!"
         exit 1
+    fi
+fi
+
+if [ "$1" = "statTests" ] || [[ "$2" = "statTests" ]]; then
+    echo "=> Testing the statistical distribution functions ..."
+    ./test_stat_examples; rc=$?
+    if [ $rc -ne 0 ]; then
+	echo "=> Errors occured while testing the statistical distribution functions."
+	echo "=> Distribution stopped!"
+	exit 1
     fi
 fi
 

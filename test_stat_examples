@@ -5,62 +5,50 @@ GREEN='\033[0;32m'
 RED='\033[0;31m'
 NC='\033[0m' # No Color
 
-
-# Set overrides for setlX launcher script
-export OVERRIDE_setlXJarDirectory="$PWD/interpreter/"
-export SETLX_LIBRARY_PATH="$PWD/interpreter/setlXlibrary"
-export OVERRIDE_setlXjavaParameters="-d64 -Xmx6144m"
-
+# Define paths
 setlXlaunchScript="$PWD/interpreter/setlX"
 statExamples="$PWD/example_SetlX_code/stat_test_code"
 pythonReferences="$PWD/example_SetlX_stat_code/stat_python_code"
 
-tmpFile=$(mktemp -t setlx-XXXXXXXXXX)
-
 started=0
 
-
 # Execute all test files
-for file in `find $statExamples -name '*.stlx' -prune`
-    do
-	outputFile=$(mktemp -t setlx-XXXXXXXXXX)
+for file in `find $statExamples -name '*.reference' -prune`
+	do
+		setlXValue=$(cat $file)
+		file=${file##*/} # removing path from file name
+		file=${file%.*} # removing .reference ending from file name
+		file=${file%.*} # removing .stlx ending from file name
 
-        started=$(bc <<< "$started + 1")
-	echo -e "Starting Test $started (${file%.*}).\n"
-	"$setlXlaunchScript" $file > "$outputFile"
+		started=$(bc <<< "$started + 1")
+		echo -e "[INFO] Starting Test $started (${file})."
+		echo "::: SetlX:  $setlXValue" # printing setlx value
+		
+		pythonValue=0
+		
+		if [ -f $pythonReferences/${file}".py.reference" ] # check if python reference exists for $file
+			then 
+				pythonValue=$(cat $pythonReferences/${file}".py.reference")
+				echo "::: Python: $pythonValue" # printing python value
+		else
+			echo -e "[ERROR] Could not find the corresponding python reference file. Did you update the python references by running './example_SetlX_stat_code/create_python_references'?\n"
+			continue
+		fi
 
-    message=""
+		difference=1
+		faultTolerance=10E-12
 
-	output=$(cat $outputFile)
-	reference=0
-    file=${file##*/}
-	if [ -f $pythonReferences/${file%.*}".py.reference" ]
-		then 
-			reference=$(cat $pythonReferences/${file%.*}".py.reference")
-	else
-		echo -e "Could not find the corresponding python reference file. Did you update the python references by running './example_SetlX_stat_code/create_python_references'?\n"
-		continue
-	fi
+		if (( $(echo "$setlXValue > $pythonValue" | tr -d $'\r' | bc -l) ));
+			then difference=$(echo "scale=12;$setlXValue-$pythonValue" | tr -d $'\r' | bc)
+		else
+			difference=$(echo "scale=12;$pythonValue-$setlXValue" | tr -d $'\r' | bc)
+		fi
 
-	difference=1
-	faultTolerance=10E-12
-
-	if (( $(echo "$output > $reference" | bc -l) ));
-		then difference=$(echo "scale=12;$output-$reference" | bc)
-	else
-		difference=$(echo "scale=12;$reference-$output" | bc)
-	fi
-
-	if (( $(echo "$difference < $faultTolerance" | bc) ));
-	    then
-		message="   Test $started (${file%.*}) ${GREEN}successful${NC}!\n"
-	else
-		message="   Test $started (${file%.*}) ${RED}failed${NC} ...\n"
-	fi
-	echo -e "$message"
-
-	rm -f "$outputFile"
+		if (( $(echo "$difference < $faultTolerance" | tr -d $'\r' | bc) ));
+			then
+			message="::: Test $started (${file}) ${GREEN}successful${NC}!\n"
+		else
+			message="::: Test $started (${file}) ${RED}failed${NC} ...\n"
+		fi
+		echo -e "$message"
 done
-
-rm -f "$tmpFile"
-

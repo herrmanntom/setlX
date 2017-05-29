@@ -2,6 +2,7 @@ package org.randoom.setlx.functions;
 
 import org.apache.commons.math3.distribution.NormalDistribution;
 import org.randoom.setlx.exceptions.SetlException;
+import org.randoom.setlx.operators.IntegerDivision;
 import org.randoom.setlx.parameters.ParameterDefinition;
 import org.randoom.setlx.plot.types.Canvas;
 import org.randoom.setlx.plot.utilities.ConnectJFreeChart;
@@ -22,9 +23,9 @@ import java.util.*;
  */
 public class PD_stat_normal_plot extends PreDefinedProcedure {
 
+    private final static ParameterDefinition CANVAS      = createParameter("canvas");
     private final static ParameterDefinition MU          = createParameter("mu");
     private final static ParameterDefinition SIGMA       = createParameter("sigma");
-    private final static ParameterDefinition CANVAS      = createParameter("canvas");
     private final static ParameterDefinition COLOR       = createOptionalParameter("color", new SetlString("DEFAULT_COLOR"));
     private final static ParameterDefinition LOWER_BOUND = createOptionalParameter("lowerBound", Defaults.createSetlDoubleValue(-5.0));
     private final static ParameterDefinition INTERVAL    = createOptionalParameter("interval", Defaults.getDefaultPlotInterval());
@@ -35,9 +36,9 @@ public class PD_stat_normal_plot extends PreDefinedProcedure {
 
     private PD_stat_normal_plot() {
         super();
+        addParameter(CANVAS);
         addParameter(MU);
         addParameter(SIGMA);
-        addParameter(CANVAS);
         addParameter(COLOR);
         addParameter(LOWER_BOUND);
         addParameter(INTERVAL);
@@ -46,29 +47,19 @@ public class PD_stat_normal_plot extends PreDefinedProcedure {
 
     @Override
     public Value execute(State state, HashMap<ParameterDefinition, Value> args) throws SetlException {
+        final Value canvas     = args.get(CANVAS);
         final Value mu         = args.get(MU);
         final Value sigma      = args.get(SIGMA);
-        final Value canvas     = args.get(CANVAS);
         final Value color      = args.get(COLOR);
         final Value lowerBound = args.get(LOWER_BOUND);
         final Value interval   = args.get(INTERVAL);
         final Value upperBound = args.get(UPPER_BOUND);
 
+        Checker.checkIfCanvas(state, canvas);
         Checker.checkIfNumber(state, mu, lowerBound, upperBound);
         Checker.checkIfUpperBoundGreaterThanLowerBound(state, lowerBound, upperBound);
         Checker.checkIfNumberAndGreaterZero(state, sigma, interval);
-        Checker.checkIfCanvas(state, canvas);
         Checker.checkIfValidColor(state, color);
-
-        List<Integer> colorScheme = new ArrayList<>();
-
-        if (color.isString() == SetlBoolean.TRUE && color.toString().equals("DEFAULT_COLOR")) {
-            colorScheme = Defaults.DEFAULT_COLOR_SCHEME;
-        } else {
-            for (Iterator<Value> value = ((SetlList) color).iterator(); value.hasNext();) {
-                colorScheme.add(value.next().toJIntValue(state));
-            }
-        }
 
         NormalDistribution nd = new NormalDistribution(mu.toJDoubleValue(state), sigma.toJDoubleValue(state));
 
@@ -80,6 +71,6 @@ public class PD_stat_normal_plot extends PreDefinedProcedure {
             valueList.add(new ArrayList<Double>(Arrays.asList(counter, nd.density(counter))));
         }
 
-        return ConnectJFreeChart.getInstance().addListGraph((Canvas) canvas, valueList, "Probability Density Function (mean: " + mu.toString() + ", standard deviation: " + sigma.toString(), colorScheme, false);
+        return ConnectJFreeChart.getInstance().addListGraph((Canvas) canvas, valueList, "Probability Density Function (mean: " + mu.toString() + ", standard deviation: " + sigma.toString(), Defaults.createColorScheme(color, state), false);
     }
 }

@@ -8,6 +8,7 @@ import org.randoom.setlx.types.SetlList;
 import org.randoom.setlx.types.Value;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -34,9 +35,7 @@ public class Defaults {
         List<Integer> colorScheme = new ArrayList<>();
 
         if (color.isString() == SetlBoolean.TRUE && color.toString().equals("DEFAULT_COLOR")) {
-            colorScheme.add(0);
-            colorScheme.add(0);
-            colorScheme.add(0);
+            return new ArrayList<>(Arrays.asList(0,0,0));
         } else {
             for (Iterator<Value> value = ((SetlList) color).iterator(); value.hasNext();) {
                 colorScheme.add(value.next().toJIntValue(state));

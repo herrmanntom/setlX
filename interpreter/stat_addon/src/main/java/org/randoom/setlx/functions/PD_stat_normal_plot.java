@@ -71,6 +71,8 @@ public class PD_stat_normal_plot extends PreDefinedProcedure {
             valueList.add(new ArrayList<Double>(Arrays.asList(counter, nd.density(counter))));
         }
 
+        List<Integer> tmp = Defaults.createColorScheme(color, state);
+        System.out.println(tmp.toString());
         return ConnectJFreeChart.getInstance().addListGraph((Canvas) canvas, valueList, "Probability Density Function (mean: " + mu.toString() + ", standard deviation: " + sigma.toString(), Defaults.createColorScheme(color, state), false);
     }
 }

@@ -4,6 +4,7 @@ import org.randoom.setlx.exceptions.IncompatibleTypeException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.plot.types.Canvas;
 import org.randoom.setlx.types.SetlBoolean;
+import org.randoom.setlx.types.SetlList;
 import org.randoom.setlx.types.Value;
 
 /**
@@ -121,5 +122,25 @@ public class Checker {
             );
         }
         return true;
+    }
+
+    /** Checks if a Value is a valid color */
+    public static boolean checkIfValidColor(State state, Value value) throws IncompatibleTypeException {
+        if (value.isString() == SetlBoolean.TRUE) {
+            String tmp = value.toString();
+            if (!tmp.equals("DEFAULT_COLOR")) {
+                throw new IncompatibleTypeException(
+                        "Input-argument '" + value.toString(state) + "' is not a valid color. Format: [R, G, B]"
+                );
+            }
+        } else if (value.isList() == SetlBoolean.TRUE) {
+            if (((SetlList) value).size() != 3) {
+                throw new IncompatibleTypeException(
+                        "Input-argument '" + value.toString(state) + "' is not a valid color. Format: [R, G, B]"
+                );
+            }
+            return true;
+        }
+        return false;
     }
 }

@@ -5,6 +5,7 @@ import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.parameters.ParameterDefinition;
 import org.randoom.setlx.plot.types.Canvas;
 import org.randoom.setlx.plot.utilities.ConnectJFreeChart;
+import org.randoom.setlx.statements.Check;
 import org.randoom.setlx.types.SetlBoolean;
 import org.randoom.setlx.types.SetlList;
 import org.randoom.setlx.types.SetlString;
@@ -57,6 +58,7 @@ public class PD_stat_normal_plot extends PreDefinedProcedure {
         Checker.checkIfUpperBoundGreaterThanLowerBound(state, lowerBound, upperBound);
         Checker.checkIfNumberAndGreaterZero(state, sigma, interval);
         Checker.checkIfCanvas(state, canvas);
+        Checker.checkIfValidColor(state, color);
 
         List<Integer> colorScheme = new ArrayList<>();
 

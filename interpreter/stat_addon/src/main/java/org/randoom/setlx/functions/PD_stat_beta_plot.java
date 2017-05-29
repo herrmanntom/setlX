@@ -69,16 +69,21 @@ public class PD_stat_beta_plot extends PreDefinedProcedure {
         // The function is only defined for Interval = [0,1]. Therefore the bounds will be set to [0,1], if the bounds are x1 < 0 or x2 > 1.
         if (minLowerBound < 0 || minLowerBound > 1) {
             minLowerBound = 0;
-            // Since the distribution is not defined for x == 0 and x == 1 if one of the parameters is less than 1, the lower bound is set to a value > 0 here.
-            if (alpha.toJDoubleValue(state) < 1 || beta.toJDoubleValue(state) < 1) {
-                minLowerBound = interval.toJDoubleValue(state);
-            }
+            state.outWrite("This function is only defined for the interval [0,1]. The lower bound has been set accordingly.\n\n");
         }
         if (maxUpperBound > 1 || maxUpperBound < 0) {
             maxUpperBound = 1;
+            state.outWrite("This function is only defined for the interval [0,1]. The upper bound has been set accordingly.\n\n");
         }
-
-        state.outWrite("This function is only defined for the interval [0,1]. The bounds have been set accordingly.\n\n");
+        // Since the distribution is not defined for x == 0 and x == 1 if one of the parameters is less than 1, the lower bound is set to a value > 0 here.
+        if (alpha.toJDoubleValue(state) < 1 || beta.toJDoubleValue(state) < 1) {
+            if (minLowerBound == 0) {
+                minLowerBound = interval.toJDoubleValue(state);
+            }
+            if (maxUpperBound == 1) {
+                maxUpperBound = 1 - interval.toJDoubleValue(state);
+            }
+        }
 
         BetaDistribution bd = new BetaDistribution(alpha.toJDoubleValue(state), beta.toJDoubleValue(state));
 ;

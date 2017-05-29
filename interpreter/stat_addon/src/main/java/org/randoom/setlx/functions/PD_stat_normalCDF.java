@@ -37,7 +37,7 @@ public class PD_stat_normalCDF extends PreDefinedProcedure {
         final Value sigma = args.get(SIGMA);
 
         Checker.checkIfNumber(state, x, mu);
-        Checker.checkIfNumberAndNotZero(state, "sigma", sigma);
+        Checker.checkIfNumberAndGreaterZero(state, sigma);
 
         NormalDistribution nd = new NormalDistribution(mu.toJDoubleValue(state), sigma.toJDoubleValue(state));
         return SetlDouble.valueOf(nd.cumulativeProbability(x.toJDoubleValue(state)));

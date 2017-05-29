@@ -52,8 +52,7 @@ public class PD_stat_normalCDF_plot extends PreDefinedProcedure {
 
         Checker.checkIfNumber(state, mu, lowerBound, upperBound);
         Checker.checkIfUpperBoundGreaterThanLowerBound(state, lowerBound, upperBound);
-        Checker.checkIfNumberAndGreaterZero(state, interval);
-        Checker.checkIfNumberAndNotZero(state, "sigma", sigma);
+        Checker.checkIfNumberAndGreaterZero(state, sigma, interval);
         Checker.checkIfCanvas(state, canvas);
 
         NormalDistribution nd = new NormalDistribution(mu.toJDoubleValue(state), sigma.toJDoubleValue(state));

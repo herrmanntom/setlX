@@ -45,8 +45,8 @@ public class Defaults {
         if (color.isString() == SetlBoolean.TRUE && color.toString().equals("\"DEFAULT_COLOR\"")) {
             return DEFAULT_COLOR_SCHEME;
         } else {
-            for (Iterator<Value> value = ((SetlList) color).iterator(); value.hasNext();) {
-                colorScheme.add(value.next().toJIntValue(state));
+            for (Value value : ((SetlList) color)) {
+                colorScheme.add(value.toJIntValue(state));
             }
         }
         return colorScheme;

@@ -34,7 +34,7 @@ public class Defaults {
     public static List<Integer> createColorScheme(Value color, State state) throws SetlException {
         List<Integer> colorScheme = new ArrayList<>();
 
-        if (color.isString() == SetlBoolean.TRUE && color.toString().equals("DEFAULT_COLOR")) {
+        if (color.isString() == SetlBoolean.TRUE && color.toString().equals("\"DEFAULT_COLOR\"")) {
             return new ArrayList<>(Arrays.asList(0,0,0));
         } else {
             for (Iterator<Value> value = ((SetlList) color).iterator(); value.hasNext();) {

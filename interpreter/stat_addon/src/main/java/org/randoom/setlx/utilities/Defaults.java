@@ -21,15 +21,6 @@ public class Defaults {
         return createSetlDoubleValue(0.01);
     }
 
-    /** Default graph color scheme (black) */
-    public static List<Integer> DEFAULT_COLOR_SCHEME;
-    static {
-        DEFAULT_COLOR_SCHEME = new ArrayList<>();
-        DEFAULT_COLOR_SCHEME.add(0);
-        DEFAULT_COLOR_SCHEME.add(0);
-        DEFAULT_COLOR_SCHEME.add(0);
-    }
-
     public static SetlDouble createSetlDoubleValue(double value) {
         try {
             return SetlDouble.valueOf(value);
@@ -43,7 +34,9 @@ public class Defaults {
         List<Integer> colorScheme = new ArrayList<>();
 
         if (color.isString() == SetlBoolean.TRUE && color.toString().equals("DEFAULT_COLOR")) {
-            colorScheme = Defaults.DEFAULT_COLOR_SCHEME;
+            colorScheme.add(0);
+            colorScheme.add(0);
+            colorScheme.add(0);
         } else {
             for (Iterator<Value> value = ((SetlList) color).iterator(); value.hasNext();) {
                 colorScheme.add(value.next().toJIntValue(state));

@@ -128,7 +128,7 @@ public class Checker {
     public static boolean checkIfValidColor(State state, Value value) throws IncompatibleTypeException {
         if (value.isString() == SetlBoolean.TRUE) {
             String tmp = value.toString();
-            if (!tmp.equals("DEFAULT_COLOR")) {
+            if (!tmp.equals("\"DEFAULT_COLOR\"")) {
                 throw new IncompatibleTypeException(
                         "Input-argument '" + value.toString(state) + "' is not a valid color. Format: [R, G, B]"
                 );

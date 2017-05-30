@@ -86,7 +86,7 @@ public class PD_stat_beta_plot extends PreDefinedProcedure {
         }
 
         BetaDistribution bd = new BetaDistribution(alpha.toJDoubleValue(state), beta.toJDoubleValue(state));
-;
+
         /** The valueList is the list of every pair of coordinates [x,y] that the graph consists of.
          *  It is filled by iteratively increasing the variable 'counter' (x), and calculating the density for every new value of 'counter' (y).
          */

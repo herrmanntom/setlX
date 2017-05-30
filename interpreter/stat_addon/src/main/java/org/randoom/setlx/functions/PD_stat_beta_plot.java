@@ -75,7 +75,7 @@ public class PD_stat_beta_plot extends PreDefinedProcedure {
             maxUpperBound = 1;
             state.outWrite("This function is only defined for the interval [0,1]. The upper bound has been set accordingly.\n\n");
         }
-        // Since the distribution is not defined for x == 0 and x == 1 if one of the parameters is less than 1, the lower bound is set to a value > 0 here.
+        // Since the distribution is not defined for x == 0 and x == 1 if one of the parameters is less than 1, the lower and upper bound are adjusted here.
         if (alpha.toJDoubleValue(state) < 1 || beta.toJDoubleValue(state) < 1) {
             if (minLowerBound == 0) {
                 minLowerBound = interval.toJDoubleValue(state);

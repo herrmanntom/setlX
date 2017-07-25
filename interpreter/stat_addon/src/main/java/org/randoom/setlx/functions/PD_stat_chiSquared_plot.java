@@ -58,13 +58,19 @@ public class PD_stat_chiSquared_plot extends PreDefinedProcedure {
         Checker.checkIfNaturalNumber(state, k);
         Checker.checkIfValidColor(state, color);
 
+        double minLowerBound = lowerBound.toJDoubleValue(state);
+
+        if (k.toJDoubleValue(state) == 1 && minLowerBound == 0) {
+            minLowerBound = minLowerBound + interval.toJDoubleValue(state);
+        }
+
         ChiSquaredDistribution csd = new ChiSquaredDistribution(k.toJDoubleValue(state));
 
         /** The valueList is the list of every pair of coordinates [x,y] that the graph consists of.
          *  It is filled by iteratively increasing the variable 'counter' (x), and calculating the density for every new value of 'counter' (y).
          */
         List<List<Double>> valueList = new ArrayList<>();
-        for (double counter = lowerBound.toJDoubleValue(state); counter < upperBound.toJDoubleValue(state); counter += interval.toJDoubleValue(state)) {
+        for (double counter = minLowerBound; counter < upperBound.toJDoubleValue(state); counter += interval.toJDoubleValue(state)) {
             valueList.add(new ArrayList<Double>(Arrays.asList(counter, csd.density(counter))));
         }
 

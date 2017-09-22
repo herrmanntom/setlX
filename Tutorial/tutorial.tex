@@ -47,6 +47,7 @@
 \newtheorem{Satz}[Definition]{Satz}
 \newtheorem{Theorem}[Definition]{Theorem}
 
+\newcommand{\ds}{\displaystyle}
 \newcommand{\club }{\ensuremath{\clubsuit   }}
 \newcommand{\spade}{\ensuremath{\spadesuit  }}
 \newcommand{\heart}{\ensuremath{\heartsuit  }}
@@ -56,7 +57,7 @@
 \title{\vspace*{-1cm}
   \epsfig{file=aleph0.eps,scale=0.21} \\[0.5cm]
 \textsc{SetlX} --- A Tutorial \\[0.5cm]
-Version 2.6.0
+Version 2.6.2
 }
 \author{Karl Stroetmann \\[0.2cm]
 Duale Hochschule Baden-W\"urttemberg Mannheim \\[0.2cm]
@@ -123,7 +124,7 @@ forty years after the first conception of \textsc{Setl}, the efficiency of compu
 dramatically and for many applications, the run time efficiency of a languange is no
 longer as important as it once was.  After all, 
 modern scripting languages like Python \cite{vanRossum:95} or Ruby \cite{flanagan:2008}
-are all interpreted and noticeably slower than compiled languages like \texttt{C}, but this
+are interpreted languages and noticeably slower than compiled languages like \texttt{C}, but this
 fact hasn't impeded their success. 
 
 While teaching at the Baden-W\"urttemberg Corporate State University,  the first author had used
@@ -134,13 +135,13 @@ While teaching at the Baden-W\"urttemberg Corporate State University,  the first
 courses.  He had
 noticed that the adoption of \textsc{Setl} had made the abstract concepts of set theory  
 more accessible to the students.   Nevertheless, as 
-\textsc{Setl2} is more than 25 years old, it has a number of shortcomings.  
+\textsc{Setl2} is more than 30 years old by now, it has a number of shortcomings.  
 One issue is the fact that the syntax of \textsc{Setl2} is quite dated and has
 proven difficult to master  for students that are mainly acquainted with \texttt{C} and \textsl{Java}.
 Therefore, the original language \textsc{Setl} has been extended into the new language
 \textsc{SetlX}.  The main features that have been changed or added are as follows: 
 \begin{itemize}
-\item \textsc{SetlX} supports terms in a way similar to the language \textsl{Prolog}
+\item \textsc{SetlX} supports \emph{terms} in a way similar to the language \href{https://en.wikipedia.org/wiki/Prolog}{Prolog}
       \cite{sterling:94}.  For example, 
       \textsc{SetlX} supports matching.  This makes \textsc{SetlX} well suited  
       for symbolic computations.
@@ -151,27 +152,43 @@ Therefore, the original language \textsc{Setl} has been extended into the new la
       \cite{michie:1968} of functions.  
 \item \textsc{SetlX} has support for regular expressions.
 \item \textsc{SetlX} provides a limited way of
-      \href{https://en.wikipedia.org/wiki/Backtracking}{\emph{backtracking}}.  Like terms, this feature 
-      was also inspired from the language \textsl{Prolog}.
+      \href{https://en.wikipedia.org/wiki/Backtracking}{\emph{backtracking}}.  This feature 
+      was inspired by the language \textsl{Prolog}.
 \item \textsc{SetlX} supports object oriented programming concepts.
-\item Vectors and matrices are supported as basic data type.  Various linear algebra functions have
-      been added on top of these data types.  For example, there are functions to invert a matrix or to
-      compute the eigenvalues and eigenvectors of a matrix.
+\item \href{https://en.wikipedia.org/wiki/Vector_(mathematics_and_physics)}{Vectors} and
+      \href{https://en.wikipedia.org/wiki/Matrix_(mathematics)}{matrices} are supported as basic 
+      data type.  Various linear algebra functions have been added on top of these data types.  For example,
+      there are functions to invert a matrix or to compute the eigenvalues and eigenvectors of a matrix.
+\item \textsc{SetlX} provides a number of probability distributions and hence can be used 
+      for statistical applications.
 \item \textsc{SetlX} provides a small set of graphical primitives that support
       the animation of algorithms.
 \item \textsc{SetlX} provides a modest plotting library that can be used to graph functions or to draw
       scatter plots. 
+\item While sets are represented via \href{https://en.wikipedia.org/wiki/Hash_table}{hash tables} in
+      \textsc{Setl2}, \textsc{SetlX} implements sets as
+      \href{https://en.wikipedia.org/wiki/Binary_search_tree}{binary search trees}.  Therefore, in
+      \textsc{Setlx} sets can be used to represent both functional relations and priority queues.  
 \item Lastly, while \textsc{Setl2} has a syntax that is reminiscent of Algol,
       \textsc{SetlX} has a syntax that is more akin to languages like \texttt{C} or
-      \textsl{Java}.  
+      \textsl{Java}, thus making its syntax more modern.
 \end{itemize}
 The language \textsc{SetlX} has been implemented by Tom Herrmann as part of his student
-research project.  He still continues to supervise the addition of new features.
+research project.  He continues to supervise the addition of new features.
 Markus Jagiella has created the package that can be used to animate algorithms.
 Patrick Robinson added the package supporting linear algebra.  Arne R\"ocke and Fabian Wohriska 
 have added the plotting functionalities to the \textsc{SetlX} interpreter.
+Support for various statistical functions has been added by Le\'on Mutschke and Jonas Siefker.
+
+\subsection*{Acknowledgements}
+We would like to acknowledge that Karl-Friedrich Gebhardt and Hakan Kjellerstrand 
+have both  read earlier drafts of
+this tutorial and have given valuable feedback that has helped to improve the current
+presentation.  
 \end{abstract}
-\pagebreak
+
+
+
 
 \tableofcontents
 

@@ -24,9 +24,8 @@ tutorial will convince the reader of the truth of the third claim.
 readable.  This often makes it possible to fit the implementation of complex algorithms in \setlx\ on a
 single slide because the \setlx\ program is no longer than the pseudocode that is usually used to
 present algorithms in lectures.  The benefit of this is that instead of pseudocode, students have a
-running program that they can modify and test. This and the
-conciseness of \textsc{SetlX} programs was one of the reasons for
-the first author to adopt \setlx\ as a programming language in his various lectures on computer
+running program that they can test and modify. This and the conciseness of \textsc{SetlX} programs was one of
+the reasons for the first author to adopt \setlx\ as a programming language in his various lectures on computer 
 science and mathematics: It is often feasible to write a complete \setlx\ program in a few lines 
 onto the blackboard, since \setlx\ programs are nearly as compact as mathematical formul\ae.
 
@@ -35,8 +34,9 @@ onto the blackboard, since \setlx\ programs are nearly as compact as mathematica
 provides a number of sophisticated builtin data types that enable the user to code at a very high
 abstraction level.
 These data types are sets, lists, first-order terms, and functions.  
-As sets are implemented as ordered binary trees, sets of pairs can be used both as symbol
-tables and as priority queues.  This enables very neat implementations 
+As sets are implemented as ordered binary trees, sets of pairs can represent
+\href{https://en.wikipedia.org/wiki/Map_(mathematics)}{mappings} as well as
+\href{https://en.wikipedia.org/wiki/Priority_queue}{priority queues}.  This enables very neat implementations
 of a number of graph theoretical algorithms.  As \textsc{SetlX} is implemented in \textsl{Java} and
 the \emph{Java virtual machine} is quite fast, various tests have shown that \textsc{SetlX} beats
 \textsl{Python} in terms of performance. 
@@ -62,8 +62,9 @@ of this tutorial is structured as follows:
       mechanism and demonstrates the use of \emph{backtracking}.
 \item The seventh chapter discusses how vectors and matrices can be used and demonstrates the linear
       algebra package that is provided by \textsc{SetlX}.
-\item The eighth chapter presents the functions that can be used for plotting.
-\item Chapter number nine introduces classes and demonstrates that \textsc{SetlX}
+\item The eighth chapter discusses the statistical functions provided by \textsc{SetlX}.
+\item The ninth chapter presents the functions that can be used for plotting.
+\item Chapter number ten introduces classes and demonstrates that \textsc{SetlX}
       supports an object-oriented programming style.
 \item The final chapter lists and explains all predefined functions.
 \item The appendix discusses the graphical primitives provided by \textsc{SetlX}.
@@ -109,11 +110,6 @@ email as follows:
        \> Tom Herrmann:           \> \href{mailto:setlx@randoom.org}{\texttt{setlx@randoom.org}}
 \end{tabbing}
 
-\subsection*{Acknowledgements}
-We would like to acknowledge that Karl-Friedrich Gebhardt and Hakan Kjellerstrand 
-have both  read earlier drafts of
-this tutorial and have given valuable feedback that has helped to improve the current
-presentation. 
 
 %%% Local Variables: 
 %%% mode: latex

@@ -1,0 +1,549 @@
+\chapter{Statistical Distributions}
+In recent years, \href{https://en.wikipedia.org/wiki/Data_mining}{data mining} has become ever more
+important.  As data mining is closely related to statistics,  \setlx\ provides several statistical
+distributions.  This chapter gives an overview over all statistical distributions that are supported. 
+
+\section{Beta Distribution} \label{sec:beta_distribution}
+The \href{https://en.wikipedia.org/wiki/Beta_distribution}{beta distribution} has two parameters $\alpha > 0$
+and $\beta > 0$ and is defined on the interval $(0,1)$. The probability density function of the beta distribution is defined as  
+\\[0.2cm]
+\hspace*{1.3cm}
+$\ds f(x) := \frac{x^{\alpha-1} \cdot (1-x)^{\beta-1}}{\mathtt{B}(\alpha,\beta)}$.
+\\[0.2cm]
+Here, $\mathtt{B}$ denotes the \href{https://en.wikipedia.org/wiki/Beta_function}{beta function} that is used to ensure
+that the total probability integrates to 1. The beta function is defined as  
+\\[0.2cm]
+\hspace*{1.3cm}
+$\ds \mathtt{B}(\alpha,\beta) := \frac{\Gamma(\alpha) \cdot \Gamma(\beta)}{\Gamma(\alpha + \beta)}$.
+\\[0.2cm]
+Here $\Gamma$ denotes the \href{https://en.wikipedia.org/wiki/Gamma_function}{gamma function}. This function is defined as
+\\[0.2cm]
+\hspace*{1.3cm}
+$\ds \Gamma(x) := \int\limits_{0}^{\infty } t^{x-1} \cdot e^{-t}\,\mathrm{d}t$.
+\\[0.2cm]
+The probability
+density function of the beta distribution can be computed in \setlx\ 
+via the expression
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{stat\_beta(x, alpha, beta)}.
+\\[0.2cm]
+As a convenience, it can be plotted on a previously created \texttt{canvas}\footnote{
+  A \texttt{canvas} is created via the command
+  ``\texttt{canvas := plot\_createCanvas(\textsl{name})};''.  Here  \textsl{name} is a string that serves as the name of the
+  canvas.  Plotting is discussed in more detail in the following chapter.
+}
+ via the expression
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{stat\_beta\_plot(canvas, alpha, beta)}. 
+\\[0.2cm]
+The cumulative distribution function of the beta distribution is given as
+\\[0.2cm]
+\hspace*{1.3cm}
+$\ds F(x) = \frac{\mathtt{B}(x, \alpha,\beta)}{\mathtt{B}(\alpha,\beta)}$. 
+\\[0.2cm]
+Here, $\mathtt{B}(x,\alpha,\beta)$ is the 
+\href{https://en.wikipedia.org/wiki/Beta_function#Incomplete_beta_function}{incomplete beta function} which is
+defined as
+\\[0.2cm]
+\hspace*{1.3cm}
+$\ds \mathtt{B}(x,\alpha,\beta) := \int\limits_{0}^{x}t^{\alpha-1} \cdot (1-t)^{\beta-1}\,\mathrm{d}t$,
+\\[0.2cm]
+while $\mathtt{B}(\alpha,\beta)$ denotes the beta function defined above.
+The cumulative distribution function of the beta distribution is computed via the expression 
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{stat\_betaCDF(x, alpha, beta)}.
+\\[0.2cm]
+As a convenience, it can plotted on a given \texttt{canvas} via the command
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{stat\_betaCDF\_plot(canvas, alpha, beta)}. 
+
+\section{Cauchy Distribution}
+The \href{https://en.wikipedia.org/wiki/Cauchy_distribution}{Cauchy distribution} has a location parameter $t$
+and a scale parameter $s$ where $s > 0$. The probability density function of the Cauchy distribution is defined
+as 
+\\[0.2cm]
+\hspace*{1.3cm}
+$\ds f(x) := \frac{1}{\pi} \cdot \frac{s}{s^2 + (x-t)^2}$ \quad for all $x \in \mathbb{R}$.
+\\[0.2cm]
+The probability density function of the Cauchy distribution is computed in \setlx\ via the expression 
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{stat\_cauchy(x, t, s)} 
+\\[0.2cm]
+As a convenience, it can be plotted on a given \texttt{canvas} via the command
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{stat\_cauchy\_plot(canvas, t, s)}.
+\\[0.2cm]
+The cumulative distribution function of the Cauchy distribution is defined as 
+\\[0.2cm]
+\hspace*{1.3cm}
+$\ds F(x) := \frac{1}{2} + \frac{1}{\pi} \cdot \arctan\left(\frac{x-t}{s}\right)$.
+\\[0.2cm]
+The cumulative distribution function of the Cauchy distribution is computed via the expression
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{stat\_cauchyCDF(x, t, s)}.
+\\[0.2cm]
+As a convenience, it is plotted on a given \texttt{canvas} by the command
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{stat\_cauchyCDF\_plot(canvas, t, s)}. 
+
+\section{Chi-Squared Distribution}
+The \href{https://en.wikipedia.org/wiki/Chi-squared_distribution}{chi-squared distribution}
+ (also known as $\chi^2$-distribution) has only one parameter $k$, where $k$ is a positive natural number,
+ i.e.~$k \in \mathbb{N}$ and $k \geq 1$. The probability density function of the 
+chi-squared distribution is defined as 
+\\[0.2cm]
+\hspace*{1.3cm}
+$\ds f(x;\,k) :=  \ds \frac{1}{2^{k/2} \cdot\Gamma(k/2)} \cdot x^{k/2-1} \cdot e^{-x/2}$ \quad for all $x > 0$.
+\\[0.3cm]
+Here $\Gamma$ denotes the \href{https://en.wikipedia.org/wiki/Gamma_function}{gamma function} that is defined as
+\\[0.2cm]
+\hspace*{1.3cm}
+$\ds \Gamma(x) := \int\limits_{0}^{\infty } t^{x-1} \cdot e^{-t}\,\mathrm{d}t$.
+\\[0.2cm]
+The probability density function of the chi-squared distribution is computed 
+via the expression
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{stat\_chiSquared(x, k)}.
+\\[0.2cm]
+As a convenience, it can be plotted on a given \texttt{canvas} with the command
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{stat\_chiSquared\_plot(canvas, k)}. 
+\\[0.2cm]
+The cumulative distribution function of the chi-squared distribution is defined as
+\\[0.2cm]
+\hspace*{1.3cm}
+$\ds F(x;\,k) := \frac{\gamma(k/2,\,x/2)}{\Gamma(k/2)}$,
+\\[0.2cm]
+where $\gamma(k/2,\,x/2)$ is the 
+\href{https://en.wikipedia.org/wiki/Incomplete_gamma_function}{lower incomplete gamma function}, which is defined as  
+\\[0.2cm]
+\hspace*{1.3cm}
+$\ds \gamma(s, x) := \int\limits_{0}^{x}{t^{s-1} \cdot e^{-t} \mathrm{d}t} $
+\\[0.2cm]
+The cumulative distribution function of the chi-squared distribution is computed in \setlx\ via the expression
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{stat\_chiSquaredCDF(x, k)}.
+\\[0.2cm]
+As a convenience, it can be plotted on a given \texttt{canvas} with the command
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{stat\_chiSquaredCDF\_plot(canvas, k)}.
+
+\section{Exponential Distribution}
+The \href{https://en.wikipedia.org/wiki/Exponential_distribution}{exponential distribution} is given as
+\\[0.2cm]
+\hspace*{1.3cm}
+$\ds f(x;\lambda) := \lambda \cdot e^{-\lambda \cdot x}$ \quad for $x \geq 0$.
+\\[0.2cm]
+Here, the parameter $\lambda$ is a scale parameter that is bigger than zero, i.e.~we have $\lambda > 0$.
+The probability density function of the exponential distribution is computed via the expression
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{stat\_exponential(x, l)}.
+\\[0.2cm]
+As a convenience, it can be plotted on a given \texttt{canvas} with the command
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{stat\_exponential\_plot(canvas, l)}. 
+\\[0.2cm]
+The cumulative distribution function is given as
+\\[0.2cm]
+\hspace*{1.3cm}
+$\ds F(x;\lambda) = 1 - e^{-\lambda \cdot x}$ \quad for $x \geq 0$.
+\\[0.2cm]
+The cumulative distribution function of the exponential distribution is computed via the expression
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{stat\_exponentialCDF(x, l)}.
+\\[0.2cm]
+As a convenience, it can be plotted on a given \texttt{canvas} with the command
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{stat\_exponentialCDF\_plot(canvas, l)}. 
+
+\section{Fisher-Snedecor Distribution} 
+The
+\href{https://en.wikipedia.org/wiki/F-distribution}{Fisher-Snedecor distribution},
+or F-distribution, has the two parameters $a$ and $b$ which are positive real numbers. 
+If $a$ and $b$ are natural numbers, then they are also known as the \emph{degrees of freedom}.  The probability density function is
+defined as 
+\\[0.2cm]
+\hspace*{1.3cm}
+$\ds f(x) := \frac{1}{\mathtt{B}(a/2,b/2)} \cdot \left(\frac{a}{b}\right)^{a/2} \cdot x^{a/2 - 1} \cdot \left(1+\frac{a}{b} \cdot x\right)^{-(a+b)/2}$
+\\[0.2cm]
+where $\mathtt{B}$ denotes the \href{https://en.wikipedia.org/wiki/Beta_function}{beta function}. The beta function is defined as  
+\\[0.2cm]
+\hspace*{1.3cm}
+$\ds \mathtt{B}(\alpha,\beta) := \frac{\Gamma(\alpha) \cdot \Gamma(\beta)}{\Gamma(\alpha + \beta)}$.
+\\[0.2cm]
+Here $\Gamma$ denotes the \href{https://en.wikipedia.org/wiki/Gamma_function}{gamma function}, which is defined as
+\\[0.2cm]
+\hspace*{1.3cm}
+$\ds \Gamma(x) := \int\limits_{0}^{\infty } t^{x-1} \cdot e^{-t}\,\mathrm{d}t$.
+\\[0.2cm]
+The probability density function of the F-distribution is computed by the expression
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{stat\_fisher(x, a, b)}.
+\\[0.2cm]
+As a convenience, it can be plotted on a given \texttt{canvas} with the command
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{stat\_fisher\_plot(canvas, a, b)}. 
+\\[0.2cm]
+The cumulative distribution function is defined as
+\\[0.2cm]
+\hspace*{1.3cm}
+$\ds F(x, a,b) := \frac{1}{\mathtt{B}\left(\frac{a}{2}, \frac{b}{2}\right)} \cdot
+  \mathtt{B}\left(\frac{a \cdot x}{a \cdot x + b},\frac{a}{2}, \frac{b}{2} \right)
+$
+\\[0.2cm]
+where $\mathtt{B}(x,a,b)$ denotes the \href{https://en.wikipedia.org/wiki/Beta_function#Incomplete_beta_function}{incomplete beta function}
+that is defined as
+\\[0.2cm]
+\hspace*{1.3cm}
+$\ds \mathtt{B}(x,a,b) := \int\limits_{0}^{x}t^{a-1} \cdot (1-t)^{b-1}\,\mathrm{d}t$,
+\\[0.2cm]
+while $\mathtt{B}(a,b)$ denotes the \href{https://en.wikipedia.org/wiki/Beta_function}{beta function}, which has been 
+defined at the beginning of this subsection.
+The cumulative distribution function of the F-distribution is computed by the expression
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{stat\_fisherCDF(x, a, b)}.
+\\[0.2cm]
+As a convenience, it can be plotted on a given \texttt{canvas} via the command
+\\[0.2cm]
+\hspace*{1.3cm}
+ \texttt{stat\_fisherCDF\_plot(canvas, a, b)}. 
+
+
+\section{Gamma Distribution}\label{sec:gamma_distribution}
+The \href{https://en.wikipedia.org/wiki/Gamma_distribution}{gamma distribution} has the shape parameter $\alpha$ and the scale 
+parameter $\lambda$. Both of these parameters are positive real numbers, i.e.~we have
+\\[0.2cm]
+\hspace*{1.3cm}
+$\alpha \in \mathbb{R}$, \quad $\lambda \in \mathbb{R}$, \quad $\alpha > 0$, \quad and \quad $\lambda > 0$.
+\\[0.2cm]
+The probability density function is defined as 
+\\[0.2cm]
+\hspace*{1.3cm}
+$\ds f(x;\alpha,\lambda) := \frac{\lambda}{\Gamma(\alpha)} \cdot (\lambda \cdot x)^{\alpha-1} \cdot e^{-\lambda \cdot x}$,
+\\[0.3cm]
+where $\Gamma$ is the \href{https://en.wikipedia.org/wiki/Gamma_function}{gamma function}, which is defined as
+\\[0.2cm]
+\hspace*{1.3cm}
+$\ds \Gamma(x) := \int\limits_{0}^{\infty } t^{x-1} \cdot e^{-t}\,\mathrm{d}t$.
+\\[0.2cm]
+The probability density function of the gamma distribution is computed via the expression
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{stat\_gamma(x, alpha, 1/lambda)}.
+\\[0.2cm]
+As a convenience, it can be plotted on a given \texttt{canvas} via the command
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{stat\_gamma\_plot(canvas, alpha, 1/lambda)}. 
+\\[0.2cm]
+The cumulative distribution function is given as
+\\[0.2cm]
+\hspace*{1.3cm}
+$\ds F(x; \alpha, \lambda) = \frac{1}{\Gamma(\alpha)} \cdot \gamma\left(\alpha, \lambda \cdot x\right)$
+\\[0.2cm]
+where $\gamma$ denotes the
+\href{https://en.wikipedia.org/wiki/Incomplete_gamma_function}{lower incomplete gamma function}, which is defined as
+\\[0.2cm]
+\hspace*{1.3cm}
+$\ds \gamma(\alpha, x) := \int\limits_{0}^{x}{t^{\alpha-1} \cdot e^{-t} \mathrm{d}t} $.
+\\[0.2cm]
+The cumulative distribution function of
+the gamma distribution is computed in \setlx\ via the expression 
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{stat\_gammaCDF(x, alpha, 1/lambda)}.
+\\[0.2cm]
+As a convenience it can be plotted on a given \texttt{canvas} via the command 
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{stat\_gammaCDF\_plot(canvas, alpha, 1/lambda)}. 
+
+\section{Lévy Distribution}
+The \href{https://en.wikipedia.org/wiki/Levy_distribution}{Lévy distribution} has two parameters:
+\begin{enumerate}[(a)]
+\item $\mu$ is a real number and is called the \emph{location parameter} \ and
+\item $c$ is a positive real number that serves as the \emph{scale parameter}. 
+\end{enumerate}
+The distribution is defined for all $x \in \mathbb{R}$ such that $x \geq \mu$. 
+The probability density function of the Lévy distribution is defined as 
+\\[0.2cm]
+\hspace*{1.3cm}
+$\ds f(x;\mu,c) := \sqrt{\frac{c}{2\pi}} \cdot \frac{1}{(x-\mu)^{3/2}} \cdot \exp\left(-\frac{c}{2 \cdot (x-\mu)}\right)$.
+\\[0.2cm]
+The probability density function of the Lévy distribution is computed via the expression
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{stat\_levy(x, mu, c)}. 
+\\[0.2cm]
+As a convenience, it can be plotted on a given \texttt{canvas} with the command
+\\[0.2cm]
+\hspace*{1.3cm}
+ \texttt{stat\_levy\_plot(canvas, mu, scale)}. 
+\\[0.2cm]
+The cumulative distribution function of the Lévy distribution satisfies 
+\\[0.2cm]
+\hspace*{1.3cm}
+$\ds F(x;\mu,c)=\textrm{erfc}\left(\sqrt{\frac{c}{2(x-\mu)}}\right)$.
+\\[0.2cm]
+Here, $\mathrm{erfc}$ is the 
+\href{https://en.wikipedia.org/wiki/Error_function#Complementary_error_function}{complementary error function}, which is defined as
+the integral
+\\[0.2cm]
+\hspace*{1.3cm}
+$\ds \mathrm{erfc}(x) := \frac{2}{\sqrt{\pi}} \cdot \int\limits_{x}^{\infty} \exp\bigl(-t^{2}\bigr)\,\mathrm{d}t$.
+\\[0.2cm]
+The cumulative distribution function of the Lévy distribution is computed via the expression
+\\[0.2cm]
+\hspace*{1.3cm}
+ \texttt{stat\_levyCDF(x, mu, c)}. 
+\\[0.2cm]
+As a convenience, it can be plotted on a given \texttt{canvas} with the command 
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{stat\_levyCDF\_plot(canvas, mu, c)}. 
+
+\section{Log-Normal Distribution}
+The \href{https://en.wikipedia.org/wiki/Log-normal_distribution}{log-normal distribution} is characterized by two parameters:
+\begin{enumerate}[(a)]
+\item $\mu$ is the mean of the natural logarithm of the associated random variable.
+\item $\sigma$ is the standard deviation of the natural logarithm of the associated random variable.  Of course, the standard variation
+      has to be positive, i.e.~$\sigma > 0$.  
+\end{enumerate}
+The log-normal distribution is defined for all $x \geq 0$. The probability density function of the
+log-normal distribution is given as 
+\\[0.2cm]
+\hspace*{1.3cm}
+$\ds f_X(x) := 
+ \frac{1}{x} \cdot \frac{1}{\sigma \cdot \sqrt{2\pi\,}} \cdot \exp\left( -\frac{\bigl(\ln(x)-\mu\bigr)^2}{2\cdot\sigma^2} \right)
+$.
+\\[0.2cm]
+The probability density function of the log-normal distribution is computed via the expression
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{stat\_logNormal(x, mu, sigma)}.
+\\[0.2cm]
+As a convenience, it can be plotted on a given \texttt{canvas} with the command
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{stat\_logNormal\_plot(canvas, mu, sigma)}. 
+\\[0.2cm]
+The cumulative distribution function of the log-normal distribution is given as
+\\[0.2cm]
+\hspace*{1.3cm}
+$\ds F_X(x) = \frac{1}{2} \cdot \mathtt{erfc} \left(-\frac{\ln(x) - \mu}{\sigma\cdot\sqrt{2}}\right)$.
+\\[0.2cm]
+Here $\mathtt{erfc}$ is the 
+\href{https://en.wikipedia.org/wiki/Error_function#Complementary_error_function}{complementary error function},
+which is defined as the integral
+\\[0.2cm]
+\hspace*{1.3cm}
+$\ds \mathrm{erfc}(x) := \frac{2}{\sqrt{\pi}} \cdot \int\limits_{x}^{\infty} \exp\bigl(-t^{2}\bigr)\,\mathrm{d}t$.
+\\[0.2cm]
+The cumulative distribution function of the log-normal distribution is computed via the expression
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{stat\_logNormalCDF(x, mu, sigma)}.
+\\[0.2cm]
+As a convenience, it can be plotted on a given \texttt{canvas} with the command
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{stat\_logNormalCDF\_plot(canvas, mu, sigma)}. 
+
+
+\section{Normal Distribution}
+The \href{https://en.wikipedia.org/wiki/Normal_distribution}{normal distribution} is characterized by two parameters:
+\begin{enumerate}[(a)]
+\item $\mu$ is the \emph{location} parameter and is the same as the mean of the associated random variable.
+\item $\sigma$ is the \emph{scale} parameter and is identical to the standard deviation of the associated random variable.
+      Therefore we must have $\sigma > 0$. 
+\end{enumerate}
+The probability density function of the normal distribution is defined as 
+\\[0.2cm]
+\hspace*{1.3cm}
+$\ds f(x) := \frac{1}{\sigma \cdot \sqrt{2 \cdot \pi}} \cdot \exp\left(-\frac{(x-\mu)^2}{2 \cdot \sigma^2}\right)$.
+\\[0.2cm]
+The probability density function of the normal distribution is computed via the expression
+\\[0.2cm]
+\hspace*{1.3cm}
+ \texttt{stat\_normal(x, mu, sigma)}.
+\\[0.2cm]
+As a convenience, it can be plotted on a given \texttt{canvas} with the command 
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{stat\_normal\_plot(canvas, mu, sigma)}. 
+\\[0.2cm]
+The cumulative distribution function of the normal distribution is given as
+\\[0.2cm]
+\hspace*{1.3cm}
+$\ds F(x) = \frac{1}{2} \cdot \mathtt{erfc}\left(-\frac{x-\mu}{\sigma \cdot\sqrt{2}}\right)$.
+\\[0.2cm]
+Here $\mathtt{erfc}$ is the 
+\href{https://en.wikipedia.org/wiki/Error_function#Complementary_error_function}{complementary error function},
+which is defined as the integral
+\\[0.2cm]
+\hspace*{1.3cm}
+$\ds \mathrm{erfc}(x) := \frac{2}{\sqrt{\pi}} \cdot \int\limits_{x}^{\infty} \exp\bigl(-t^{2}\bigr)\,\mathrm{d}t$.
+\\[0.2cm]
+The cumulative distribution function of the normal distribution is computed via the expression
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{stat\_normalCDF(x, mu, sigma)}.
+\\[0.2cm]
+As a convenience, it can be plotted on a given \texttt{canvas} with the command 
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{stat\_normalCDF\_plot(canvas, mu, sigma)}. 
+
+\section{Pareto Distribution}
+The \href{https://en.wikipedia.org/wiki/Pareto_distribution}{Pareto distribution} is characterized by two parameters:
+\begin{enumerate}[(a)]
+\item $\alpha$ is the \emph{shape} parameter and has to be positive.
+\item $x_\mathrm{m}$ is the \emph{scale} parameter and also has to be positive.
+\end{enumerate}
+The probability density function is defined for all $x \geq x_\mathrm{m}$ and is given as 
+\\[0.2cm]
+\hspace*{1.3cm}
+$f(x) := \ds \frac{\alpha \cdot x_{\mathrm{m}}^\alpha}{x^{\alpha+1}}$.
+\\[0.2cm]
+The probability density function of the Pareto distribution is computed via the expression
+\\[0.2cm]
+\hspace*{1.3cm}
+ \texttt{stat\_pareto(x, xm, alpha)}. 
+\\[0.2cm]
+As a convenience, it can be plotted on a given \texttt{canvas} with the command 
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{stat\_pareto\_plot(canvas, xm, alpha)}. 
+\\[0.2cm]
+The cumulative distribution function of the Pareto distribution is given as
+\\[0.2cm]
+\hspace*{1.3cm}
+$\ds F(x) = 1 - \left(\frac{x_\mathrm{m}}{x}\right)^\alpha$ \quad for $x \geq x_\mathrm{m}$.
+\\[0.2cm]
+The cumulative distribution function of the Pareto distribution is computed via the expression 
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{stat\_paretoCDF(x, xm, alpha)}.
+\\[0.2cm]
+As a convenience, it can be plotted on a given \texttt{canvas} with the command 
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{stat\_paretoCDF\_plot(canvas, xm, alpha)}. 
+
+\section{Student's $t$-Distribution}
+The \href{https://en.wikipedia.org/wiki/Student\%27s_t-distribution}{Student's $t$-distribution} 
+is characterized by one parameter $\nu$, which is called the \emph{degrees of freedom}.  The degrees of freedom
+is a positive natural number, i.e.~we must have $\nu \in \mathbb{N}$ and $\nu \geq 1$.
+The probability density function of the Student's $t$-distribution is defined for all $x \in \mathbb{R}$ as
+\\[0.2cm]
+\hspace*{1.3cm}
+$\ds f(x) := 
+\frac{\Gamma(\frac{\nu+1}{2})} {\sqrt{\nu\cdot\pi\;}\cdot\Gamma(\frac{\nu}{2})} \cdot\left(1+\frac{x^2}{\nu}\right)^{\!-\frac{\nu+1}{2}}
+$.
+\\[0.2cm]
+Here $\Gamma$ denotes the \href{https://en.wikipedia.org/wiki/Gamma_function}{gamma function}, which is defined as
+\\[0.2cm]
+\hspace*{1.3cm}
+$\ds \Gamma(x) := \int\limits_{0}^{\infty } t^{x-1} \cdot e^{-t}\,\mathrm{d}t$.
+\\[0.2cm]
+The probability density function of the Student's $t$-distribution is computed via the expression
+\\[0.2cm]
+\hspace*{1.3cm}
+ \texttt{stat\_student(x, nu)}.
+\\[0.2cm]
+As a convenience, it can be plotted on a given \texttt{canvas} with the command
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{stat\_student\_plot(canvas, nu)}. 
+\\[0.2cm]
+The cumulative distribution function of the Student distribution has the form
+\\[0.2cm]
+\hspace*{1.3cm}
+$\ds F(x) = 1 - \frac{1}{2 \cdot \mathtt{B}\left(\frac{\nu}{2}, \frac{1}{2}\right)}  
+            \cdot \mathtt{B}\left(\frac{\nu}{{x^2+\nu}},\frac{\nu}{2}, \frac{1}{2}\right)
+$,
+\\[0.2cm]
+where $\mathtt{B}(x;\,a,b)$ denotes the \href{https://en.wikipedia.org/wiki/Beta_function#Incomplete_beta_function}{incomplete beta function},
+which is defined as
+\\[0.2cm]
+\hspace*{1.3cm}
+$\ds \mathtt{B}(x;\,a,b) := \int\limits_{0}^{x}t^{a-1} \cdot (1-t)^{b-1}\,\mathrm{d}t$,
+\\[0.2cm]
+while $\mathtt{B}(a,b)$ denotes the \href{https://en.wikipedia.org/wiki/Beta_function}{beta function}. The beta function is defined as  
+\\[0.2cm]
+\hspace*{1.3cm}
+$\ds \mathtt{B}(\alpha,\beta) := \frac{\Gamma(\alpha) \cdot \Gamma(\beta)}{\Gamma(\alpha + \beta)}$.
+\\[0.2cm]
+The cumulative distribution function of the Student's $t$-distribution is computed via the expression
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{stat\_studentCDF(x, nu)}.
+\\[0.2cm]
+As a convenience, it can be plotted on a given \texttt{canvas} with the command
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{stat\_studentCDF\_plot(canvas, nu)}. 
+
+\section{Weibull Distribution}
+The \href{https://en.wikipedia.org/wiki/Weibull_distribution}{Weibull distribution} is characterized by two
+parameters:
+\begin{enumerate}[(a)]
+\item $k$ is the \emph{shape} parameter and is a positive real number.
+\item $\lambda$ is the \emph{scale} parameter and is a positive real number.
+\end{enumerate}
+The Weibull distribution is defined for $x \geq 0$. The probability density function of the Weibull 
+distribution is defined as 
+\\[0.2cm]
+\hspace*{1.3cm}
+$\ds f(x) := \lambda \cdot k \cdot (\lambda \cdot x)^{k-1} \cdot \exp\bigl(-(\lambda \cdot x)^k\bigr)$.
+\\[0.2cm]
+The probability density function of the Weibull distribution is computed via the expression
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{stat\_weibull(x, k, 1/lambda)} 
+\\[0.2cm]
+As a convenience, it can be plotted on a given \texttt{canvas} with the command 
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{stat\_weibull\_plot(canvas, k, 1/lambda)}. 
+\\[0.2cm]
+The cumulative distribution function of the Weibull distribution is given as
+\\[0.2cm]
+\hspace*{1.3cm}
+$\ds F(x) = 1 - \exp\bigl(-(\lambda \cdot x)^k\bigr)$
+\\[0.2cm]
+The cumulative distribution function of the Weibull distribution is computed via the expression
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{stat\_weibullCDF(x, k, 1/lambda)} 
+\\[0.2cm]
+As a convenience, it can be plotted on a given \texttt{canvas} with the command 
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{stat\_weibullCDF\_plot(canvas, k, 1/lambda)}. 
+
+
+		
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: "tutorial"
+%%% End: 

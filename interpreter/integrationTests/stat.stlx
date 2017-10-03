@@ -4,432 +4,264 @@ registerTestSuite("stat");
 // ************************************************************************** \\
 
 statBeta := procedure() {
-	if (stat_beta(2,3,3) == 0.0) {
-		correct := true;
-	} else {
-		print("Error is in: stat_beta(2, 3, 3) == $0.0$");
-		correct := false;
-	}
-
-	validateForTestCase("statBeta")
+	validateForTestCase("stat_beta(2,3,3)")
 		.that(
-			correct
+			stat_beta(2,3,3)
 		).is(
-			true
+			0.0
 		);
 };
 statBeta();
 
 
 statBetaCDF := procedure() {
-	if (stat_betaCDF(2,3,4) == 1.0) {
-		correct := true;
-	} else {
-		print("Error is in: stat_betaCDF(2, 3, 4) == $1.0$");
-		correct := false;
-	}
-
-	validateForTestCase("statBetaCDF")
+	validateForTestCase("stat_betaCDF(2,3,4)")
 		.that(
-			correct
+			stat_betaCDF(2,3,4)
 		).is(
-			true
+			1.0
 		);
 };
 statBetaCDF();
 
 
 statCauchy := procedure() {
-	if (stat_cauchy(2,3,3) == 0.09549296585513721) {
-		correct := true;
-	} else {
-		print("Error is in: stat_cauchy(2, 3, 3) == $0.09549296585513721$");
-		correct := false;
-	}
-
-	validateForTestCase("statCauchy")
+	validateForTestCase("stat_cauchy(2,3,3)")
 		.that(
-			correct
+			stat_cauchy(2,3,3)
 		).is(
-			true
+			0.09549296585513721
 		);
 };
 statCauchy();
 
 
 statCauchyCDF := procedure() {
-	if (stat_cauchyCDF(2,3,3) == 0.39758361765043326) {
-		correct := true;
-	} else {
-		print("Error is in: stat_cauchyCDF(2, 3, 3) == $0.39758361765043326$");
-		correct := false;
-	}
-
-	validateForTestCase("statCauchyCDF")
+	validateForTestCase("stat_cauchyCDF(2,3,3)")
 		.that(
-			correct
+			stat_cauchyCDF(2,3,3)
 		).is(
-			true
+			0.39758361765043326
 		);
 };
 statCauchyCDF();
 
 
 statChiSquared := procedure() {
-	if (stat_chiSquared(2,3) == 0.2075537487102973) {
-		correct := true;
-	} else {
-		print("Error is in: stat_chiSquared(2, 3) == $0.2075537487102973$");
-		correct := false;
-	}
-
-	validateForTestCase("statChiSquared")
+	validateForTestCase("stat_chiSquared(2,3)")
 		.that(
-			correct
+			stat_chiSquared(2,3)
 		).is(
-			true
+			0.2075537487102973
 		);
 };
 statChiSquared();
 
 
 statChiSquaredCDF := procedure() {
-	if (stat_chiSquaredCDF(2,3) == 0.42759329552912023) {
-		correct := true;
-	} else {
-		print("Error is in: stat_chiSquaredCDF(2, 3) == $0.42759329552912023$");
-		correct := false;
-	}
-
-	validateForTestCase("statChiSquaredCDF")
+	validateForTestCase("stat_chiSquaredCDF(2,3)")
 		.that(
-			correct
+			stat_chiSquaredCDF(2,3)
 		).is(
-			true
+			0.42759329552912023
 		);
 };
 statChiSquaredCDF();
 
 
 statExponential := procedure() {
-	if (stat_exponential(2,6) == 0.11942188509563154) {
-		correct := true;
-	} else {
-		print("Error is in: stat_exponential(2, 6) == $0.11942188509563154$");
-		correct := false;
-	}
-
-	validateForTestCase("statExponential")
+	validateForTestCase("stat_exponential(2,6)")
 		.that(
-			correct
+			stat_exponential(2,6)
 		).is(
-			true
+			0.11942188509563154
 		);
 };
 statExponential();
 
 
 statExponentialCDF := procedure() {
-	if (stat_exponentialCDF(2,6) == 0.28346868942621073) {
-		correct := true;
-	} else {
-		print("Error is in: stat_exponentialCDF(2, 6) == $0.28346868942621073$");
-		correct := false;
-	}
-
-	validateForTestCase("statExponentialCDF")
+	validateForTestCase("stat_exponentialCDF(2,6)")
 		.that(
-			correct
+			stat_exponentialCDF(2,6)
 		).is(
-			true
+			0.28346868942621073
 		);
 };
 statExponentialCDF();
 
 
 statFisher := procedure() {
-	if (stat_fisher(3,5,2) == 0.07169777401493928) {
-		correct := true;
-	} else {
-		print("Error is in: stat_fisher(3, 5, 2) == $0.07169777401493928$");
-		correct := false;
-	}
-
-	validateForTestCase("statFisher")
+	validateForTestCase("stat_fisher(3,5,2)")
 		.that(
-			correct
+			stat_fisher(3,5,2)
 		).is(
-			true
+			0.07169777401493928
 		);
 };
 statFisher();
 
 
 statFisherCDF := procedure() {
-	if (stat_fisherCDF(3,5,2) == 0.7313172949523805) {
-		correct := true;
-	} else {
-		print("Error is in: stat_fisherCDF(3, 5, 2) == $0.7313172949523805$");
-		correct := false;
-	}
-
-	validateForTestCase("statFisherCDF")
+	validateForTestCase("stat_fisherCDF(3,5,2)")
 		.that(
-			correct
+			stat_fisherCDF(3,5,2)
 		).is(
-			true
+			0.7313172949523805
 		);
 };
 statFisherCDF();
 
 
 statGamma := procedure() {
-	if (stat_gamma(4,6,3) == 0.003085544918044173) {
-		correct := true;
-	} else {
-		print("Error is in: stat_gamma(4, 6, 3) == $0.003085544918044173$");
-		correct := false;
-	}
-
-	validateForTestCase("statGamma")
+	validateForTestCase("stat_gamma(4,6,3)")
 		.that(
-			correct
+			stat_gamma(4,6,3)
 		).is(
-			true
+			0.003085544918044173
 		);
 };
 statGamma();
 
 
 statGammaCDF := procedure() {
-	if (stat_gammaCDF(4,6,3) == 0.002525287783204569) {
-		correct := true;
-	} else {
-		print("Error is in: stat_gammaCDF(4, 6, 3) == $0.002525287783204569$");
-		correct := false;
-	}
-
-	validateForTestCase("statGammaCDF")
+	validateForTestCase("stat_gammaCDF(4,6,3)")
 		.that(
-			correct
+			stat_gammaCDF(4,6,3)
 		).is(
-			true
+			0.002525287783204569
 		);
 };
 statGammaCDF();
 
 
 statLevy := procedure() {
-	if (stat_levy(6,3,3) == 0.08065690817304778) {
-		correct := true;
-	} else {
-		print("Error is in: stat_levy(6, 3, 3) == $0.08065690817304778$");
-		correct := false;
-	}
-
-	validateForTestCase("statLevy")
+	validateForTestCase("stat_levy(6,3,3)")
 		.that(
-			correct
+			stat_levy(6,3,3)
 		).is(
-			true
+			0.08065690817304778
 		);
 };
 statLevy();
 
 
 statLevyCDF := procedure() {
-	if (stat_levyCDF(6,3,3) == 0.3173105078629139) {
-		correct := true;
-	} else {
-		print("Error is in: stat_levyCDF(6, 3, 3) == $0.3173105078629139$");
-		correct := false;
-	}
-
-	validateForTestCase("statLevyCDF")
+	validateForTestCase("stat_levyCDF(6,3,3)")
 		.that(
-			correct
+			stat_levyCDF(6,3,3)
 		).is(
-			true
+			0.3173105078629139
 		);
 };
 statLevyCDF();
 
 
 statLogNormal := procedure() {
-		if (stat_logNormal(1,0,0.5)==1.5957691216057308) {
-			correct := true;
-		} else {
-			print("Error is in: stat_logNormal(1, 0, 0.5) == $1.5957691216057308$");
-			correct := false;
-		}
-
-		validateForTestCase("statLogNormal")
+		validateForTestCase("stat_logNormal(1,0,0.5)")
 			.that(
-				correct
+				stat_logNormal(1,0,0.5)
 			).is(
-				true
+				1.5957691216057308
 			);
 };
 statLogNormal();
 
 
 statLogNormalCDF := procedure() {
-		if (stat_logNormalCDF(1,0,0.5) == 0.5) {
-			correct := true;
-		} else {
-			print("Error is in: stat_logNormalCDF(1, 0, 0.5) == $0.5$");
-			correct := false;
-		}
-
-		validateForTestCase("statLogNormalCDF")
+		validateForTestCase("stat_logNormalCDF(1,0,0.5)")
 			.that(
-				correct
+				stat_logNormalCDF(1,0,0.5)
 			).is(
-				true
+				0.5
 			);
 };
 statLogNormalCDF();
 
 
 statNormal := procedure() {
-	if (stat_normal(2,3,9) == 0.04405413986167643) {
-		correct := true;
-	} else {
-		print("Error is in: stat_normal(2, 3, 9) == $0.04405413986167643$");
-		correct := false;
-	}
-
 	validateForTestCase("statNormal")
 		.that(
-			correct
+			stat_normal(2,3,9)
 		).is(
-			true
+			0.04405413986167643
 		);
 };
 statNormal();
 
 
 statNormalCDF := procedure() {
-		if (stat_normalCDF(2,3,9) == 0.4557641189546886) {
-			correct := true;
-		} else {
-			print("Error is in: stat_normalCDF(2, 3, 9) == $0.4557641189546886$");
-			correct := false;
-		}
-
-		validateForTestCase("statNormalCDF")
+		validateForTestCase("stat_normalCDF(2,3,9)")
 			.that(
-				correct
+				stat_normalCDF(2,3,9)
 			).is(
-				true
+				0.4557641189546886
 			);
 };
 statNormalCDF();
 
 
 statPareto := procedure() {
-		if (stat_pareto(6,3,3) == 0.0625) {
-			correct := true;
-		} else {
-			print("Error is in: stat_pareto(6, 3, 3) == $0.0625$");
-			correct := false;
-		}
-
-		validateForTestCase("statPareto")
+		validateForTestCase("stat_pareto(6,3,3)")
 			.that(
-				correct
+				stat_pareto(6,3,3)
 			).is(
-				true
+				0.0625
 		);
 };
 statPareto();
 
 
 statParetoCDF := procedure() {
-		if (stat_paretoCDF(6,3,3) == 0.875) {
-			correct := true;
-		} else {
-			print("Error is in: stat_paretoCDF(6, 3, 3) == $0.875$");
-			correct := false;
-		}
-
-		validateForTestCase("statParetoCDF")
+		validateForTestCase("stat_paretoCDF(6,3,3)")
 			.that(
-				correct
+				stat_paretoCDF(6,3,3)
 			).is(
-				true
+				0.875
 			);
 };
 statParetoCDF();
 
 
 statStudent := procedure() {
-		if (stat_student(2,3) == 0.06750966066389291) {
-			correct := true;
-		} else {
-			print("Error is in: stat_student(2, 3) == $0.06750966066389291$");
-			correct := false;
-		}
-
-		validateForTestCase("statStudent")
+		validateForTestCase("stat_student(2,3)")
 			.that(
-				correct
+				stat_student(2,3)
 			).is(
-				true
+				0.06750966066389291
 			);
 };
 statStudent();
 
 
 statStudentCDF := procedure() {
-		if (stat_studentCDF(2,3) == 0.9303370157205785) {
-			correct := true;
-		} else {
-			print("Error is in: stat_studentCDF(2, 3) == $0.9303370157205785$");
-			correct := false;
-		}
-
-		validateForTestCase("statStudentCDF")
+		validateForTestCase("stat_studentCDF(2,3)")
 			.that(
-				correct
+				stat_studentCDF(2,3)
 			).is(
-				true
+				0.9303370157205785
 			);
 };
 statStudentCDF();
 
 
 statWeibull := procedure() {
-		if (stat_weibull(2,3,4) == 0.16546816923461166) {
-			correct := true;
-		} else {
-			print("Error is in: stat_weibull(2, 3, 4) == $0.16546816923461166$");
-			correct := false;
-		}
-
-		validateForTestCase("statWeibull")
+		validateForTestCase("stat_weibull(2,3,4)")
 			.that(
-				correct
+				stat_weibull(2,3,4)
 			).is(
-				true
+				0.16546816923461166
 			);
 };
 statWeibull();
 
 
 statWeibullCDF := procedure() {
-		if (stat_weibullCDF(2,3,4) == 0.11750309741540454) {
-			correct := true;
-		} else {
-			print("Error is in: stat_weibullCDF(2, 3, 4) == $0.11750309741540454$");
-			correct := false;
-		}
-
-		validateForTestCase("statWeibullCDF")
+		validateForTestCase("stat_weibullCDF(2,3,4)")
 			.that(
-				correct
+				stat_weibullCDF(2,3,4)
 			).is(
-				true
+				0.11750309741540454
 			);
 };
 statWeibullCDF();

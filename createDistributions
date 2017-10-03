@@ -14,7 +14,7 @@ mvn clean -P dist-clean
 cd ..
 
 # run tests
-if [ "$1" != "noTests" ] && [[ "$2" != "noTests" ]]; then
+if [[ "$1" != "noTests"  && "$2" != "noTests" ]]; then
     echo "=> Testing the setlX interpreter ..."
     ./test_all_examples; rc=$?
     if [ $rc -ne 0 ]; then
@@ -24,7 +24,7 @@ if [ "$1" != "noTests" ] && [[ "$2" != "noTests" ]]; then
     fi
 fi
 
-if [ "$1" = "statTests" ] || [[ "$2" = "statTests" ]]; then
+if [[ "$1" = "statTests" || "$2" = "statTests" ]]; then
     echo "=> Testing the statistical distribution functions ..."
     ./test_stat_examples; rc=$?
     if [ $rc -ne 0 ]; then
@@ -42,7 +42,7 @@ mvn clean -P dist-clean
 # build the binary version
 echo "=> Rebuilding the setlX interpreter ..."
 mvn install
-if [[ -f "$OVERRIDE_setlXJarDirectory/setlX.jar" && "$OVERRIDE_setlXJarDirectory/setlX-gfx.jar" && "$OVERRIDE_setlXJarDirectory/setlX-plot.jar" && "$OVERRIDE_setlXJarDirectory/setlX-stat.jar" ]]; then
+if [[ -f "$OVERRIDE_setlXJarDirectory/setlX.jar" && -f "$OVERRIDE_setlXJarDirectory/setlX-gfx.jar" && -f "$OVERRIDE_setlXJarDirectory/setlX-plot.jar" && -f "$OVERRIDE_setlXJarDirectory/setlX-stat.jar" ]]; then
     # clean it up again (does not remove the jar)
     mvn clean
     echo "=> The setlX interpreter was build correctly."

@@ -45,9 +45,9 @@ registerTestSuite := procedure(name) {
 printTestResult := procedure() {
     print("\n$stateOfTests.testName$: $stateOfTests.testsOK$ / $stateOfTests.testNumber$ successful");
     if (stateOfTests.testsOK == stateOfTests.testNumber) {
-        print("Everything is fine.");
+        print("This group of tests is fine.");
     } else {
-        print("Errors detected.");
+        print("This group of tests produced some errors.");
     }
 };
 

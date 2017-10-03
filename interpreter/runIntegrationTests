@@ -30,14 +30,14 @@ if [[ $rc == 0 ]]; then
         
         # check for failed tests
         failedCount=$(grep -c "failed" "$outputFile")
-        everythingOkCount=$(grep -c "Everything is fine." "$outputFile")
+        everythingOkCount=$(grep -c "This group of tests is fine." "$outputFile")
         if [ $failedCount -gt 0 -o $everythingOkCount -ne 1 ]; then
             failedTests=("${failedTests[@]}" "$path")
         fi
     done
     
     if [ "${#failedTests[@]}" -ne "0" ]; then     
-        echo "Errors in ${#failedTests[@]} test file detected. Please fix them all."
+        echo "Errors in ${#failedTests[@]} test files detected (${failedTests[@]}). Please fix them all."
         rc=1
     else
         echo "Every test is fine. Move along sir!"

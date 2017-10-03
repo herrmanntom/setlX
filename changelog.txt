@@ -1,6 +1,9 @@
 
 Changes (* notice | + feature added, replaced or improved | - feature removed | # bugfix):
 
+---v2.7.0--- 2017-10-03
+ + add statistics library by Leon Mutschke and Jonas Siefker
+ 
 ---v2.6.1--- 2017-04-08
  + add la_hadamard(matrixA, matrixB) procedure
  # fix sorting with different number types: sort([1, 3, 2.0, 4.0])

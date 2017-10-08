@@ -1,6 +1,9 @@
 
 Changes (* notice | + feature added, replaced or improved | - feature removed | # bugfix):
 
+---v2.7.1--- 201x-yy-zz
+ # Unix launch script: prevent usage of rlwrap inside emacs
+
 ---v2.7.0--- 2017-10-03
  + add statistics library by Leon Mutschke and Jonas Siefker
  

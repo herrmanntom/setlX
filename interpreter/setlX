@@ -40,7 +40,7 @@ fi
 
 java_call="java"
 
-if [ $(which rlwrap > /dev/null 2>&1; echo $?) -eq 0 ]
+if [[ -z "$INSIDE_EMACS" && $(which rlwrap > /dev/null 2>&1; echo $?) -eq 0 ]]
   then
     java_call="rlwrap -C $(basename $0) $java_call"
 fi

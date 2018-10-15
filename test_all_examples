@@ -174,12 +174,7 @@ for path in "${examplesAutomaticTest[@]}"
         done
         if [ $threadID -lt 0 ]
           then
-            if [ $(which usleep > /dev/null 2>&1; echo $?) -eq 0 ]
-              then
-                usleep 100000
-            else
-                sleep 1
-            fi
+            sleep 0.1
         fi
     done
 done

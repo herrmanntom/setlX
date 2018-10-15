@@ -1,7 +1,8 @@
 
 Changes (* notice | + feature added, replaced or improved | - feature removed | # bugfix):
 
----v2.7.1--- 201x-yy-zz
+---v2.7.1--- 2018-10-15
+ # Fix issue with parameter of setPenColor()
  # Unix launch script: prevent usage of rlwrap inside emacs
 
 ---v2.7.0--- 2017-10-03

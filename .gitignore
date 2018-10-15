@@ -14,6 +14,7 @@
 /grammar_pure/grammar_tester/*.jar
 /grammar_pure/Pure.g4
 /interpreter/core/src/main/java/org/randoom/setlx/files/*.java
+/interpreter/core/src/main/java/org/randoom/setlx/utilities/SetlXSourceVersion.java
 /interpreter/*/target
 /interpreter/*/*/target
 /interpreter/*.jar

@@ -15,5 +15,6 @@
 
     <modules>
         <module>setlX-code-generator-maven-plugin</module>
+        <module>setlX-version-generator-maven-plugin</module>
     </modules>
 </project>

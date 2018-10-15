@@ -125,6 +125,12 @@
                 </plugin>
 
                 <plugin>
+                    <groupId>org.randoom.setlx.mojo</groupId>
+                    <artifactId>setlX-version-generator-maven-plugin</artifactId>
+                    <version>${project.version}</version>
+                </plugin>
+
+                <plugin>
                     <groupId>com.lukegb.mojo</groupId>
                     <artifactId>gitdescribe-maven-plugin</artifactId>
                     <version>3.0</version>

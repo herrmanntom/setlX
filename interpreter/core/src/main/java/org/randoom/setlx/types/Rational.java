@@ -103,7 +103,7 @@ public class Rational extends NumberValue {
         this.denominator = d.divide(ggt);
         this.isInteger   = this.denominator.equals(BigInteger.ONE);
         if (this.denominator.equals(BigInteger.ZERO)) {
-            throw new NumberFormatException("new Rational: Division by zero!");
+            throw new NumberFormatException("new Rational(" + n + ", "+ d + "): Division by zero!");
         }
     }
 
@@ -413,9 +413,9 @@ public class Rational extends NumberValue {
         private final int        from;
         private final int        to;
         private final int        runnerIndex;
-        /*package*/   BigInteger result;
+        private BigInteger       result;
 
-        public Factorial(final State state, final int from, final int to, int runnerIndex) {
+        private Factorial(final State state, final int from, final int to, int runnerIndex) {
             super(state, StackSize.SMALL);
             this.from        = from;
             this.to          = to;
@@ -459,8 +459,8 @@ public class Rational extends NumberValue {
             }
         } else { // use multiple threads for a bigger factorial
             // create as many threads as there are processors
-            final Factorial runners[] = new Factorial[CORES];
-            final Thread    threads[] = new Thread[CORES];
+            final Factorial[] runners = new Factorial[CORES];
+            final Thread[]    threads = new Thread[CORES];
             for (int i = 0; i < CORES; ++i) {
                 final int from = n/CORES * (i) + 1;
                       int to   = n/CORES * (i + 1) + 1;
@@ -602,12 +602,13 @@ public class Rational extends NumberValue {
     }
 
     @Override
-    protected Rational power(final State state, final int exponent) throws NumberToLargeException {
+    protected Rational power(final State state, final int exponent) throws UndefinedOperationException {
         if (exponent >= 0) {
             return new Rational(numerator.pow(exponent), denominator.pow(exponent     ));
-        } else {
-            return new Rational(denominator.pow(exponent * -1), numerator.pow(exponent * -1));
+        } else if (ZERO.equals(this)) {
+            throw new UndefinedOperationException("'0 ** " + exponent + "' is undefined.");
         }
+        return new Rational(denominator.pow(exponent * -1), numerator.pow(exponent * -1));
     }
 
     @Override
@@ -704,7 +705,7 @@ public class Rational extends NumberValue {
     }
 
     @Override
-    public Rational round(final State state) throws SetlException {
+    public Rational round(final State state) {
         if (isInteger) {
             return this;
         } else if (numerator.signum() > 0) {

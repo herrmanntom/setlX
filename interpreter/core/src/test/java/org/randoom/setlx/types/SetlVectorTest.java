@@ -27,17 +27,17 @@ public class SetlVectorTest {
     public void testSetup() throws SetlException {
         state = new State();
 
-        ArrayList<Double> simpleBase = new ArrayList<Double>(3);
+        ArrayList<Double> simpleBase = new ArrayList<>(3);
         simpleBase.add(1.0);
         simpleBase.add(2.0);
         simpleBase.add(3.0);
-        sdi = new TreeMap<Integer, SetlDouble>();
+        sdi = new TreeMap<>();
             for (int i = -10000; i <= 10000; i++) {
                 sdi.put(i, SetlDouble.valueOf(i));
             }
-        simple_sdi_results_mul = new TreeMap<Integer, ArrayList<Double>>();
+        simple_sdi_results_mul = new TreeMap<>();
         for (int i = -10000; i <= 10000; i++) {
-            ArrayList<Double> a = new ArrayList<Double>(3);
+            ArrayList<Double> a = new ArrayList<>(3);
             a.add(simpleBase.get(0) * i);
             a.add(simpleBase.get(1) * i);
             a.add(simpleBase.get(2) * i);
@@ -152,7 +152,7 @@ public class SetlVectorTest {
         StringBuilder simpleBuilder = new StringBuilder();
         simple.canonical(state, simpleBuilder);
         assertTrue("Canonical error: wrong result " + simpleBuilder.toString() + " vs <<1.0 2.0 3.0>>", simpleBuilder.toString().equals("<<1.0 2.0 3.0>>"));
-        List<Value> simpleIdx = new ArrayList<Value>();
+        List<Value> simpleIdx = new ArrayList<>();
         simpleIdx.add(Rational.ONE);
         try {
             assertTrue("Simple[] error: wrong result", simple.collectionAccess(null, simpleIdx).equalTo(sdi.get(1)));
@@ -223,7 +223,7 @@ public class SetlVectorTest {
     }
 
     private SetlVector generateVectorOfFourDoubles() {
-        ArrayList<Double> vector = new ArrayList<Double>();
+        ArrayList<Double> vector = new ArrayList<>();
         vector.add(1.0);
         vector.add(2.0);
         vector.add(3.0);
@@ -237,7 +237,7 @@ public class SetlVectorTest {
         SetlVector vector = generateVectorOfFourDoubles();
 
         // when
-        ArrayList<Value> values = new ArrayList<Value>();
+        ArrayList<Value> values = new ArrayList<>();
         Iterator<Value> iterator = vector.iterator();
         while (iterator.hasNext()) {
             values.add(iterator.next());
@@ -255,7 +255,7 @@ public class SetlVectorTest {
         SetlVector vector = generateVectorOfFourDoubles();
 
         // when
-        ArrayList<Value> values = new ArrayList<Value>();
+        ArrayList<Value> values = new ArrayList<>();
         Iterator<Value> iterator = vector.iterator();
         while (iterator.hasNext()) {
             Value value = iterator.next();
@@ -279,7 +279,7 @@ public class SetlVectorTest {
         SetlVector vector = generateVectorOfFourDoubles();
 
         // when
-        ArrayList<Value> values = new ArrayList<Value>();
+        ArrayList<Value> values = new ArrayList<>();
         Iterator<Value> iterator = vector.descendingIterator();
         while (iterator.hasNext()) {
             values.add(iterator.next());
@@ -297,7 +297,7 @@ public class SetlVectorTest {
         SetlVector vector = generateVectorOfFourDoubles();
 
         // when
-        ArrayList<Value> values = new ArrayList<Value>();
+        ArrayList<Value> values = new ArrayList<>();
         Iterator<Value> iterator = vector.descendingIterator();
         while (iterator.hasNext()) {
             Value value = iterator.next();

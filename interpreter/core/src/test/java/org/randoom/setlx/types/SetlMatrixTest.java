@@ -41,9 +41,7 @@ public class SetlMatrixTest {
             Field matrix = SetlMatrix.class.getDeclaredField("matrix");
             matrix.setAccessible(true);
             return (Matrix) matrix.get(setlMatrix);
-        } catch (NoSuchFieldException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
+        } catch (NoSuchFieldException | IllegalAccessException e) {
             e.printStackTrace();
         }
         return null;
@@ -53,7 +51,7 @@ public class SetlMatrixTest {
     public void testSetup() {
         state = new State();
 
-        sdi = new TreeMap<Integer, SetlDouble>();
+        sdi = new TreeMap<>();
         try {
             for (int i = -10000; i <= 10000; i++) {
                 sdi.put(i, SetlDouble.valueOf(i));
@@ -76,7 +74,7 @@ public class SetlMatrixTest {
         snsBase[1][1] = 5;
         snsBase[1][2] = 6;
         sns = new SetlMatrix(new Jama.Matrix(snsBase));
-        simple_pow_results = new TreeMap<Integer, double[][]>();
+        simple_pow_results = new TreeMap<>();
         /**
          * Octave results:
          * -5: [[-106.437 48.687] [73.031 -33.406]]
@@ -163,7 +161,7 @@ public class SetlMatrixTest {
          * s: [[5.46499 0] [0 0.36597]]
          * v: [[-0.57605 0.81742] [-0.81742 -0.57605]]
          */
-        simple_svd = new TreeMap<Character, double[][]>();
+        simple_svd = new TreeMap<>();
         tmpBase = new double[2][2];
         tmpBase[0][0] = 0.40455;
         tmpBase[0][1] = 0.91451;
@@ -185,7 +183,7 @@ public class SetlMatrixTest {
         /**
          * svd(sns)
          */
-        sns_svd = new TreeMap<Character, double[][]>();
+        sns_svd = new TreeMap<>();
         tmpBase = new double[2][2];
         tmpBase[0][0] = -0.38632;
         tmpBase[0][1] = -0.92237;
@@ -217,7 +215,7 @@ public class SetlMatrixTest {
         /**
          * eig(simple)
          */
-        simple_eig = new TreeMap<Character, double[][]>();
+        simple_eig = new TreeMap<>();
         tmpBase = new double[2][2];
         tmpBase[0][0] = -0.82456;
         tmpBase[0][1] = -0.41597;
@@ -315,7 +313,7 @@ public class SetlMatrixTest {
             System.err.println(ex.getMessage());
             fail("col_construct error: exception");
         }
-        ArrayList<Double> vecbase = new ArrayList<Double>(2);
+        ArrayList<Double> vecbase = new ArrayList<>(2);
         vecbase.add((double) 1);
         vecbase.add((double) 2);
         SetlVector cmprVector = new SetlVector(vecbase);

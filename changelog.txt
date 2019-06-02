@@ -1,6 +1,9 @@
 
 Changes (* notice | + feature added, replaced or improved | - feature removed | # bugfix):
 
+---v2.7.2--- 2019-06-03
+ # Raising 0 to the power of some negative number will result in some more useful exception
+
 ---v2.7.1--- 2018-10-15
  # Fix issue with parameter of setPenColor()
  # Unix launch script: prevent usage of rlwrap inside emacs

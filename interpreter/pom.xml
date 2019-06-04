@@ -22,6 +22,7 @@
         <module>gfx_addon</module>
         <module>plot_addon</module>
         <module>stat_addon</module>
+        <module>webapi_addon</module>
 
         <module>tools</module>
     </modules>

@@ -19,7 +19,7 @@ public class PD_webapi_parse_xml extends PreDefinedProcedure {
 
     private final static ParameterDefinition XML_STRING = createParameter("xml_string");
 
-    /** Definition of the PreDefinedProcedure 'webapi_parse_xml_file' */
+    /** Definition of the PreDefinedProcedure 'webapi_parse_xml' */
     public final static PreDefinedProcedure DEFINITION = new PD_webapi_parse_xml();
 
     private PD_webapi_parse_xml() {

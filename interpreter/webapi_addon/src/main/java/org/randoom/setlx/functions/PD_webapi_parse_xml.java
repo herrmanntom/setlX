@@ -19,7 +19,7 @@ public class PD_webapi_parse_xml extends PreDefinedProcedure {
 
     private final static ParameterDefinition XML_STRING = createParameter("xml_string");
 
-    /** Definition of the PreDefinedProcedure 'stat_beta' */
+    /** Definition of the PreDefinedProcedure 'webapi_parse_xml_file' */
     public final static PreDefinedProcedure DEFINITION = new PD_webapi_parse_xml();
 
     private PD_webapi_parse_xml() {
@@ -31,7 +31,7 @@ public class PD_webapi_parse_xml extends PreDefinedProcedure {
     public Value execute(State state, HashMap<ParameterDefinition, Value> args) throws SetlException {
         final Value argument = args.get(XML_STRING);
         if (argument.isString() == SetlBoolean.FALSE || argument.size() == 0) {
-            throw new IncompatibleTypeException("Could not parse '" + argument.getUnquotedString(state) + "' as xml");
+            throw new IncompatibleTypeException("Parameter is not a string: " + argument.toString(state));
         }
         String xmlString = argument.getUnquotedString(state);
 

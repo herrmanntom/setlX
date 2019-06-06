@@ -11,12 +11,12 @@ import org.randoom.setlx.utilities.XhtmlParser;
 import java.util.HashMap;
 
 /**
- * webapi_parse_xhtml(xhtml_string) : Use javax parsers to parse given xhtml content into document and map it to setlx objects.
- *                                    Also tries to fix up some common problems when parsing it as xml
+ * webapi_parse_xhtml(xhtmlString) : Use javax parsers to parse given xhtml content into document and map it to setlx objects.
+ *                                   Also tries to fix up some common problems when parsing it as xml
  */
 public class PD_webapi_parse_xhtml extends PreDefinedProcedure {
 
-    private final static ParameterDefinition XHTML_STRING = createParameter("xhtml_string");
+    private final static ParameterDefinition XHTML_STRING = createParameter("xhtmlString");
 
     /** Definition of the PreDefinedProcedure 'webapi_parse_xhtml' */
     public final static PreDefinedProcedure DEFINITION = new PD_webapi_parse_xhtml();

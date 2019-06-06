@@ -17,12 +17,12 @@ import java.util.HashMap;
 import java.util.List;
 
 /**
- * webapi_parse_xhtml_file(path_to_xml_file) : Use javax parsers to parse given xhtml content into document and map it to setlx objects.
- *                                             Also tries to fix up some common problems when parsing it as xml
+ * webapi_parse_xhtml_file(pathToXmlFile) : Use javax parsers to parse given xhtml content into document and map it to setlx objects.
+ *                                          Also tries to fix up some common problems when parsing it as xml
  */
 public class PD_webapi_parse_xhtml_file extends PreDefinedProcedure {
 
-    private final static ParameterDefinition PATH_TO_XHTML_FILE = createParameter("path_to_xhtml_file");
+    private final static ParameterDefinition PATH_TO_XHTML_FILE = createParameter("pathToXmlFile");
 
     /** Definition of the PreDefinedProcedure 'webapi_parse_xhtml' */
     public final static PreDefinedProcedure DEFINITION = new PD_webapi_parse_xhtml_file();

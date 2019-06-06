@@ -13,7 +13,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 
 /**
- * webapi_parse_xml(xmlString) : Use javax parsers to parse given xml content into document and map it to setlx objects.
+ * webapi_parseXml(xmlString) : Use javax parsers to parse given xml content into document and map it to setlx objects.
  */
 public class PD_webapi_parseXml extends PreDefinedProcedure {
 

@@ -14,7 +14,7 @@ import java.io.FileNotFoundException;
 import java.util.HashMap;
 
 /**
- * webapi_parse_xml_file(pathToXmlFile) : Use javax parsers to parse given xml content into document and map it to setlx objects.
+ * webapi_parseXmlFile(pathToXmlFile) : Use javax parsers to parse given xml content into document and map it to setlx objects.
  */
 public class PD_webapi_parseXmlFile extends PreDefinedProcedure {
 

@@ -24,7 +24,6 @@ public class PD_webapi_parse_xhtml_file extends PreDefinedProcedure {
 
     private final static ParameterDefinition PATH_TO_XHTML_FILE = createParameter("pathToXmlFile");
 
-    /** Definition of the PreDefinedProcedure 'webapi_parse_xhtml' */
     public final static PreDefinedProcedure DEFINITION = new PD_webapi_parse_xhtml_file();
 
     private PD_webapi_parse_xhtml_file() {

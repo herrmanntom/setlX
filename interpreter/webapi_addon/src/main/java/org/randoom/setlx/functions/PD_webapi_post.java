@@ -21,7 +21,6 @@ public class PD_webapi_post extends PreDefinedProcedure {
     private final static ParameterDefinition FORM_DATA_MAP = createParameter("formDataMap");
     private final static ParameterDefinition COOKIE_DATA_MAP = createParameter("cookieDataMap");
 
-    /** Definition of the PreDefinedProcedure 'webapi_parse_xhtml' */
     public final static PreDefinedProcedure DEFINITION = new PD_webapi_post();
 
     private PD_webapi_post() {

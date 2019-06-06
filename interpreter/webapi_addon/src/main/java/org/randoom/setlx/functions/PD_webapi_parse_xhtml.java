@@ -18,7 +18,6 @@ public class PD_webapi_parse_xhtml extends PreDefinedProcedure {
 
     private final static ParameterDefinition XHTML_STRING = createParameter("xhtmlString");
 
-    /** Definition of the PreDefinedProcedure 'webapi_parse_xhtml' */
     public final static PreDefinedProcedure DEFINITION = new PD_webapi_parse_xhtml();
 
     private PD_webapi_parse_xhtml() {

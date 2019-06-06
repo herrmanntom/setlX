@@ -1,38 +1,39 @@
 package org.randoom.setlx.functions;
 
-import org.apache.cxf.common.util.Base64Utility;
 import org.randoom.setlx.exceptions.IncompatibleTypeException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.parameters.ParameterDefinition;
 import org.randoom.setlx.types.SetlBoolean;
-import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.State;
+import org.randoom.setlx.utilities.XmlParser;
 
+import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 
 /**
- * base64_encode(plainString) : Encode string with base64 (Assumes UTF8 character encoding)
+ * webapi_parse_xml(xmlString) : Use javax parsers to parse given xml content into document and map it to setlx objects.
  */
-public class PD_base64_encode extends PreDefinedProcedure {
+public class PD_webapi_parseXml extends PreDefinedProcedure {
 
-    private final static ParameterDefinition PLAIN_STRING = createParameter("plainString");
+    private final static ParameterDefinition XML_STRING = createParameter("xmlString");
 
-    public final static PreDefinedProcedure DEFINITION = new PD_base64_encode();
+    public final static PreDefinedProcedure DEFINITION = new PD_webapi_parseXml();
 
-    private PD_base64_encode() {
+    private PD_webapi_parseXml() {
         super();
-        addParameter(PLAIN_STRING);
+        addParameter(XML_STRING);
     }
 
     @Override
     public Value execute(State state, HashMap<ParameterDefinition, Value> args) throws SetlException {
-        final Value argument = args.get(PLAIN_STRING);
+        final Value argument = args.get(XML_STRING);
         if (argument.isString() == SetlBoolean.FALSE || argument.size() == 0) {
             throw new IncompatibleTypeException("Parameter is not a string: " + argument.toString(state));
         }
+        String xmlString = argument.getUnquotedString(state);
 
-        return new SetlString(Base64Utility.encode(argument.getUnquotedString(state).getBytes(StandardCharsets.UTF_8)));
+        return XmlParser.parse(state, new ByteArrayInputStream(xmlString.getBytes(StandardCharsets.UTF_8)));
     }
 }

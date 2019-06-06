@@ -20,13 +20,13 @@ import java.util.List;
  * webapi_parse_xhtml_file(pathToXmlFile) : Use javax parsers to parse given xhtml content into document and map it to setlx objects.
  *                                          Also tries to fix up some common problems when parsing it as xml
  */
-public class PD_webapi_parse_xhtml_file extends PreDefinedProcedure {
+public class PD_webapi_parseXhtmlDile extends PreDefinedProcedure {
 
     private final static ParameterDefinition PATH_TO_XHTML_FILE = createParameter("pathToXmlFile");
 
-    public final static PreDefinedProcedure DEFINITION = new PD_webapi_parse_xhtml_file();
+    public final static PreDefinedProcedure DEFINITION = new PD_webapi_parseXhtmlDile();
 
-    private PD_webapi_parse_xhtml_file() {
+    private PD_webapi_parseXhtmlDile() {
         super();
         addParameter(PATH_TO_XHTML_FILE);
     }

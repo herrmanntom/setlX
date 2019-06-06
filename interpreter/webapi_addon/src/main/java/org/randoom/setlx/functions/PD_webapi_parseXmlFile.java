@@ -16,13 +16,13 @@ import java.util.HashMap;
 /**
  * webapi_parse_xml_file(pathToXmlFile) : Use javax parsers to parse given xml content into document and map it to setlx objects.
  */
-public class PD_webapi_parse_xml_file extends PreDefinedProcedure {
+public class PD_webapi_parseXmlFile extends PreDefinedProcedure {
 
-    private final static ParameterDefinition PATH_TO_XML_FILE = createParameter("path_to_xml_file");
+    private final static ParameterDefinition PATH_TO_XML_FILE = createParameter("pathToXmlFile");
 
-    public final static PreDefinedProcedure DEFINITION = new PD_webapi_parse_xml_file();
+    public final static PreDefinedProcedure DEFINITION = new PD_webapi_parseXmlFile();
 
-    private PD_webapi_parse_xml_file() {
+    private PD_webapi_parseXmlFile() {
         super();
         addParameter(PATH_TO_XML_FILE);
     }

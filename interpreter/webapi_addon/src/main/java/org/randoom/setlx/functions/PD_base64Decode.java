@@ -15,15 +15,15 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 
 /**
- * base64_decode(base64String) : Decode base64 string (Assumes UTF8 character encoding)
+ * base64Decode(base64String) : Decode base64 string (Assumes UTF8 character encoding)
  */
-public class PD_base64_decode extends PreDefinedProcedure {
+public class PD_base64Decode extends PreDefinedProcedure {
 
     private final static ParameterDefinition BASE_64_STRING = createParameter("base64String");
 
-    public final static PreDefinedProcedure DEFINITION = new PD_base64_decode();
+    public final static PreDefinedProcedure DEFINITION = new PD_base64Decode();
 
-    private PD_base64_decode() {
+    private PD_base64Decode() {
         super();
         addParameter(BASE_64_STRING);
     }

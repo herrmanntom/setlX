@@ -1,6 +1,7 @@
 package org.randoom.setlx.utilities;
 
 import org.randoom.setlx.exceptions.IncompatibleTypeException;
+import org.randoom.setlx.exceptions.JVMIOException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.statements.Block;
 import org.randoom.setlx.types.Om;
@@ -20,6 +21,12 @@ import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MultivaluedHashMap;
 import javax.ws.rs.core.NewCookie;
 import javax.ws.rs.core.Response;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -36,6 +43,31 @@ public class WebRequests {
                                                       "}";
 
     public static SetlObject get(State state, String targetUrl, SetlSet queryParameterMap, SetlSet cookieData) throws SetlException {
+        Response response = getResponse(state, targetUrl, queryParameterMap, cookieData);
+        SetlObject setlObject = mapResponse(state, response, null);
+        response.close();
+        return setlObject;
+    }
+
+    public static SetlObject getAndStoreFile(State state, String targetUrl, SetlSet queryParameterMap, SetlSet cookieData, String fileToWrite) throws SetlException {
+        Response response = getResponse(state, targetUrl, queryParameterMap, cookieData);
+        SetlObject setlObject;
+        if (response.getStatus() == 200) {
+            Path targetPath = Paths.get(fileToWrite).toAbsolutePath();
+            try (InputStream inputStream = response.readEntity(InputStream.class)) {
+                Files.copy(inputStream, targetPath, StandardCopyOption.REPLACE_EXISTING);
+            } catch (IOException e) {
+                throw new JVMIOException("Could not save response to '" + fileToWrite + "'", e);
+            }
+            setlObject = mapResponse(state, response, targetPath.toString());
+        } else {
+            setlObject = mapResponse(state, response, null);
+        }
+        response.close();
+        return setlObject;
+    }
+
+    private static Response getResponse(State state, String targetUrl, SetlSet queryParameterMap, SetlSet cookieData) throws SetlException {
         Client client = ClientBuilder.newClient();
         WebTarget target = client.target(targetUrl);
 
@@ -48,8 +80,7 @@ public class WebRequests {
 
         request = setCookieData(state, cookieData, request);
 
-        Response response = request.get();
-        return mapResponse(state, response);
+        return request.get();
     }
 
     public static SetlObject post(State state, String targetUrl, SetlSet formDataMap, SetlSet cookieData) throws SetlException {
@@ -66,7 +97,9 @@ public class WebRequests {
         }
 
         Response response = request.post(Entity.form(new MultivaluedHashMap<>(formData)));
-        return mapResponse(state, response);
+        SetlObject setlObject = mapResponse(state, response, null);
+        response.close();
+        return setlObject;
     }
 
     private static Invocation.Builder setCookieData(State state, SetlSet cookieData, Invocation.Builder request) throws SetlException {
@@ -80,7 +113,7 @@ public class WebRequests {
         return request;
     }
 
-    private static SetlObject mapResponse(State state, Response response) throws SetlException {
+    private static SetlObject mapResponse(State state, Response response, String overrideEntity) throws SetlException {
         Value classCandidate = state.findValue(CLASS_NAME);
         if (classCandidate == Om.OM) {
             Block block = ParseSetlX.parseStringToBlock(state, CLASS_CODE_RESPONSE);
@@ -94,7 +127,11 @@ public class WebRequests {
 
         List<Value> argumentValues = new ArrayList<>();
         argumentValues.add(Rational.valueOf(response.getStatus()));
-        argumentValues.add(new SetlString(response.readEntity(String.class)));
+        if (overrideEntity != null) {
+            argumentValues.add(new SetlString(overrideEntity));
+        } else {
+            argumentValues.add(new SetlString(response.readEntity(String.class)));
+        }
         argumentValues.add(mapCookies(state, response.getCookies().values()));
         return (SetlObject) classCandidate.call(state, argumentValues, null, null, null);
     }

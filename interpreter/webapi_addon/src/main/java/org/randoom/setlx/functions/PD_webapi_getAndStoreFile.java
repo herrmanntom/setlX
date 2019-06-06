@@ -12,21 +12,23 @@ import org.randoom.setlx.utilities.WebRequests;
 import java.util.HashMap;
 
 /**
- * webapi_get(targetUrl, queryParameterMap, cookieDataMap) : Send GET request to target url
+ * webapi_getAndStoreFile(targetUrl, queryParameterMap, cookieDataMap, fileToWrite) : Send GET request to target url and store resulting entity to file
  */
-public class PD_webapi_get extends PreDefinedProcedure {
+public class PD_webapi_getAndStoreFile extends PreDefinedProcedure {
 
     private final static ParameterDefinition BASE_URL = createParameter("baseUrl");
     private final static ParameterDefinition QUERY_PARAMETER_MAP = createParameter("queryParameterMap");
     private final static ParameterDefinition COOKIE_DATA_MAP = createParameter("cookieDataMap");
+    private final static ParameterDefinition FILE_TO_WRITE = createParameter("fileToWrite");
 
-    public final static PreDefinedProcedure DEFINITION = new PD_webapi_get();
+    public final static PreDefinedProcedure DEFINITION = new PD_webapi_getAndStoreFile();
 
-    private PD_webapi_get() {
+    private PD_webapi_getAndStoreFile() {
         super();
         addParameter(BASE_URL);
         addParameter(QUERY_PARAMETER_MAP);
         addParameter(COOKIE_DATA_MAP);
+        addParameter(FILE_TO_WRITE);
     }
 
     @Override
@@ -43,8 +45,13 @@ public class PD_webapi_get extends PreDefinedProcedure {
         if (argument3.isMap() == SetlBoolean.FALSE) {
             throw new IncompatibleTypeException("Parameter is not a map: " + argument3.toString(state));
         }
+        final Value argument4 = args.get(FILE_TO_WRITE);
+        if (argument4.isString() == SetlBoolean.FALSE || argument4.size() == 0) {
+            throw new IncompatibleTypeException("Parameter is not a string: " + argument4.toString(state));
+        }
         String url = argument.getUnquotedString(state);
+        String fileToWrite = argument4.getUnquotedString(state);
 
-        return WebRequests.get(state, url, (SetlSet) argument2, (SetlSet) argument3);
+        return WebRequests.getAndStoreFile(state, url, (SetlSet) argument2, (SetlSet) argument3, fileToWrite);
     }
 }

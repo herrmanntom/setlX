@@ -1,6 +1,8 @@
 package org.randoom.setlx.utilities;
 
+import org.apache.cxf.interceptor.Fault;
 import org.randoom.setlx.exceptions.IncompatibleTypeException;
+import org.randoom.setlx.exceptions.JVMException;
 import org.randoom.setlx.exceptions.JVMIOException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.statements.Block;
@@ -13,6 +15,7 @@ import org.randoom.setlx.types.SetlSet;
 import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.Value;
 
+import javax.ws.rs.ProcessingException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
@@ -80,7 +83,11 @@ public class WebRequests {
 
         request = setCookieData(state, cookieData, request);
 
-        return request.get();
+        try {
+            return request.get();
+        } catch (ProcessingException e) {
+            throw new JVMException("Could not perform GET '" + targetUrl + "': " + e.getMessage(), e);
+        }
     }
 
     public static SetlObject post(State state, String targetUrl, SetlSet formDataMap, SetlSet cookieData) throws SetlException {
@@ -96,7 +103,13 @@ public class WebRequests {
             formData.put(entry.getMember(1).getUnquotedString(state), entry.getMember(2).getUnquotedString(state));
         }
 
-        Response response = request.post(Entity.form(new MultivaluedHashMap<>(formData)));
+        Response response;
+        try {
+            response = request.post(Entity.form(new MultivaluedHashMap<>(formData)));
+        } catch (ProcessingException e) {
+            throw new JVMException("Could not perform POST '" + targetUrl + "': " + e.getMessage(), e);
+        }
+
         SetlObject setlObject = mapResponse(state, response, null);
         response.close();
         return setlObject;

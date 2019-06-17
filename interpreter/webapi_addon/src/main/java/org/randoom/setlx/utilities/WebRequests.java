@@ -34,6 +34,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.logging.Handler;
+import java.util.logging.Logger;
 
 public class WebRequests {
 
@@ -84,6 +86,7 @@ public class WebRequests {
         request = setCookieData(state, cookieData, request);
 
         try {
+            disableLoggers();
             return request.get();
         } catch (ProcessingException e) {
             throw new JVMException("Could not perform GET '" + targetUrl + "': " + e.getMessage(), e);
@@ -105,6 +108,7 @@ public class WebRequests {
 
         Response response;
         try {
+            disableLoggers();
             response = request.post(Entity.form(new MultivaluedHashMap<>(formData)));
         } catch (ProcessingException e) {
             throw new JVMException("Could not perform POST '" + targetUrl + "': " + e.getMessage(), e);
@@ -113,6 +117,14 @@ public class WebRequests {
         SetlObject setlObject = mapResponse(state, response, null);
         response.close();
         return setlObject;
+    }
+
+    private static void disableLoggers() {
+        Logger global = Logger.getLogger("");
+        Handler[] handlers = global.getHandlers();
+        for (Handler handler : handlers) {
+            global.removeHandler(handler);
+        }
     }
 
     private static Invocation.Builder setCookieData(State state, SetlSet cookieData, Invocation.Builder request) throws SetlException {

@@ -56,7 +56,7 @@ public class XmlParser {
             DocumentBuilder builder = documentBuilderFactory.newDocumentBuilder();
             xmlDocument = builder.parse(inputStream);
         } catch (ParserConfigurationException | SAXException | IOException e) {
-            throw new JVMException("Could not parse xml", e);
+            throw new JVMException("Could not parse xml: " + e.getMessage(), e);
         }
 
         return mapXmlNode(state, (SetlClass) classCandidate, xmlDocument.getDocumentElement());

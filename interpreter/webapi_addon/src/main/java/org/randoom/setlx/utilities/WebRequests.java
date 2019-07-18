@@ -22,6 +22,7 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.Invocation;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MultivaluedHashMap;
+import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.NewCookie;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
@@ -34,6 +35,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Handler;
 import java.util.logging.Logger;
 
@@ -41,9 +43,10 @@ public class WebRequests {
 
     private static final String CLASS_NAME = "webapi_response";
 
-    private final static String CLASS_CODE_RESPONSE = "class " + CLASS_NAME + "(status, entity, cookies) {\n" +
+    private final static String CLASS_CODE_RESPONSE = "class " + CLASS_NAME + "(status, entity, headers, cookies) {\n" +
                                                       "    this.status := status;\n" +
                                                       "    this.entity := entity;\n" +
+                                                      "    this.headers := headers;\n" +
                                                       "    this.cookies := cookies;\n" +
                                                       "}";
 
@@ -157,8 +160,25 @@ public class WebRequests {
         } else {
             argumentValues.add(new SetlString(response.readEntity(String.class)));
         }
+        argumentValues.add(mapHeaders(state, response.getStringHeaders()));
         argumentValues.add(mapCookies(state, response.getCookies().values()));
         return (SetlObject) classCandidate.call(state, argumentValues, null, null, null);
+    }
+
+    private static SetlSet mapHeaders(State state, MultivaluedMap<String, String> responseHeaders) {
+        SetlSet headers = new SetlSet();
+
+        for (Map.Entry<String, List<String>> responseHeader : responseHeaders.entrySet()) {
+            for (String value : responseHeader.getValue()) {
+                SetlList headerPair = new SetlList();
+                headerPair.addMember(state, new SetlString(responseHeader.getKey()));
+                headerPair.addMember(state, new SetlString(value));
+
+                headers.addMember(state, headerPair);
+            }
+        }
+
+        return headers;
     }
 
     private static SetlSet mapCookies(State state, Collection<NewCookie> responseCookies) {

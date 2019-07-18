@@ -1,6 +1,5 @@
 package org.randoom.setlx.utilities;
 
-import org.apache.cxf.interceptor.Fault;
 import org.randoom.setlx.exceptions.IncompatibleTypeException;
 import org.randoom.setlx.exceptions.JVMException;
 import org.randoom.setlx.exceptions.JVMIOException;
@@ -77,7 +76,12 @@ public class WebRequests {
 
     private static Response getResponse(State state, String targetUrl, SetlSet queryParameterMap, SetlSet cookieData) throws SetlException {
         Client client = ClientBuilder.newClient();
-        WebTarget target = client.target(targetUrl);
+        WebTarget target;
+        try {
+            target = client.target(targetUrl);
+        } catch (IllegalArgumentException e) {
+            throw new JVMException("Could not perform GET '" + targetUrl + "': " + e.getMessage(), e);
+        }
 
         for (Value e : queryParameterMap) {
             SetlList entry = (SetlList) e;
@@ -98,7 +102,12 @@ public class WebRequests {
 
     public static SetlObject post(State state, String targetUrl, SetlSet formDataMap, SetlSet cookieData) throws SetlException {
         Client client = ClientBuilder.newClient();
-        WebTarget target = client.target(targetUrl);
+        WebTarget target;
+        try {
+            target = client.target(targetUrl);
+        } catch (IllegalArgumentException e) {
+            throw new JVMException("Could not perform POST '" + targetUrl + "': " + e.getMessage(), e);
+        }
         Invocation.Builder request = target.request();
 
         request = setCookieData(state, cookieData, request);

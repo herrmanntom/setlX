@@ -20,6 +20,7 @@ import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.Invocation;
 import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.Form;
 import javax.ws.rs.core.MultivaluedHashMap;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.NewCookie;
@@ -64,7 +65,7 @@ public class WebRequests {
             try (InputStream inputStream = response.readEntity(InputStream.class)) {
                 Files.copy(inputStream, targetPath, StandardCopyOption.REPLACE_EXISTING);
             } catch (IOException e) {
-                throw new JVMIOException("Could not save response to '" + fileToWrite + "'", e);
+                throw new JVMIOException("Could not save response to '" + fileToWrite + "': " + e.getMessage(), e);
             }
             setlObject = mapResponse(state, response, targetPath.toString());
         } else {
@@ -100,7 +101,20 @@ public class WebRequests {
         }
     }
 
-    public static SetlObject post(State state, String targetUrl, SetlSet queryParameterMap, SetlSet formDataMap, SetlSet cookieData) throws SetlException {
+    public static SetlObject postForm(State state, String targetUrl, SetlSet queryParameterMap, SetlSet formDataMap, SetlSet cookieData) throws SetlException {
+        HashMap<String, String> formData = new HashMap<>();
+        for (Value e : formDataMap) {
+            SetlList entry = (SetlList) e;
+            formData.put(entry.getMember(1).getUnquotedString(state), entry.getMember(2).getUnquotedString(state));
+        }
+        return postRequest(state, targetUrl, queryParameterMap, Entity.form(new MultivaluedHashMap<>(formData)), cookieData);
+    }
+
+    public static SetlObject postJsonEntity(State state, String targetUrl, SetlSet queryParameterMap, String jsonEntity, SetlSet cookieData) throws SetlException {
+        return postRequest(state, targetUrl, queryParameterMap, Entity.json(jsonEntity), cookieData);
+    }
+
+    public static SetlObject postRequest(State state, String targetUrl, SetlSet queryParameterMap, Entity<?> entity, SetlSet cookieData) throws SetlException {
         Client client = ClientBuilder.newClient();
         WebTarget target;
         try {
@@ -118,16 +132,10 @@ public class WebRequests {
 
         request = setCookieData(state, cookieData, request);
 
-        HashMap<String, String> formData = new HashMap<>();
-        for (Value e : formDataMap) {
-            SetlList entry = (SetlList) e;
-            formData.put(entry.getMember(1).getUnquotedString(state), entry.getMember(2).getUnquotedString(state));
-        }
-
         Response response;
         try {
             disableLoggers();
-            response = request.post(Entity.form(new MultivaluedHashMap<>(formData)));
+            response = request.post(entity);
         } catch (ProcessingException e) {
             throw new JVMException("Could not perform POST '" + targetUrl + "': " + e.getMessage(), e);
         }

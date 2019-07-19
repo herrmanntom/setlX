@@ -12,18 +12,18 @@ import org.randoom.setlx.utilities.WebRequests;
 import java.util.HashMap;
 
 /**
- * webapi_post(targetUrl, queryParameterMap, formDataMap, cookieDataMap) : Send POST request to target url
+ * webapi_postForm(targetUrl, queryParameterMap, formDataMap, cookieDataMap) : Send POST request to target url
  */
-public class PD_webapi_post extends PreDefinedProcedure {
+public class PD_webapi_postForm extends PreDefinedProcedure {
 
     private final static ParameterDefinition TARGET_URL = createParameter("targetUrl");
     private final static ParameterDefinition QUERY_PARAMETER_MAP = createParameter("queryParameterMap");
     private final static ParameterDefinition FORM_DATA_MAP = createParameter("formDataMap");
     private final static ParameterDefinition COOKIE_DATA_MAP = createParameter("cookieDataMap");
 
-    public final static PreDefinedProcedure DEFINITION = new PD_webapi_post();
+    public final static PreDefinedProcedure DEFINITION = new PD_webapi_postForm();
 
-    private PD_webapi_post() {
+    private PD_webapi_postForm() {
         super();
         addParameter(TARGET_URL);
         addParameter(QUERY_PARAMETER_MAP);
@@ -51,6 +51,6 @@ public class PD_webapi_post extends PreDefinedProcedure {
         }
         String url = argument.getUnquotedString(state);
 
-        return WebRequests.post(state, url, (SetlSet) argument2, (SetlSet) argument3, (SetlSet) argument4);
+        return WebRequests.postForm(state, url, (SetlSet) argument2, (SetlSet) argument3, (SetlSet) argument4);
     }
 }

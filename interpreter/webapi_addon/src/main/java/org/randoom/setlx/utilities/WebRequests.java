@@ -20,7 +20,6 @@ import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.Invocation;
 import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.Form;
 import javax.ws.rs.core.MultivaluedHashMap;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.NewCookie;
@@ -50,15 +49,15 @@ public class WebRequests {
                                                       "    this.cookies := cookies;\n" +
                                                       "}";
 
-    public static SetlObject get(State state, String targetUrl, SetlSet queryParameterMap, SetlSet cookieData) throws SetlException {
-        Response response = getResponse(state, targetUrl, queryParameterMap, cookieData);
+    public static SetlObject get(State state, String targetUrl, SetlSet queryParameterMap, SetlSet headerParameterMap, SetlSet cookieData) throws SetlException {
+        Response response = getResponse(state, targetUrl, queryParameterMap, headerParameterMap, cookieData);
         SetlObject setlObject = mapResponse(state, response, null);
         response.close();
         return setlObject;
     }
 
-    public static SetlObject getAndStoreFile(State state, String targetUrl, SetlSet queryParameterMap, SetlSet cookieData, String fileToWrite) throws SetlException {
-        Response response = getResponse(state, targetUrl, queryParameterMap, cookieData);
+    public static SetlObject getAndStoreFile(State state, String targetUrl, SetlSet queryParameterMap, SetlSet headerParameterMap, SetlSet cookieData, String fileToWrite) throws SetlException {
+        Response response = getResponse(state, targetUrl, queryParameterMap, headerParameterMap, cookieData);
         SetlObject setlObject;
         if (response.getStatus() == 200) {
             Path targetPath = Paths.get(fileToWrite).toAbsolutePath();
@@ -75,7 +74,7 @@ public class WebRequests {
         return setlObject;
     }
 
-    private static Response getResponse(State state, String targetUrl, SetlSet queryParameterMap, SetlSet cookieData) throws SetlException {
+    private static Response getResponse(State state, String targetUrl, SetlSet queryParameterMap, SetlSet headerParameterMap, SetlSet cookieData) throws SetlException {
         Client client = ClientBuilder.newClient();
         WebTarget target;
         try {
@@ -91,6 +90,8 @@ public class WebRequests {
 
         Invocation.Builder request = target.request();
 
+        request = setHeaderData(state, headerParameterMap, request);
+
         request = setCookieData(state, cookieData, request);
 
         try {
@@ -101,20 +102,20 @@ public class WebRequests {
         }
     }
 
-    public static SetlObject postForm(State state, String targetUrl, SetlSet queryParameterMap, SetlSet formDataMap, SetlSet cookieData) throws SetlException {
+    public static SetlObject postForm(State state, String targetUrl, SetlSet queryParameterMap, SetlSet headerParameterMap, SetlSet formDataMap, SetlSet cookieData) throws SetlException {
         HashMap<String, String> formData = new HashMap<>();
         for (Value e : formDataMap) {
             SetlList entry = (SetlList) e;
             formData.put(entry.getMember(1).getUnquotedString(state), entry.getMember(2).getUnquotedString(state));
         }
-        return postRequest(state, targetUrl, queryParameterMap, Entity.form(new MultivaluedHashMap<>(formData)), cookieData);
+        return postRequest(state, targetUrl, queryParameterMap, headerParameterMap, Entity.form(new MultivaluedHashMap<>(formData)), cookieData);
     }
 
-    public static SetlObject postJsonEntity(State state, String targetUrl, SetlSet queryParameterMap, String jsonEntity, SetlSet cookieData) throws SetlException {
-        return postRequest(state, targetUrl, queryParameterMap, Entity.json(jsonEntity), cookieData);
+    public static SetlObject postJsonEntity(State state, String targetUrl, SetlSet queryParameterMap, SetlSet headerParameterMap, String jsonEntity, SetlSet cookieData) throws SetlException {
+        return postRequest(state, targetUrl, queryParameterMap, headerParameterMap, Entity.json(jsonEntity), cookieData);
     }
 
-    public static SetlObject postRequest(State state, String targetUrl, SetlSet queryParameterMap, Entity<?> entity, SetlSet cookieData) throws SetlException {
+    public static SetlObject postRequest(State state, String targetUrl, SetlSet queryParameterMap, SetlSet headerParameterMap, Entity<?> entity, SetlSet cookieData) throws SetlException {
         Client client = ClientBuilder.newClient();
         WebTarget target;
         try {
@@ -129,6 +130,8 @@ public class WebRequests {
         }
 
         Invocation.Builder request = target.request();
+
+        request = setHeaderData(state, headerParameterMap, request);
 
         request = setCookieData(state, cookieData, request);
 
@@ -151,6 +154,14 @@ public class WebRequests {
         for (Handler handler : handlers) {
             global.removeHandler(handler);
         }
+    }
+
+    private static Invocation.Builder setHeaderData(State state, SetlSet headerParameterMap, Invocation.Builder request) throws SetlException {
+        for (Value e : headerParameterMap) {
+            SetlList entry = (SetlList) e;
+            request = request.header(entry.getMember(1).getUnquotedString(state), entry.getMember(2).getUnquotedString(state));
+        }
+        return request;
     }
 
     private static Invocation.Builder setCookieData(State state, SetlSet cookieData, Invocation.Builder request) throws SetlException {

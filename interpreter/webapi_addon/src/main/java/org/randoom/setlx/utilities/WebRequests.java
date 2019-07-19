@@ -100,7 +100,7 @@ public class WebRequests {
         }
     }
 
-    public static SetlObject post(State state, String targetUrl, SetlSet formDataMap, SetlSet cookieData) throws SetlException {
+    public static SetlObject post(State state, String targetUrl, SetlSet queryParameterMap, SetlSet formDataMap, SetlSet cookieData) throws SetlException {
         Client client = ClientBuilder.newClient();
         WebTarget target;
         try {
@@ -108,6 +108,12 @@ public class WebRequests {
         } catch (IllegalArgumentException e) {
             throw new JVMException("Could not perform POST '" + targetUrl + "': " + e.getMessage(), e);
         }
+
+        for (Value e : queryParameterMap) {
+            SetlList entry = (SetlList) e;
+            target = target.queryParam(entry.getMember(1).getUnquotedString(state), entry.getMember(2).getUnquotedString(state));
+        }
+
         Invocation.Builder request = target.request();
 
         request = setCookieData(state, cookieData, request);

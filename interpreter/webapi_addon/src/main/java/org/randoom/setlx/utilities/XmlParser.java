@@ -56,7 +56,7 @@ public class XmlParser {
             DocumentBuilder builder = documentBuilderFactory.newDocumentBuilder();
             xmlDocument = builder.parse(inputStream);
         } catch (ParserConfigurationException | SAXException | IOException e) {
-            throw new JVMException("Could not parse xml", e);
+            throw new JVMException("Could not parse xml: " + e.getMessage(), e);
         }
 
         return mapXmlNode(state, (SetlClass) classCandidate, xmlDocument.getDocumentElement());
@@ -74,14 +74,16 @@ public class XmlParser {
     private static SetlSet mapAttributes(State state, Node node) {
         SetlSet attributes = new SetlSet();
         NamedNodeMap attributeMap = node.getAttributes();
-        for (int i = 0; i < attributeMap.getLength(); ++i) {
-            Node attribute = attributeMap.item(i);
+        if (attributeMap != null) {
+            for (int i = 0; i < attributeMap.getLength(); ++i) {
+                Node attribute = attributeMap.item(i);
 
-            SetlList attributePair = new SetlList();
-            attributePair.addMember(state, new SetlString(attribute.getNodeName()));
-            attributePair.addMember(state, new SetlString(attribute.getNodeValue()));
+                SetlList attributePair = new SetlList();
+                attributePair.addMember(state, new SetlString(attribute.getNodeName()));
+                attributePair.addMember(state, new SetlString(attribute.getNodeValue()));
 
-            attributes.addMember(state, attributePair);
+                attributes.addMember(state, attributePair);
+            }
         }
         return attributes;
     }

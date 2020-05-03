@@ -1,0 +1,90 @@
+Each card has 4 properties and each property has 3 possible values:
+	symbol count:	{"one", "three", "two"}
+	symbol color:	{"green", "purple", "red"}
+	symbol shape:	{"diamond", "round", "s"}
+	symbol filler:	{"empty", "full", "striped"}
+
+With all combinations, the game contains 81 cards.
+
+Goal of the game is to find sets of 3 cards.
+
+To form a card set, each property must either be the same on all card, or different on all cards, like this one:
+	green	one	empty	diamond
+	purple	three	full	round
+	red	two	striped	s
+
+When concidering all cards, there are 1080 possible sets of 3 cards.
+
+During a normal game, there are just 12 cards on the table. Not all possible combinations of 12 cards contain a set. For example those:
+	green	one	empty	diamond
+	green	one	empty	round
+	green	one	full	diamond
+	green	one	full	round
+	green	three	empty	diamond
+	green	three	empty	round
+	red	three	striped	round
+	red	three	striped	s
+	red	two	full	round
+	red	two	full	s
+	red	two	striped	round
+	red	two	striped	s
+
+In case the 12 cards do not contain a set, 3 more cards are put on the table. But also not all possible combinations of 15 cards contain a set. For example those:
+	green	one	empty	diamond
+	green	one	empty	round
+	green	one	full	diamond
+	green	one	full	round
+	green	three	empty	diamond
+	green	three	empty	round
+	green	three	full	diamond
+	red	three	full	round
+	red	three	full	s
+	red	three	striped	round
+	red	three	striped	s
+	red	two	full	round
+	red	two	full	s
+	red	two	striped	round
+	red	two	striped	s
+
+Then again 3 more cards are put on the table. Again not all possible combinations of 18 cards contain a set. For example those:
+	green	one	empty	diamond
+	green	one	empty	round
+	green	one	full	diamond
+	green	one	full	round
+	green	three	empty	diamond
+	green	three	empty	round
+	green	three	full	s
+	green	three	striped	s
+	green	two	full	s
+	purple	one	empty	round
+	red	three	full	round
+	red	three	full	s
+	red	three	striped	round
+	red	three	striped	s
+	red	two	full	round
+	red	two	full	s
+	red	two	striped	round
+	red	two	striped	s
+
+Then again 3 more cards are put on the table, raising the number of cards to 21. This ensures a set can be found. Maximum number of set free cards is 20. For example those:
+	green	one	empty	diamond
+	green	one	empty	round
+	green	one	full	diamond
+	green	one	full	round
+	green	three	empty	diamond
+	green	three	empty	round
+	green	three	full	s
+	green	three	striped	s
+	green	two	full	s
+	purple	one	empty	round
+	purple	two	striped	round
+	red	one	full	diamond
+	red	three	empty	diamond
+	red	three	full	diamond
+	red	three	striped	round
+	red	three	striped	s
+	red	two	full	round
+	red	two	full	s
+	red	two	striped	round
+	red	two	striped	s
+

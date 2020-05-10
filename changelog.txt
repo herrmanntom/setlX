@@ -1,6 +1,9 @@
 
 Changes (* notice | + feature added, replaced or improved | - feature removed | # bugfix):
 
+---v2.7.3--- 2020-05-10
+ + add webapi-addon that provides some simple methods to interact with http servers
+
 ---v2.7.2--- 2019-06-03
  # Raising 0 to the power of some negative number will result in some more useful exception
 

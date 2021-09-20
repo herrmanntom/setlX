@@ -1,19 +1,19 @@
-askUser := procedure() {
+findZero := procedure() {
     try {
         s := read("Please enter a function: ");
         f := evalTerm(parse("x |-> " + s));
         a := read("Enter left  boundary: ");
         b := read("Enter right boundary: ");
-        z := findZero(f, a, b);
+        z := bisection(f, a, b);
         print("zero at z = $z$");
     } catch (e) {
         print(e);
         print("Please try again.\n");
-        askUser();
+        findZero();
     }
 };
 
-findZero := procedure(f, a, b) {
+bisection := procedure(f, a, b) {
     if (a > b) {
         throw("Left boundary a has to be less than right boundary b!");   
     }
@@ -33,4 +33,4 @@ findZero := procedure(f, a, b) {
     return 1/2 * (a + b);
 };
 
-askUser();
+findZero();

@@ -74,7 +74,7 @@ needs to be different from the sign of $f(b)$.
             f := eval("x |-> " + s);
             a := read("Enter left  boundary: ");
             b := read("Enter right boundary: ");
-            z := findZero(f, a, b);
+            z := bisection(f, a, b);
             print("zero at z = $z$");
         } catch (e) {
             print(e);
@@ -823,7 +823,7 @@ Finally, we are ready to solve the zebra puzzle.  Figure \ref{fig:zebra.stlx} on
 \pageref{fig:zebra.stlx} shows how to set the parameters of the function \texttt{generateAndTest}
 to solve the zebra puzzle.  The idea is to model the colors of the houses, the nationalities of
 their inhabitants, the beverages, the cigarette brand, and the pets by numbers from the set
-$\{1,2,3,4,5\}$.  For example, if the variable ``\texttt{red}´´ has the value 3, then this is
+$\{1,2,3,4,5\}$.  For example, if the variable ``\texttt{red}ï¿½ï¿½ has the value 3, then this is
 interpreted as the fact that the third house is red.  Let us discuss the details of this program line by line.
 \begin{enumerate}
 \item In line 1 we define the auxiliary function \texttt{nextTo}.  This function checks whether

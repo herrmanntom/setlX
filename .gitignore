@@ -5,6 +5,7 @@
 /documentation/*.log
 /documentation/*.out
 /documentation/*.pdf
+/documentation/*.ps
 /documentation/*.toc
 /documentation/version.tex
 /grammar_pure/EBNF_extractor/target
@@ -24,6 +25,7 @@
 /Tutorial/*.log
 /Tutorial/*.out
 /Tutorial/*.pdf
+/Tutorial/*.ps
 /Tutorial/*.toc
 /Tutorial/_region_.prv/
 /Tutorial/tutorial.prv/

@@ -2,7 +2,7 @@
 Changes (* notice | + feature added, replaced or improved | - feature removed | # bugfix):
 
 ---v2.7.4--- 202x-yz-uv
- # fixed typo in tutorial
+ # fixed typos in tutorial
  # updated junit for supposed security holes, that could only be exploited during the build
  
 ---v2.7.3--- 2020-05-10
